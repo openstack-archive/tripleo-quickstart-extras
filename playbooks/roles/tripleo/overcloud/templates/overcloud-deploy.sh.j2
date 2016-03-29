@@ -1,0 +1,43 @@
+#!/bin/bash
+# Simple overcloud deploy script
+
+set -eux
+
+source {{ working_dir }}/stackrc
+
+while true; do
+    count=$(openstack hypervisor stats show -c count -f value)
+    if [ $count -gt 0 ]; then
+        break
+    fi
+done
+
+{% if test_ping %}
+DEPLOY_ENV_YAML=/tmp/deploy_env.yaml
+
+# Set most service workers to 1 to minimise memory usage on
+# the deployed overcloud when using the pingtest. We use this
+# test over tempest when we are memory constrained, ie the HA jobs.
+cat > $DEPLOY_ENV_YAML << EOENV
+parameter_defaults:
+  # HeatWorkers doesn't modify num_engine_workers, so handle
+  # via heat::config
+  controllerExtraConfig:
+    heat::config::heat_config:
+      DEFAULT/num_engine_workers:
+        value: 1
+    heat::api_cloudwatch::enabled: false
+    heat::api_cfn::enabled: false
+  HeatWorkers: 1
+  CeilometerWorkers: 1
+  CinderWorkers: 1
+  GlanceWorkers: 1
+  KeystoneWorkers: 1
+  NeutronWorkers: 1
+  NovaWorkers: 1
+  SwiftWorkers: 1
+EOENV
+{% endif %}
+
+exec openstack overcloud deploy --templates {{ deploy_args }} \
+    ${DEPLOY_ENV_YAML:+-e $DEPLOY_ENV_YAML}

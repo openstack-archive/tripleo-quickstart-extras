@@ -1,0 +1,15 @@
+- include: create-scripts.yml
+  tags:
+    - overcloud-scripts
+
+- include: deploy-overcloud.yml
+  tags:
+    - overcloud-deploy
+
+- include: post-deploy.yml
+  tags:
+    - overcloud-post-deploy
+
+- include: validate.yml
+  tags:
+    - overcloud-validate

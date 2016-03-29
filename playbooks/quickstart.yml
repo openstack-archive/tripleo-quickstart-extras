@@ -1,0 +1,7 @@
+---
+- name: Deploy overcloud
+  hosts: undercloud
+  gather_facts: no
+  roles:
+
+    - tripleo/overcloud

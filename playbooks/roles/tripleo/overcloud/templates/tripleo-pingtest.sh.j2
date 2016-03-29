@@ -1,0 +1,28 @@
+#
+# test_ping
+#
+
+EXTERNAL_NETWORK_GATEWAY={{ external_network_gateway }}
+FLOATING_IP_CIDR={{ floating_ip_cidr }}
+FLOATING_IP_START={{ floating_ip_start }}
+FLOATING_IP_END={{ floating_ip_end }}
+export EXTERNAL_NETWORK_GATEWAY FLOATING_IP_CIDR
+export FLOATING_IP_START FLOATING_IP_END
+
+# clean up network if it exists from previous run
+source {{ working_dir }}/overcloudrc
+neutron net-delete nova > /dev/null 2>&1 || true
+
+# clean up test images
+glance image-list |
+  awk '/pingtest_image/ {print $2}' |
+  xargs --no-run-if-empty -n1 glance image-delete
+
+rm -rf tripleo-ci
+git clone https://github.com/openstack-infra/tripleo-ci.git
+pushd tripleo-ci
+
+# We need to use a yes hack here because mitaka heatclient introduced a
+# confirmation prompt, but it is not there in liberty.
+# openstack/python-heatclient/commit/4f4575565cf0f93781f4fb273ad65342536c33c2
+yes | ./scripts/tripleo.sh --overcloud-pingtest
