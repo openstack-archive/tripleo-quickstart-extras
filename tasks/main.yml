@@ -1,0 +1,25 @@
+---
+# tasks file for ansible-role-tripleo-tempest
+
+- name: Create tempest skipfile
+  template:
+    src: skipfile.j2
+    dest: "{{ working_dir }}/skipfile"
+    mode: 0644
+
+- name: Create tempest run script
+  template:
+    src: run-tempest.sh.j2
+    dest: "{{ working_dir }}/run-tempest.sh"
+    mode: 0744
+
+- name: Create overcloud tempest setup script
+  template:
+    src: "{{ validate_script }}"
+    dest: "{{ working_dir }}/overcloud-tempest-setup.sh"
+    mode: 0744
+
+- name: Execute tempest
+  shell: |
+    {{ working_dir }}/overcloud-tempest-setup.sh > {{ tempest_log }} 2>&1
+
