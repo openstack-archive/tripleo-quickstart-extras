@@ -9,7 +9,3 @@
 - include: post-deploy.yml
   tags:
     - overcloud-post-deploy
-
-- include: validate.yml
-  tags:
-    - overcloud-validate
