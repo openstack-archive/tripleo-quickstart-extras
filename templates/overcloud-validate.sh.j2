@@ -1,0 +1,8 @@
+#!/bin/bash
+# Validate the overcloud deployment
+
+set -eux
+
+{% if test_ping|bool %}
+{% include 'tripleo-pingtest.sh.j2' %}
+{% endif %}

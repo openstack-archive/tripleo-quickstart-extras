@@ -1,2 +1,12 @@
 ---
-# tasks file for acme
+# tasks file for ansible-role-tripleo-overcloud-validate
+
+- name: Create overcloud validate script
+  template:
+    src: "{{ validate_script }}"
+    dest: "{{ working_dir }}/overcloud-validate.sh"
+    mode: 0744
+
+- name: Validate the overcloud
+  shell: |
+    {{ working_dir }}/overcloud-validate.sh > {{ validate_log }} 2>&1
