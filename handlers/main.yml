@@ -1,0 +1,9 @@
+---
+# handlers file for upgrade
+- name: restart openstack services
+  service: name={{item}} state=restarted
+  sudo: yes
+  with_items:
+      - openstack-heat-api
+      - openstack-heat-engine
+      - openstack-nova-api

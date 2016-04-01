@@ -1,0 +1,27 @@
+#!/bin/bash
+source {{ upgrade_working_dir }}/stackrc
+echo "execute script delivery"
+openstack overcloud deploy --templates {{ tht_dir }} \
+    -e {{ tht_dir }}/overcloud-resource-registry-puppet.yaml \
+    -e {{ tht_dir }}/environments/puppet-pacemaker.yaml \
+    -e {{ tht_dir }}/environments/major-upgrade-pacemaker-init.yaml
+
+echo "execute major upgrade controller"
+openstack overcloud deploy --templates {{ tht_dir }} \
+    -e {{ tht_dir }}/overcloud-resource-registry-puppet.yaml \
+    -e {{ tht_dir }}/environments/puppet-pacemaker.yaml \
+    -e {{ tht_dir }}/environments/major-upgrade-pacemaker.yaml
+
+echo "get compute uuid and update compute"
+compute_uuid=`nova list | grep overcloud-novacompute-0  | awk '{ print $2; }'`
+{{ upgrade_non_controller_script }} --upgrade $compute_uuid
+
+echo "get ceph uuid and update ceph"
+ceph_uuid=`nova list | grep overcloud-cephstorage-0  | awk '{ print $2; }'`
+{{ upgrade_non_controller_script }} --upgrade $ceph_uuid
+
+echo "execute converge"
+openstack overcloud deploy --templates {{ tht_dir }} \
+    -e {{ tht_dir }}/overcloud-resource-registry-puppet.yaml \
+    -e {{ tht_dir }}/environments/puppet-pacemaker.yaml \
+    -e {{ tht_dir }}/environments/major-upgrade-pacemaker-converge.yaml

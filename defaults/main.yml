@@ -1,0 +1,27 @@
+---
+# pre upgrade settings:
+oc_dns_server: 192.168.122.1
+# set-repo settings:
+target_upgrade_version: mitaka
+upgrade_delorean_hash: current-passed-ci
+repos:
+  - delorean.repo
+  - delorean-deps.repo
+yum_repo_path: /etc/yum.repos.d/
+# Url of the delorean repos:
+repos_url:
+  - http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/{{ upgrade_delorean_hash | default('current-passed-ci')}}/delorean.repo
+  - http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/delorean-deps.repo
+# upgrade settings:
+upgrade_working_dir: /home/stack
+tht_dir: tripleo-heat-templates
+upgrade_script: upgrade-controller-liberty.sh.j2
+upgrade_non_controller_script: /bin/upgrade-non-controller.sh
+upgrade_log: upgrade_console.log
+undercloud_upgrade_user: stack
+
+# upgrade steps:
+step_pre_upgrade: false
+step_upgrade_set_repo: true
+step_upgrade_undercloud: true
+step_upgrade_overcloud: true

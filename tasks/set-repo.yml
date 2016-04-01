@@ -1,0 +1,14 @@
+---
+- name: Clean up the repos
+  sudo: yes
+  file: path=/etc/yum.repos.d/{{ item }} state=absent
+  with_items: "{{ repos }}"
+
+- name: Get delorean repo
+  sudo: yes
+  get_url: url={{ item }} dest={{ yum_repo_path }}
+  with_items: "{{ repos_url }}"
+
+- name: Clean yum cache
+  sudo: yes
+  shell: yum clean all

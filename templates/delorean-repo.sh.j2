@@ -1,0 +1,20 @@
+#!/bin/bash
+# Script for set up the target repositories for Upgrade
+
+set -eux
+
+curl -o /etc/yum.repos.d/delorean.repo http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/{{ delorean_hash | default('current-passed-ci')}}/delorean.repo
+
+curl -o /etc/yum.repos.d/delorean-deps.repo http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/delorean-deps.repo
+
+# We need EPEL for the ceph packages currently, so make EPEL
+# available only for those packages.
+cat <<-EOF>>/etc/yum.repos.d/ceph.repo
+[ceph]
+name=Ceph packages from EPEL
+mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=x86_64
+failovermethod=priority
+enabled=1
+gpgcheck=0
+includepkgs=ceph,leveldb,libcephfs1,python-cephfs
+EOF
