@@ -1,5 +1,6 @@
 ---
 # defaults file for ansible-role-tripleo-overcloud-validate
+working_dir: /home/stack
 validate_script: overcloud-validate.sh.j2
 validate_log: "{{ working_dir }}/overcloud_validate.log"
 
