@@ -13,7 +13,7 @@
       sed -i 's/ssh/ssh -o StrictHostKeyChecking=no/' \
       {{ upgrade_non_controller_script }}
 
-- name: Create overcloud deploy script
+- name: Create overcloud upgrade script
   template:
     src: "{{ upgrade_script }}"
     dest: "{{ upgrade_working_dir }}/overcloud-upgrade.sh"

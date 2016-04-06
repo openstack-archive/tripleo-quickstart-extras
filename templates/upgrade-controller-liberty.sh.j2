@@ -25,3 +25,7 @@ openstack overcloud deploy --templates {{ tht_dir }} \
     -e {{ tht_dir }}/overcloud-resource-registry-puppet.yaml \
     -e {{ tht_dir }}/environments/puppet-pacemaker.yaml \
     -e {{ tht_dir }}/environments/major-upgrade-pacemaker-converge.yaml
+
+echo "check upgrade status"
+heat stack-list | grep -i COMPLETE
+exit $?
