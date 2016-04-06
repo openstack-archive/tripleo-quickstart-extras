@@ -1,3 +1,5 @@
+working_dir: /home/stack
+
 deploy_script: overcloud-deploy.sh.j2
 deploy_log: "{{ working_dir }}/overcloud_deploy.log"
 post_deploy_script: overcloud-deploy-post.sh.j2
