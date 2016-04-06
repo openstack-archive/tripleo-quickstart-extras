@@ -3,7 +3,7 @@
 
 set -eux
 
-{% if test_tempest|bool %}
+{% if configure_tempest|bool %}
 {% include 'configure-tempest.sh.j2' %}
 
 {% include 'run-tempest.sh.j2' %}
