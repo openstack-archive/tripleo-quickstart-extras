@@ -1,3 +1,7 @@
+- include: setup-heat-templates.yml
+  tags:
+    - overcloud-scripts
+
 - include: create-scripts.yml
   tags:
     - overcloud-scripts

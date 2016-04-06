@@ -1,0 +1,2 @@
+parameters:
+  Controller-1::NeutronExternalNetworkBridge: "''"

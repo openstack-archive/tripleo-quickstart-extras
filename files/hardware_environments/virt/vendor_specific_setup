@@ -1,0 +1,3 @@
+# Set up for virt_default
+
+echo "no vendor specific commands required"

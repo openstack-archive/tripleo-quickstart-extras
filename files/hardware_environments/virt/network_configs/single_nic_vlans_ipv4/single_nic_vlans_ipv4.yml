@@ -1,0 +1,21 @@
+# note the EC2MetadataIp: value should match the value in
+# /home/stack/undercloud.conf for key local_ip
+# # EC2MetadataIp: "local_ip"
+#
+# #ControlPlaneSubnetCidr: key name must match the keyname found in
+# #/usr/share/openstack-tripleo-heat-templates/network/config/$type/node.yaml
+
+parameter_defaults:
+  InternalApiNetCidr: 172.16.20.0/24
+  StorageNetCidr: 172.16.21.0/24
+  TenantNetCidr: 172.16.22.0/24
+  ExternalNetCidr: 172.16.23.0/24
+  InternalApiAllocationPools: [{'start': '172.16.20.10', 'end': '172.16.20.100'}]
+  StorageAllocationPools: [{'start': '172.16.21.10', 'end': '172.16.21.100'}]
+  TenantAllocationPools: [{'start': '172.16.22.10', 'end': '172.16.22.100'}]
+  ExternalAllocationPools: [{'start': '172.16.23.110', 'end': '172.16.23.150'}]
+  ExternalInterfaceDefaultRoute: 172.16.23.1
+  NeutronExternalNetworkBridge: "''"
+  ControlPlaneSubnetCidr: "24"
+  ControlPlaneDefaultRoute: 192.0.2.1
+  EC2MetadataIp: 192.0.2.1

@@ -1,0 +1,9 @@
+- name: Copy the network-isolation parameters to the undercloud
+  synchronize:
+    src: "{{ local_heat_template_dir }}/hardware_environments/{{ hw_env }}/network_configs/{{ network_isolation_type }}/{{ network_isolation_type }}.yml"
+    dest: "{{ working_dir }}/network-environment.yaml"
+    use_ssh_args: yes
+
+
+
+

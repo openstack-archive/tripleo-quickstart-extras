@@ -1,4 +1,9 @@
+local_working_dir: "{{ lookup('env', 'HOME') }}/.cat"
+local_heat_template_dir: "{{ local_working_dir }}/usr/local/share/ansible-role-tripleo-overcloud/files"
 working_dir: /home/stack
+
+hw_env: virt
+network_isolation_type: single_nic_vlans_ipv4
 
 deploy_script: overcloud-deploy.sh.j2
 deploy_log: "{{ working_dir }}/overcloud_deploy.log"
