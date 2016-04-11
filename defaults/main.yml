@@ -1,6 +1,6 @@
 ---
 # pre upgrade settings:
-oc_dns_server: 192.168.122.1
+upgrade_overcloud_dns_server: 8.8.8.8
 # set-repo settings:
 target_upgrade_version: mitaka
 upgrade_delorean_hash: current-passed-ci
@@ -15,13 +15,14 @@ repos_url:
 # upgrade settings:
 upgrade_working_dir: /home/stack
 tht_dir: tripleo-heat-templates
+pre_upgrade_overcloud_script: pre-upgrade-overcloud.sh.j2
 upgrade_script: upgrade-controller-liberty.sh.j2
 upgrade_non_controller_script: /bin/upgrade-non-controller.sh
 upgrade_log: upgrade_console.log
 undercloud_upgrade_user: stack
 
 # upgrade steps:
-step_pre_upgrade: false
+step_pre_upgrade: true
 step_upgrade_set_repo: true
 step_upgrade_undercloud: true
 step_upgrade_overcloud: true

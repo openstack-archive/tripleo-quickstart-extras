@@ -3,6 +3,18 @@
   sudo: yes
   lineinfile:
     regexp: "nameserver"
-    line: "nameserver {{ oc_dns_server }}"
+    line: "nameserver {{ upgrade_overcloud_dns_server }}"
     dest: "/etc/resolv.conf"
+  when: step_pre_upgrade
+
+- name: Create pre upgrade overcloud script
+  template:
+    src: "{{ pre_upgrade_overcloud_script }}"
+    dest: "{{ working_dir }}/pre_upgrade_overcloud_script.sh"
+    mode: 0744
+  when: step_pre_upgrade
+
+- name: Execute pre upgrade tasks on overcloud
+  shell: |
+    {{ working_dir }}/pre_upgrade_overcloud_script.sh > pre_upgrade_overcloud_script 2>&1
   when: step_pre_upgrade
