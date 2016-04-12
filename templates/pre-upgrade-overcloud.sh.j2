@@ -7,6 +7,6 @@ function run-on-overcloud() {
     done
 }
 
-run-on-overcloud 'sudo sed -i "\$a{{ upgrade_overcloud_dns_server }}" /etc/resolv.conf'
-run-on-overcloud 'sudo curl -o /etc/yum.repos.d/delorean.repo http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/{{ delorean_hash | default("current-passed-ci")}}/delorean.repo'
+run-on-overcloud 'sudo sed -i "\$anameserver {{ upgrade_overcloud_dns_server }}" /etc/resolv.conf'
+run-on-overcloud 'sudo curl -o /etc/yum.repos.d/delorean.repo http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/{{ upgrade_delorean_hash | default("current-passed-ci")}}/delorean.repo'
 run-on-overcloud 'sudo curl -o /etc/yum.repos.d/delorean-deps.repo http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/delorean-deps.repo'
