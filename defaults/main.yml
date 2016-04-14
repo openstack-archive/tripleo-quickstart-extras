@@ -1,0 +1,9 @@
+---
+# defaults file for ansible-role-tripleo-ssl
+local_working_dir: "{{ lookup('env', 'HOME') }}/.cat"
+working_dir: /home/stack
+ssl_overcloud: false
+ssl_undercloud: false
+
+hw_env:
+  ExternalVIP: 172.16.23.110
