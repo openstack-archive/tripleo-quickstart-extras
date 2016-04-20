@@ -9,12 +9,10 @@
     - upgrade-repo
 
 - include: upgrade-undercloud.yml
-  when: step_upgrade_undercloud
   tags:
     - upgrade-undercloud
 
 - include: upgrade-overcloud.yml
-  when: step_upgrade_overcloud
   tags:
     - upgrade-overcloud
 
