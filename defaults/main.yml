@@ -17,10 +17,18 @@ repos_url:
 upgrade_working_dir: /home/stack
 tht_dir: tripleo-heat-templates
 pre_upgrade_overcloud_script: pre-upgrade-overcloud.sh.j2
-upgrade_script: upgrade-controller-liberty.sh.j2
+upgrade_script: upgrade-overcloud.sh.j2
 upgrade_non_controller_script: /bin/upgrade-non-controller.sh
 upgrade_log: upgrade_console.log
 undercloud_upgrade_user: stack
+# override those lists with your templates that your env needs for upgrade
+# example:
+# upgrade_custom_templates_script_delivery:
+#  - custom.yaml
+#  - custom2.yaml
+upgrade_custom_templates_script_delivery: {}
+upgrade_custom_templates_controller: {}
+upgrade_custom_templates_converge: {}
 
 # upgrade steps:
 step_pre_upgrade: true
