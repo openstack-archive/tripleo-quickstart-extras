@@ -1,2 +1,14 @@
 ---
 # defaults file for ansible-role-tripleo-overcloud-validate-ha
+working_dir: /home/stack
+test_instance_script: overcloud-test-instance
+test_instance_log: "{{ working_dir }}/{{ test_instance_script}}.log"
+
+overcloud_working_dir: /home/heat-admin
+test_ha_script: overcloud-test-ha
+test_ha_log: "{{ overcloud_working_dir }}/{{ test_ha_script}}.log"
+
+floating_ip_cidr: "{{ undercloud_network_cidr|default('192.0.2.0/24') }}"
+floating_ip_start: "{{ floating_ip_cidr|nthhost(100) }}"
+floating_ip_end: "{{ floating_ip_cidr|nthhost(120) }}"
+external_network_gateway: "{{ floating_ip_cidr|nthhost(1) }}"

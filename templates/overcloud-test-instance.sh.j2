@@ -1,0 +1,100 @@
+#!/bin/bash
+# Test the overcloud deployment
+
+EXTERNAL_NETWORK_GATEWAY={{ external_network_gateway }}
+FLOATING_IP_CIDR={{ floating_ip_cidr }}
+FLOATING_IP_START={{ floating_ip_start }}
+FLOATING_IP_END={{ floating_ip_end }}
+export EXTERNAL_NETWORK_GATEWAY FLOATING_IP_CIDR
+export FLOATING_IP_START FLOATING_IP_END
+
+source {{ working_dir }}/overcloudrc
+
+TIMEOUT=30
+INSTANCE_NAME=cirros-1
+PRIVATE_NETWORK=10.1.1.0/24
+
+neutron net-create floating-network --router:external=True --provider:physical_network datacentre --provider:network_type flat
+neutron subnet-create --name floating-subnet --disable-dhcp --allocation-pool start=$FLOATING_IP_START,end=$FLOATING_IP_END --gateway $EXTERNAL_NETWORK_GATEWAY floating-network $FLOATING_IP_CIDR
+neutron net-create private-network
+neutron subnet-create private-network $PRIVATE_NETWORK --name private-subnet
+neutron router-create floating-router
+neutron router-interface-add floating-router private-subnet
+neutron router-gateway-set floating-router floating-network
+neutron security-group-create pingandssh
+securitygroup_id=$(neutron security-group-list | grep pingandssh | head -1 | awk '{print $2}')
+neutron security-group-rule-create  --direction ingress --protocol tcp --port-range-min 22 --port-range-max 22 $securitygroup_id
+neutron security-group-rule-create --protocol icmp --direction ingress $securitygroup_id
+floatingip=$(neutron floatingip-create floating-network | grep floating_ip_address | awk '{print $4}')
+echo floatingip=$floatingip
+
+#[stack@mrg-06 ~]$ neutron net-list                                                                                                                 
+#...
+#| 6fde7d2a-e2d9-4b0f-a982-b7cbc3244807 | private-network                                    | 31a5ccd5-07bd-4103-a4a3-ab2c6d6148d7 10.1.1.0/24      |
+#...
+private_net_id=$(neutron net-list | grep private-network | awk '{print $2}')
+wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img
+glance image-create --name CirrOS --container-format bare --disk-format raw --file cirros-0.3.4-x86_64-disk.img
+nova boot --image CirrOS --flavor m1.small --security-groups pingandssh --nic net-id=$private_net_id $INSTANCE_NAME                                                                 
+
+#[stack@mrg-06 ~]$ nova list
+#...
+#| eb29c1a1-c30e-4f8f-91ea-cec1fd38c088 | $INSTANCE_NAME | BUILD  | spawning   | NOSTATE     | private-network=10.1.1.5 |
+#...
+sleep 5
+instance_ip=$(nova list | grep $INSTANCE_NAME | awk '{print $12}' | sed "s/private-network=//g")
+echo instance_ip=$instance_ip
+
+#[stack@mrg-06 ~]$ neutron port-list
+#...
+#| 61ce215d-3dc7-4873-af73-342620cdc3b6 |                                                 | fa:16:3e:8d:8b:8d | {"subnet_id": "31a5ccd5-07bd-4103-a4a3-ab2c6d6148d7", "ip_address": "10.1.1.5"}      |
+#...
+port_id=$(neutron port-list | grep $instance_ip | awk '{print $2}')
+echo port_id=$port_id
+
+#[stack@mrg-06 ~]$ neutron floatingip-list
+#...
+#| 624f5256-ee89-438f-8335-904017e74a18 |                  | 10.16.144.77        |         |
+#...
+floatingip_id=$(neutron floatingip-list | grep $floatingip | awk '{print $2}')
+echo floatingip_id=$floatingip_id
+neutron floatingip-associate $floatingip_id $port_id
+
+echo "###############################################"
+echo "$(date) Instance will be available at the IP $floatingip"
+
+COUNTER=1
+while [ $COUNTER -lt $TIMEOUT ]
+do
+ ping -c1 $floatingip 2>&1 > /dev/null
+
+ if [ $? -eq 0 ]
+  then
+   echo "SUCCESS"
+   break
+  else
+   echo "."
+ fi
+ let COUNTER=COUNTER+1
+done
+
+[ $COUNTER -ge $TIMEOUT ] && echo "FAILURE!"
+
+echo "Cleaning up"
+
+floatingip=$(nova list | grep $INSTANCE_NAME | awk '{print $13}')
+floatingip_id=$(neutron floatingip-list | grep $floatingip | awk '{print $2}')
+instance_ip=$(nova list | grep $INSTANCE_NAME | awk '{print $12}' | sed "s/private-network=//g")
+port_id=$(neutron port-list | grep $instance_ip | awk '{print $2}')
+nova delete $INSTANCE_NAME
+glance image-delete CirrOS
+neutron floatingip-disassociate $floatingip_id $port_id
+neutron floatingip-delete $floatingip_id
+neutron router-gateway-clear floating-router floating-network
+neutron router-interface-delete floating-router private-subnet
+neutron router-delete floating-router
+neutron security-group-delete pingandssh
+neutron subnet-delete private-subnet
+neutron subnet-delete floating-subnet
+neutron net-delete floating-network
+neutron net-delete private-network
