@@ -1,2 +1,24 @@
 ---
 # tasks file for ansible-role-tripleo-overcloud-validate-ha
+
+- name: Create instance deploy test script
+  template:
+    src: "{{ test_instance_script }}.sh.j2"
+    dest: "{{ working_dir }}/{{ test_instance_script }}.sh"
+    mode: 0744
+
+- name: Test instance deploy on the overcloud 
+  shell: |
+    {{ working_dir }}/{{ test_instance_script }}.sh > {{ test_instance_log }} 2>&1
+
+- name: Create HA test script
+  delegate_to: overcloud-controller-0
+  template:
+    src: "{{ test_ha_script }}.sh.j2"
+    dest: "{{ overcloud_working_dir }}/{{ test_ha_script }}.sh"
+    mode: 0744
+
+- name: HA test 0
+  delegate_to: overcloud-controller-0
+  shell: |
+    {{ overcloud_working_dir }}/{{ test_ha_script }}.sh -t "0" -r "10" > {{ test_ha_log }} 2>&1
