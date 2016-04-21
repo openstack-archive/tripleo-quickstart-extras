@@ -12,7 +12,6 @@
     src: "{{ pre_upgrade_overcloud_script }}"
     dest: "{{ upgrade_working_dir }}/pre_upgrade_overcloud_script.sh"
     mode: 0744
-  when: step_pre_upgrade
 
 - name: Execute pre upgrade tasks on overcloud
   shell: |

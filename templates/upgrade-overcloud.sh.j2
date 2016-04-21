@@ -15,6 +15,7 @@ openstack overcloud deploy --templates {{ tht_dir }} \
     -e {{ item }} \
 {% endfor %}
 
+if [[ $? == 0 ]]; then
 echo "execute major upgrade controller"
 openstack overcloud deploy --templates {{ tht_dir }} \
     -e tripleo-heat-templates/overcloud-resource-registry-puppet.yaml \
@@ -29,7 +30,9 @@ openstack overcloud deploy --templates {{ tht_dir }} \
 {% for item in upgrade_custom_templates_controller %}
     -e {{ item }} \
 {% endfor %}
+fi
 
+if [[ $? == 0 ]]; then
 echo "get compute uuid and update compute"
 compute_uuid=`nova list | grep compute  | awk '{ print $2; }'`
 {{ upgrade_non_controller_script }} --upgrade $compute_uuid
@@ -37,7 +40,9 @@ compute_uuid=`nova list | grep compute  | awk '{ print $2; }'`
 echo "get ceph uuid and update ceph"
 ceph_uuid=`nova list | grep overcloud-cephstorage-0  | awk '{ print $2; }'`
 {{ upgrade_non_controller_script }} --upgrade $ceph_uuid
+fi
 
+if [[ $? == 0 ]]; then
 echo "execute converge"
 openstack overcloud deploy --templates {{ tht_dir }} \
     -e tripleo-heat-templates/overcloud-resource-registry-puppet.yaml \
@@ -52,8 +57,10 @@ openstack overcloud deploy --templates {{ tht_dir }} \
 {% for item in upgrade_custom_templates_converge %}
     -e {{ item }} \
 {% endfor %}
+fi
 
-
+if [[ $? == 0 ]]; then
 echo "check upgrade status"
 heat stack-list | grep -i COMPLETE
+fi
 exit $?

@@ -1,10 +1,6 @@
 ---
-- name: Execute yum update on the undercloud
-  sudo: yes
-  yum: name=* state=latest
-
 - name: Upgrade the undercloud
-  shell: openstack undercloud install &> upgrade_undercloud.log
+  shell: openstack undercloud upgrade &> upgrade_undercloud.log
   when: step_upgrade_undercloud
   notify:
     - restart openstack services

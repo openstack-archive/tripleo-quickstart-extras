@@ -4,10 +4,17 @@
   file: path=/etc/yum.repos.d/{{ item }} state=absent
   with_items: "{{ repos }}"
 
-- name: Get delorean repo
+- name: Create upgrade repo script for undercloud
+  template:
+    src: "{{ upgrade_repo_script }}"
+    dest: "{{ upgrade_working_dir }}/upgrade-undercloud-repo.sh"
+    mode: 0744
+
+- name: Execute upgrade repo script
   sudo: yes
-  get_url: url={{ item }} dest={{ yum_repo_path }}
-  with_items: "{{ repos_url }}"
+  shell: |
+    {{ upgrade_working_dir }}/upgrade-undercloud-repo.sh > upgrade-undercloud-repo.sh.log 2>&1
+  when: step_upgrade_set_repo
 
 - name: Clean yum cache
   sudo: yes

@@ -16,10 +16,14 @@ repos_url:
 # upgrade settings:
 upgrade_working_dir: /home/stack
 tht_dir: tripleo-heat-templates
+# scripts
+upgrade_repo_script: delorean-repo.sh.j2
 pre_upgrade_overcloud_script: pre-upgrade-overcloud.sh.j2
 upgrade_script: upgrade-overcloud.sh.j2
 upgrade_non_controller_script: /bin/upgrade-non-controller.sh
+# logs:
 upgrade_log: upgrade_console.log
+# user:
 undercloud_upgrade_user: stack
 # override those lists with your templates that your env needs for upgrade
 # example:
@@ -29,7 +33,13 @@ undercloud_upgrade_user: stack
 upgrade_custom_templates_script_delivery: {}
 upgrade_custom_templates_controller: {}
 upgrade_custom_templates_converge: {}
-
+# custom templates:
+# example:
+#upgrade_templates: {}
+#  custom:
+#    name: custom.yaml
+#    src: /home/mbu/ovb_templates/qwba6-mbu-rmgr-rh-pud-env.yaml
+upgrade_templates: {}
 # upgrade steps:
 step_pre_upgrade: true
 step_upgrade_set_repo: true
