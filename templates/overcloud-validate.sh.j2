@@ -1,8 +1,60 @@
 #!/bin/bash
 # Validate the overcloud deployment
-
 set -eux
 
-{% if test_ping|bool %}
-{% include 'tripleo-pingtest.sh.j2' %}
+source {{ working_dir }}/{{ tenantrc }}
+# get validate image
+wget {{ validate_image_url }}
+# remove existing image
+for image in $(glance image-list | grep {{ validate_image_name }} | awk '{ print $2; }'); do
+   glance image-delete $image
+done
+glance image-create --name="{{ validate_image_name }}" --disk-format=qcow2 \
+  --container-format=bare < cirros-0.3.4-x86_64-disk.img
+# clean up network if it exists from previous run
+neutron net-delete {{ overcloud_public_network_name }} > /dev/null 2>&1 || true
+# create external network
+# Liberty compat :
+#( note: heat can't create an external network in liberty)
+neutron net-create {{ overcloud_public_network_name }} --router:external=True \
+    --provider:network_type {{ public_network_type }} \
+    --provider:physical_network {{ public_physical_network }} \
+{% if public_segmentation_id != '' %}
+    --provider:segmentation_id 10
 {% endif %}
+
+neutron subnet-create --name ext-subnet \
+    --allocation-pool \
+    start={{ public_net_pool_start }},end={{ public_net_pool_end }} \
+    --disable-dhcp \
+    --gateway {{ public_net_gateway }} \
+    {{ overcloud_public_network_name }} {{ public_net_cidr }}
+
+# create test ping stack
+heat stack-create {{ validate_stack_name }} --template-file  tenantvm_floatingip.yaml
+# wait for stack complete or failed
+/bin/bash /usr/libexec/openstack-tripleo/wait_for -w 300 --delay 30 \
+  --success-match {{ validate_success_status }} -- heat stack-show {{ validate_stack_name }}
+
+if [[ $? == 0 ]]; then
+    # get the floating ip
+    novaid=`nova list|grep {{ validate_server_name }} |awk  '{print $2}'`
+    floating_ip=`nova floating-ip-list | grep $novaid | awk  '{print $4}'`
+    ping -c 1 $floating_ip
+else
+    ping -c 1 $floating_ip || :
+    nova show Server1 || :
+    nova service-list || :
+    neutron agent-list || :
+    nova console-log Server1 || :
+    echo "Overcloud validate Failed"
+    exit 1
+fi
+
+# clean env
+/usr/bin/yes | heat stack-delete {{ validate_stack_name }}
+if [[ $(tripleo wait_for -w 300 -d 30 -s "Stack not found" -- "heat stack-show {{ validate_stack_name }}") ]]; then
+    echo "Heat stack delete"
+else
+    echo "Failed to delete stack, please check manually"
+fi

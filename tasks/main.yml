@@ -7,6 +7,11 @@
     dest: "{{ working_dir }}/overcloud-validate.sh"
     mode: 0744
 
+- name: Copy validate template
+  template:
+    src: "{{ validate_template }}"
+    dest: "{{ working_dir }}/tenantvm_floatingip.yaml"
+
 - name: Validate the overcloud
   shell: |
     {{ working_dir }}/overcloud-validate.sh > {{ validate_log }} 2>&1

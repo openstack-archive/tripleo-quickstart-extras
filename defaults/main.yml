@@ -1,13 +1,28 @@
 ---
 # defaults file for ansible-role-tripleo-overcloud-validate
 working_dir: /home/stack
+tenantrc: overcloudrc
 validate_script: overcloud-validate.sh.j2
+validate_template: tenantvm_floatingip.yaml.j2
 validate_log: "{{ working_dir }}/overcloud_validate.log"
-
+validate_stack_name: pingtest_stack
+validate_success_status: CREATE_COMPLETE
+validate_server_name: Server1
+validate_image_file: cirros-0.3.4-x86_64-disk.img
+validate_image_url: "http://download.cirros-cloud.net/0.3.4/{{ validate_image_file }}"
+validate_image_name: pingtest_image
+validate_flavor_id: 1
+overcloud_public_network_name: nova
+validate_key_name: pingtest_key
 step_validate_overcloud: true
 test_ping: true
+release: mitaka
 
-floating_ip_cidr: "{{ undercloud_network_cidr|default('192.0.2.0/24') }}"
-floating_ip_start: "{{ floating_ip_cidr|nthhost(100) }}"
-floating_ip_end: "{{ floating_ip_cidr|nthhost(120) }}"
-external_network_gateway: "{{ floating_ip_cidr|nthhost(1) }}"
+public_net_cidr: "{{ undercloud_network_cidr|default('192.0.2.0/24') }}"
+public_net_pool_start: "{{ floating_ip_cidr|nthhost(100) }}"
+public_net_pool_end: "{{ floating_ip_cidr|nthhost(120) }}"
+public_net_gateway: "{{ floating_ip_cidr|nthhost(1) }}"
+
+public_network_type: flat
+public_physical_network: datacentre
+public_segmentation_id: ''
