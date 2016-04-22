@@ -13,11 +13,18 @@
       sed -i 's/ssh/ssh -o StrictHostKeyChecking=no/' \
       {{ upgrade_non_controller_script }}
 
-- name: Copy custom heat template files if provided
+- name: Copy custom heat templates files if provided
   template:
     src: "{{ item.value.src }}"
     dest: "{{ upgrade_working_dir }}/{{ item.value.name }}"
   with_dict: "{{ upgrade_templates }}"
+
+- name: Allow traffic for the controller
+  sudo: yes
+  when: network_isolation
+  shell: >
+        sudo iptables -A BOOTSTACK_MASQ -s {{ network_isolation_ipv4_cidr }} ! \
+        -d {{ network_isolation_ipv4_cidr }} -j MASQUERADE -t nat
 
 - name: Create overcloud upgrade script
   template:

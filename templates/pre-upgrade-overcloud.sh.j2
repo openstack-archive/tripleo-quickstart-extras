@@ -1,12 +1,6 @@
 #!/bin/bash
-source stackrc
-
-function run-on-overcloud() {
-    for i in $(nova list|grep ctlplane|awk -F' ' '{ print $12 }'|awk -F'=' '{ print $2 }'); do
-        ssh -o StrictHostKeyChecking=no heat-admin@$i "$@"
-    done
-}
-
-run-on-overcloud 'sudo sed -i "s/nameserver.*/nameserver {{ upgrade_overcloud_dns_server }}/" /etc/resolv.conf'
-run-on-overcloud 'sudo curl -o /etc/yum.repos.d/delorean.repo http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/{{ upgrade_delorean_hash | default("current-passed-ci")}}/delorean.repo'
-run-on-overcloud 'sudo curl -o /etc/yum.repos.d/delorean-deps.repo http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/delorean-deps.repo'
+sudo sed -i "s/nameserver.*/nameserver {{ upgrade_overcloud_dns_server }}/" /etc/resolv.conf
+sudo curl -o /etc/yum.repos.d/delorean.repo \
+http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/{{ upgrade_delorean_hash | default("current-passed-ci")}}/delorean.repo
+sudo curl -o /etc/yum.repos.d/delorean-deps.repo \
+http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/delorean-deps.repo
