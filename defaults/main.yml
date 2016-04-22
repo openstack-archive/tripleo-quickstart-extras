@@ -5,5 +5,4 @@ working_dir: /home/stack
 ssl_overcloud: false
 ssl_undercloud: false
 
-hw_env:
-  ExternalVIP: 172.16.23.110
+undercloud_undercloud_public_vip: 172.16.23.110

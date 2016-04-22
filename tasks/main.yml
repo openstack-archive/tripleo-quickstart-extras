@@ -13,21 +13,42 @@
   when: ssl_overcloud
 
 - name: create self-signed SSL cert
-  command: openssl req -x509 -nodes -newkey rsa:2048 -subj "/CN={{ hw_env.ExternalVIP }}" -days 3650 -keyout overcloud-privkey.pem -out overcloud-cacert.pem -extensions v3_ca
-  when: ssl_overcloud
+  command: openssl req -x509 -nodes -newkey rsa:2048 -subj "/CN={{ undercloud_undercloud_public_vip }}" -days 3650 -keyout test-privkey.pem -out test-cacert.pem -extensions v3_ca
+  when: ssl_overcloud or ssl_undercloud
+
+- name: Combine CA and key for HAproxy
+  shell: >
+    cat test-cacert.pem test-privkey.pem > undercloud.pem
+  when: ssl_undercloud
+
+- name: Combine CA and key for HAproxy
+  sudo: yes
+  shell: >
+    mkdir /etc/pki/instack-certs;
+    cp undercloud.pem /etc/pki/instack-certs;
+    semanage fcontext -a -t etc_t "/etc/pki/instack-certs(/.*)?";
+    restorecon -R /etc/pki/instack-certs;
+  when: ssl_undercloud
+
+- name: Copy self-signed certificate
+  sudo: yes
+  shell: >
+      cp test-cacert.pem /etc/pki/ca-trust/source/anchors/;
+      update-ca-trust extract;
+  when: ssl_undercloud
 
 - name: fetch template from single remote host
   tls_tht:
       source_dir: "/usr/share/openstack-tripleo-heat-templates/"
       dest_dir: "{{ working_dir }}/"
-      cert_filename: "overcloud-cacert.pem"
-      cert_ca_filename: "overcloud-cacert.pem"
-      key_filename: "overcloud-privkey.pem"
+      cert_filename: "test-cacert.pem"
+      cert_ca_filename: "test-cacert.pem"
+      key_filename: "test-privkey.pem"
   when: ssl_overcloud
 
 - name: copy the self-signed SSL cert
   shell: >
-      cp overcloud-cacert.pem /etc/pki/ca-trust/source/anchors/;
+      cp test-cacert.pem /etc/pki/ca-trust/source/anchors/;
       update-ca-trust extract;
   sudo: true
   when: ssl_overcloud
