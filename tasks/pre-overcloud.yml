@@ -1,0 +1,6 @@
+---
+- name: Copy custom heat templates files if provided
+  template:
+    src: "{{ item.value.src }}"
+    dest: "{{ upgrade_working_dir }}/{{ item.value.name }}"
+  with_dict: "{{ upgrade_templates }}"

@@ -21,10 +21,11 @@ repos_url:
 upgrade_working_dir: /home/stack
 tht_dir: tripleo-heat-templates
 # scripts
-upgrade_repo_script: delorean-repo.sh.j2
-pre_upgrade_overcloud_script: pre-upgrade-overcloud.sh.j2
+upgrade_undercloud_repo_script: upgrade-repo.sh.j2
+upgrade_overcloud_repo_script: upgrade-repo.sh.j2
 upgrade_script: upgrade-overcloud.sh.j2
 upgrade_non_controller_script: /bin/upgrade-non-controller.sh
+upgrade_overcloud_repo_template: overcloud-repo.yaml.j2
 # logs:
 upgrade_log: upgrade_console.log
 # user:
@@ -34,18 +35,24 @@ undercloud_upgrade_user: stack
 # upgrade_custom_templates_script_delivery:
 #  - custom.yaml
 #  - custom2.yaml
-upgrade_custom_templates_script_delivery: {}
-upgrade_custom_templates_controller: {}
-upgrade_custom_templates_converge: {}
+upgrade_custom_templates_script_delivery:
+  - overcloud-repo.yaml
+upgrade_custom_templates_controller:
+  - overcloud-repo.yaml
+upgrade_custom_templates_converge:
+  - overcloud-repo.yaml
 # custom templates:
 # example:
 #upgrade_templates: {}
 #  custom:
 #    name: custom.yaml
 #    src: /home/mbu/ovb_templates/qwba6-mbu-rmgr-rh-pud-env.yaml
-upgrade_templates: {}
+upgrade_templates:
+  overcloud-repo:
+    name: overcloud-repo.yaml
+    src: "{{ upgrade_overcloud_repo_template }}"
 # upgrade steps:
-step_pre_upgrade: true
-step_upgrade_set_repo: true
+step_pre_overcloud_upgrade: true
+step_pre_undercloud_upgrade: true
 step_upgrade_undercloud: true
 step_upgrade_overcloud: true

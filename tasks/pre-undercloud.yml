@@ -3,10 +3,18 @@
   sudo: yes
   file: path=/etc/yum.repos.d/{{ item }} state=absent
   with_items: "{{ repos }}"
+  when: step_pre_undercloud_upgrade
+
+- name: Allow traffic for the controller
+  sudo: yes
+  when: network_isolation
+  shell: >
+        sudo iptables -A BOOTSTACK_MASQ -s {{ network_isolation_ipv4_cidr }} ! \
+        -d {{ network_isolation_ipv4_cidr }} -j MASQUERADE -t nat
 
 - name: Create upgrade repo script for undercloud
   template:
-    src: "{{ upgrade_repo_script }}"
+    src: "{{ upgrade_undercloud_repo_script }}"
     dest: "{{ upgrade_working_dir }}/upgrade-undercloud-repo.sh"
     mode: 0744
 
@@ -14,7 +22,7 @@
   sudo: yes
   shell: |
     {{ upgrade_working_dir }}/upgrade-undercloud-repo.sh > upgrade-undercloud-repo.sh.log 2>&1
-  when: step_upgrade_set_repo
+  when: step_pre_undercloud_upgrade
 
 - name: Clean yum cache
   sudo: yes

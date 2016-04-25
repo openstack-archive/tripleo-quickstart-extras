@@ -1,6 +1,7 @@
-#!/bin/bash
-sudo sed -i "s/nameserver.*/nameserver {{ upgrade_overcloud_dns_server }}/" /etc/resolv.conf
-sudo curl -o /etc/yum.repos.d/delorean.repo \
+parameter_defaults:
+  UpgradeInitCommand: |
+    set -e
+    curl -o /etc/yum.repos.d/delorean.repo \
 http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/{{ upgrade_delorean_hash | default("current-passed-ci")}}/delorean.repo
-sudo curl -o /etc/yum.repos.d/delorean-deps.repo \
+    curl -o /etc/yum.repos.d/delorean-deps.repo \
 http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/delorean-deps.repo

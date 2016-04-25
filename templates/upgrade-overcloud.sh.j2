@@ -8,7 +8,6 @@ openstack overcloud deploy --templates {{ tht_dir }} \
     -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
     -e ~/network-environment.yaml \
 {% endif %}
-    -e {{ tht_dir }}/overcloud-resource-registry-puppet.yaml \
     -e {{ tht_dir }}/environments/puppet-pacemaker.yaml \
     -e {{ tht_dir }}/environments/major-upgrade-pacemaker-init.yaml \
 {% for item in upgrade_custom_templates_script_delivery %}
@@ -24,7 +23,6 @@ openstack overcloud deploy --templates {{ tht_dir }} \
     -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
     -e ~/network-environment.yaml \
 {% endif %}
-    -e {{ tht_dir }}/overcloud-resource-registry-puppet.yaml \
     -e {{ tht_dir }}/environments/puppet-pacemaker.yaml \
     -e {{ tht_dir }}/environments/major-upgrade-pacemaker.yaml \
 {% for item in upgrade_custom_templates_controller %}
@@ -51,7 +49,6 @@ openstack overcloud deploy --templates {{ tht_dir }} \
     -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
     -e ~/network-environment.yaml \
 {% endif %}
-    -e {{ tht_dir }}/overcloud-resource-registry-puppet.yaml \
     -e {{ tht_dir }}/environments/puppet-pacemaker.yaml \
     -e {{ tht_dir }}/environments/major-upgrade-pacemaker-converge.yaml \
 {% for item in upgrade_custom_templates_converge %}
