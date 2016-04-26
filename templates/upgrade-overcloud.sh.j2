@@ -9,10 +9,10 @@ openstack overcloud deploy --templates {{ tht_dir }} \
     -e ~/network-environment.yaml \
 {% endif %}
     -e {{ tht_dir }}/environments/puppet-pacemaker.yaml \
-    -e {{ tht_dir }}/environments/major-upgrade-pacemaker-init.yaml \
 {% for item in upgrade_custom_templates_script_delivery %}
     -e {{ item }} \
 {% endfor %}
+    -e {{ tht_dir }}/environments/major-upgrade-pacemaker-init.yaml
 
 if [[ $? == 0 ]]; then
 echo "execute major upgrade controller"
@@ -24,10 +24,10 @@ openstack overcloud deploy --templates {{ tht_dir }} \
     -e ~/network-environment.yaml \
 {% endif %}
     -e {{ tht_dir }}/environments/puppet-pacemaker.yaml \
-    -e {{ tht_dir }}/environments/major-upgrade-pacemaker.yaml \
 {% for item in upgrade_custom_templates_controller %}
     -e {{ item }} \
 {% endfor %}
+    -e {{ tht_dir }}/environments/major-upgrade-pacemaker.yaml
 fi
 
 if [[ $? == 0 ]]; then
@@ -50,10 +50,10 @@ openstack overcloud deploy --templates {{ tht_dir }} \
     -e ~/network-environment.yaml \
 {% endif %}
     -e {{ tht_dir }}/environments/puppet-pacemaker.yaml \
-    -e {{ tht_dir }}/environments/major-upgrade-pacemaker-converge.yaml \
 {% for item in upgrade_custom_templates_converge %}
     -e {{ item }} \
 {% endfor %}
+    -e {{ tht_dir }}/environments/major-upgrade-pacemaker-converge.yaml
 fi
 
 if [[ $? == 0 ]]; then
