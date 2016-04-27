@@ -1,0 +1,143 @@
+---
+# tasks file for ansible-role-tripleo-gate
+
+- name: Ensure DLRN package dependencies
+  become: yes
+  yum: name={{ item }} state=present
+  with_flattened:
+    - createrepo
+    - gcc
+    - git
+    - libffi-devel
+    - mock
+    - openssl-devel
+    - python-virtualenv
+    - rpm-build
+    - sqlite
+
+- name: Create mock group
+  become: yes
+  group: name=mock state=present
+
+- name: Add user to mock group
+  become: yes
+  user:
+    name: '{{ ansible_user }}'
+    groups: mock
+
+- name: Create virtualenv for DLRN
+  command: virtualenv {{ ansible_user_dir }}/dlrn-venv
+  args:
+    creates: '{{ ansible_user_dir }}/dlrn-venv'
+
+- name: Clone DLRN
+  git:
+    repo: '{{ artg_dlrn_repo_url }}'
+    depth: 1
+    dest: '{{ ansible_user_dir }}/DLRN'
+
+# workaround for
+# https://github.com/openstack-packages/DLRN/issues/16
+- name: force update pip (see DLRN issue 16)
+  pip:
+    name: pip
+    state: latest
+    virtualenv: '{{ ansible_user_dir }}/dlrn-venv'
+
+- name: Install DLRN requirements
+  pip:
+    requirements: '{{ ansible_user_dir }}/DLRN/requirements.txt'
+    virtualenv: '{{ ansible_user_dir }}/dlrn-venv'
+
+- name: Install DLRN
+  shell: >
+    source {{ ansible_user_dir }}/dlrn-venv/bin/activate;
+    python setup.py install;
+  args:
+      chdir: '{{ ansible_user_dir }}/DLRN'
+
+- name: Set release name
+  set_fact: artg_release={{ artg_branch | replace('stable/', '') }}
+
+- name: Set DLRN distro
+  set_fact: artg_distro=rpm-{{ artg_release }}
+
+- name: Override projects.ini settings
+  lineinfile:
+    dest: '{{ ansible_user_dir }}/DLRN/projects.ini'
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+  with_items:
+    - { regexp: 'baseurl=.*', line: 'baseurl=https://trunk.rdoproject.org/centos7-{{ artg_release }}' }
+    - { regexp: 'distro=.*', line: 'distro={{ artg_distro }}' }
+    - { regexp: 'source=.*', line: 'source={{ artg_branch }}' }
+
+- name: Map project name to DLRN project name
+  register: project_name_mapped
+  shell: >
+    source {{ ansible_user_dir }}/dlrn-venv/bin/activate;
+    export PROJECT_NAME=$(echo {{ artg_project }} | sed "s|openstack/||");
+    ./scripts/map-project-name $PROJECT_NAME {{ artg_rdoinfo_repo_url }}
+  args:
+      chdir: '{{ ansible_user_dir }}/DLRN'
+
+# TODO(adarazs): regarding the refspec: a fix is needed for DLRN. We're
+# creating an origin/<commit_branch> reference, because DLRN does something
+# like "git checkout -b <branch> origin/<branch>" and there's no way to prevent
+# it, except "masking" this origin reference with out gated change.
+# The existing --dev mode only works for packaging repos.
+- name: Clone the gated change
+  git:
+    repo: "https://{{ artg_host }}/{{ artg_project }}"
+    dest: "{{ ansible_user_dir }}/DLRN/data/{{ project_name_mapped.stdout }}"
+    refspec: "{{ artg_refspec }}:origin/{{ artg_branch }}"
+
+- name: Run DLRN
+  shell: >
+    source {{ ansible_user_dir }}/dlrn-venv/bin/activate;
+    while true; do
+        delorean --config-file projects.ini --head-only --package-name {{ project_name_mapped.stdout }} --local --info-repo rdoinfo --build-env DELOREAN_DEV=1 || /bin/true;
+        STATUS=$(echo "select status from commits where project_name == '{{ project_name_mapped.stdout }}' order by id desc limit 1;" | sqlite3 commits.sqlite);
+        if [ "$STATUS" == "FAILED" ] ; then
+            exit 1;
+        elif [ "$STATUS" == "SUCCESS" ] ; then
+            break;
+        elif [ "$STATUS" == "RETRY" ] ; then
+            continue;
+        fi;
+        exit 1;
+    done;
+  args:
+      chdir: '{{ ansible_user_dir }}/DLRN'
+
+- name: Create a directory to hold the rpms
+  file:
+    path: '{{ ansible_user_dir }}/gating_repo'
+    state: directory
+
+- name: Copy the generated rpms
+  shell: >
+    rm -rf {{ ansible_user_dir }}/gating_repo/*;
+    find {{ ansible_user_dir }}/DLRN/data/repos -type f -name '*.rpm' -print0 | xargs -0 cp -t {{ ansible_user_dir }}/gating_repo;
+
+- name: Run createrepo on generated rpms
+  shell: 'createrepo gating_repo'
+  args:
+    chdir: '{{ ansible_user_dir }}'
+
+- name: Compress the repo
+  shell: 'tar czf {{ artg_compressed_gating_repo }} gating_repo'
+  args:
+    chdir: '{{ ansible_user_dir }}'
+
+- name: Clean up
+  file:
+    path: '{{ item }}'
+    state: absent
+  with_items:
+    - '{{ ansible_user_dir }}/DLRN'
+    - '{{ ansible_user_dir }}/dlrn-venv'
+    - '{{ ansible_user_dir }}/gating_repo'
+
+- name: Trigger repo injection for quickstart
+  set_fact: compressed_gating_repo={{ artg_compressed_gating_repo }}
