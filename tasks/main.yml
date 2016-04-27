@@ -22,3 +22,8 @@
   delegate_to: overcloud-controller-0
   shell: |
     {{ overcloud_working_dir }}/{{ test_ha_script }}.sh -t "0" -r "10" > {{ test_ha_log }} 2>&1
+
+- name: HA test A
+  delegate_to: overcloud-controller-0
+  shell: |
+    {{ overcloud_working_dir }}/{{ test_ha_script }}.sh -t "A" -r "10" > {{ test_ha_log }} 2>&1
