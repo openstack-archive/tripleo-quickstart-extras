@@ -28,7 +28,7 @@ neutron subnet-create --name ext-subnet \
     start={{ public_net_pool_start }},end={{ public_net_pool_end }} \
     --disable-dhcp \
     --gateway {{ public_net_gateway }} \
-    {{ overcloud_public_network_name }} {{ public_net_cidr }}
+    {{ overcloud_public_network_name }} {{ floating_ip_cidr }}
 
 # create test ping stack
 heat stack-create {{ validate_stack_name }} --template-file  tenantvm_floatingip.yaml
