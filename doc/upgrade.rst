@@ -159,5 +159,3 @@ This script should be overriden for downstream for example.
 Known issues
 ------------
 
-1/ The role doesn't manage Swift node upgrade yet
-2/ The role only manage a 3 nodes deployments yet (1 controller / 1 compute / 1 ceph
