@@ -1,6 +1,7 @@
 local_working_dir: "{{ lookup('env', 'HOME') }}/.quickstart"
 working_dir: /home/stack
 
+undercloud_type: virtual
 hw_env: virt
 network_isolation_type: single_nic_vlans_ipv4
 network_isolation: true
