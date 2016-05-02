@@ -1,0 +1,6 @@
+---
+- name:  Upgrade Tripleo
+  hosts: virthost
+  gather_facts: no
+  roles:
+    - { role: ansible-role-tripleo-cleanup-nfo }
