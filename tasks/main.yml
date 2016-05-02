@@ -105,12 +105,19 @@
   become_user: root
   ignore_errors: true
 
+- name: Set default collect list
+  set_fact: collect_list="{{ artcl_collect_list | join(' ') }}"
+
+- name: Override collect list
+  set_fact: collect_list="{{ artcl_collect_override[inventory_hostname] | join(' ') }}"
+  when: artcl_collect_override is defined and artcl_collect_override[inventory_hostname] is defined
+
 - name: Gather the logs to /tmp
   become: yes
   become_user: root
   shell: >
     mkdir -p /tmp/{{ inventory_hostname }};
-    for F in $(ls -d1 /var/log/rpm.list /var/log/extra {{ artcl_collect_list|join(' ') }}); do
+    for F in $(ls -d1 /var/log/rpm.list /var/log/extra {{ collect_list }}); do
       cp -rL --parents $F /tmp/{{ inventory_hostname }};
     done;
     find /tmp/{{ inventory_hostname }} -type d -print0 | xargs -0 chmod 755;
