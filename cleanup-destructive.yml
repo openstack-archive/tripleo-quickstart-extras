@@ -1,5 +1,5 @@
 ---
-- name:  Upgrade Tripleo
+- name:  Clean up tripleo packages and libvirt
   hosts: virthost
   gather_facts: no
   roles:
