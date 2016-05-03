@@ -1,7 +1,7 @@
 #
 # configure-tempest
 #
-
+{% if tempest_overcloud %}
 source {{ working_dir }}/overcloudrc
 
 # clean up network if it exists from previous run
@@ -22,6 +22,10 @@ neutron subnet-create --name ext-subnet \
     --disable-dhcp \
     --gateway {{ external_network_gateway }} \
     {{ public_net_name }} {{ floating_ip_cidr }}
+{% else %}
+source {{ working_dir }}/stackrc
+public_net_id=$(neutron net-show {{ undercloud_public_net_name }} -f value -c id)
+{% endif %}
 
 rm -rf {{ working_dir }}/tempest
 mkdir {{ working_dir }}/tempest
@@ -29,7 +33,15 @@ cd {{ working_dir }}/tempest
 
 /usr/share/openstack-tempest-*/tools/configure-tempest-directory
 
-tools/config_tempest.py --out etc/tempest.conf --network-id $public_net_id --deployer-input ~/tempest-deployer-input.conf --debug --create \
+{% if tempest_undercloud %}
+# config_tempest assumes that Cinder is installed and accessible. Cinder is
+# not installed on the undercloud. Remove unneeded lines to prevent the tool
+# from bawking upon execution
+sed --in-place "/'volume'\: 'cinder',/d" tools/config_tempest.py
+sed --in-place "/'volume'\: \['v1', 'v2'\]/d" tools/config_tempest.py
+{% endif %}
+
+tools/config_tempest.py --out etc/tempest.conf --network-id $public_net_id --deployer-input ~/{{ tempest_deployer_input_file }} --debug --create \
 identity.uri $OS_AUTH_URL \
 identity.admin_password $OS_PASSWORD \
 network.tenant_network_cidr {{ tenant_network_cidr }} \

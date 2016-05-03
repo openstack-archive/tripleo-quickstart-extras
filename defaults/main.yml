@@ -13,5 +13,13 @@ public_net_name: nova
 public_network_type: flat
 public_physical_network: datacentre
 public_segmentation_id: ''
-
 tenant_network_cidr: 192.168.0.0/24
+undercloud_public_net_name: ctlplane
+
+tempest_deployer_input_file: tempest-deployer-input.conf
+# steps:
+tempest_undercloud: false
+tempest_config: true
+tempest_overcloud: true
+run_tempest: true
+post_tempest: true

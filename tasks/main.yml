@@ -1,18 +1,20 @@
 ---
-# tasks file for ansible-role-tripleo-tempest
+- include: undercloud-config.yml
+  when: tempest_undercloud
+  tags:
+    - tempest-undercloud-config
 
-- name: Create overcloud tempest setup script
-  template:
-    src: tempest-setup.j2
-    dest: "{{ working_dir }}/overcloud-tempest-setup.sh"
-    mode: 0744
+- include: pre-tempest.yml
+  when: tempest_config
+  tags:
+    - pre-tempest-config
 
-- name: Create tempest skipfile
-  template:
-    src: skipfile.j2
-    dest: "{{ working_dir }}/skipfile"
-    mode: 0644
+- include: run-tempest.yml
+  when: run_tempest
+  tags:
+    - run-tempest
 
-- name: Execute tempest
-  shell: |
-    {{ working_dir }}/overcloud-tempest-setup.sh > {{ tempest_log_file }} 2>&1
+- include: post-tempest.yml
+  when: post_tempest
+  tags:
+    - post-tempest

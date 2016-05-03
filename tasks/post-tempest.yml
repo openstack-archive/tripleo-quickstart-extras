@@ -1,0 +1,18 @@
+---
+- name: Fetch nostests results
+  fetch:
+    src: "{{ working_dir }}/tempest/tempest.xml"
+    dest: "{{ lookup('env', 'PWD') }}/nosetests.xml"
+    flat: yes
+
+- name: Generate subunit results file
+  shell: |
+    find '{{ working_dir }}/tempest/.testrepository/' -regex '.*/[0-9]+' \
+    | while read name; do cat "$name"; done \
+    > '{{ working_dir }}/tempest/results.subunit'
+
+- name: Fetch subunit results
+  fetch:
+    src: "{{ working_dir }}/tempest/results.subunit"
+    dest: "{{ lookup('env', 'PWD') }}/results.subunit"
+    flat: yes
