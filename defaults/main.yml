@@ -8,3 +8,10 @@ floating_ip_end: "{{ floating_ip_cidr|nthhost(120) }}"
 tempest_log_file: 'tempest_output.log'
 test_regex: '.*smoke'
 working_dir: '/home/stack'
+
+public_net_name: nova
+public_network_type: flat
+public_physical_network: datacentre
+public_segmentation_id: ''
+
+tenant_network_cidr: 192.168.0.0/24
