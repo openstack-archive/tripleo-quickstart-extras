@@ -20,8 +20,9 @@ neutron net-create {{ overcloud_public_network_name }} --router:external=True \
     --provider:network_type {{ public_network_type }} \
     --provider:physical_network {{ public_physical_network }} \
 {% if public_segmentation_id != '' %}
-    --provider:segmentation_id 10
+    --provider:segmentation_id {{ public_segmentation_id }}
 {% endif %}
+
 
 neutron subnet-create --name ext-subnet \
     --allocation-pool \
@@ -33,7 +34,7 @@ neutron subnet-create --name ext-subnet \
 # create test ping stack
 heat stack-create {{ validate_stack_name }} --template-file  tenantvm_floatingip.yaml
 # wait for stack complete or failed
-/bin/bash /usr/libexec/openstack-tripleo/wait_for -w 300 --delay 30 \
+/bin/bash /usr/libexec/openstack-tripleo/wait_for -w 1200 --delay 30 \
   --success-match {{ validate_success_status }} -- heat stack-show {{ validate_stack_name }}
 
 if [[ $? == 0 ]]; then
