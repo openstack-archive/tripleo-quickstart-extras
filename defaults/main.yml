@@ -1,10 +1,10 @@
 ---
 # defaults file for ansible-role-tripleo-tempest
 configure_tempest: true
-external_network_gateway: "{{ floating_ip_cidr|nthhost(1) }}"
 floating_ip_cidr: "{{ undercloud_network_cidr|default('192.0.2.0/24') }}"
-floating_ip_start: "{{ floating_ip_cidr|nthhost(100) }}"
-floating_ip_end: "{{ floating_ip_cidr|nthhost(120) }}"
+public_net_pool_start: "{{ floating_ip_cidr|nthhost(100) }}"
+public_net_pool_end: "{{ floating_ip_cidr|nthhost(120) }}"
+public_net_gateway: "{{ floating_ip_cidr|nthhost(1) }}"
 tempest_log_file: 'tempest_output.log'
 test_regex: '.*smoke'
 working_dir: '/home/stack'
