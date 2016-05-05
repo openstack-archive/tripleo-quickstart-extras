@@ -1,0 +1,5 @@
+---
+- name: Gather logs
+  hosts: all:!localhost
+  roles:
+        - ansible-role-tripleo-collect-logs
