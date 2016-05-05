@@ -1,0 +1,11 @@
+- include: create-scripts.yml
+  tags:
+    - undercloud-scripts
+
+- include: install-undercloud.yml
+  tags:
+    - undercloud-install
+
+- include: post-install.yml
+  tags:
+    - undercloud-post-install
