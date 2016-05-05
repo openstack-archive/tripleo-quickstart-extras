@@ -1,2 +1,30 @@
 ---
 # tasks file for ansible-role-tripleo-baremetal-undercloud
+
+- include: machine-provisioning.yml
+  tags:
+    - machine-provision
+
+- include: machine-setup.yml
+  tags:
+    - machine-setup
+
+- include: undercloud-scripts.yml
+  delegate_to: "{{ virthost }}"
+  tags:
+    - undercloud-scripts
+
+- include: undercloud-pre-install.yml
+  delegate_to: "{{ virthost }}"
+  tags:
+    - undercloud-pre-install
+
+- include: undercloud-install.yml
+  delegate_to: "{{ virthost }}"
+  tags:
+    - undercloud-install
+
+- include: overcloud-images.yml
+  delegate_to: "{{ virthost }}"
+  tags:
+    - overcloud-images

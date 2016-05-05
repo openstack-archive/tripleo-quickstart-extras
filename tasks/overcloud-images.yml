@@ -1,0 +1,4 @@
+- name: Overcloud images
+  shell: >
+    {{ working_dir }}/overcloud-images.sh > {{ overcloud_images_log }} 2>&1
+  when: step_overcloud_images

@@ -1,0 +1,48 @@
+---
+- name:  Baremetal undercloud install
+  hosts: localhost
+  roles:
+    - tripleo-baremetal-undercloud
+  tags:
+    - undercloud-bm-install
+
+- name:  Inventory the undercloud
+  hosts: localhost
+  vars:
+      inventory: undercloud
+  roles:
+    - tripleo-inventory
+  tags:
+    - undercloud-inventory
+
+- name:  Post undercloud install steps
+  hosts: undercloud
+  roles:
+    - tripleo-undercloud-post
+  tags:
+    - undercloud-post-install
+
+- name:  Deploy the overcloud
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - tripleo-overcloud
+  tags:
+    - overcloud-deploy
+
+- name:  Inventory the overcloud
+  hosts: undercloud
+  vars:
+      inventory: all
+  roles:
+    - tripleo-inventory
+  tags:
+    - overcloud-inventory
+
+- name:  validate the overcloud
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - tripleo-overcloud-validate
+  tags:
+    - overcloud-validate
