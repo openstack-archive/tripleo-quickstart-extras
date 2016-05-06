@@ -8,10 +8,10 @@ validate_log: "{{ working_dir }}/overcloud_validate.log"
 validate_stack_name: pingtest_stack
 validate_success_status: CREATE_COMPLETE
 validate_server_name: Server1
-validate_image_file: cirros-0.3.4-x86_64-disk.img
-validate_image_url: "http://download.cirros-cloud.net/0.3.4/{{ validate_image_file }}"
+validate_image_file: Fedora-Cloud-Base-23-20151030.x86_64.qcow2
+validate_image_url: "https://download.fedoraproject.org/pub/fedora/linux/releases/23/Cloud/x86_64/Images/{{ validate_image_file }}"
 validate_image_name: pingtest_image
-validate_flavor_id: 1
+validate_flavor_id: 2
 overcloud_public_network_name: nova
 validate_key_name: pingtest_key
 step_validate_overcloud: true
