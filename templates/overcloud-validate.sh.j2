@@ -34,8 +34,10 @@ neutron subnet-create --name ext-subnet \
 # create test ping stack
 heat stack-create {{ validate_stack_name }} --template-file  tenantvm_floatingip.yaml
 # wait for stack complete or failed
-/bin/bash /usr/libexec/openstack-tripleo/wait_for -w 1200 --delay 30 \
+/bin/bash /usr/libexec/openstack-tripleo/wait_for -w 600 --delay 30 \
   --success-match {{ validate_success_status }} -- heat stack-show {{ validate_stack_name }}
+# let time to the instance to boot
+sleep 30
 
 if [[ $? == 0 ]]; then
     # get the floating ip
