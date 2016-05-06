@@ -8,10 +8,6 @@
   when: step_upgrade_undercloud
   notify:
     - restart openstack services
-
-- name: Allow traffic for the controller
-  sudo: yes
-  when: network_isolation
-  shell: >
-        sudo iptables -A BOOTSTACK_MASQ -s {{ network_isolation_ipv4_cidr }} ! \
-        -d {{ network_isolation_ipv4_cidr }} -j MASQUERADE -t nat
+    - create vlan if doesn't exist
+    - set vlan up
+    - allow traffic for the controller

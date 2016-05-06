@@ -7,3 +7,28 @@
       - openstack-heat-api
       - openstack-heat-engine
       - openstack-nova-api
+
+- name: create vlan if doesn't exist
+  ignore_errors: yes
+  sudo: yes
+  shell: >
+    ifconfig {{ network_isolation_vlan }};
+    if [[ $? != 0 ]]; then \
+    ovs-vsctl add-port br-ctlplane {{ network_isolation_vlan }} tag={{ network_isolation_vlan_tag }} \
+    -- set interface {{ network_isolation_vlan }} type=internal;
+    fi
+  when: network_isolation
+
+- name: set vlan up
+  ignore_errors: yes
+  sudo: yes
+  shell: >
+    ip l set dev {{ network_isolation_vlan }} up; ip addr add {{ network_isolation_ipv4_cidr }} dev {{ network_isolation_vlan }};
+  when: network_isolation
+
+- name: allow traffic for the controller
+  sudo: yes
+  shell: >
+        sudo iptables -A BOOTSTACK_MASQ -s {{ network_isolation_ipv4_cidr }} ! \
+        -d {{ network_isolation_ipv4_cidr }} -j MASQUERADE -t nat
+  when: network_isolation
