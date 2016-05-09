@@ -17,9 +17,9 @@ Role Variables
 Dependencies
 ------------
 
-
+Example:
 ----------------
-
+./deploy.sh -c -p cleanup-destructive <testbox>
 
 
 License
