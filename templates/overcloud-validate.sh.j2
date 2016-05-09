@@ -2,6 +2,19 @@
 # Validate the overcloud deployment
 set -eux
 
+function cleanup() {
+# clean env
+/usr/bin/yes | heat stack-delete {{ validate_stack_name }}
+if [[ $(tripleo wait_for -w 300 -d 30 -s "Stack not found" -- "heat stack-show {{ validate_stack_name }}") ]]; then
+    echo "Heat stack delete"
+else
+    /usr/bin/yes | heat stack-delete {{ validate_stack_name }}
+    echo "Failed to delete stack, please check manually"
+fi
+}
+# trap on exit
+trap cleanup EXIT
+# source tenantrc file
 source {{ working_dir }}/{{ tenantrc }}
 # get validate image
 wget {{ validate_image_url }}
@@ -38,26 +51,11 @@ heat stack-create {{ validate_stack_name }} --template-file  tenantvm_floatingip
   --success-match {{ validate_success_status }} -- heat stack-show {{ validate_stack_name }}
 # let time to the instance to boot
 sleep 30
-
-if [[ $? == 0 ]]; then
-    # get the floating ip
-    novaid=`nova list|grep {{ validate_server_name }} |awk  '{print $2}'`
-    floating_ip=`nova floating-ip-list | grep $novaid | awk  '{print $4}'`
-    ping -c 1 $floating_ip
-else
-    ping -c 1 $floating_ip || :
-    nova show Server1 || :
-    nova service-list || :
-    neutron agent-list || :
-    nova console-log Server1 || :
-    echo "Overcloud validate Failed"
-    exit 1
-fi
-
-# clean env
-/usr/bin/yes | heat stack-delete {{ validate_stack_name }}
-if [[ $(tripleo wait_for -w 300 -d 30 -s "Stack not found" -- "heat stack-show {{ validate_stack_name }}") ]]; then
-    echo "Heat stack delete"
-else
-    echo "Failed to delete stack, please check manually"
-fi
+# get the floating ip
+novaid=`nova list|grep {{ validate_server_name }} |awk  '{print $2}'`
+floating_ip=`nova floating-ip-list | grep $novaid | awk  '{print $4}'`
+ping -c 1 $floating_ip
+nova show {{ validate_server_name }} || :
+nova service-list || :
+neutron agent-list || :
+nova console-log {{ validate_server_name }}
