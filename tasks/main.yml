@@ -78,18 +78,18 @@
   ignore_errors: true
 
 - name: kill all processes owned by stack
-  command: killall -u {{ provisioner.remote_user }}
+  command: killall -u {{ non_root_user }}
   ignore_errors: true
 
 - name: destroy the stack user
-  user: name={{ provisioner.remote_user }} remove=yes force=yes state=absent
+  user: name={{ non_root_user }} remove=yes force=yes state=absent
 
 - name: remove stack home dir
   shell: rm -Rf {{ item }}
   ignore_errors: true
   with_items:
-    - /home/{{ provisioner.remote_user }}
-    - /var/spool/mail/{{ provisioner.remote_user }}
+    - /home/{{ non_root_user }}
+    - /var/spool/mail/{{ non_root_user }}
 
 - name: remove files automation files from /root
   file: name={{item}} state=absent
