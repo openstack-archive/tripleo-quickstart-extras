@@ -55,11 +55,9 @@ openstack overcloud deploy --templates {{ tht_dir }} \
     -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
     -e ~/network-environment.yaml \
 {% endif %}
-    -e {{ tht_dir }}/environments/puppet-pacemaker.yaml \
 {% for item in upgrade_custom_templates_converge %}
     -e {{ item }} \
 {% endfor %}
-    -e {{ tht_dir }}/environments/major-upgrade-pacemaker-converge.yaml
 
 echo "check upgrade status"
 heat stack-list | grep -i COMPLETE
