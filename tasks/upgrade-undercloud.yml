@@ -26,11 +26,3 @@
   shell: >
     ip l set dev {{ network_isolation_vlan }} up; ip addr add {{ network_isolation_ipv4_cidr }} dev {{ network_isolation_vlan }};
   when: network_isolation
-
-- name: allow traffic for the controller
-  shell: >
-    sed -i '/next_hop\: {get_param\: EC2MetadataIp}/a\                -\n                  default: true\n                  next_hop: {get_param: ControlPlaneDefaultRoute}' \
-    /home/stack/tripleo-heat-templates/network/config/single-nic-vlans/controller.yaml;
-    sed -i '/parameters:/a\  ControlPlaneDefaultRoute:\n    description: The subnet CIDR of the control plane network\n    type: string' \
-    /home/stack/tripleo-heat-templates/network/config/single-nic-vlans/controller.yaml;
-  when: network_isolation

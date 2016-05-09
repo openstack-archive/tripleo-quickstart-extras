@@ -13,6 +13,14 @@
       sed -i 's/ssh/ssh -o StrictHostKeyChecking=no/' \
       {{ upgrade_non_controller_script }}
 
+- name: allow traffic for the controller
+  shell: >
+    sed -i '/next_hop\: {get_param\: EC2MetadataIp}/a\                -\n                  default: true\n                  next_hop: {get_param: ControlPlaneDefaultRoute}' \
+    /home/stack/tripleo-heat-templates/network/config/single-nic-vlans/controller.yaml;
+    sed -i '/parameters:/a\  ControlPlaneDefaultRoute:\n    description: The subnet CIDR of the control plane network\n    type: string' \
+    /home/stack/tripleo-heat-templates/network/config/single-nic-vlans/controller.yaml;
+  when: network_isolation
+
 - name: Create overcloud upgrade script
   template:
     src: "{{ upgrade_script }}"
