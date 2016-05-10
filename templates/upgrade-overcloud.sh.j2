@@ -50,14 +50,16 @@ done
 echo "execute converge"
 openstack overcloud deploy --templates {{ tht_dir }} \
     -e tripleo-heat-templates/overcloud-resource-registry-puppet.yaml \
-{% if network_isolation == true %}
-    -e {{ tht_dir }}/environments/network-isolation.yaml \
-    -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
-    -e ~/network-environment.yaml \
-{% endif %}
+    -e tripleo-heat-templates/environments/puppet-pacemaker.yaml \
+    -e tripleo-heat-templates/environments/major-upgrade-pacemaker-converge.yaml \
 {% for item in upgrade_custom_templates_converge %}
     -e {{ item }} \
 {% endfor %}
+{% if network_isolation == true %}
+    -e {{ tht_dir }}/environments/network-isolation.yaml \
+    -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
+    -e ~/network-environment.yaml
+{% endif %}
 
 echo "check upgrade status"
 heat stack-list | grep -i COMPLETE
