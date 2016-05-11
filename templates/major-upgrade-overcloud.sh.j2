@@ -10,10 +10,16 @@ openstack overcloud deploy --templates {{ tht_dir }} \
     -e ~/network-environment.yaml \
 {% endif %}
     -e {{ tht_dir }}/environments/puppet-pacemaker.yaml \
+    -e {{ tht_dir }}/environments/major-upgrade-pacemaker-init.yaml \
 {% for item in upgrade_custom_templates_script_delivery %}
     -e {{ item }} \
 {% endfor %}
-    -e {{ tht_dir }}/environments/major-upgrade-pacemaker-init.yaml
+
+echo "get ceph uuid and update swift"
+for swift in $(nova list | grep swift  | awk '{ print $2; }'); do
+    echo "Run upgrade on $swift"
+    {{ upgrade_non_controller_script }} --upgrade  $swift
+done
 
 echo "execute major upgrade controller"
 openstack overcloud deploy --templates {{ tht_dir }} \
@@ -39,12 +45,6 @@ echo "get ceph uuid and update ceph"
 for ceph in $(nova list | grep cephstorage  | awk '{ print $2; }'); do
     echo "Run upgrade on $ceph"
     {{ upgrade_non_controller_script }} --upgrade  $ceph
-done
-
-echo "get ceph uuid and update swift"
-for swift in $(nova list | grep swift  | awk '{ print $2; }'); do
-    echo "Run upgrade on $swift"
-    {{ upgrade_non_controller_script }} --upgrade  $swift
 done
 
 echo "execute converge"

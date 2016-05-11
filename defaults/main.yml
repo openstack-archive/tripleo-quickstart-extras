@@ -40,10 +40,8 @@ undercloud_upgrade_user: stack
 #  - custom2.yaml
 upgrade_custom_templates_script_delivery:
   - overcloud-repo.yaml
-upgrade_custom_templates_controller:
-  - overcloud-repo.yaml
-upgrade_custom_templates_converge:
-  - overcloud-repo.yaml
+upgrade_custom_templates_controller: {}
+upgrade_custom_templates_converge: {}
 # custom templates:
 # example:
 #upgrade_templates: {}
