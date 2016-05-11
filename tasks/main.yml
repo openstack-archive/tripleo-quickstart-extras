@@ -4,15 +4,15 @@
   tags:
     - pre-upgrade-undercloud
 
-- include: pre-overcloud.yml
-  when: step_pre_overcloud_upgrade
-  tags:
-    - pre-upgrade-overcloud
-
 - include: upgrade-undercloud.yml
   when: step_upgrade_undercloud
   tags:
     - upgrade-undercloud
+
+- include: pre-overcloud.yml
+  when: step_pre_overcloud_upgrade
+  tags:
+    - pre-upgrade-overcloud
 
 - include: upgrade-overcloud.yml
   when: step_upgrade_overcloud
