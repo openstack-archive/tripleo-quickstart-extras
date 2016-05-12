@@ -20,6 +20,7 @@
       {{ upgrade_non_controller_script }}
 
 - name: allow traffic for the controller
+  sudo: yes
   shell: >
         sudo iptables -A BOOTSTACK_MASQ -s {{ network_isolation_ipv4_cidr }} ! \
         -d {{ network_isolation_ipv4_cidr }} -j MASQUERADE -t nat;
