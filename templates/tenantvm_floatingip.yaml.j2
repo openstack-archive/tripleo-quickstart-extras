@@ -85,7 +85,7 @@ resources:
     properties:
       name: Volume1
       image: { get_param: image }
-      size: 10
+      size: 1
 
   server1:
     type: OS::Nova::Server
@@ -135,7 +135,7 @@ resources:
   test_flavor:
     type: OS::Nova::Flavor
     properties:
-      ram: 1024
+      ram: 512
       vcpus: 1
 {% endif %}
 
