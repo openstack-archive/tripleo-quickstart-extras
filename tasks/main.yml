@@ -1,0 +1,15 @@
+---
+- name: Modify virthost provisioning interface for PXE forwarding
+  hosts: virthost
+  user: root
+  tasks:
+    - name: Add static ip to nic on provisioning network
+      template:
+        source: ifcfg-virthost-provision.j2
+        dest: /etc/sysconfig/network-scripts/ifcfg-{{ virthost_provisioning_interface }}
+        mode: 644
+        owner: root
+        group: root
+
+    - name: Ensure nic is up
+      command: ifup {{ virthost_provisioning_interface }}
