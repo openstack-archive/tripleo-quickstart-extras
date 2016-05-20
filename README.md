@@ -19,15 +19,34 @@ Role Variables
   the project definitions for DLRN
 * `artg_compressed_gating_repo` -- a full path to a compressed repository that
   contains all the generated rpms
+* `artg_change_list` -- a list of changes to gate. Only needed when not running
+  in Zuul or Gerrit (see below). The format is:
 
-These variables will be automatically set when using the
-[Gerrit Trigger plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gerrit+Trigger).
+```yaml
+artg_change_list:
+    - host: "review.openstack.org"
+      project: "openstack/tripleo-heat-templates"
+      branch: "master"
+      refspec: "refs/changes/1/123456/1"
+    - host: ...
+```
 
-* `artg_host` -- the hostname of the Gerrit server
-* `artg_project` -- the full project name of the change
-* `artg_branch` -- branch of the change
-* `artg_refspec` -- refspec of the project, can be found out by clicking on
-  the "Download" link in the Gerrit interface, starts with `refs/...`
+Gating with Zuul or Jenkins
+---------------------------
+
+The role can also work with Zuul and Jenkins based gating jobs.
+
+In case of Zuul, the role uses `ZUUL_HOST` and `ZUUL_CHANGES` vars to parse the
+full set of dependent changes that were previously
+[resolved by Zuul](http://docs.openstack.org/infra/zuul/gating.html#cross-repository-dependencies).
+
+If we're running in a Jenkins environment with the
+[Gerrit Trigger plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gerrit+Trigger),
+`GERRIT_HOST`, `GERRIT_CHANGE_ID`, `GERRIT_BRANCH` and
+`GERRIT_PATCHSET_REVISION` are used to detect the gated change. The role then
+searches for "Depends-On:" lines in the commit message (and recursively in the
+commit messages of the dependent changes) and adds all of them to the gating
+list. This happens through Gerrit server's public REST API.
 
 Example Playbook
 ----------------

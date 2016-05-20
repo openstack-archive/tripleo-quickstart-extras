@@ -1,0 +1,54 @@
+---
+- name: Set release name
+  set_fact: artg_release={{ artg_change.branch | replace('stable/', '') }}
+
+- name: Set DLRN distro
+  set_fact: artg_distro=rpm-{{ artg_release }}
+
+- name: Override projects.ini settings
+  lineinfile:
+    dest: '{{ ansible_user_dir }}/DLRN/projects.ini'
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+  with_items:
+    - { regexp: 'baseurl=.*', line: 'baseurl=https://trunk.rdoproject.org/centos7-{{ artg_release }}' }
+    - { regexp: 'distro=.*', line: 'distro={{ artg_distro }}' }
+    - { regexp: 'source=.*', line: 'source={{ artg_change.branch }}' }
+
+- name: Map project name to DLRN project name
+  register: project_name_mapped
+  shell: >
+    source {{ ansible_user_dir }}/dlrn-venv/bin/activate;
+    export PROJECT_NAME=$(echo {{ artg_change.project }} | sed "s|openstack/||");
+    ./scripts/map-project-name $PROJECT_NAME {{ artg_rdoinfo_repo_url }}
+  args:
+      chdir: '{{ ansible_user_dir }}/DLRN'
+
+# TODO(adarazs): regarding the refspec: a fix is needed for DLRN. We're
+# creating an origin/<commit_branch> reference, because DLRN does something
+# like "git checkout -b <branch> origin/<branch>" and there's no way to prevent
+# it, except "masking" this origin reference with out gated change.
+# The existing --dev mode only works for packaging repos.
+- name: Clone the gated change
+  git:
+    repo: "https://{{ artg_change.host }}/{{ artg_change.project }}"
+    dest: "{{ ansible_user_dir }}/DLRN/data/{{ project_name_mapped.stdout }}"
+    refspec: "{{ artg_change.refspec }}:origin/{{ artg_change.branch }}"
+
+- name: Run DLRN
+  shell: >
+    source {{ ansible_user_dir }}/dlrn-venv/bin/activate;
+    while true; do
+        delorean --config-file projects.ini --head-only --package-name {{ project_name_mapped.stdout }} --local --info-repo rdoinfo --build-env DELOREAN_DEV=1 || /bin/true;
+        STATUS=$(echo "select status from commits where project_name == '{{ project_name_mapped.stdout }}' order by id desc limit 1;" | sqlite3 commits.sqlite);
+        if [ "$STATUS" == "FAILED" ] ; then
+            exit 1;
+        elif [ "$STATUS" == "SUCCESS" ] ; then
+            break;
+        elif [ "$STATUS" == "RETRY" ] ; then
+            continue;
+        fi;
+        exit 1;
+    done;
+  args:
+      chdir: '{{ ansible_user_dir }}/DLRN'
