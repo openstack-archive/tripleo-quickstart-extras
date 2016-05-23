@@ -20,3 +20,12 @@
 - name: Clean yum cache
   sudo: yes
   shell: yum clean all
+
+- name: stop openstack services
+  service: name={{item}} state=stopped
+  sudo: yes
+  with_items:
+      - openstack-keystone
+      - neutron-server
+      - mariadb
+
