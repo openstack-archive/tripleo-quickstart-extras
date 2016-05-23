@@ -1,2 +1,6 @@
 ---
 # defaults file for ansible-role-tripleo-baremetal-prep-virthost
+virthost_provisioning_interface: eth1
+virthost_provisioning_ip: 192.168.122.1
+virthost_provisioning_netmask: 255.255.255.192
+virthost_provisioning_hwaddr: 52:54:00:00:76:00
