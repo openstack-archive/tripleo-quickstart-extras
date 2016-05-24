@@ -2,7 +2,7 @@
 - name: Add static ip to nic on provisioning network
   become: true
   template:
-    source: ifcfg-virthost-provision.j2
+    src: ifcfg-virthost-provision.j2
     dest: /etc/sysconfig/network-scripts/ifcfg-{{ virthost_provisioning_interface }}
     mode: 644
     owner: root
@@ -11,3 +11,8 @@
 - name: Ensure nic is up
   become: true
   command: ifup {{ virthost_provisioning_interface }}
+
+- name: Add provisioning interface to the "brovc" bridge
+  become: true
+  command: "brctl addif brovc {{ virthost_provisioning_interface }}"
+  ignore_errors: true
