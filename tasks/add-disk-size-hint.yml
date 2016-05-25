@@ -20,5 +20,11 @@
           ironic node-update {{ item.0 }} add properties/root_device='{"size": {{ disk_root_device_size | int }}}'
         fi
       with_together:
-        - ironic_node_list_uuid.stdout_lines
-        - disk_size.stdout_lines
+        - "{{ ironic_node_list_uuid.stdout_lines }}"
+        - "{{ disk_size.stdout_lines }}"
+
+    - name: rerun introspection
+      shell: |
+        . {{ working_dir }}/stackrc
+        openstack baremetal introspection bulk start
+
