@@ -1,2 +1,2 @@
 ---
-# defaults file for ansible-role-tripleo-baremetal-overcloud
+working_dir: /home/stack
