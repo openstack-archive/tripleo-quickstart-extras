@@ -1,0 +1,56 @@
+---
+- include: provision.yml
+
+- name:  Setup undercloud and baremetal vms and networks in libvirt
+  hosts: virthost
+  gather_facts: yes
+  roles:
+    - libvirt/teardown
+    - libvirt/setup
+
+- name: Rebuild inventory
+  hosts: localhost
+  roles:
+    - rebuild-inventory
+
+- name: Prepare the host for PXE forwarding
+  hosts: virthost
+  gather_facts: no
+  roles:
+    - ansible-role-tripleo-baremetal-prep-virthost
+
+- name:  Install the undercloud
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - tripleo/undercloud
+
+- name:  Post undercloud install steps
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - ansible-role-tripleo-undercloud-post
+
+- name:  Perpare the baremetal overcloud
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - ansible-role-tripleo-baremetal-overcloud
+
+- name:  Deploy the overcloud
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - ansible-role-tripleo-overcloud
+
+- name:  Inventory the overcloud
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - ansible-role-tripleo-inventory
+
+- name:  validate the overcloud
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - ansible-role-tripleo-overcloud-validate
