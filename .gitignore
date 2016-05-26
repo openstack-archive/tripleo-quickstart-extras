@@ -1,0 +1,2 @@
+.eggs/
+ansible_role_tripleo_validate_ipmi.egg-info/
