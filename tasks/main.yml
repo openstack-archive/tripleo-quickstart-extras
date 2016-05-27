@@ -8,7 +8,7 @@
 
       - name: fail if instackenv.json does not exist
         fail: msg="instackenv.json does not exist in the working directory."
-        when: when: instackenv_json_working_dir.stat.exists == False
+        when: instackenv_json_working_dir.stat.exists == False
 
       - name: install ipmitool
         become: yes
@@ -17,12 +17,6 @@
             - git
             - OpenIPMI
             - OpenIPMI-tools
-
-      - name: start IMPI service
-        become: yes
-        shell: >
-            chkconfig ipmi on;
-            service ipmi start
 
       - name: get tools to validate instackenv.json/nodes.json
         git: >
