@@ -8,7 +8,7 @@
 
       - name: fail if instackenv.json does not exist
         fail: msg="instackenv.json does not exist in the working directory."
-        when: instackenv_json_working_dir.stdout.find("instackenv.json") == -1
+        when: when: instackenv_json_working_dir.stat.exists == False
 
       - name: install ipmitool
         become: yes
