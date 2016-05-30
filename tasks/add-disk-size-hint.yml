@@ -1,5 +1,5 @@
 ---
-- when: disk_root_device_size
+- when: step_root_device_size
   block:
 
     - name: get nodes UUID

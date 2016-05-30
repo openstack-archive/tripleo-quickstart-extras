@@ -1,2 +1,3 @@
 ---
 working_dir: /home/stack
+step_root_device_size: false
