@@ -1,32 +1,6 @@
 ---
 # tasks file for ansible-role-tripleo-gate
 
-- name: Parse Jenkins changes
-  jenkins_deps:
-    host: "{{ lookup('env', 'GERRIT_HOST') }}"
-    change_id: "{{ lookup('env', 'GERRIT_CHANGE_ID') }}"
-    branch: "{{ lookup('env', 'GERRIT_BRANCH') }}"
-    patchset_rev: "{{ lookup('env', 'GERRIT_PATCHSET_REVISION') }}"
-  register: artg_jenkins
-  when: artg_change_list is not defined and "{{ lookup('env', 'GERRIT_HOST') }}" != ""
-
-- name: Set artg_change_list fact from parsed output
-  set_fact:
-    artg_change_list: "{{ artg_jenkins.change_list }}"
-  when: artg_jenkins.change_list is defined
-
-- name: Parse Zuul changes
-  zuul_deps:
-    host: "{{ lookup('env', 'ZUUL_HOST') }}"
-    changes: "{{ lookup('env', 'ZUUL_CHANGES') }}"
-  register: artg_zuul
-  when: artg_change_list is not defined and "{{ lookup('env', 'ZUUL_HOST') }}" != ""
-
-- name: Set artg_change_list fact from parsed output
-  set_fact:
-    artg_change_list: "{{ artg_zuul.change_list }}"
-  when: artg_zuul.change_list is defined
-
 - name: Ensure DLRN package dependencies
   become: yes
   yum: name={{ item }} state=present
@@ -62,6 +36,13 @@
     depth: 1
     dest: '{{ ansible_user_dir }}/DLRN'
 
+#Remove the rpm install test to speed up delorean
+#TODO: add an option for this in delorean
+- name: Remove DLRN RPM install test
+  shell: >
+    sed -i -e 's%--postinstall%%'
+    {{ ansible_user_dir }}/DLRN/scripts/build_rpm.sh
+
 # workaround for
 # https://github.com/openstack-packages/DLRN/issues/16
 - name: force update pip (see DLRN issue 16)
@@ -81,6 +62,20 @@
     python setup.py install;
   args:
       chdir: '{{ ansible_user_dir }}/DLRN'
+
+- name: Parse Jenkins changes
+  jenkins_deps:
+    host: "{{ lookup('env', 'GERRIT_HOST') }}"
+    change_id: "{{ lookup('env', 'GERRIT_CHANGE_ID') }}"
+    branch: "{{ lookup('env', 'GERRIT_BRANCH') }}"
+    patchset_rev: "{{ lookup('env', 'GERRIT_PATCHSET_REVISION') }}"
+  when: artg_change_list is not defined and "{{ lookup('env', 'GERRIT_HOST') }}" != ""
+
+- name: Parse Zuul changes
+  zuul_deps:
+    host: "{{ lookup('env', 'ZUUL_HOST') }}"
+    changes: "{{ lookup('env', 'ZUUL_CHANGES') }}"
+  when: artg_change_list is not defined and "{{ lookup('env', 'ZUUL_HOST') }}" != ""
 
 - include: build.yml artg_change={{ item }}
   with_items: '{{ artg_change_list }}'

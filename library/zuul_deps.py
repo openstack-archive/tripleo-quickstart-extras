@@ -36,14 +36,15 @@ def process(host, changes):
                        "project": params[0],
                        "branch": params[1],
                        "refspec": params[2]})
-    return {'changed': True, 'change_list': output}
+    return {'changed': True,
+            'ansible_facts': {'artg_change_list': output}}
 
 
 def main():
     module = AnsibleModule(
         argument_spec=dict(
-            host=dict(required=True),
-            changes=dict(required=True)
+            host=dict(required=True, type='str'),
+            changes=dict(required=True, type='str')
         )
     )
     result = process(module.params['host'],
