@@ -151,7 +151,7 @@
     dest: "{{ artcl_collect_dir }}/{{ inventory_hostname }}.tar"
     flat: yes
     validate_checksum: no
-  when: artcl_gzip_only
+  when: artcl_gzip_only|bool
 
 - name: Delete temporary log directory after collection
   file:
@@ -164,32 +164,32 @@
       shell: >
         chdir={{ artcl_collect_dir }}
         tar xf {{ inventory_hostname }}.tar;
-      when: artcl_gzip_only
+      when: artcl_gzip_only|bool
 
     - name: delete the tar file after extraction
       file:
         path: "{{ artcl_collect_dir }}/{{ inventory_hostname }}.tar"
         state: absent
-      when: artcl_gzip_only
+      when: artcl_gzip_only|bool
 
     - name: fetch and gzip the console log
       shell: >
         curl {{ lookup('env', 'BUILD_URL') }}/consoleText | gzip > {{ artcl_collect_dir }}/console.txt.gz
-      when: artcl_rsync_logs and "{{ lookup('env', 'BUILD_URL') }}" != ""
+      when: artcl_rsync_logs|bool and "{{ lookup('env', 'BUILD_URL') }}" != ""
 
     - name: upload to the artifact server using password
       shell: >
         RSYNC_PASSWORD=`echo $PROVISIONER_KEY|cut -b 1-13` rsync -av {{ artcl_collect_dir }}/ {{ artcl_rsync_path }}/$BUILD_TAG;
-      when: artcl_rsync_logs and "{{ lookup('env', 'PROVISIONER_KEY') }}" != ""
+      when: artcl_rsync_logs|bool and "{{ lookup('env', 'PROVISIONER_KEY') }}" != ""
 
     - name: upload to the artifact server using pubkey auth
       shell: >
         rsync -av {{ artcl_collect_dir }}/ {{ artcl_rsync_path }}/$BUILD_TAG
-      when: artcl_rsync_logs and "{{ lookup('env', 'PROVISIONER_KEY') }}" == ""
+      when: artcl_rsync_logs|bool and "{{ lookup('env', 'PROVISIONER_KEY') }}" == ""
 
     - name: create the artifact location redirect file
       template:
         src: full_logs.html.j2
         dest: "{{ artcl_collect_dir }}/full_logs.html"
-      when: artcl_rsync_logs
+      when: artcl_rsync_logs|bool
   delegate_to: localhost
