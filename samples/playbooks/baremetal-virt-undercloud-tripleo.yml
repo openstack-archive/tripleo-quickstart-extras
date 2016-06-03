@@ -19,6 +19,12 @@
   roles:
     - ansible-role-tripleo-baremetal-prep-virthost
 
+- name: Validate IPMI and instackenv.json
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - ansible-role-tripleo-validate-ipmi
+
 - name:  Install the undercloud
   hosts: undercloud
   gather_facts: no

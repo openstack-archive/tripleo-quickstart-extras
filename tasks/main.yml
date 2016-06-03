@@ -8,6 +8,10 @@
     owner: root
     group: root
 
+- name: Bring the nic down first
+  become: true
+  command: ifdown {{ virthost_provisioning_interface }}
+
 - name: Ensure nic is up
   become: true
   command: ifup {{ virthost_provisioning_interface }}
