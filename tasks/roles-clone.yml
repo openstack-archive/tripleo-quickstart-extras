@@ -1,0 +1,22 @@
+---
+- name: Get the project name
+  set_fact:
+    artg_project_name: '{{ artg_change.project | regex_replace("^.*/", "") }}'
+
+- name: Clone the gated change
+  git:
+    repo: 'https://{{ artg_change.host }}/{{ artg_change.project }}'
+    dest: '{{ local_working_dir }}/gated_roles/{{ artg_project_name }}'
+    refspec: '{{ artg_change.refspec }}'
+    version: 'FETCH_HEAD'
+
+- name: Modify requirements
+  lineinfile:
+    dest: '{{ local_working_dir }}/tripleo-quickstart/quickstart-role-requirements.txt'
+    regexp: '{{ artg_project_name }}'
+    line: 'file://{{ local_working_dir }}/gated_roles/{{ artg_project_name }}/#egg={{ artg_project_name }}'
+
+- name: Make sure the package is not installed in our venv
+  pip:
+    name: '{{ artg_project_name }}'
+    state: absent

@@ -14,6 +14,8 @@ Requirements
 Role Variables
 --------------
 
+* `artg_mode` -- either `dlrn` (the default, gating upstream tripleo packages)
+   or `roles` (gating ansible-role-tripleo repos like this one)
 * `artg_dlrn_repo_url` -- the URL of the DLRN repository
 * `artg_rdoinfo_repo_url` -- the URL of the rdoinfo repository that contains
   the project definitions for DLRN
