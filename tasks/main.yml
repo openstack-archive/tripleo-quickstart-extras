@@ -2,32 +2,15 @@
 - when: validate_ipmi_step
   block:
 
-      - name: check if instackenv.json exists
-        stat: path="{{ working_dir }}/instackenv.json"
-        register: instackenv_json_working_dir
+      - name: Copy validate IPMI template to the undercloud
+        template:
+            src: validate-overcloud-ipmi-connection.sh.j2
+            dest: "{{ working_dir }}/validate-overcloud-ipmi-connection.sh"
+            mode: 0755
 
-      - name: fail if instackenv.json does not exist
-        fail: msg="instackenv.json does not exist in the working directory."
-        when: instackenv_json_working_dir.stat.exists == False
+      - name: wait for  script file to exist
+        wait_for: path="{{ working_dir }}/validate-overcloud-ipmi-connection.sh"
 
-      - name: install ipmitool
-        become: yes
-        yum: name={{ item }} state=latest
-        with_items:
-            - git
-            - OpenIPMI
-            - OpenIPMI-tools
-
-      - name: get tools to validate instackenv.json/nodes.json
-        git: >
-            repo="https://github.com/rthallisey/clapper.git"
-            dest="{{ working_dir }}/clapper"
-      - name: validate instackenv.json
+      - name: Run the validate IPMI overclcoud connection script
         shell: >
-            chdir={{ working_dir }}
-            python clapper/instackenv-validator.py -f {{ working_dir }}/instackenv.json
-        register: instackenv_validator_output
-
-      - name: fail if instackenv.json fails validation
-        fail: msg="instackenv.json didn't validate."
-        when: instackenv_validator_output.stdout.find("SUCCESS") == -1
+          "{{ working_dir }}"/validate-overcloud-ipmi-connection.sh

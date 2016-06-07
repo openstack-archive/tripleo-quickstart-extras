@@ -1,38 +1,43 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+An Ansible role to validate the instackenv.json and IPMI overcloud connections.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+This role should be executed before deploying an overcloud on baremetal nodes to ensure that introspection and PXE boot will be able to access the nodes required for deployment.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+**Note:** Make sure to include all environment file and options from your [initial Overcloud creation](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux_OpenStack_Platform/7/html/Director_Installation_and_Usage/).
+
+- validate_ipmi_step: <true> -- boolean value that will validate IPMI if true
+- working_dir: <'/home/stack'> -- working directory for the role.
+
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+  1. Sample playbook to call the role
 
-    - hosts: servers
+    - name: Validate IPMI connection to overcloud nodes
+      hosts: undercloud
       roles:
-         - { role: username.rolename, x: 42 }
+        - ansible-role-triple-validate-ipmi
 
 License
 -------
 
-BSD
+Apache
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+RDO-CI Team
