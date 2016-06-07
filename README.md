@@ -1,38 +1,47 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+An Ansible role to set up a machine to host a virtual undercloud for a TripleO deployment on baremetal nodes.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+This role assumes that the host machine already has a nic on the provisioning network. The role assigns the nic an IP address.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+**Note:** Make sure to include all environment file and options from your [initial Overcloud creation](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux_OpenStack_Platform/7/html/Director_Installation_and_Usage/sect-Scaling_the_Overcloud.html)
+
+- virthost_provisioning_interface: <eth1> --  NIC for the provisioning interface on the undercloud host
+- virthost_provisioning_ip: <192.168.122.1> -- IP address for the provisioning interface on the undercloud host
+- virthost_provisioning_netmask: <255.255.255.192> -- Netmask for the provisioning interface on the undercloud host
+- virthost_provisioning_hwaddr: <52:54:00:00:76:00> -- MAC address the provisioning interface on the undercloud host
+- working_dir: <'/home/stack'> -- working directory for the role.
+
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+The playbook included in this role calls https://github.com/redhat-openstack/ansible-role-tripleo-validate-ipmi and https://github.com/redhat-openstack/ansible-role-tripleo-baremetal-overcloud.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+  1. Sample playbook to call the role
 
-    - hosts: servers
+    - name: Prepare the host for PXE forwarding
+      hosts: virthost
+      gather_facts: no
       roles:
-         - { role: username.rolename, x: 42 }
+        - ansible-role-tripleo-baremetal-prep-virthost
 
 License
 -------
 
-BSD
+Apache
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+RDO-CI Team

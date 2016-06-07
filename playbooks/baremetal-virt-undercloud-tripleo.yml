@@ -1,6 +1,15 @@
 ---
 - include: provision.yml
 
+# The `environment/setup` role performs any tasks that require `root`
+# access on the target host.
+- name: Install libvirt packages and configure networks
+  hosts: virthost
+  tags:
+    - environment
+  roles:
+    - environment/setup
+
 - name:  Setup undercloud and baremetal vms and networks in libvirt
   hosts: virthost
   gather_facts: yes
@@ -17,13 +26,13 @@
   hosts: virthost
   gather_facts: no
   roles:
-    - ansible-role-tripleo-baremetal-prep-virthost
+    - baremetal-prep-virthost
 
 - name: Validate IPMI and instackenv.json
   hosts: undercloud
   gather_facts: no
   roles:
-    - ansible-role-tripleo-validate-ipmi
+    - validate-ipmi
 
 - name:  Install the undercloud
   hosts: undercloud
@@ -35,28 +44,28 @@
   hosts: undercloud
   gather_facts: no
   roles:
-    - ansible-role-tripleo-undercloud-post
+    - tripleo-undercloud-post
 
 - name:  Perpare the baremetal overcloud
   hosts: undercloud
   gather_facts: no
   roles:
-    - ansible-role-tripleo-baremetal-overcloud
+    - baremetal-overcloud
 
 - name:  Deploy the overcloud
   hosts: undercloud
   gather_facts: no
   roles:
-    - ansible-role-tripleo-overcloud
+    - tripleo-overcloud
 
 - name:  Inventory the overcloud
   hosts: undercloud
   gather_facts: no
   roles:
-    - ansible-role-tripleo-inventory
+    - tripleo-inventory
 
 - name:  validate the overcloud
   hosts: undercloud
   gather_facts: no
   roles:
-    - ansible-role-tripleo-overcloud-validate
+    - tripleo-overcloud-validate
