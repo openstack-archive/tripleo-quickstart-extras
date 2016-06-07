@@ -1,0 +1,39 @@
+---
+# tasks file for ansible-role-tripleo-overcloud-scale-nodes
+
+#!/bin/bash
+
+# Simple overcloud scale script
+
+set -eux
+
+# Source in undercloud credentials.
+source {{ artosn_working_dir }}/stackrc
+
+# Wait until there are hypervisors available.
+while true; do
+    count=$(openstack hypervisor stats show -c count -f value)
+    if [ $count -gt 0 ]; then
+        break
+    fi
+done
+
+deploy_status=0
+
+# Scale the overcloud!
+openstack overcloud deploy --templates {{ scale_args }} \
+    ${DEPLOY_ENV_YAML:+-e $DEPLOY_ENV_YAML} || deploy_status=1
+
+# We don't always get a useful error code from the openstack deploy command,
+# so check `heat stack-list` for a CREATE_FAILED status.
+if heat stack-list | grep -q 'CREATE_FAILED'; then
+    deploy_status=1
+
+    for failed in $(heat resource-list \
+        --nested-depth 5 overcloud | grep FAILED |
+        grep 'StructuredDeployment ' | cut -d '|' -f3)
+    do heat deployment-show $failed > failed_deployment_$failed.log
+    done
+fi
+
+exit $deploy_status
