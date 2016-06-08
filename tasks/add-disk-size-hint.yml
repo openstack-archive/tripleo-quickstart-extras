@@ -2,29 +2,14 @@
 - when: step_root_device_size
   block:
 
-    - name: get nodes UUID
-      shell: |
-        . {{ working_dir }}/stackrc
-        ironic node-list | grep 'power' |  awk '{print $2}'
-      register: ironic_node_list_uuid
+    - name: Copy over disk size hint script template
+      template:
+        src: add-disk-size-hint.sh.j2
+        dest: "{{ working_dir }}/add-disk-size-hint.sh"
+        mode: 0755
 
-    - name: find disk size from instackenv.json
-      shell: |
-        cat instackenv.json | grep '"disk": ' |  awk '{print $2}' | sed s/\"//g | sed s/\,//
-      register: disk_size
+    - name: Rerun provision with disk size hints
+      shell: >
+        "{{ working_dir }}"/add-disk-size-hint.sh
 
-    - name: update nodes with disk size hint
-      shell: |
-        . {{ working_dir }}/stackrc
-        if  [ {{ disk_root_device_size | int }} -ge {{ item.1 | int }}  ]; then
-          ironic node-update {{ item.0 }} add properties/root_device='{"size": {{ disk_root_device_size | int }}}'
-        fi
-      with_together:
-        - "{{ ironic_node_list_uuid.stdout_lines }}"
-        - "{{ disk_size.stdout_lines }}"
-
-    - name: rerun introspection
-      shell: |
-        . {{ working_dir }}/stackrc
-        openstack baremetal introspection bulk start
 

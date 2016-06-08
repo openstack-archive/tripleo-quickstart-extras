@@ -1,38 +1,43 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+An Ansible role to setup the baremetal overcloud nodes for deployment.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+This  playbook expects that the undercloud has been installed and setup using one of the roles relevant to baremetal overcloud deployments.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+**Note:** Make sure to include all environment file and options from your [initial Overcloud creation](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux_OpenStack_Platform/7/html/Director_Installation_and_Usage/sect-Scaling_the_Overcloud.html).
+
+- step_root_device_size: <false> -- boolean value that will apply disk size hints and rerun introspection if true
+- working_dir: <'/home/stack'> -- working directory for the role. Assumes stackrc file is present at this location
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+This playbook does not deploy the overcloud. After this playbook runs, call https://github.com/redhat-openstack/ansible-role-tripleo-overcloud.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+  1. Sample playbook to call the role
 
-    - hosts: servers
+    - name: Prepare the baremetal overcloud for deployment
+      hosts: virthost
+      gather_facts: no
       roles:
-         - { role: username.rolename, x: 42 }
+        - ansible-role-tripleo-baremetal-overcloud
 
 License
 -------
 
-BSD
+Apache
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+RDO-CI Team
