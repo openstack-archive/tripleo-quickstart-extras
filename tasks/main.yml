@@ -9,7 +9,7 @@
 
 - block:
     - name: Collect list of installed rpms
-      shell: rpm -qa > /var/log/rpm.list
+      shell: rpm -qa | sort -f >/var/log/rpm.list
 
     - name: Collect list of running kernel modules
       shell: lsmod > /var/log/module_list
