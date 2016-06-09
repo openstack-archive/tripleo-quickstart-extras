@@ -1,5 +1,4 @@
-local_working_dir: "{{ lookup('env', 'HOME') }}/.cat"
-local_heat_template_dir: "{{ local_working_dir }}/usr/local/share/ansible-role-tripleo-overcloud/files"
+local_working_dir: "{{ lookup('env', 'HOME') }}/.quickstart"
 working_dir: /home/stack
 
 hw_env: virt
