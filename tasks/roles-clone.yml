@@ -13,7 +13,7 @@
 - name: Modify requirements
   lineinfile:
     dest: '{{ local_working_dir }}/tripleo-quickstart/quickstart-role-requirements.txt'
-    regexp: '{{ artg_project_name }}'
+    regexp: 'egg={{ artg_project_name }}$'
     line: 'file://{{ local_working_dir }}/gated_roles/{{ artg_project_name }}/#egg={{ artg_project_name }}'
 
 - name: Make sure the package is not installed in our venv
