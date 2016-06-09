@@ -3,10 +3,10 @@
   hosts: undercloud
   gather_facts: no
   roles:
-    - ansible-role-tripleo-inventory
+    - tripleo-inventory
 
 - name: Collect logs and debug data
   hosts: all:!localhost:!virthost
   gather_facts: no
   roles:
-    - ansible-role-tripleo-collect-logs
+    - tripleo-collect-logs
