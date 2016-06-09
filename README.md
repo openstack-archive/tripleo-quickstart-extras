@@ -58,7 +58,7 @@ Example Playbook
 - name: Build custom RPMs
   hosts: virthost
   roles:
-    - ansible-role-tripleo-gate
+    - tripleo-gate
 ```
 
 License
