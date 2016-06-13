@@ -1,7 +1,7 @@
-Role Name
-=========
+ansible-role-tripleo-collect-logs
+=================================
 
-An Ansible role for aggregating logs.
+An Ansible role for aggregating logs from TripleO nodes.
 
 Requirements
 ------------
@@ -49,7 +49,7 @@ Example Playbook
 - name: Gather logs
   hosts: all:!localhost
   roles:
-    - ansible-role-tripleo-collect-logs
+    - tripleo-collect-logs
 ```
 
 License
