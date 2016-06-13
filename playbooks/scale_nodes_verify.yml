@@ -5,9 +5,11 @@
 # 'ansible-role-tripleo-inventory: regenerate ssh config' task to fail when attempting to acces non-existant host vars
 
 # Re-inventory the overcloud
-- name:  Inventory the overcloud
+- name: Inventory the overcloud
   hosts: undercloud
-  gather_facts: no
+  gather_facts: yes
+  vars:
+    inventory: all
   roles:
     - tripleo-inventory
 
