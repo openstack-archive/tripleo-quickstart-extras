@@ -23,3 +23,5 @@ tempest_config: true
 tempest_overcloud: true
 run_tempest: true
 post_tempest: true
+tempest_source: rdo # rdo or upstream
+tempest_format: venv # venv or packages

@@ -4,6 +4,9 @@
 {% if tempest_overcloud %}
 source {{ working_dir }}/overcloudrc
 
+# Clean up from any previous tempest run.
+rm -rf {{ working_dir }}/tempest
+
 # clean up network if it exists from previous run
 neutron net-delete {{ public_net_name }} > /dev/null 2>&1 || true
 
@@ -27,11 +30,33 @@ source {{ working_dir }}/stackrc
 public_net_id=$(neutron net-show {{ undercloud_public_net_name }} -f value -c id)
 {% endif %}
 
-rm -rf {{ working_dir }}/tempest
+# Generate a tempest configuration.
+sudo yum install -y libffi-devel openssl-devel python-virtualenv
+
+{% if tempest_source == "rdo" %}
 mkdir {{ working_dir }}/tempest
 cd {{ working_dir }}/tempest
-
 /usr/share/openstack-tempest-*/tools/configure-tempest-directory
+
+{% if tempest_format == "packages" %}
+{% elif tempest_format == "venv" %}
+virtualenv --no-site-packages .venv
+./tools/with_venv.sh pip install -U pip setuptools
+./tools/with_venv.sh pip install junitxml httplib2 -r test-requirements.txt -r requirements.txt
+{% endif %}
+
+{% elif tempest_source == "upstream" %}
+git clone https://github.com/openstack/tempest {{ working_dir }}/tempest
+cd {{ working_dir }}/tempest
+virtualenv --no-site-packages .venv
+./tools/with_venv.sh pip install -U pip setuptools
+./tools/with_venv.sh pip install junitxml httplib2 -r test-requirements.txt -r requirements.txt
+cp /usr/share/openstack-tempest-*/tools/config_tempest.py ./tools/
+cp /usr/share/openstack-tempest-*/tools/run-tests.sh ./tools/
+cp /usr/share/openstack-tempest-*/tools/tests2skip.py ./tools/
+cp /usr/share/openstack-tempest-*/tempest/common/api_discovery.py ./tempest/common/
+cp /usr/share/openstack-tempest-*/etc/default-overrides.conf ./etc/
+{% endif %}
 
 {% if tempest_undercloud %}
 # config_tempest assumes that Cinder is installed and accessible. Cinder is
@@ -41,9 +66,19 @@ sed --in-place "/'volume'\: 'cinder',/d" tools/config_tempest.py
 sed --in-place "/'volume'\: \['v1', 'v2'\]/d" tools/config_tempest.py
 {% endif %}
 
-tools/config_tempest.py --out etc/tempest.conf --network-id $public_net_id --deployer-input ~/{{ tempest_deployer_input_file }} --debug --create \
-identity.uri $OS_AUTH_URL \
-identity.admin_password $OS_PASSWORD \
-network.tenant_network_cidr {{ tenant_network_cidr }} \
-object-storage.operator_role swiftoperator \
-orchestration.stack_owner_role heat_stack_owner
+{% if tempest_format == "venv" %}./tools/with_venv.sh {% endif %}./tools/config_tempest.py --out etc/tempest.conf \
+  --network-id $public_net_id \
+  --deployer-input ~/{{ tempest_deployer_input_file }} \
+  --debug --create \
+  identity.uri $OS_AUTH_URL \
+  identity.admin_password $OS_PASSWORD \
+  network.tenant_network_cidr {{ tenant_network_cidr }} \
+  object-storage.operator_role swiftoperator \
+  compute.allow_tenant_isolation true \
+  compute.build_timeout 500 \
+  compute.image_ssh_user cirros \
+  compute.ssh_user cirros \
+  network.build_timeout 500 \
+  volume.build_timeout 500 \
+  scenario.ssh_user cirros \
+  orchestration.stack_owner_role heat_stack_owner

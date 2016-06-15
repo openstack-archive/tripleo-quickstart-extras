@@ -1,5 +1,3 @@
-#
-# run-temptest
-#
+# Run tempest.
 
-tools/run-tests.sh --skip-file {{ working_dir }}/skipfile {{ test_regex }}
+{% if tempest_format == "venv" %}./tools/with_venv.sh {% endif %}./tools/run-tests.sh {{ test_regex }} --skip-file {{ working_dir }}/skipfile

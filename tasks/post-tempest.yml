@@ -11,8 +11,26 @@
     | while read name; do cat "$name"; done \
     > '{{ working_dir }}/tempest/results.subunit'
 
+- name: Generate HTML results file
+  shell: |
+    subunit2html $(find {{ working_dir }}/tempest/.testrepository -name [0-9] \
+    | head -1) {{ working_dir }}/tempest/tempest.html \
+    2>&1 >> {{ tempest_log_file }}
+  ignore_errors: yes
+
 - name: Fetch subunit results
   fetch:
     src: "{{ working_dir }}/tempest/results.subunit"
     dest: "{{ lookup('env', 'PWD') }}/results.subunit"
     flat: yes
+
+- name: Fetch HTML results
+  fetch:
+    src: "{{ working_dir }}/tempest/tempest.html"
+    dest: "{{ lookup('env', 'PWD') }}/tempest.html"
+    flat: yes
+  ignore_errors: yes
+
+- name: Exit with tempest result code
+  shell: tail -10 {{ tempest_log_file }}; exit {{ tempest_result.rc }}
+  when: 'tempest_result.rc != 0'
