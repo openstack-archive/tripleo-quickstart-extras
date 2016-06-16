@@ -1,14 +1,15 @@
 #!/bin/bash
 # Test the overcloud deployment
 
-EXTERNAL_NETWORK_GATEWAY={{ external_network_gateway }}
-FLOATING_IP_CIDR={{ floating_ip_cidr }}
-FLOATING_IP_START={{ floating_ip_start }}
-FLOATING_IP_END={{ floating_ip_end }}
-export EXTERNAL_NETWORK_GATEWAY FLOATING_IP_CIDR
-export FLOATING_IP_START FLOATING_IP_END
+set -e
 
 source {{ working_dir }}/overcloudrc
+
+# TODO: find a way to pass also the floating external network, so the instance can be exposed "outside"
+FLOATING_IP_CIDR=$(grep ExternalNetCidr network-environment.yaml|awk '{print $2}')
+EXTERNAL_NETWORK_GATEWAY=$(grep ExternalInterfaceDefaultRoute network-environment.yaml|awk '{print $2}')
+FLOATING_IP_START=$(grep ExternalAllocationPools network-environment.yaml | sed "s/.*start': '\(.*\)', .*/\\1/g")
+FLOATING_IP_END=$(grep ExternalAllocationPools network-environment.yaml | sed "s/.*end': '\(.*\)'.*/\\1/g")
 
 TIMEOUT=30
 INSTANCE_NAME=cirros-1
@@ -32,6 +33,7 @@ echo floatingip=$floatingip
 #...
 #| 6fde7d2a-e2d9-4b0f-a982-b7cbc3244807 | private-network                                    | 31a5ccd5-07bd-4103-a4a3-ab2c6d6148d7 10.1.1.0/24      |
 #...
+nova flavor-create --ephemeral 0  --is-public True m1.small 1 2048 20 1
 private_net_id=$(neutron net-list | grep private-network | awk '{print $2}')
 wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img
 glance image-create --name CirrOS --container-format bare --disk-format raw --file cirros-0.3.4-x86_64-disk.img
@@ -80,16 +82,11 @@ done
 
 [ $COUNTER -ge $TIMEOUT ] && echo "FAILURE!"
 
-echo "Cleaning up"
-
-floatingip=$(nova list | grep $INSTANCE_NAME | awk '{print $13}')
-floatingip_id=$(neutron floatingip-list | grep $floatingip | awk '{print $2}')
-instance_ip=$(nova list | grep $INSTANCE_NAME | awk '{print $12}' | sed "s/private-network=//g")
-port_id=$(neutron port-list | grep $instance_ip | awk '{print $2}')
-nova delete $INSTANCE_NAME
-glance image-delete CirrOS
 neutron floatingip-disassociate $floatingip_id $port_id
 neutron floatingip-delete $floatingip_id
+nova delete $INSTANCE_NAME
+glance image-delete $(glance image-list | grep CirrOS | awk '{print $2}')
+nova flavor-delete m1.small
 neutron router-gateway-clear floating-router floating-network
 neutron router-interface-delete floating-router private-subnet
 neutron router-delete floating-router
