@@ -341,6 +341,7 @@ recover_environment "$test_sequence"
 if [ $? -ne 0 ]
  then
   echo "Recovery from test $test_sequence FAILED!"
+  check_failed_actions
   exit 1
 fi
 
