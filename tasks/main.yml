@@ -1,29 +1,37 @@
 ---
 # tasks file for ansible-role-tripleo-overcloud-validate-ha
+#- include: setup.yml
+#  hosts: "{{ groups['overcloud'] }}"
+#  tags:
+#    - tests-setup
+#- include: name: Install Pacemaker CTS on all overcloud nodes
+##  package: name=pacemaker-cts state=latest
+#  delegate_to: "{{ item }}"
+#  with_items: "{{ groups['overcloud'] }}"
+#  delegate_facts: true
+#  run_once: true
+#  become: yes
+#  become_user: root
 
-- name: Create instance deploy test script
-  template:
-    src: "{{ test_instance_script }}.sh.j2"
-    dest: "{{ working_dir }}/{{ test_instance_script }}.sh"
-    mode: 0744
+- name: Get overcloud-ha-test-suite
+  shell: >
+    rm -rf overcloud-ha-test-suite;
+    git clone https://github.com/rscarazz/openstack/ overcloud-ha-test-suite;
+    cd overcloud-ha-test-suite;
+    git filter-branch --prune-empty --subdirectory-filter overcloud-ha-test-suite HEAD;
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['all'] }}"
 
-- name: Test instance deploy on the overcloud 
-  shell: |
-    {{ working_dir }}/{{ test_instance_script }}.sh > {{ test_instance_log }} 2>&1
+- name: HA Test instance deploy on the overcloud (undercloud)
+  shell: >
+    {{ working_dir }}/overcloud-ha-test-suite/overcloud-ha-test-suite.sh -t {{ working_dir }}/overcloud-ha-test-suite/test/test_instance-creation -r {{ working_dir }}/overcloud-ha-test-suite/recovery/recovery_instance-creation > {{ working_dir }}/test_instance.log 2>&1
 
-- name: Create HA test script
+- name: HA test failed actions (overcloud)
   delegate_to: overcloud-controller-0
-  template:
-    src: "{{ test_ha_script }}.sh.j2"
-    dest: "{{ overcloud_working_dir }}/{{ test_ha_script }}.sh"
-    mode: 0744
+  shell: >
+    {{ overcloud_working_dir }}/overcloud-ha-test-suite/overcloud-ha-test-suite.sh -t {{ overcloud_working_dir }}/overcloud-ha-test-suite/test/test_check-failed-actions > {{ overcloud_working_dir }}/test_failed-actions.log 2>&1
 
-- name: HA test 0
-  delegate_to: overcloud-controller-0
-  shell: |
-    {{ overcloud_working_dir }}/{{ test_ha_script }}.sh -t "0" -r "10" > {{ test_ha_log }} 2>&1
-
-- name: HA test A
-  delegate_to: overcloud-controller-0
-  shell: |
-    {{ overcloud_working_dir }}/{{ test_ha_script }}.sh -t "A" -r "10" > {{ test_ha_log }} 2>&1
+#- name: HA test A
+#  delegate_to: overcloud-controller-0
+#  shell: |
+#    {{ overcloud_working_dir }}/{{ test_ha_script }}.sh -t "A" -r "10" > {{ test_ha_log }} 2>&1
