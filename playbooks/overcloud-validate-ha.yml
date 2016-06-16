@@ -1,0 +1,7 @@
+---
+
+- name:  Validate overcloud HA status
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - tripleo-overcloud-validate-ha
