@@ -14,7 +14,7 @@ Test suites available:
 A - Stop every systemd resource, stop Galera and Rabbitmq, Start every systemd resource
 B - Stop Galera and Rabbitmq, stop every systemd resource, Start every systemd resource
 C - Stop Galera and Rabbitmq, wait 20 minutes to see if something fails
-D - Stop the cluster and check if there are (still) active resources
+D - Stop the cluster and check if there are (still) active processes
 "
 }
 
@@ -24,30 +24,34 @@ function check_failed_actions {
  sudo pcs status | grep "Failed Actions:" &> /dev/null
  if [ $? -eq 0 ]
   then
-   echo "Errors while disabling $resource!"
-   show_failed_actions $resource
-   return 1
+   if [ "x$resource" == "x" ]
+    then
+     echo "Cluster has failed actions:"
+     sudo pcs status | sed -n -e '/Failed Actions:/,/^$/p' | egrep 'OCF_|not running|unknown' | awk '{print $2}' | cut -f1 -d_ | sort |uniq
+     FAILURES=true
+     return 1
+    else
+     errors=$(sudo pcs status | sed -n -e '/Failed Actions:/,/^$/p' | grep -A1 $resource)
+     if [ $? -eq 0 ]
+      then
+       echo "Resource $resource has failed actions:"
+       echo $errors
+       FAILURES=true
+       return 1
+      else
+       echo "No failed actions for $resource."
+       return 0
+     fi
+   fi
   else
-   echo "No failed actions."
+   if [ "x$resource" == "x" ]
+    then
+     echo "Cluster is OK."
+    else
+     echo "No failed actions for $resource."
+   fi
    return 0
   fi
-}
-
-function show_failed_actions {
- resource=$1
-
- echo "Failed Actions (if any):"
- if [ "x$resource" == "x" ]
-  then
-   sudo pcs status | sed -n -e '/Failed Actions:/,/^$/ p'
-  else
-   sudo pcs status | sed -n -e '/Failed Actions:/,/^$/ p' | grep -A1 $resource
- fi
-
- echo "Failed Resources (if any):"
- sudo pcs status | sed -n -e '/Failed Actions:/,/^$/p' | egrep 'OCF_|not running|unknown' | awk '{print $2}' | cut -f1 -d_ | sort |uniq
-
- return $?
 }
 
 function check_resources_process_status {
@@ -91,22 +95,21 @@ function check_resource_status {
  resource=$1
  status=$2
  i=1
- return_code=1
 
  while [ $i -lt $timeout ]
   do
-   output=$(sudo pcs status | sed -n -e "/Clone Set: .*[$resource]/,/^ [a-Z]/ p" | head -n -1 | tail -n +2 | egrep -v "$status\:")
+   output=$(sudo pcs status | sed -n -e "/Clone Set: .*\[$resource\]/,/^ [a-Z]/p" | head -n -1 | tail -n +2 | egrep -v "$status\:")
    if [ "x$output" == "x" ]
     then
-     return_code=0
+     return 0
      break
     else
      echo -n "."
      sleep 1
-     i=$(expr $i + 1)
+     let "i++"
    fi
   done
- return $return_code
+ return 1
 }
 
 function play_on_resources {
@@ -132,28 +135,9 @@ function play_on_resources {
     then
      check_failed_actions $resource
     else
-     echo "Ok"
+     echo "OK"
    fi
   done
-}
-
-function recover_wait_start {
- i=1
- while true; do
-  [ $i -eq $timeout ] && break
-
-  sudo pcs status | grep Stopped &> /dev/null
-  if [ $? -eq 0 ]
-   then
-    echo -n "."
-   else
-    echo "Started."
-    return 0
-    break
-  fi
-  ((i++))
- done
- return 1
 }
 
 function recover_environment {
@@ -163,15 +147,16 @@ function recover_environment {
    sleep $recover
    echo "$(date) - Recovering..."
    case $test_sequence in
-    "0") echo -n "$(date) - "
+    "0") echo -n "$(date) - No need to recover."
+         return 0
          ;;
     "A"|"B"|"C")
-     echo -n "$(date) - Cleaning up cluster... "
+     echo "$(date) - Cleaning up cluster... "
      echo "$(date) * Step 1: enable all the systemd resources"
      play_on_resources "enable" "$OVERCLOUD_CORE_RESOURCES"
 
-     echo -n "$(date) - Cleaning up failed resources"
-     sudo pcs status | sed -n -e '/Failed Actions:/,/^$/p' | egrep 'OCF_TIMEOUT|not running' | awk '{print $2}' | cut -f1 -d_ | sort | uniq | while read RES; do sudo pcs resource cleanup \$RES; done
+     echo "$(date) * Step 2: Cleaning up failed resources"
+     sudo pcs status | sed -n -e '/Failed Actions:/,/^$/p' | egrep 'OCF_TIMEOUT|not running' | awk '{print $2}' | cut -f1 -d_ | sort | uniq | while read RES; do echo "Cleaning $RES"; sudo pcs resource cleanup $RES; done
      ;;
     "D")
      echo -n "Starting cluster "
@@ -180,13 +165,25 @@ function recover_environment {
    esac
  fi
 
- recover_wait_start
- if [ $? -eq 0 ]
-  then
-   echo "Recovery complete."
-  else
-   echo "Problems during recovery!"
- fi
+ i=1
+ while true; do
+  [ $i -eq $timeout ] && break
+
+  sudo pcs status | grep Stopped &> /dev/null
+  if [ $? -eq 0 ]
+   then
+    echo -n "."
+   else
+    echo "Cluster started."
+    return 0
+    break
+  fi
+  sleep 1
+  let "i++"
+ done
+
+ echo "Problems during recovery!"
+ return 1
 }
 
 if [ $# -gt 0 ]
@@ -233,21 +230,22 @@ fi
 
 # Fixed parameters
 resources_tmp_file="/tmp/resources.list"
-timeout=30
+timeout=60
 
 # Populating overcloud elements
-echo -n "$(date) - Populationg overcloud elements..."
+echo "$(date) - Populationg overcloud elements..."
 echo -n "$(date) * Getting systemd resource list..."
 export OVERCLOUD_CORE_RESOURCES="galera rabbitmq-clone"
 export OVERCLOUD_SYSTEMD_RESOURCES=$(sudo pcs config show | egrep "Resource:.*systemd"|grep -v "haproxy"|awk '{print $2}')
 [ $? -ne 0 ] && exit 1
 echo "OK"
-env
+
+FAILURES=false
 
 case "$test_sequence" in
  "0") 
      echo "$(date) - List of cluster's failed actions:"
-     show_failed_actions
+     check_failed_actions
 
      ;;
  "A")
@@ -255,19 +253,19 @@ case "$test_sequence" in
      play_on_resources "disable" "$OVERCLOUD_SYSTEMD_RESOURCES"
    
      echo "$(date) - List of cluster's failed actions:"
-     show_failed_actions
+     check_failed_actions
    
      echo "$(date) * Step 2: disable core services"
      play_on_resources "disable" "$OVERCLOUD_CORE_RESOURCES"
    
      echo "$(date) - List of cluster's failed actions:"
-     show_failed_actions
+     check_failed_actions
    
      echo "$(date) * Step 3: enable each resource one by one and check the status"
      play_on_resources "enable" "$OVERCLOUD_SYSTEMD_RESOURCES"
    
      echo "$(date) - List of cluster's failed actions:"
-     show_failed_actions
+     check_failed_actions
    
      ;;
 "B")
@@ -275,19 +273,19 @@ case "$test_sequence" in
      play_on_resources "disable" "$OVERCLOUD_CORE_RESOURCES"
    
      echo "$(date) - List of cluster's failed actions:"
-     show_failed_actions
+     check_failed_actions
    
      echo "$(date) * Step 2: disable all the systemd resources"
      play_on_resources "disable" "$OVERCLOUD_SYSTEMD_RESOURCES"
    
      echo "$(date) - List of cluster's failed actions:"
-     show_failed_actions
+     check_failed_actions
    
      echo "$(date) * Step 3: enable all the systemd resources"
      play_on_resources "enable" "$OVERCLOUD_SYSTEMD_RESOURCES"
    
      echo "$(date) - List of cluster's failed actions:"
-     show_failed_actions
+     check_failed_actions
    
      ;;
 "C")
@@ -295,7 +293,7 @@ case "$test_sequence" in
      play_on_resources "disable" "$OVERCLOUD_CORE_RESOURCES"
    
      echo "$(date) - List of cluster's failed actions:"
-     show_failed_actions
+     check_failed_actions
    
      echo "$(date) * Step 2: poll every minute for twenty minutes the status of the resources"
      for i in $(seq 1 20)
@@ -310,7 +308,7 @@ case "$test_sequence" in
       done
    
      echo "$(date) - List of cluster's failed actions:"
-     show_failed_actions
+     check_failed_actions
 
      ;;
 "D")
@@ -332,6 +330,18 @@ case "$test_sequence" in
      ;;
 esac
 
+if [ "$FAILURES" = true ]
+ then
+  echo "Test $test_sequence FAILED!"
+  exit 1
+fi
+
 recover_environment "$test_sequence"
+
+if [ $? -ne 0 ]
+ then
+  echo "Recovery from test $test_sequence FAILED!"
+  exit 1
+fi
 
 echo "$(date) - End"
