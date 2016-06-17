@@ -152,12 +152,13 @@
   shell: "yumdb search from_repo delorean* | egrep -v from_repo | grep -v '^$' | tail -n +2 "
   register: delorean_rpms
 
-- name: debug
-  debug: var={{ item }}
-  with_flattened:
-    - director_rpms.stdout_lines
-    - rhos_rpms.stdout_lines
-    - delorean_rpms.stdout_lines
+# BUG: when this task encounters an rpm of the form "1:somerpm" it fails
+#- name: debug
+#  debug: var={{ item }}
+#  with_flattened:
+#    - director_rpms.stdout_lines
+#    - rhos_rpms.stdout_lines
+#    - delorean_rpms.stdout_lines
 
 - name: remove any openstack rpms from the host
   yum: name={{item}} state=absent
