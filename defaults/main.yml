@@ -3,7 +3,6 @@
 
 artcl_collect_list:
   - /var/log/
-  - /root/
   - /var/lib/mysql
   - /etc/nova
   - /etc/ceilometer
@@ -28,6 +27,7 @@ artcl_collect_list:
   - /home/stack/*.conf
   - /home/stack/*.yml
   - /home/stack/*.yaml
+  - /home/stack/*.sh
   - /home/stack/deploy-overcloudrc
   - /home/stack/network-environment.yaml
   - /home/stack/tempest/*.xml
