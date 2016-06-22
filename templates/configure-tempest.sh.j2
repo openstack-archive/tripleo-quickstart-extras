@@ -8,7 +8,11 @@ source {{ working_dir }}/overcloudrc
 rm -rf {{ working_dir }}/tempest
 
 # clean up network if it exists from previous run
-neutron net-delete {{ public_net_name }} > /dev/null 2>&1 || true
+for i in $(neutron router-list -c id -f value); do neutron router-gateway-clear $i; done
+for r in $(neutron router-list -c id -f value); do for p in $(neutron router-port-list $r -c id -f value); do neutron router-interface-delete $r port=$p; done; done
+for i in $(neutron router-list -c id -f value); do neutron router-delete $i; done
+for i in $(neutron port-list -c id -f value); do neutron port-delete $i; done
+for i in $(neutron net-list -c id -f value); do neutron net-delete $i; done
 
 neutron net-create {{ public_net_name }} --router:external=True \
     --provider:network_type {{ public_network_type }} \
@@ -34,12 +38,13 @@ public_net_id=$(neutron net-show {{ undercloud_public_net_name }} -f value -c id
 sudo yum install -y libffi-devel openssl-devel python-virtualenv
 
 {% if tempest_source == "rdo" %}
+{% if tempest_format == "packages" %}
 mkdir {{ working_dir }}/tempest
 cd {{ working_dir }}/tempest
 /usr/share/openstack-tempest-*/tools/configure-tempest-directory
-
-{% if tempest_format == "packages" %}
 {% elif tempest_format == "venv" %}
+git clone https://github.com/redhat-openstack/tempest {{ working_dir }}/tempest
+cd {{ working_dir }}/tempest
 virtualenv --no-site-packages .venv
 ./tools/with_venv.sh pip install -U pip setuptools
 ./tools/with_venv.sh pip install junitxml httplib2 -r test-requirements.txt -r requirements.txt
