@@ -11,10 +11,15 @@
     version: 'FETCH_HEAD'
 
 - name: Modify requirements
-  lineinfile:
-    dest: '{{ local_working_dir }}/tripleo-quickstart/quickstart-role-requirements.txt'
-    regexp: 'egg={{ artg_project_name }}$'
-    line: 'file://{{ local_working_dir }}/gated_roles/{{ artg_project_name }}/#egg={{ artg_project_name }}'
+  replace:
+    dest: '{{ req_item }}'
+    regexp: '^.*egg={{ artg_project_name }}$'
+    replace: 'file://{{ local_working_dir }}/gated_roles/{{ artg_project_name }}/#egg={{ artg_project_name }}'
+  with_items: '{{ artg_requirements }}'
+  # we are already in a file included in a loop, we need loop_control:
+  # http://docs.ansible.com/ansible/playbooks_loops.html#loop-control
+  loop_control:
+    loop_var: req_item
 
 - name: Make sure the package is not installed in our venv
   pip:

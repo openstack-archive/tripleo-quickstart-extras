@@ -14,6 +14,7 @@ Requirements
 Role Variables
 --------------
 
+* `local_working_dir` -- the directory where tripleo-quickstart is located
 * `artg_mode` -- either `dlrn` (the default, gating upstream tripleo packages)
    or `roles` (gating ansible-role-tripleo repos like this one)
 * `artg_dlrn_repo_url` -- the URL of the DLRN repository
@@ -23,6 +24,8 @@ Role Variables
   contains all the generated rpms
 * `artg_change_list` -- a list of changes to gate. Only needed when not running
   in Zuul or Gerrit (see below). The format is:
+* `artg_requirements` -- used in roles mode, the requirements file to use for
+  replacing the gated roles
 
 ```yaml
 artg_change_list:
