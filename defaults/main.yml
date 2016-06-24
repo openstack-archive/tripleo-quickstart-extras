@@ -5,7 +5,7 @@ upgrade_overcloud_dns_server: 8.8.8.8
 # this settings should be override by the network isolation settings
 # that it was previously passed.
 # it correspond to the cidr of the vlan on the UC
-network_isolation_ipv4_cidr: "172.16.23.1/24"
+network_isolation_ipv4_cidr: "10.0.0.1/24"
 network_isolation_vlan_tag: 10
 network_isolation_vlan: "vlan{{ network_isolation_vlan_tag }}"
 # set-repo settings:
