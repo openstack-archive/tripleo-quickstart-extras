@@ -1,6 +1,6 @@
 ---
 # Upgrade Undercloud and Overcloud on top of a quickstart deployment
-- include: quickstart.yml
+- include: tripleo-roles.yml
 
 - name:  Upgrade Tripleo
   hosts: undercloud
