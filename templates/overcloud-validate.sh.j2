@@ -13,7 +13,7 @@ function cleanup() {
         echo "Heat stack delete"
     else
         if [[ $(heat stack-list | grep {{ validate_stack_name }} | grep -i failed) ]]; then
-        {% if release in ['kilo','rhos-7'] %}
+        {% if release in ['kilo', 'liberty', 'rhos-7'] %}
             heat stack-delete {{ validate_stack_name }}
         {% else  %}
              heat stack-delete -y {{ validate_stack_name }}
