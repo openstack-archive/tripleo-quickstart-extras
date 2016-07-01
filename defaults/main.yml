@@ -5,6 +5,7 @@ undercloud_type: virtual
 hw_env: virt
 network_isolation_type: single_nic_vlans_ipv4
 network_isolation: true
+enable_pacemaker: false
 
 deploy_script: overcloud-deploy.sh.j2
 deploy_log: "{{ working_dir }}/overcloud_deploy.log"
@@ -42,11 +43,16 @@ flavor_args: >-
   --ceph-storage-flavor {{flavor_map.ceph
   if flavor_map is defined and 'ceph' in flavor_map else 'oooq_ceph'}}
 
+network_args: ""
+pacemaker_args: ""
+
 timeout_args: "--timeout {{deploy_timeout}}"
 deploy_args: >-
   {{ libvirt_args }}
   {{ flavor_args }}
   {{ timeout_args }}
+  {{ network_args }}
+  {{ pacemaker_args }}
   {{ extra_args }}
 
 step_deploy_overcloud: true

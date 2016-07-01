@@ -1,3 +1,7 @@
+- include: pre-deploy.yml
+  tags:
+    - overcloud-scripts
+
 - include: setup-heat-templates.yml
   when: undercloud_type != "baremetal"
   tags:
