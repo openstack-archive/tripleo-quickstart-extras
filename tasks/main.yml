@@ -52,6 +52,7 @@
   shell: >
     user_id=`cat /etc/passwd | grep stack | awk -F ':' '{ print $3 }'`;
     rm -Rf /run/user/$user_id/libvirt
+  ignore_errors: true
 
 - name: destroy virbr0 network if present
   command: brctl delbr virbr0
