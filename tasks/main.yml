@@ -48,6 +48,11 @@
   command: virsh pool-destroy oooq_pool
   ignore_errors: true
 
+- name: destroy /run/user/ for stack
+  shell: >
+    user_id=`cat /etc/passwd | grep stack | awk -F ':' '{ print $3 }'`;
+    rm -Rf /run/user/$user_id/libvirt
+
 - name: destroy virbr0 network if present
   command: brctl delbr virbr0
   ignore_errors: true
