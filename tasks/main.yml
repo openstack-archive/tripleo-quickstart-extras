@@ -42,6 +42,12 @@
   command: virsh pool-destroy default
   ignore_errors: true
 
+- name: destroy oooq_pool
+  become: yes
+  become_user: stack
+  command: virsh pool-destroy oooq_pool
+  ignore_errors: true
+
 - name: destroy virbr0 network if present
   command: brctl delbr virbr0
   ignore_errors: true
