@@ -27,15 +27,15 @@
         sudo iptables-save > /etc/sysconfig/iptables;
   when: network_isolation
 
-- name: Create overcloud upgrade script
+- name: Create major overcloud upgrade script
   when: major_upgrade
   template:
     src: "{{ major_upgrade_script }}"
     dest: "{{ upgrade_working_dir }}/overcloud-upgrade.sh"
     mode: 0755
 
-- name: Create overcloud upgrade script
-  when: not major_upgrade
+- name: Create minor overcloud upgrade script
+  when: not major_upgrade|bool
   template:
     src: "{{ minor_upgrade_script }}"
     dest: "{{ upgrade_working_dir }}/overcloud-upgrade.sh"
