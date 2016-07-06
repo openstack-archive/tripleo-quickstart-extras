@@ -23,7 +23,7 @@
 
 - name: stop openstack services
   service: name={{item}} state=stopped
-  when: not major_upgrade|bool
+  when: major_upgrade
   sudo: yes
   with_items:
       - openstack-keystone
