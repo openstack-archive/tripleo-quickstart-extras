@@ -1,5 +1,9 @@
 parameter_defaults:
   UpgradeInitCommand: |
     set -e
-    curl -o /etc/yum.repos.d/delorean.repo http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/{{ upgrade_delorean_hash | default("current-passed-ci")}}/delorean.repo
+{% if upgrade_delorean_hash == 'current-passed-ci' %}
+    curl -o /etc/yum.repos.d/delorean.repo http://buildlogs.centos.org/centos/7/cloud/x86_64/rdo-trunk-{{ target_upgrade_version }}-tested/delorean.repo
+{% else %}
+    curl -o /etc/yum.repos.d/delorean.repo http://buildlogs.centos.org/centos/7/cloud/x86_64/rdo-trunk-{{ target_upgrade_version }}/delorean.repo
+{% endif %}
     curl -o /etc/yum.repos.d/delorean-deps.repo http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/delorean-deps.repo

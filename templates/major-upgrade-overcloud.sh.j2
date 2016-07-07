@@ -2,6 +2,7 @@
 set -eux
 source {{ upgrade_working_dir }}/stackrc
 
+echo "execute aodh upgrade"
 {% if target_upgrade_version == 'mitaka' %}
 openstack overcloud deploy --templates {{ tht_dir }} \
     -e tripleo-heat-templates/overcloud-resource-registry-puppet.yaml \
@@ -16,6 +17,17 @@ openstack overcloud deploy --templates {{ tht_dir }} \
 {% endfor %}
     -e {{ tht_dir }}/environments/major-upgrade-aodh.yaml
 
+# Workaround for:
+# https://bugs.launchpad.net/tripleo/+bug/1599798
+mv tripleo-heat-templates tripleo-heat-templates.org
+git clone https://github.com/openstack/tripleo-heat-templates.git -b stable/mitaka
+pushd tripleo-heat-templates
+git config user.email "mat.bultel@gmail.com"
+git config user.name "matbu"
+git fetch https://review.openstack.org/openstack/tripleo-heat-templates refs/changes/79/338879/2 && git checkout FETCH_HEAD
+popd
+
+echo "execute keystone upgrade"
 openstack overcloud deploy --templates {{ tht_dir }} \
     -e tripleo-heat-templates/overcloud-resource-registry-puppet.yaml \
 {% if network_isolation == true %}
