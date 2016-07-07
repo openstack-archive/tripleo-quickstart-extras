@@ -7,3 +7,4 @@ parameter_defaults:
     curl -o /etc/yum.repos.d/delorean.repo http://buildlogs.centos.org/centos/7/cloud/x86_64/rdo-trunk-{{ target_upgrade_version }}/delorean.repo
 {% endif %}
     curl -o /etc/yum.repos.d/delorean-deps.repo http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/delorean-deps.repo
+    yum clean all
