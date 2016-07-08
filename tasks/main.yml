@@ -1,22 +1,6 @@
 ---
 # tasks file for ansible-role-tripleo-overcloud-validate-ha
 
-#- name: Get overcloud-ha-test-suite
-#  shell: >
-#    rm -rf /tmp/overcloud-ha-test-suite;
-#    git clone https://github.com/rscarazz/openstack/ /tmp/overcloud-ha-test-suite;
-#    cd /tmp/overcloud-ha-test-suite;
-#    git filter-branch --prune-empty --subdirectory-filter overcloud-ha-test-suite HEAD;
-#    rm -rf .git;
-#
-#- name: Push overcloud-ha-test-suite to all the hosts
-#  synchronize:
-#    src: /tmp/overcloud-ha-test-suite
-#    dest: /tmp/overcloud-ha-test-suite
-#    mode: pull
-#  delegate_to: "{{ item }}"
-#  with_items: "{{ groups['controller'] }}"
-
 - name: Creating the environment file on undercloud
   delegate_to: undercloud
   template:
@@ -43,21 +27,19 @@
       - "{{ groups['controller'] }}"
   shell: >
     rm -rf overcloud-ha-test-suite;
-    git clone https://github.com/rscarazz/openstack/ overcloud-ha-test-suite;
-    cd overcloud-ha-test-suite;
-    git filter-branch --prune-empty --subdirectory-filter overcloud-ha-test-suite HEAD;
+    git clone https://github.com/rscarazz/tripleo-director-ha-test-suite/ tripleo-director-ha-test-suite;
   delegate_to: "{{ item }}"
   with_items: "{{ nodes }}"
-
-- name: HA Test instance deploy on the overcloud (undercloud)
-  delegate_to: undercloud
-  shell: >
-    {{ working_dir }}/overcloud-ha-test-suite/overcloud-ha-test-suite.sh -t {{ working_dir }}/overcloud-ha-test-suite/test/test_instance-creation -r {{ working_dir }}/overcloud-ha-test-suite/recovery/recovery_instance-creation > {{ working_dir }}/test_instance.log 2>&1
 
 - name: HA test failed actions (overcloud)
   delegate_to: overcloud-controller-0
   shell: >
-    {{ overcloud_working_dir }}/overcloud-ha-test-suite/overcloud-ha-test-suite.sh -t {{ overcloud_working_dir }}/overcloud-ha-test-suite/test/test_check-failed-actions > {{ overcloud_working_dir }}/test_failed-actions.log 2>&1
+    {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_check-failed-actions > {{ overcloud_working_dir }}/test_failed-actions.log 2>&1
+
+- name: HA Test instance deploy on the overcloud (undercloud)
+  delegate_to: undercloud
+  shell: >
+    {{ working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ working_dir }}/tripleo-director-ha-test-suite/test/test_instance-creation -r {{ working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_instance-creation > {{ working_dir }}/test_instance.log 2>&1
 
 #- name: HA test A
 #  delegate_to: overcloud-controller-0
