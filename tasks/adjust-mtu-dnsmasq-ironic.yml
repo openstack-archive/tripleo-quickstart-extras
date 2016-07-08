@@ -1,0 +1,16 @@
+- when: mtu is defined
+  block:
+
+    - name: Adjust interface mtus
+      become: yes
+      shell: >
+        ip link set {{ item }} mtu {{ mtu }};
+        echo "MTU={{ mtu }}" >> /etc/sysconfig/network-scripts/ifcfg-{{ item }}
+      with_items:  "{{ mtu_interface }}"
+
+    - name: Modify dnsmasq-ironic.conf
+      become: yes
+      shell: >
+        echo -e "\ndhcp-option-force=26,{{ mtu }}" >> /etc/dnsmasq-ironic.conf;
+        systemctl restart 'neutron-*'
+

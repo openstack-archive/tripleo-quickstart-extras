@@ -1,3 +1,6 @@
 ---
 working_dir: /home/stack
 step_root_device_size: false
+mtu: 1350
+mtu_interface:
+  - eth1
