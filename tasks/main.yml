@@ -177,19 +177,21 @@
         curl {{ lookup('env', 'BUILD_URL') }}/consoleText | gzip > {{ artcl_collect_dir }}/console.txt.gz
       when: artcl_rsync_logs|bool and "{{ lookup('env', 'BUILD_URL') }}" != ""
 
-    - name: upload to the artifact server using password
+    #internal-ci
+    - name: upload to the artifact server using pubkey auth
       shell: >
-        RSYNC_PASSWORD=`echo $PROVISIONER_KEY|cut -b 1-13` rsync -av {{ artcl_collect_dir }}/ {{ artcl_rsync_path }}/$BUILD_TAG;
+        rsync -av -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" {{ artcl_collect_dir }}/ {{ artcl_rsync_path }}/$BUILD_TAG
       retries: 5
       delay: 60
-      when: artcl_rsync_logs|bool and "{{ lookup('env', 'PROVISIONER_KEY') }}" != ""
+      when: artcl_rsync_logs|bool and artcl_rsync_use_daemon is not defined
 
+    #centos-ci
     - name: upload to the artifact server using pubkey auth
       shell: >
         rsync -av {{ artcl_collect_dir }}/ {{ artcl_rsync_path }}/$BUILD_TAG
       retries: 5
       delay: 60
-      when: artcl_rsync_logs|bool and "{{ lookup('env', 'PROVISIONER_KEY') }}" == ""
+      when: artcl_rsync_logs|bool and artcl_rsync_use_daemon == true
 
     - name: create the artifact location redirect file
       template:

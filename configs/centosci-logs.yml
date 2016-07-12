@@ -38,4 +38,5 @@ artcl_collect_list:
 artcl_gzip_only: true
 artcl_artifact_url: https://ci.centos.org/artifacts/rdo
 artcl_rsync_path: rdo@artifacts.ci.centos.org::rdo
+artcl_rsync_use_daemon: true
 artcl_rsync_logs: true
