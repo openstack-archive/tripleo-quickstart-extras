@@ -16,8 +16,6 @@
     regexp: '^.*egg={{ artg_project_name }}$'
     replace: 'file://{{ local_working_dir }}/gated_roles/{{ artg_project_name }}/#egg={{ artg_project_name }}'
   with_items: '{{ artg_requirements }}'
-  # we are already in a file included in a loop, we need loop_control:
-  # http://docs.ansible.com/ansible/playbooks_loops.html#loop-control
   loop_control:
     loop_var: req_item
 

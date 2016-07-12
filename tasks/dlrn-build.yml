@@ -8,12 +8,14 @@
 - name: Override projects.ini settings
   lineinfile:
     dest: '{{ ansible_user_dir }}/DLRN/projects.ini'
-    regexp: '{{ item.regexp }}'
-    line: '{{ item.line }}'
+    regexp: '{{ project_item.regexp }}'
+    line: '{{ project_item.line }}'
   with_items:
     - { regexp: 'baseurl=.*', line: 'baseurl=https://trunk.rdoproject.org/centos7-{{ artg_release }}' }
     - { regexp: 'distro=.*', line: 'distro={{ artg_distro }}' }
     - { regexp: 'source=.*', line: 'source={{ artg_change.branch }}' }
+  loop_control:
+      loop_var: project_item
 
 - name: Map project name to DLRN project name
   register: project_name_mapped
