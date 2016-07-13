@@ -27,7 +27,19 @@
   ignore_errors: true
 
 - name: remove images from /var/lib/libvirt/images
-  shell: rm -Rf /var/lib/libvirt/images/*.qcow2
+  shell: rm -rf /var/lib/libvirt/images/*.qcow2
+  ignore_errors: true
+
+- name: remove tripleo-quickstart image cache (/var/cache/tripleo-quickstart/images)
+  shell: rm -rf /var/cache/tripleo-quickstart/images
+  ignore_errors: true
+
+- name: remove ansible-role-tripleo-image-build artifacts
+  shell: >
+    rm -rf /var/log/artib;
+    rm -rf /home/oooq-images;
+    rm -rf /var/lib/oooq-images;
+  ignore_errors: true
 
 - name: destroy brbm network
   command: virsh net-destroy brbm
