@@ -8,23 +8,23 @@
     - tar
 
 - block:
-    - name: Collect list of installed rpms
-      shell: rpm -qa | sort -f >/var/log/rpm.list
-
-    - name: Collect list of running kernel modules
-      shell: lsmod > /var/log/module_list
-
     - name: Prepare directory with extra logs
       file: dest=/var/log/extra state=directory
+
+    - name: rpm -qa
+      shell: rpm -qa | sort -f >/var/log/extra/rpm-list.txt
+
+    - name: yum list installed
+      shell: yum list installed >/var/log/extra/yum-list-installed.txt
 
     - name: Collect logs from all failed systemd services
       shell: >
         systemctl -t service --failed --no-legend | awk '{print $1}'
-            | xargs -r -n1 journalctl -u > /var/log/extra/services 2>&1
+            | xargs -r -n1 journalctl -u > /var/log/extra/services.txt 2>&1
 
     - name: Collect network status info
       shell: >
-        (ip a; ip r; iptables-save; iptables -nL) &> /var/log/extra/network;
+        (ip a; ip r; iptables-save; iptables -nL) &> /var/log/extra/network.txt;
         (for NS in $(ip netns list); do
         echo "==== $NS ====";
         ip netns exec $NS ip a;
@@ -43,32 +43,32 @@
         ovsdb-client dump) &> /var/log/extra/network-bridges;
 
     - name: lsof -P
-      shell: "lsof -P &> /var/log/extra/lsof"
+      shell: "lsof -P &> /var/log/extra/lsof.txt"
 
     - name: pstree -p
-      shell: "pstree -p &> /var/log/extra/pstree"
+      shell: "pstree -p &> /var/log/extra/pstree.txt"
 
     - name: sysctl -a
-      shell: "sysctl -a &> /var/log/extra/sysctl"
+      shell: "sysctl -a &> /var/log/extra/sysctl.txt"
 
     - name: netstat -lnp
-      shell: "netstat -lnp &> /var/log/extra/netstat"
+      shell: "netstat -lnp &> /var/log/extra/netstat.txt"
 
     - name: openstack-status
-      shell: "which openstack-status &> /dev/null && (. ~/keystonerc_admin; openstack-status &> /var/log/extra/openstack-status)"
+      shell: "which openstack-status &> /dev/null && (. ~/keystonerc_admin; openstack-status &> /var/log/extra/openstack-status.txt)"
       when: "'controller' in inventory_hostname"
 
     - name: lsmod
-      shell: "lsmod &> /var/log/extra/lsmod"
+      shell: "lsmod &> /var/log/extra/lsmod.txt"
 
     - name: lspci
-      shell: "lspci &> /var/log/extra/lspci"
+      shell: "lspci &> /var/log/extra/lspci.txt"
 
     - name: pip list
-      shell: "pip list &> /var/log/extra/pip"
+      shell: "pip list &> /var/log/extra/pip.txt"
 
     - name: lvm debug
-      shell: "(vgs; pvs; lvs) &> /var/log/extra/lvm"
+      shell: "(vgs; pvs; lvs) &> /var/log/extra/lvm.txt"
 
     - name: Generate human-readable SAR logs
       shell: "[[ -f /usr/lib64/sa/sa2 ]] && /usr/lib64/sa/sa2 -A"
