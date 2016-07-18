@@ -1,4 +1,4 @@
-- when: mtu is defined
+- when: step_adjust_mtu
   block:
 
     - name: Adjust interface mtus
