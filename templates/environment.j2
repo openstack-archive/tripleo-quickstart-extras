@@ -4,6 +4,7 @@ export OPENSTACK_VERSION={{ release }}
 export SSH="ssh -q -o StrictHostKeyChecking=no"
 export SCP="scp -q -o StrictHostKeyChecking=no"
 # Floating network details
+export FLOATING_PHYSICAL_NET="{{ public_physical_network }}"
 export FLOATING_SUBNET="{{ floating_ip_cidr }}"
 export FLOATING_RANGE_START="{{ public_net_pool_start }}"
 export FLOATING_RANGE_END="{{ public_net_pool_end }}"
