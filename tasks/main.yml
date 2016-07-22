@@ -26,7 +26,7 @@
       - "undercloud"
       - "{{ groups['controller'] }}"
   shell: >
-    rm -rf overcloud-ha-test-suite;
+    rm -rf tripleo-director-ha-test-suite;
     git clone https://github.com/rscarazz/tripleo-director-ha-test-suite/ tripleo-director-ha-test-suite;
   delegate_to: "{{ item }}"
   with_items: "{{ nodes }}"
