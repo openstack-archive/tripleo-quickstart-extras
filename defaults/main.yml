@@ -35,6 +35,7 @@ artcl_collect_list:
   - /home/stack/tempest/*.log
   - /home/stack/tempest/etc/*.conf
   - /home/stack/local_tht
+  - /home/stack/gating_repo.tar.gz
   - /usr/share/openstack-tripleo-heat-templates
   - /etc/yum.repos.d
   - /etc/selinux
