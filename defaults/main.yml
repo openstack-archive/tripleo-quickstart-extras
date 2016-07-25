@@ -32,6 +32,7 @@ artcl_collect_list:
   - /home/stack/deploy-overcloudrc
   - /home/stack/network-environment.yaml
   - /home/stack/tempest/*.xml
+  - /home/stack/tempest/*.html
   - /home/stack/tempest/*.log
   - /home/stack/tempest/etc/*.conf
   - /home/stack/local_tht
