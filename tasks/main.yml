@@ -175,5 +175,9 @@
         - rhos_rpms.stdout_lines
         - delorean_rpms.stdout_lines
 
+    # this task *MUST* be the last task that is run
+    - name: remove all the yum repos <nuke>
+      shell: rm -Rf /etc/yum.repos.d/*
+
   # end of block
   ignore_errors: true
