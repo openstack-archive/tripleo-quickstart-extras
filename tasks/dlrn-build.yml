@@ -26,34 +26,12 @@
   args:
       chdir: '{{ ansible_user_dir }}/DLRN'
 
-# TODO(adarazs): regarding the refspec: a fix is needed for DLRN. We're
-# creating an origin/<commit_branch> reference, because DLRN does something
-# like "git checkout -b <branch> origin/<branch>" and there's no way to prevent
-# it, except "masking" this origin reference with out gated change.
-# The existing --dev mode only works for packaging repos.
 - name: Clone the gated change
   git:
-    repo: "https://{{ artg_change.host }}/{{ artg_change.project }}"
-    dest: "{{ ansible_user_dir }}/DLRN/data/{{ project_name_mapped.stdout }}"
-    refspec: "{{ artg_change.refspec }}:origin/{{ artg_change.branch }}"
-
-# THT does not use the default rpm-master distro, however DLRN insists on
-# checking that branch out, even when we rewrite it in projects.ini
-# This was fixed in the latest DLRN however we are forced to pin it to earlier
-# version because of
-# https://github.com/openstack-packages/DLRN/issues/22
-- block:
-    - name: Clone the THT distro files
-      git:
-        repo: 'http://review.rdoproject.org/r/p/openstack/tripleo-heat-templates-distgit.git'
-        dest: '{{ ansible_user_dir }}/DLRN/data/openstack-tripleo-heat-templates_distro'
-
-    - name: Check out the proper distro branch and write it out as rpm-master
-      shell: >
-        git checkout -B rpm-master refs/remotes/origin/{{ artg_distro }}
-      args:
-        chdir: '{{ ansible_user_dir }}/DLRN/data/openstack-tripleo-heat-templates_distro'
-  when: artg_change.project == 'openstack/tripleo-heat-templates'
+    repo: 'https://{{ artg_change.host }}/{{ artg_change.project }}'
+    dest: '{{ ansible_user_dir }}/DLRN/data/{{ project_name_mapped.stdout }}'
+    refspec: '{{ artg_change.refspec }}'
+    version: 'FETCH_HEAD'
 
 - name: Run DLRN
   shell: >

@@ -30,13 +30,10 @@
   args:
     creates: '{{ ansible_user_dir }}/dlrn-venv'
 
-# pin DLRN until this issue is resolved
-# https://github.com/openstack-packages/DLRN/issues/22
 - name: Clone DLRN
   git:
     repo: '{{ artg_dlrn_repo_url }}'
     dest: '{{ ansible_user_dir }}/DLRN'
-    version: 'c58f1907fcd30405b0f88503dd88f8bac9c69dc5'
 
 #Remove the rpm install test to speed up delorean
 #TODO: add an option for this in delorean
@@ -45,9 +42,7 @@
     sed -i -e 's%--postinstall%%'
     {{ ansible_user_dir }}/DLRN/scripts/build_rpm.sh
 
-# workaround for
-# https://github.com/openstack-packages/DLRN/issues/16
-- name: force update pip (see DLRN issue 16)
+- name: Update pip before requirements install
   pip:
     name: pip
     state: latest
