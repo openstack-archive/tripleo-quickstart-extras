@@ -1,5 +1,31 @@
 #!/bin/bash
-set -eux
+set -ux
+
+onerror(){
+
+    echo "Command failed"
+    #if heat stack-list | grep -q '_FAILED'; then
+
+        # get the failures list
+        heat resource-list overcloud >> failed_upgrade_list.log || true
+
+        # get any puppet related errors
+        for failed in $(heat resource-list \
+            --nested-depth 5 overcloud | grep FAIL |
+            grep 'StructuredDeployment ' | cut -d '|' -f3)
+        do echo -n "heat deployment-show out put for deployment: $failed" >> failed_upgrade.log
+           echo -n "######################################################" >> failed_upgrade.log
+           heat deployment-show $failed >> failed_upgrade.log
+           echo -n "######################################################" >> failed_upgrade.log
+           echo "puppet standard error for deployment: $failed" >> failed_upgrade.log
+           echo -n "######################################################" >> failed_upgrade.log
+           echo -e $(heat deployment-show $failed | jq .output_values.deploy_stderr) >> failed_upgrade.log
+           echo -n "######################################################" >> failed_upgrade.log
+        done
+    #fi
+}
+trap onerror ERR
+
 source {{ upgrade_working_dir }}/stackrc
 
 echo "execute aodh upgrade"
@@ -16,16 +42,6 @@ openstack overcloud deploy --templates {{ tht_dir }} \
     -e {{ item }} \
 {% endfor %}
     -e {{ tht_dir }}/environments/major-upgrade-aodh.yaml
-
-# Workaround for:
-# https://bugs.launchpad.net/tripleo/+bug/1599798
-mv tripleo-heat-templates tripleo-heat-templates.org
-git clone https://github.com/openstack/tripleo-heat-templates.git -b stable/mitaka
-pushd tripleo-heat-templates
-git config user.email "mat.bultel@gmail.com"
-git config user.name "matbu"
-git fetch https://review.openstack.org/openstack/tripleo-heat-templates refs/changes/79/338879/3 && git checkout FETCH_HEAD
-popd
 
 echo "execute keystone upgrade"
 openstack overcloud deploy --templates {{ tht_dir }} \
