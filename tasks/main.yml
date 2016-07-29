@@ -186,7 +186,9 @@
       when: artcl_rsync_logs|bool and artcl_rsync_use_daemon == false
 
     #centos-ci
-    - name: upload to the artifact server using pubkey auth
+    - name: upload to the artifact server using password auth
+      environment:
+        RSYNC_PASSWORD: "{{ lookup('env', 'RSYNC_PASSWORD') }}"
       shell: >
         rsync -av {{ artcl_collect_dir }}/ {{ artcl_rsync_path }}/$BUILD_TAG
       retries: 5
