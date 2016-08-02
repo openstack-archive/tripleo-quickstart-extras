@@ -1,6 +1,7 @@
 ---
-- name: Collect logs and debug data
+
+- name: Collect logs, create docs, publish
   hosts: all:!localhost
   gather_facts: no
   roles:
-    - tripleo-collect-logs
+    - role: tripleo-collect-logs

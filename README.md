@@ -31,7 +31,7 @@ artcl_collect_list:
 * `artcl_gzip_only`: false/true  -- When true, gathered files are gzipped one by
   one in `artcl_collect_dir`, when false, a tar.gz file will contain all the
   logs.
-* `artcl_rsync_logs`: true/false -- If true, the role will attempt to rsync logs
+* `artcl_publish`: true/false -- If true, the role will attempt to rsync logs
   to the target specified by `artcl_rsync_url`. Uses `BUILD_URL`, `BUILD_TAG`
   vars from the environment (set during a Jenkins job run) and requires the
   next to variables to be set.
