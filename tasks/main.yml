@@ -5,6 +5,9 @@
 
 - block:
 
+    - name: unregister rhn via subscription manager
+      redhat_subscription: state=absent
+
     - debug: msg="All errors in this block are ignored"
 
     - name: ensure libvirt-python is installed
