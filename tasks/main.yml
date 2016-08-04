@@ -4,5 +4,8 @@
 - include: collect.yml
   when: artcl_collect|bool
 
+- include: create-docs.yml
+  when: artcl_gen_docs|bool
+
 - include: publish.yml
   when: artcl_publish|bool
