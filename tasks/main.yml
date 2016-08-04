@@ -1,17 +1,3 @@
----
-# tasks file for ansible-role-tripleo-overcloud-validate
-
-- name: Create overcloud validate script
-  template:
-    src: "{{ validate_script }}"
-    dest: "{{ working_dir }}/overcloud-validate.sh"
-    mode: 0744
-
-- name: Copy validate template
-  template:
-    src: "{{ validate_template }}"
-    dest: "{{ working_dir }}/tenantvm_floatingip.yaml"
-
-- name: Validate the overcloud
-  shell: |
-    {{ working_dir }}/overcloud-validate.sh > {{ validate_log }} 2>&1
+- include: validate.yml
+  tags:
+    - overcloud-validate
