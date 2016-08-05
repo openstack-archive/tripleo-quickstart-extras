@@ -20,11 +20,18 @@ function cleanup() {
         {% endif %}
         fi
     fi
+    # Remove images and network
+    rm -f {{ validate_image_dir }}/cirros.*
+    glance image-list | grep pingtest | awk '{print $2}' | while read IMAGEID; do glance image-delete $IMAGEID; done
+    #neutron net-delete {{ overcloud_public_network_name }} > /dev/null 2>&1 || true
+    neutron net-delete {{ overcloud_public_network_name }}
 }
 # trap on exit
 trap cleanup EXIT
 # source tenantrc file
 source {{ working_dir }}/{{ tenantrc }}
+# Check if an environment is already deployed and, in case, cleanup it
+[ "x$(heat stack-list | grep pingtest_stack || true)" != "x" ] && cleanup
 # get validate image
 if [[ ! -d {{ validate_image_dir }} ]]; then
     mkdir {{ validate_image_dir }};
@@ -35,17 +42,11 @@ KERNEL_PATH={{ validate_image_dir }}/cirros.kernel
 curl -L -o $IMAGE_PATH {{ validate_image_url }}{{ image_disk }}
 curl -L -o $INITRAMFS_PATH {{ validate_image_url }}{{ image_initramfs }}
 curl -L -o $KERNEL_PATH {{ validate_image_url }}{{ image_kernel }}
-# remove existing image
-for image in $(glance image-list | grep {{ validate_image_name }} | awk '{ print $2; }'); do
-   glance image-delete $image
-done
 # upload cirros image into glance
 ramdisk_id=$(openstack image create pingtest_initramfs --public --container-format ari --disk-format ari --file $INITRAMFS_PATH | grep ' id ' | awk '{print $4}')
 kernel_id=$(openstack image create pingtest_kernel --public --container-format aki --disk-format aki --file $KERNEL_PATH | grep ' id ' | awk '{print $4}')
 openstack image create {{ validate_image_name }} --public --container-format ami --disk-format ami \
     --property kernel_id=$kernel_id --property ramdisk_id=$ramdisk_id --file $IMAGE_PATH
-# clean up network if it exists from previous run
-neutron net-delete {{ overcloud_public_network_name }} > /dev/null 2>&1 || true
 # create external network
 # Liberty compat :
 #( note: heat can't create an external network in liberty)
