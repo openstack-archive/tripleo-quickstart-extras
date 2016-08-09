@@ -21,12 +21,8 @@
   sudo: yes
   shell: yum clean all
 
-- name: stop openstack services
-  service: name={{item}} state=stopped
-  when: major_upgrade
-  sudo: yes
-  with_items:
-      - openstack-keystone
-      - neutron-server
-      - mariadb
-
+- name: Create undercloud upgrade script
+  template:
+    src: "{{ undercloud_upgrade_script }}"
+    dest: "{{ upgrade_working_dir }}/undercloud-upgrade.sh"
+    mode: 0755

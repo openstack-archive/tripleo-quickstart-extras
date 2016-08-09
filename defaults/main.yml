@@ -23,6 +23,7 @@ repos_url:
 upgrade_working_dir: /home/stack
 tht_dir: tripleo-heat-templates
 # scripts
+undercloud_upgrade_script: upgrade-undercloud.sh.j2
 upgrade_undercloud_repo_script: upgrade-repo.sh.j2
 upgrade_overcloud_repo_script: upgrade-repo.sh.j2
 major_upgrade_script: major-upgrade-overcloud.sh.j2
@@ -30,7 +31,8 @@ minor_upgrade_script: minor-upgrade-overcloud.sh.j2
 upgrade_non_controller_script: /bin/upgrade-non-controller.sh
 upgrade_overcloud_repo_template: overcloud-repo.yaml.j2
 # logs:
-upgrade_log: upgrade_console.log
+upgrade_log: overcloud_upgrade_console.log
+undercloud_upgrade_log: undercloud_upgrade_console.log
 # user:
 undercloud_upgrade_user: stack
 # override those lists with your templates that your env needs for upgrade

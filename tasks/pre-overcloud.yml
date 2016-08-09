@@ -14,6 +14,7 @@
       {{ upgrade_working_dir }}/{{ tht_dir }};
 
 - name: Add the no ssh finger print checking into upgrade-non-controller.sh
+  when: step_upgrade_undercloud
   sudo: yes
   shell: >
       sed -i 's/ssh/ssh -o StrictHostKeyChecking=no/' \

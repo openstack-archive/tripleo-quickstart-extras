@@ -1,6 +1,7 @@
 ---
 - name: Upgrade the undercloud
-  shell: openstack undercloud upgrade &> upgrade_undercloud.log
+  shell: >
+      {{ upgrade_working_dir }}/undercloud-upgrade.sh > {{ undercloud_upgrade_log }} 2>&1
   when: step_upgrade_undercloud
   notify:
     - restart openstack services
