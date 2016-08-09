@@ -1,7 +1,13 @@
 ---
 working_dir: /home/stack
+
 step_root_device_size: false
+
 step_adjust_mtu: false
 mtu: 1350
 mtu_interface:
   - eth1
+
+undercloud_type: virtual
+network-isolation: true
+network_isolation_ipv4_cidr: "172.16.23.0/24"

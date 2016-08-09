@@ -1,0 +1,9 @@
+---
+- when: network-isolation and undercloud_type == "baremetal"
+  block:
+
+    - name: allow traffic for the controller
+      become: yes
+      shell: >
+          iptables -A BOOTSTACK_MASQ -s {{ network_isolation_ipv4_cidr }} ! -d {{ network_isolation_ipv4_cidr }} -j MASQUERADE -t nat;
+          iptables-save > /etc/sysconfig/iptables;

@@ -1,7 +1,7 @@
 Role Name
 =========
 
-An Ansible role to setup the baremetal overcloud nodes for deployment.
+An Ansible role to setup the undercloud for a deployment on baremetal overcloud nodes.
 
 Requirements
 ------------
@@ -15,6 +15,12 @@ Role Variables
 
 - step_root_device_size: <false> -- boolean value that will apply disk size hints and rerun introspection if true
 - working_dir: <'/home/stack'> -- working directory for the role. Assumes stackrc file is present at this location
+- step_adjust_mtu: <false> -- boolean value that will change MTUS on specified nics
+- mtu: <1350> -- numerical value to set MTUs
+- mtu_interface: <'eth1'> -- list of NICs
+- undercloud_type: <virtual> -- can be overwritten with values like 'baremetal' or 'ovb'
+- network-isolation: <true> -- bolean value to test if network isolation wil be used in the deployment
+- network_isolation_ipv4_cidr: <"172.16.23.0/24">
 
 Dependencies
 ------------
@@ -26,11 +32,11 @@ Example Playbook
 
   1. Sample playbook to call the role
 
-    - name: Prepare the baremetal overcloud for deployment
+    - name: Prepare for deployment on baremetal overcloud
       hosts: virthost
       gather_facts: no
       roles:
-        - ansible-role-tripleo-baremetal-overcloud
+        - ansible-role-tripleo-overcloud-prep-baremetal
 
 License
 -------
@@ -41,3 +47,4 @@ Author Information
 ------------------
 
 RDO-CI Team
+
