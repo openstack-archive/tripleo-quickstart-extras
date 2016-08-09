@@ -1,8 +1,9 @@
 #!/bin/bash
+
 set -eux
 # Undercloud upgrade script.
 # Those steps is for the major mariadb upgrade in mitaka
-{% if target_upgrade_version == 'mitaka' and major_upgrade == true %}
+{% if target_upgrade_version == 'mitaka' and major_upgrade == 'true' %}
 sudo systemctl start mariadb
 mysqldump -u root --flush-privileges --single-transaction --all-databases > /home/stack/backup.sql
 sudo systemctl stop mariadb
