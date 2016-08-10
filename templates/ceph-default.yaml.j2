@@ -1,0 +1,7 @@
+{% if enable_ceph == false and target_upgrade_version == 'mitaka' %}
+parameter_defaults:
+  CephClusterFSID: ''
+  CephMonKey: ''
+  CephAdminKey: ''
+  CephClientKey: ''
+{% endif %}

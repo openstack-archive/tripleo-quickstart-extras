@@ -30,6 +30,7 @@ major_upgrade_script: major-upgrade-overcloud.sh.j2
 minor_upgrade_script: minor-upgrade-overcloud.sh.j2
 upgrade_non_controller_script: /bin/upgrade-non-controller.sh
 upgrade_overcloud_repo_template: overcloud-repo.yaml.j2
+ceph_default_template: ceph-default.yaml.j2
 # logs:
 upgrade_log: overcloud_upgrade_console.log
 undercloud_upgrade_log: undercloud_upgrade_console.log
@@ -40,10 +41,15 @@ undercloud_upgrade_user: stack
 # upgrade_custom_templates_script_delivery:
 #  - custom.yaml
 #  - custom2.yaml
+#upgrade_custom_templates_controller: {}
+#upgrade_custom_templates_converge: {}
 upgrade_custom_templates_script_delivery:
   - overcloud-repo.yaml
-upgrade_custom_templates_controller: {}
-upgrade_custom_templates_converge: {}
+  - ceph-default.yaml
+upgrade_custom_templates_controller:
+  - ceph-default.yaml
+upgrade_custom_templates_converge:
+  - ceph-default.yaml
 # custom templates:
 # example:
 #upgrade_templates: {}
@@ -54,6 +60,9 @@ upgrade_templates:
   overcloud-repo:
     name: overcloud-repo.yaml
     src: "{{ upgrade_overcloud_repo_template }}"
+  ceph-default:
+    name: ceph-default.yaml
+    src: "{{ ceph_default_template }}"
 # upgrade steps:
 step_pre_overcloud_upgrade: true
 step_pre_undercloud_upgrade: true
@@ -64,3 +73,4 @@ step_upgrade_overcloud: true
 # major : True
 # default is major
 major_upgrade: true
+enable_ceph: false
