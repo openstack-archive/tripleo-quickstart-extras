@@ -11,14 +11,6 @@
         ansible_user: "root"
         ansible_host: "{{ virthost }}"
 
-# Add the virthost node to the generated
-# inventory.
-- name:  Inventory the virthost
-  hosts: localhost
-  gather_facts: yes
-  roles:
-    - { role: tripleo-inventory }
-
 - include: teardown.yml
 
 - include: provision.yml
@@ -66,17 +58,17 @@
   roles:
     - tripleo/undercloud
 
-- name:  Post undercloud install steps
+- name:  copy over config files
   hosts: undercloud
   gather_facts: no
   roles:
-    - tripleo-undercloud-post
+    - overcloud-prep-config
 
 - name:  Perpare the baremetal overcloud
   hosts: undercloud
   gather_facts: no
   roles:
-    - baremetal-overcloud
+    - overcloud-prep-baremetal
 
 - name:  Deploy the overcloud
   hosts: undercloud
@@ -110,6 +102,8 @@
 
 - name:  validate the overcloud
   hosts: undercloud
+  tags:
+    - overcloud-validate
   gather_facts: no
   roles:
     - tripleo-overcloud-validate
