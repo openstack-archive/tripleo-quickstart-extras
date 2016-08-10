@@ -2,32 +2,26 @@
 set -ux
 
 onerror(){
-
     echo "Command failed"
-    #if heat stack-list | grep -q '_FAILED'; then
-
-        # get the failures list
-        heat resource-list overcloud >> failed_upgrade_list.log || true
-
-        # get any puppet related errors
-        for failed in $(heat resource-list \
-            --nested-depth 5 overcloud | grep FAIL |
-            grep 'StructuredDeployment ' | cut -d '|' -f3)
-        do echo -n "heat deployment-show out put for deployment: $failed" >> failed_upgrade.log
-           echo -n "######################################################" >> failed_upgrade.log
-           heat deployment-show $failed >> failed_upgrade.log
-           echo -n "######################################################" >> failed_upgrade.log
-           echo "puppet standard error for deployment: $failed" >> failed_upgrade.log
-           echo -n "######################################################" >> failed_upgrade.log
-           echo -e $(heat deployment-show $failed | jq .output_values.deploy_stderr) >> failed_upgrade.log
-           echo -n "######################################################" >> failed_upgrade.log
-        done
-    #fi
+    # get the failures list
+    heat resource-list overcloud >> failed_upgrade_list.log || true
+    for failed in $(heat resource-list \
+        --nested-depth 5 overcloud | grep FAIL |
+        grep 'StructuredDeployment ' | cut -d '|' -f3)
+    do echo -n "heat deployment-show out put for deployment: $failed" >> failed_upgrade.log
+       echo -n "######################################################" >> failed_upgrade.log
+       heat deployment-show $failed >> failed_upgrade.log
+       echo -n "######################################################" >> failed_upgrade.log
+       echo "puppet standard error for deployment: $failed" >> failed_upgrade.log
+       echo -n "######################################################" >> failed_upgrade.log
+       echo -e $(heat deployment-show $failed | jq .output_values.deploy_stderr) >> failed_upgrade.log
+       echo -n "######################################################" >> failed_upgrade.log
+    done
+    exit 1
 }
 trap onerror ERR
 
 source {{ upgrade_working_dir }}/stackrc
-
 echo "execute aodh upgrade"
 {% if target_upgrade_version == 'mitaka' %}
 openstack overcloud deploy --templates {{ tht_dir }} \
