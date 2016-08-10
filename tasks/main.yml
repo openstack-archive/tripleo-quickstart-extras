@@ -1,0 +1,19 @@
+---
+- when: undercloud_type == "baremetal"
+  block:
+
+    - name: "Push baremetal instackenv.json"
+      copy:
+        src: "{{ baremetal_instackenv }}"
+        dest: "{{ working_dir }}/instackenv.json"
+
+    - name: "Push network-environment.yaml"
+      copy:
+        src: "{{ baremetal_network_environment }}"
+        dest: "{{ working_dir }}/network-environment.yaml"
+
+- name: "Push baremetal nic-configs directory (if defined)"
+  copy:
+    src: "{{ baremetal_nic_configs }}"
+    dest: "{{ working_dir }}"
+  when: baremetal_nic_configs is defined

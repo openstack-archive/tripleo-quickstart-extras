@@ -1,0 +1,6 @@
+---
+working_dir: /home/stack
+
+undercloud_type: virtual
+baremetal_instackenv: "{{ working_dir }}/instackenv.json"
+baremetal_network_environment: "{{ working_dir }}/network-isolation.yml"
