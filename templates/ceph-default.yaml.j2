@@ -1,4 +1,6 @@
 {% if enable_ceph == false and target_upgrade_version == 'mitaka' %}
+# Workaround due to backward compatibility:
+# https://bugs.launchpad.net/tripleo/+bug/1610258
 parameter_defaults:
   CephClusterFSID: ''
   CephMonKey: ''

@@ -30,6 +30,8 @@ major_upgrade_script: major-upgrade-overcloud.sh.j2
 minor_upgrade_script: minor-upgrade-overcloud.sh.j2
 upgrade_non_controller_script: /bin/upgrade-non-controller.sh
 upgrade_overcloud_repo_template: overcloud-repo.yaml.j2
+# Workaround for:
+# https://bugs.launchpad.net/tripleo/+bug/1610258
 ceph_default_template: ceph-default.yaml.j2
 # logs:
 upgrade_log: overcloud_upgrade_console.log
