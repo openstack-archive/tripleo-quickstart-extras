@@ -9,5 +9,5 @@ mtu_interface:
   - eth1
 
 undercloud_type: virtual
-network-isolation: true
+network_isolation: true
 network_isolation_ipv4_cidr: "172.16.23.0/24"

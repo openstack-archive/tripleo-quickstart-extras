@@ -1,5 +1,5 @@
 ---
-- when: network-isolation and undercloud_type == "baremetal"
+- when: network_isolation and undercloud_type == "baremetal"
   block:
 
     - name: allow traffic for the controller

@@ -19,7 +19,7 @@ Role Variables
 - mtu: <1350> -- numerical value to set MTUs
 - mtu_interface: <'eth1'> -- list of NICs
 - undercloud_type: <virtual> -- can be overwritten with values like 'baremetal' or 'ovb'
-- network-isolation: <true> -- bolean value to test if network isolation wil be used in the deployment
+- network_isolation: <true> -- bolean value to test if network isolation wil be used in the deployment
 - network_isolation_ipv4_cidr: <"172.16.23.0/24">
 
 Dependencies
