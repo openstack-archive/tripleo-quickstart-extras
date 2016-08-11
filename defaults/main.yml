@@ -43,15 +43,10 @@ undercloud_upgrade_user: stack
 # upgrade_custom_templates_script_delivery:
 #  - custom.yaml
 #  - custom2.yaml
-#upgrade_custom_templates_controller: {}
-#upgrade_custom_templates_converge: {}
 upgrade_custom_templates_script_delivery:
   - overcloud-repo.yaml
-  - ceph-default.yaml
-upgrade_custom_templates_controller:
-  - ceph-default.yaml
-upgrade_custom_templates_converge:
-  - ceph-default.yaml
+upgrade_custom_templates_controller: {}
+upgrade_custom_templates_converge: {}
 # custom templates:
 # example:
 #upgrade_templates: {}
@@ -62,9 +57,6 @@ upgrade_templates:
   overcloud-repo:
     name: overcloud-repo.yaml
     src: "{{ upgrade_overcloud_repo_template }}"
-  ceph-default:
-    name: ceph-default.yaml
-    src: "{{ ceph_default_template }}"
 # upgrade steps:
 step_pre_overcloud_upgrade: true
 step_pre_undercloud_upgrade: true
