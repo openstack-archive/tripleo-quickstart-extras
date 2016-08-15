@@ -16,6 +16,18 @@
     - name: yum list installed
       shell: yum list installed >/var/log/extra/yum-list-installed.txt
 
+    # used by rel-eng to import into internal builds
+    - name: package import delorean
+      shell: |
+        repoquery --disablerepo='*' --enablerepo='delorean'\
+        -a --qf '%{sourcerpm}'|sort -u|sed 's/.src.rpm//g' >> /var/log/extra/import-delorean.txt
+
+    # used by rel-eng to import into internal builds
+    - name: package import delorean-testing
+      shell: |
+        repoquery --disablerepo='*' --enablerepo='delorean-*-testing'\
+        -a --qf '%{sourcerpm}'|sort -u|sed 's/.src.rpm//g' >> /var/log/extra/import-delorean-testing.txt
+
     - name: Collect logs from all failed systemd services
       shell: >
         systemctl -t service --failed --no-legend | awk '{print $1}'
