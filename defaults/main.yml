@@ -55,6 +55,8 @@ deploy_args: >-
   {{ pacemaker_args }}
   {{ extra_args }}
 
+overcloud_templates_path: /usr/share/openstack-tripleo-heat-templates
+
 step_deploy_overcloud: true
 step_validate_overcloud: true
 test_tempest: false
