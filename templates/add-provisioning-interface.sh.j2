@@ -1,10 +1,31 @@
 #!/bin/bash
 
-# Script to add provisioning interface to brovc
-
 set -eux
 
-# Add static ip to nic on provisioning network
+### --start_docs
+
+## Deploying a baremetal overcloud from a virtual machine undercloud
+## =================================================================
+
+.. note:: When deploying the overcloud on baremetal nodes, there is the option of using an
+          undercloud deployed on a baremetal machine or creating a virtual machine (VM) on
+          that same baremetal machine and using the VM to serve as the undercloud.
+
+          The advantages of using a VM undercloud are:
+
+          * The VM can be rebuilt and reinstalled without reprovisioning the entire baremetal machine
+          * The tripleo-quickstart default workflow is written for a Virtual Environment deployment.
+            Using a VM undercloud requires less customization of the default workflow
+
+## * The following set up steps are run *on the virthost machine* to allow the undercloud VM
+## * to PXE boot the overcloud nodes:
+
+## Set up the virthost machine for PXE forwarding
+## ----------------------------------------------
+
+## * Add a static IPADDR to the NIC on provisioning network
+## ::
+
 sudo cat > /etc/sysconfig/network-scripts/ifcfg-{{ virthost_provisioning_interface }} << EOF
 NAME={{ virthost_provisioning_interface }}
 IPADDR={{ virthost_provisioning_ip }}
@@ -24,12 +45,19 @@ IPV6_PEERDNS=yes
 IPV6_PEERROUTES=yes
 EOF
 
-# Bring the nic down first
+## * Bring the NIC down first
+## ::
+
 sudo ifdown {{ virthost_provisioning_interface }}
 
-# Bring the nic up again
+## * Bring the NIC up again
+## ::
+
 sudo ifup {{ virthost_provisioning_interface }}
 
-# Add provisioning interface to the "brovc" bridge
+## * Add the NIC on the provisioning interface to the "brovc" bridge
+## ::
+
 sudo brctl addif brovc {{ virthost_provisioning_interface }}
 
+### --stop_docs
