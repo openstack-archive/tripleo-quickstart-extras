@@ -46,5 +46,5 @@
   when: set_heat_workers
   sudo: yes
   shell: >
-    sed -i "/#num_engine_workers/a num_engine_workers = {{ heat_workers }}" /etc/heat/heat.conf
+    sed -i "/#num_engine_workers/a num_engine_workers = {{ heat_workers }}" /etc/heat/heat.conf;
     systemctl restart openstack-heat-engine
