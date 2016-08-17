@@ -68,3 +68,6 @@ step_upgrade_overcloud: true
 # default is major
 major_upgrade: true
 enable_ceph: false
+# heat workers:
+set_heat_workers: true
+heat_workers: 2

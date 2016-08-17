@@ -41,3 +41,10 @@
     src: "{{ minor_upgrade_script }}"
     dest: "{{ upgrade_working_dir }}/overcloud-upgrade.sh"
     mode: 0755
+
+- name: Set the num of heat workers
+  when: set_heat_workers
+  sudo: yes
+  shell: >
+    sed -i "/#num_engine_workers/a num_engine_workers = {{ heat_workers }}" /etc/heat/heat.conf
+    systemctl restart openstack-heat-engine
