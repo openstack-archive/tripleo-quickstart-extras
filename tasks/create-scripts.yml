@@ -1,25 +1,7 @@
-# Creat the scripts that will be used to deploy the undercloud
-# environment.
-- name: Create undercloud configuration
-  template:
-    src: "{{ undercloud_config_file }}"
-    dest: "./undercloud.conf"
-    mode: 0600
+# Creat the overcloud-prep-network scripts that will be used to setup the undercloud for network isolation
 
-- name: Create undercloud hieradata overrides
+- name: Create overcloud-prep-network script
   template:
-    src: "{{ undercloud_hieradata_override_file }}"
-    dest: "./quickstart-hieradata-overrides.yaml"
-    mode: 0600
-
-- name: Create undercloud install script
-  template:
-    src: "{{ undercloud_install_script }}"
-    dest: "{{ working_dir }}/undercloud-install.sh"
-    mode: 0755
-
-- name: Create undercloud post-install script
-  template:
-    src: "{{ undercloud_post_install_script }}"
-    dest: "{{ working_dir }}/undercloud-post-install.sh"
+    src: "{{ overcloud_prep_network_script }}"
+    dest: "{{ working_dir }}/overcloud-prep-network.sh"
     mode: 0755
