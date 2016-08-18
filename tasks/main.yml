@@ -2,11 +2,6 @@
   tags:
     - overcloud-scripts
 
-- include: setup-heat-templates.yml
-  when: (undercloud_type != "baremetal") and (undercloud_type != "ovb")
-  tags:
-    - overcloud-scripts
-
 - include: create-scripts.yml
   tags:
     - overcloud-scripts
