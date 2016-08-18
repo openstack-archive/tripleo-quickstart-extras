@@ -2,8 +2,15 @@
 - when: network_isolation and undercloud_type == "baremetal"
   block:
 
-    - name: allow traffic for the controller
+    - name: Copy over allow traffic script template
+      template:
+        src: allow-traffic-for-controller.sh.j2
+        dest: "{{ working_dir }}/allow-traffic-for-controller.sh"
+        mode: 0755
+
+    - name: Allow traffic for the controller
       become: yes
       shell: >
-          iptables -A BOOTSTACK_MASQ -s {{ network_isolation_ipv4_cidr }} ! -d {{ network_isolation_ipv4_cidr }} -j MASQUERADE -t nat;
-          iptables-save > /etc/sysconfig/iptables;
+        "{{ working_dir }}"/allow-traffic-for-controller.sh
+
+

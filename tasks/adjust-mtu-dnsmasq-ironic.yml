@@ -1,16 +1,15 @@
 - when: step_adjust_mtu
   block:
 
-    - name: Adjust interface mtus
-      become: yes
-      shell: >
-        ip link set {{ item }} mtu {{ mtu }};
-        echo "MTU={{ mtu }}" >> /etc/sysconfig/network-scripts/ifcfg-{{ item }}
-      with_items:  "{{ mtu_interface }}"
+    - name: Copy over adjust interface mtus script template
+      template:
+        src: adjust-interface-mtus.sh.j2
+        dest: "{{ working_dir }}/adjust-interface-mtus.sh"
+        mode: 0755
 
-    - name: Modify dnsmasq-ironic.conf
+    - name: Adjust MTU values and modify dnsmasq-ironic.conf
       become: yes
       shell: >
-        echo -e "\ndhcp-option-force=26,{{ mtu }}" >> /etc/dnsmasq-ironic.conf;
-        systemctl restart 'neutron-*'
+        "{{ working_dir }}"/adjust-interface-mtus.sh
+
 

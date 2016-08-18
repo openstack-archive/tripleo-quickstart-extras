@@ -4,14 +4,28 @@
 
 set -eux
 
-# get nodes UUID
+### --start_docs
+
+## Add disk size hints
+## ===================
+
+.. note:: Information on setting the root device for deployment is available here:
+          <http://docs.openstack.org/developer/tripleo-docs/advanced_deployment/root_device.html#setting-the-root-device-for-deployment>
+
+## * Get nodes UUID
+## ::
+
 source {{ working_dir }}/stackrc
 export items="$( ironic node-list | grep 'power' |  awk '{print $2}' )"
 
-# find disk size from instackenv.json
+## * Find disk size from instackenv.json
+## ::
+
 export DISK_SIZE="$( cat instackenv.json | grep '"disk": ' |  awk '{print $2}' | sed s/\"//g | sed s/\,// )"
 
-# update nodes with disk size hint
+## * Update nodes with disk size hint
+## ::
+
 count=0
 ARRAY_DISK_SIZE=($(echo $DISK_SIZE))
 ROOT_DEVICE_SIZE={{ disk_root_device_size }}
@@ -24,5 +38,9 @@ for item in $items; do
     count=$((count+1))
 done
 
-# rerun introspection
+## * Rerun introspection
+## ::
+
 openstack baremetal introspection bulk start
+
+### --stop_docs

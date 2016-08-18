@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -eux
+
+### --start_docs
+
+## Adjust interface MTU valuesfor undercloud and overcloud
+## =======================================================
+
+## * Adjust interface mtus
+## ::
+
+{% for interface in (mtu_interface) %}
+  ip link set {{ interface }} mtu {{ mtu }}
+  echo "MTU={{ mtu }}" >> /etc/sysconfig/network-scripts/ifcfg-{{ interface }}
+{% endfor %}
+
+## * Modify dnsmasq-ironic.conf
+## ::
+
+echo -e "\ndhcp-option-force=26,{{ mtu }}" >> /etc/dnsmasq-ironic.conf
+systemctl restart 'neutron-*'
+
+### --stop_docs
