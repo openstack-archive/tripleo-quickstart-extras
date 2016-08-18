@@ -1,0 +1,40 @@
+#!/bin/bash
+
+set -eux
+
+### --start_docs
+## --------------------------------------------------
+## Prepare the undercloud for deploying the overcloud
+## --------------------------------------------------
+
+## ########################
+## Prepare Your Environment
+## ########################
+
+## * Source in the undercloud credentials.
+## ::
+
+source {{ working_dir }}/stackrc
+
+## * Upload images to glance.
+## ::
+
+openstack overcloud image upload {% if bash_deploy_ramdisk %}--old-deploy-image{% endif %}
+
+## * Register nodes with Ironic.
+## ::
+
+openstack baremetal import --json instackenv.json
+openstack baremetal configure boot
+
+{% if step_introspect %}
+
+## * Introspect hardware attributes of nodes.
+## ::
+
+openstack baremetal introspection bulk start
+
+{% endif %}
+
+
+### --stop_docs
