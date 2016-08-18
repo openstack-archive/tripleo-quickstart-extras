@@ -42,6 +42,17 @@
     dest: "{{ upgrade_working_dir }}/overcloud-upgrade.sh"
     mode: 0755
 
+- name: get the number of core
+  when: set_heat_workers
+  register: core
+  shell: >
+    cat /proc/cpuinfo | grep processor | wc -l
+
+- name: set the number of workers for heat engine before runnning OC upgrade
+  when: set_heat_workers
+  set_fact:
+    heat_workers="{{ core.stdout|int - 1 }}"
+
 - name: Set the num of heat workers
   when: set_heat_workers
   sudo: yes
