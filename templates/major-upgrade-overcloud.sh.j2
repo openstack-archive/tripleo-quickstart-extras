@@ -120,6 +120,9 @@ if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COM
         -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
         -e ~/network-environment.yaml
     {% endif %}
+fi
+if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
+    echo "Update successful"
 else
     exit 1
 fi
