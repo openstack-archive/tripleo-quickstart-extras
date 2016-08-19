@@ -51,11 +51,11 @@
 - name: set the number of workers for heat engine before runnning OC upgrade
   when: set_heat_workers
   set_fact:
-    heat_workers="{{ core.stdout|int - 2 }}"
+    heat_workers="{{ core.stdout|int / 2 }}"
 
 - name: Set the num of heat workers
   when: set_heat_workers
   sudo: yes
   shell: >
-    sed -i "/#num_engine_workers/a num_engine_workers = {{ heat_workers }}" /etc/heat/heat.conf;
+    sed -i "/#num_engine_workers/a num_engine_workers = {{ heat_workers|int }}" /etc/heat/heat.conf;
     systemctl restart openstack-heat-engine
