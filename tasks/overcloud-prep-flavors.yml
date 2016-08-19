@@ -1,39 +1,4 @@
-# Extract the undercloud admin password from
-# `undercloud-passwords.conf`.
-- name: Get undercloud admin password
-  command: >
-    awk -F= '$1 == "undercloud_admin_password" {print $2}'
-    {{ working_dir }}/undercloud-passwords.conf
-  register: undercloud_admin_password
-
-- name: Copy stackrc to ansible host
-  tags:
-    - undercloud-post-install
-  fetch:
-    flat: true
-    src: stackrc
-    dest: "{{ local_working_dir }}/stackrc"
-
-# We need this (and the previous task) in order to replace the
-# `sudo hiera admin_password` with an actual password in the `stackrc`
-# file.
-- name: Update admin password in local credentials file
-  delegate_to: localhost
-  lineinfile:
-    dest: "{{ local_working_dir }}/stackrc"
-    line: "export OS_PASSWORD={{ undercloud_admin_password.stdout }}"
-    regexp: "OS_PASSWORD"
-
-- name: Prepare the undercloud for deploy
+- name: Prepare the scripts for overcloud flavors
   shell: |
-    {{ working_dir }}/undercloud-post-install.sh > \
-    {{ undercloud_post_install_log }} 2>&1
-
-- name: Create network environment file for network isolation
-  tags:
-    - undercloud-scripts
-  template:
-    src: "{{ network_environment_file }}"
-    dest: "{{ working_dir }}/network-environment.yaml"
-    mode: 0755
-  when: network_isolation
+    {{ working_dir }}/overcloud-prep-flavors.sh > \
+    {{ overcloud_prep_flavors_log }} 2>&1
