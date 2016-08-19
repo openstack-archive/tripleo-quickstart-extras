@@ -2,6 +2,6 @@
   tags:
     - undercloud-scripts
 
-- include: post-install.yml
+- include: overcloud-prep-network.yml
   tags:
-    - overcloud-prep-network.yml
+    - undercloud-post-install

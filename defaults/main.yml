@@ -1,6 +1,6 @@
 overcloud_prep_network_script: overcloud-prep-network.sh.j2
 overcloud_prep_network_log: "{{ working_dir }}/overcloud_prep_network.log"
-etwork_environment_file: network-environment.yaml.j2
+network_environment_file: network-environment.yaml.j2
 
 undercloud_network_cidr: 192.0.2.0/24
 
