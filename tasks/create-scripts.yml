@@ -2,6 +2,6 @@
 
 - name: Create overcloud prep-images script
   template:
-    src: "{{ undercloud_prep_images_script }}"
-    dest: "{{ working_dir }}/undercloud-prep-images.sh"
+    src: "{{ overcloud_prep_images_script }}"
+    dest: "{{ working_dir }}/overcloud-prep-images.sh"
     mode: 0755
