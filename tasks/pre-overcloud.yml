@@ -51,7 +51,7 @@
 - name: set the number of workers for heat engine before runnning OC upgrade
   when: set_heat_workers
   set_fact:
-    heat_workers="{{ core.stdout|int - 1 }}"
+    heat_workers="{{ core.stdout|int - 2 }}"
 
 - name: Set the num of heat workers
   when: set_heat_workers
