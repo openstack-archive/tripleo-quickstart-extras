@@ -1,0 +1,6 @@
+[gerrit]
+host=review.gerrithub.io
+port=29418
+project=redhat-openstack/ansible-role-tripleo-overcloud-prep-flavors
+defaultbranch=master
+
