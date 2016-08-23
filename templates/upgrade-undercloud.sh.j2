@@ -3,7 +3,7 @@
 set -eux
 # Undercloud upgrade script.
 # Those steps is for the major mariadb upgrade in mitaka
-{% if target_upgrade_version == 'mitaka' and major_upgrade == 'true' %}
+{% if target_upgrade_version == 'mitaka' and major_upgrade|bool %}
 sudo systemctl start mariadb
 mysqldump -u root --flush-privileges --single-transaction --all-databases > /home/stack/backup.sql
 sudo systemctl stop mariadb
@@ -15,7 +15,7 @@ sudo systemctl stop openstack-*
 sudo systemctl stop neutron-*
 sudo yum -y update instack-undercloud openstack-puppet-modules openstack-tripleo-common python-tripleoclient
 {% endif %}
-{% if target_upgrade_version == 'master' and major_upgrade == 'true' %}
+{% if target_upgrade_version == 'master' and major_upgrade|bool %}
 sudo yum -y update python-cachetools
 sudo yum clean all && sudo yum clean metadata && sudo yum clean dbcache && sudo yum makecache
 sudo systemctl stop openstack-*
