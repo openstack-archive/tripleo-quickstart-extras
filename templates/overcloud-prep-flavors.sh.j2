@@ -3,22 +3,19 @@
 set -eux
 
 ### --start_docs
-## --------------------------------------------------
 ## Prepare the undercloud for deploying the overcloud
-## --------------------------------------------------
+## ==================================================
 
-## ########################
 ## Prepare Your Environment
-## ########################
+## ------------------------
 
 ## * Source in the undercloud credentials.
 ## ::
 
 source {{ working_dir }}/stackrc
 
-## ##############
 ## Flavor Details
-## ##############
+## --------------
 
 ## * Create flavor oooq_<name> for each flavor in the ansible `flavors` variable.
 
