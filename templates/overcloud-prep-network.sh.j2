@@ -3,13 +3,11 @@
 set -eux
 
 ### --start_docs
-## --------------------------------------------------
 ## Prepare the undercloud for deploying the overcloud
-## --------------------------------------------------
+## ==================================================
 
-## ########################
 ## Prepare Your Environment
-## ########################
+## ------------------------
 
 ## * Source in the undercloud credentials.
 ## ::
@@ -18,9 +16,8 @@ source {{ working_dir }}/stackrc
 
 {% if network_isolation == true and ipv6 == false %}
 
-## ################
 ## Setup Networking
-## ################
+## ----------------
 
 ## * Enable NAT for "external" network.
 ## ::
