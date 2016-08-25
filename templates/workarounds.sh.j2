@@ -4,11 +4,20 @@ set -eux
 
 source {{ working_dir }}/environment
 
-{% if release == 'master' or release == 'mitaka' %}
-# Workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1348222
 source {{ working_dir }}/stackrc
 CONTROLLERS=$(nova list | grep controller | awk '{print $12}' | cut -f2 -d=)
 CONTROLLER0=$(nova list | grep controller-0 | awk '{print $12}' | cut -f2 -d=)
+
+{% if release == 'master' or release == 'mitaka' %}
+# Workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1348222
 for CONTROLLER in $CONTROLLERS; do $SSH heat-admin@$CONTROLLER sudo pip install redis; done
+{% endif %}
+
+{% if release == 'mitaka' %}
+# Workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1357229
+for CONTROLLER in $CONTROLLERS; do $SSH heat-admin@$CONTROLLER "sudo sed -i -e 's/^After=.*/After=syslog.target network.target/g' /usr/lib/systemd/system/openstack-heat-engine.service"; done
+{% endif %}
+
+{% if release == 'master' or release == 'mitaka' %}
 $SSH heat-admin@$CONTROLLER0 sudo pcs resource cleanup
 {% endif %}
