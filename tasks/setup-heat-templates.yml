@@ -5,6 +5,9 @@
     use_ssh_args: yes
   when: network_isolation
 
-
-
-
+- name: Copy neutron l3 ha heat template
+  when: enable_pacemaker and overcloud_nodes|length < 3
+  template:
+    src: "neutronl3ha.yaml.j2"
+    dest: "{{ working_dir }}/neutronl3ha.yaml"
+    mode: 0755
