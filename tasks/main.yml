@@ -34,6 +34,9 @@
     - name: remove tripleo-quickstart image cache (/var/cache/tripleo-quickstart/images)
       shell: rm -rf /var/cache/tripleo-quickstart/images
 
+    - name: remove tripleo-quickstart /var/oooqvms
+      shell: rm -rf /var/oooqvms/
+
     - name: remove ansible-role-tripleo-image-build artifacts
       shell: >
         rm -rf /var/log/artib;
