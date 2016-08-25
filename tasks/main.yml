@@ -39,7 +39,7 @@
 - name: HA test Master/Slave core resource stop and start (overcloud)
   delegate_to: overcloud-controller-0
   shell: >
-    {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_master-slave -r {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_master-slave
+    {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_master-slave -r {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_master-slave  > {{ overcloud_working_dir }}/test_ha_master-slave.log 2>&1
 
 - name: HA test Keystone removal (overcloud)
   delegate_to: overcloud-controller-0
