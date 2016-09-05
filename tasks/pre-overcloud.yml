@@ -6,9 +6,11 @@
   with_dict: "{{ upgrade_templates }}"
 
 - name: Make sure no Tht repo is present
+  when: not mixed_upgrade|bool
   file: path={{ upgrade_working_dir }}/{{ tht_dir }} state=absent
 
 - name: Copy new Tht directory to the upgrade working dir
+  when: not mixed_upgrade|bool
   shell: >
       cp -R /usr/share/openstack-tripleo-heat-templates \
       {{ upgrade_working_dir }}/{{ tht_dir }};

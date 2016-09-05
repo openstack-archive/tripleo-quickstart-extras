@@ -1,0 +1,26 @@
+heat_template_version: 2014-10-16
+description: 'Update resolv.conf'
+parameters:
+  server:
+    type: string
+
+resources:
+
+  NameServerConfig:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: script
+      config: |
+        #!/bin/sh
+        echo "nameserver {{ upgrade_overcloud_dns_server }}" >> /etc/resolv.conf
+
+  NameServerDeployment:
+    type: OS::Heat::SoftwareDeployment
+    properties:
+      name: NameServerDeployment
+      config: {get_resource: NameServerConfig}
+      server: {get_param: server}
+
+outputs:
+  deploy_stdout:
+    value: "None"

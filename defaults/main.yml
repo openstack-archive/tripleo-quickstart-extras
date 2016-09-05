@@ -47,6 +47,7 @@ upgrade_custom_templates_script_delivery:
   - overcloud-repo.yaml
 upgrade_custom_templates_controller: {}
 upgrade_custom_templates_converge: {}
+update_custom_templates: {}
 # custom templates:
 # example:
 #upgrade_templates: {}
@@ -67,6 +68,9 @@ step_upgrade_overcloud: true
 # major : True
 # default is major
 major_upgrade: true
+mixed_upgrade: false
 enable_ceph: false
 # heat workers:
 set_heat_workers: true
+# Update:
+update_heat_stack_template: update-dnsserver.yaml
