@@ -11,9 +11,18 @@
         ansible_user: "root"
         ansible_host: "{{ virthost }}"
 
-- include: teardown.yml
+- include: teardown-provision.yml
 
+# The `provision.yml` playbook is responsible for
+# creating an inventory entry for our `virthost` and for creating an
+# unprivileged user on that host for use by our virtual environment.
 - include: provision.yml
+
+# These teardown tasks only make sense after running provision.yml,
+# because they assume they are connecting as the `stack` user rather
+# than `root`.
+- include: teardown-nodes.yml
+- include: teardown-environment.yml
 
 # The `environment/setup` role performs any tasks that require `root`
 # access on the target host.
@@ -74,19 +83,19 @@
   hosts: undercloud
   gather_facts: no
   roles:
-    - tripleo-overcloud
+    - tripleo/overcloud
 
 # Add the overcloud nodes to the generated inventory.
 - name:  Inventory the overcloud
   hosts: undercloud
   gather_facts: yes
+  tags:
+    - overcloud-deploy
   vars:
       inventory: all
   roles:
     - tripleo-inventory
 
-  # to-do replace this with a role that debugs
-  # the deployment based on the results
 - name:  Check the result of the deployment
   hosts: localhost
   tags:
@@ -106,4 +115,4 @@
     - overcloud-validate
   gather_facts: no
   roles:
-    - tripleo-overcloud-validate
+    - tripleo/validate
