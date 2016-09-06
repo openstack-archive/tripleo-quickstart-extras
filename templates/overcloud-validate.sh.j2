@@ -1,9 +1,15 @@
 #!/bin/bash
-# Validate the overcloud deployment
+
 set -eux
 
+### --start_docs
+## Validate the overcloud deployment
+## =================================
+
+## * Create cleanup env function for heat
+## ::
+
 function cleanup() {
-# clean env
 {% if release in ['kilo', 'liberty', 'rhos-7'] %}
     heat stack-delete {{ validate_stack_name }}
 {% else  %}
@@ -26,11 +32,17 @@ function cleanup() {
     #neutron net-delete {{ overcloud_public_network_name }} > /dev/null 2>&1 || true
     neutron net-delete {{ overcloud_public_network_name }}
 }
-# trap on exit
-trap cleanup EXIT
-# source tenantrc file
+# trap on exit #nodocs
+trap cleanup EXIT #nodocs
+
+## * Source tenantrc file
+## ::
+
 source {{ working_dir }}/{{ tenantrc }}
-# Check if an environment is already deployed and, in case, cleanup it
+
+## * Check if an environment is already deployed and, in case, cleanup it
+## ::
+
 [ "x$(heat stack-list | grep pingtest_stack || true)" != "x" ] && cleanup
 # get validate image
 if [[ ! -d {{ validate_image_dir }} ]]; then
@@ -42,14 +54,21 @@ KERNEL_PATH={{ validate_image_dir }}/cirros.kernel
 curl -L -o $IMAGE_PATH {{ validate_image_url }}{{ image_disk }}
 curl -L -o $INITRAMFS_PATH {{ validate_image_url }}{{ image_initramfs }}
 curl -L -o $KERNEL_PATH {{ validate_image_url }}{{ image_kernel }}
-# upload cirros image into glance
+
+## * Upload cirros image into glance
+## ::
+
 ramdisk_id=$(openstack image create pingtest_initramfs --public --container-format ari --disk-format ari --file $INITRAMFS_PATH | grep ' id ' | awk '{print $4}')
 kernel_id=$(openstack image create pingtest_kernel --public --container-format aki --disk-format aki --file $KERNEL_PATH | grep ' id ' | awk '{print $4}')
 openstack image create {{ validate_image_name }} --public --container-format ami --disk-format ami \
     --property kernel_id=$kernel_id --property ramdisk_id=$ramdisk_id --file $IMAGE_PATH
-# create external network
-# Liberty compat :
-#( note: heat can't create an external network in liberty)
+
+## * Create external network
+
+## ..note: Liberty comparability:
+##   heat can't create an external network in liberty)
+## ::
+
 neutron net-create {{ overcloud_public_network_name }} --router:external=True \
     --provider:network_type {{ public_network_type }} \
     --provider:physical_network {{ public_physical_network }} \
@@ -65,14 +84,22 @@ neutron subnet-create --name ext-subnet \
     --gateway {{ public_net_gateway }} \
     {{ overcloud_public_network_name }} {{ floating_ip_cidr }}
 
-# create test ping stack
+## * Create test ping stack
+## ::
+
 heat stack-create {{ validate_stack_name }} --template-file  tenantvm_floatingip.yaml
+
+### --stop_docs
 # wait for stack complete or failed
 /bin/bash /usr/libexec/openstack-tripleo/wait_for -w 600 --delay 30 \
   --success-match {{ validate_success_status }} -- heat stack-show {{ validate_stack_name }}
 # let time to the instance to boot
 sleep 30
-# get the floating ip
+
+### --start_docs
+## * Get the floating ip
+## ::
+
 novaid=`nova list|grep {{ validate_server_name }} |awk  '{print $2}'`
 floating_ip=`nova floating-ip-list | grep $novaid | awk  '{print $4}'`
 nova console-log {{ validate_server_name }}
@@ -81,3 +108,5 @@ nova show {{ validate_server_name }} || :
 nova service-list || :
 neutron agent-list ||:
 nova console-log {{ validate_server_name }}
+
+### --stop_docs
