@@ -53,10 +53,9 @@
       sudo: yes
       command: virsh pool-destroy default
 
-    - name: destroy oooq_pool
+    - name: destroy local libvirt storage, networks and config
       become: yes
-      become_user: stack
-      command: virsh pool-destroy oooq_pool
+      shell: rm -rf /home/stack/.config/libvirt
 
     - name: destroy /run/user/ for stack
       shell: >
