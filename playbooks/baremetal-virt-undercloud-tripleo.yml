@@ -83,7 +83,7 @@
   hosts: undercloud
   gather_facts: no
   roles:
-    - tripleo/overcloud
+    - tripleo-overcloud
 
 # Add the overcloud nodes to the generated inventory.
 - name:  Inventory the overcloud
@@ -115,4 +115,4 @@
     - overcloud-validate
   gather_facts: no
   roles:
-    - tripleo/validate
+    - tripleo-overcloud-validate
