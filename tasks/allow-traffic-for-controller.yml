@@ -1,16 +1,15 @@
 ---
-- when: network_isolation and undercloud_type == "baremetal"
-  block:
 
-    - name: Copy over allow traffic script template
-      template:
-        src: allow-traffic-for-controller.sh.j2
-        dest: "{{ working_dir }}/allow-traffic-for-controller.sh"
-        mode: 0755
+- name: Copy over allow traffic script template
+  template:
+    src: allow-traffic-for-controller.sh.j2
+    dest: "{{ working_dir }}/allow-traffic-for-controller.sh"
+    mode: 0755
 
-    - name: Allow traffic for the controller
-      become: yes
-      shell: >
-        "{{ working_dir }}"/allow-traffic-for-controller.sh
+- name: Allow traffic for the controller
+  become: yes
+  shell: >
+    "{{ working_dir }}"/allow-traffic-for-controller.sh
+  when: network_isolation and undercloud_type == "baremetal"
 
 
