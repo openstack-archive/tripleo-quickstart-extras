@@ -1,0 +1,9 @@
+---
+# Upgrade Undercloud and Overcloud on top of a quickstart Baremetal deployment
+- include: baremetal-virt-undercloud-tripleo.yml
+
+- name:  Upgrade Tripleo
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - { role: tripleo-overcloud-upgrade, deployment_type: baremetal }

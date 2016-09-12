@@ -28,7 +28,7 @@
         sudo iptables -A BOOTSTACK_MASQ -s {{ network_isolation_ipv4_cidr }} ! \
         -d {{ network_isolation_ipv4_cidr }} -j MASQUERADE -t nat;
         sudo iptables-save > /etc/sysconfig/iptables;
-  when: network_isolation
+  when: network_isolation|bool and deployment_type == "virtual"
 
 - name: Create major overcloud upgrade script
   when: major_upgrade

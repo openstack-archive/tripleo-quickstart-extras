@@ -38,6 +38,10 @@ upgrade_log: overcloud_upgrade_console.log
 undercloud_upgrade_log: undercloud_upgrade_console.log
 # user:
 undercloud_upgrade_user: stack
+# Deployment type could:
+#  - virtual
+#  - baremetal
+deployment_type: virtual
 # override those lists with your templates that your env needs for upgrade
 # example:
 # upgrade_custom_templates_script_delivery:
