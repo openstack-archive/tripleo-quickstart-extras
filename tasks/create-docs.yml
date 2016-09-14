@@ -19,11 +19,13 @@
            "{{ artcl_collect_dir }}/undercloud/home/stack/{{ item }}.sh" > \
            "{{ artcl_docs_source_dir }}/{{ item }}.rst"
       with_items: "{{ artcl_create_docs_payload.included_deployment_scripts }}"
+      ignore_errors: yes
 
     - name: Fetch static rST docs to include in output docs
       shell: >
         cp "{{ artcl_docs_source_dir }}/../static/{{ item }}.rst" "{{ artcl_docs_source_dir }}"
       with_items: "{{ artcl_create_docs_payload.included_static_docs }}"
+      ignore_errors: yes
 
     - name: Generate fresh index.rst for Sphinx
       template:
