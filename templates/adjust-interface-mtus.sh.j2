@@ -20,5 +20,6 @@ set -eux
 
 echo -e "\ndhcp-option-force=26,{{ mtu }}" >> /etc/dnsmasq-ironic.conf
 systemctl restart 'neutron-*'
+systemctl restart openstack-ironic-conductor
 
 ### --stop_docs
