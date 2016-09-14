@@ -79,6 +79,24 @@
   roles:
     - overcloud-prep-baremetal
 
+- name:  Prepare the overcloud images for deployment
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - overcloud-prep-images
+
+- name:  Prepare overcloud flavors
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - overcloud-prep-flavors
+
+- name:  Prepare the undercloud networks for the overcloud deployment
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - overcloud-prep-network
+
 - name:  Deploy the overcloud
   hosts: undercloud
   gather_facts: no
