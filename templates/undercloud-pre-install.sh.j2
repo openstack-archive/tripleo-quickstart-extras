@@ -14,7 +14,7 @@ sudo sed -i -e 's/^SELINUX.*/SELINUX=permissive/g' /etc/sysconfig/selinux
 sudo systemctl disable firewalld
 
 # Packages
-sudo yum install -y ntp vim tmux openssl wget ntp ntpdate bind-utils net-tools tmux vim git lftp libguestfs-tools
+sudo yum install -y ntp ntpdate vim tmux openssl wget bind-utils net-tools git lftp libguestfs-tools sos
 
 # Time
 sudo yum erase -y chrony
