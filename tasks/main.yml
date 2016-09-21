@@ -12,6 +12,20 @@
         src: "{{ baremetal_network_environment }}"
         dest: "{{ working_dir }}/network-environment.yaml"
 
+- when: network_isolation_type is defined and network_isolation_type == "bond_with_vlans"
+  block:
+
+    - name: Create bond-with-vlans nic-configs script
+      template:
+        src: "{{ bond_with_vlans_copy_nic_configs_script }}"
+        dest: "{{ working_dir }}/bond-with-vlans-copy-nic-configs.sh"
+        mode: 0755
+
+    - name: Modify the nic-configs file to use Linux bonds
+      shell: |
+        {{ working_dir }}/bond-with-vlans-copy-nic-configs.sh > \
+        {{ bond_with_vlans_nic_configs_log }} 2>&1
+
 - name: "Push baremetal nic-configs directory (if defined)"
   copy:
     src: "{{ baremetal_nic_configs }}"
