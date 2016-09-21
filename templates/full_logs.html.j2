@@ -2,13 +2,13 @@
 <html lang="en-US">
     <head>
         <meta charset="UTF-8">
-        <meta http-equiv="refresh" content="1; url={{ artcl_artifact_url }}/{{ lookup('env', 'BUILD_TAG') }}">
+        <meta http-equiv="refresh" content="1; url={{ artcl_artifact_url }}/{{ lookup('env', 'BUILD_TAG') }}/">
         <script type="text/javascript">
-            window.location.href = "{{ artcl_artifact_url }}/{{ lookup('env', 'BUILD_TAG') }}"
+            window.location.href = "{{ artcl_artifact_url }}/{{ lookup('env', 'BUILD_TAG') }}/"
         </script>
         <title>Redirection to logs</title>
     </head>
     <body>
-        If you are not redirected automatically, follow the <a href='{{ artcl_artifact_url }}/{{ lookup('env', 'BUILD_TAG') }}'>link to the logs</a>.
+        If you are not redirected automatically, follow the <a href='{{ artcl_artifact_url }}/{{ lookup('env', 'BUILD_TAG') }}/'>link to the logs</a>.
     </body>
 </html>

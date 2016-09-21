@@ -30,6 +30,13 @@ artcl_collect_dir: "{{ lookup('env', 'PWD') }}/collected_files"
 artcl_gzip_only: true
 artcl_collect: true
 artcl_publish: false
+artcl_use_rsync: false
+artcl_rsync_use_daemon: false
+
+artcl_use_swift: false
+# clean up the logs after 31 days
+artcl_swift_delete_after: 2678400
+artcl_swift_container: logs
 
 ## Doc generation specific vars
 artcl_gen_docs: false

@@ -14,10 +14,14 @@ TripleO-Quickstart during deployment, into rST files. These rST files are
 combined with static rST files and fed into Sphinx to create user friendly
 post-build-documentation specific to an original deployment.
 
-Finally, the role optionally handles uploading these logs to a rsync server.
+Finally, the role optionally handles uploading these logs to a rsync server or
+to an OpenStack Swift object storage. Logs from Swift can be exposed with
+[os-loganalyze](https://github.com/openstack-infra/os-loganalyze).
 
 Role Variables
 --------------
+
+### Collection related
 
 * `artcl_collect_list` -- A list of files and directories to gather from
   the target. Directories are collected recursively. Can include joker
@@ -36,6 +40,9 @@ artcl_collect_list:
 * `artcl_gzip_only`: false/true  -- When true, gathered files are gzipped one
   by one in `artcl_collect_dir`, when false, a tar.gz file will contain all the
   logs.
+
+### Documentation generation related
+
 * `artcl_gen_docs`: true/false -- If true, the role will use build artifacts
   and Sphinx and produce user friendly documentation.
 * `artcl_docs_source_dir` -- a local directory that serves as the Sphinx source
@@ -64,13 +71,26 @@ artcl_create_docs_payload:
     - undercloud-post-install
 ```
 
+### Publishing related
+
 * `artcl_publish`: true/false -- If true, the role will attempt to rsync logs
   to the target specified by `artcl_rsync_url`. Uses `BUILD_URL`, `BUILD_TAG`
   vars from the environment (set during a Jenkins job run) and requires the
   next to variables to be set.
+* `artcl_use_rsync`: false/true -- use rsync to upload the logs
+* `artcl_rsync_use_daemon`: false/true -- use rsync daemon instead of ssh to connect
 * `artcl_rsync_url` -- rsync target for uploading the logs. The localhost
   needs to have passwordless authentication to the target or the
   `PROVISIONER_KEY` Var specificed in the environment.
+* `artcl_use_swift`: false/true -- use swift object storage to publish the logs
+* `artcl_swift_auth_url` -- the OpenStack auth URL for Swift
+* `artcl_swift_username` -- OpenStack username for Swift
+* `artcl_swift_password` -- password for the Swift user
+* `artcl_swift_tenant_name` -- OpenStack tenant name for Swift
+* `artcl_swift_container` -- the name of the Swift container to use,
+  default is `logs`
+* `artcl_swift_delete_after` -- The number of seconds after which Swift will
+  remove the uploaded objects, the default is 2678400 seconds = 31 days.
 * `artcl_artifact_url` -- a HTTP URL at which the uploaded logs will be
   accessible after upload.
 
