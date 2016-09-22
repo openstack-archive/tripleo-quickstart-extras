@@ -4,8 +4,8 @@
 set -eux
 
 # Retrieving images
-curl -O "{{ overcloud_image_url }}"
-curl -O "{{ ipa_image_url }}"
+wget "{{ overcloud_image_url }}"
+wget "{{ ipa_image_url }}"
 for i in *.tar; do
 tar xvfp $i
 done
