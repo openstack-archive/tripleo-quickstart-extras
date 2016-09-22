@@ -10,27 +10,26 @@
 #/usr/bin/awk '/Stack overcloud CREATE_/ && /FAILED/{exit 1}' {{ deploy_log }}
 
 - name: Check overcloud deploy status
-  shell: >
-    ! /usr/bin/grep 'Stack overcloud CREATE_FAILED' {{ deploy_log }}
+  command: >
+    /usr/bin/grep 'Stack overcloud CREATE_FAILED' {{ deploy_log }}
   register: deploy_result
-  ignore_errors: true
+  failed_when: deploy_result.rc > 1
+  changed_when: false
 
 - name: write out overcloud status to a file on the localhost
   shell: >
     echo '{ "overcloud_deploy_result": "failed" }' > "{{ local_working_dir }}/overcloud_deployment_result.json"
   delegate_to: localhost
-  when: deploy_result.rc != 0
+  when: deploy_result.rc == 0
 
 - name: write out overcloud status to a file on the localhost
   shell: >
     echo '{ "overcloud_deploy_result": "passed" }' > "{{ local_working_dir }}/overcloud_deployment_result.json"
   delegate_to: localhost
-  when: deploy_result.rc == 0
+  when: deploy_result.rc == 1
 
 - name: import deployment status from file
   include_vars: "{{ local_working_dir }}/overcloud_deployment_result.json"
 
 - name: echo deployment_status
   debug: var=overcloud_deploy_result
-
-
