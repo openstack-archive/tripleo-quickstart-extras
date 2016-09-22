@@ -9,6 +9,6 @@
 
 - name: Create tempest skipfile
   template:
-    src: skipfile.j2
-    dest: "{{ working_dir }}/skipfile"
+    src: "{{ skip_file_src }}"
+    dest: "{{ working_dir }}/{{ skip_file }}"
     mode: 0644
