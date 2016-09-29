@@ -69,6 +69,8 @@ openstack image create {{ validate_image_name }} --public --container-format ami
 ##   heat can't create an external network in liberty)
 ## ::
 
+if ! neutron net-list | grep 'nova'; then
+
 neutron net-create {{ overcloud_public_network_name }} --router:external=True \
     --provider:network_type {{ public_network_type }} \
     --provider:physical_network {{ public_physical_network }} \
@@ -83,6 +85,8 @@ neutron subnet-create --name ext-subnet \
     --disable-dhcp \
     --gateway {{ public_net_gateway }} \
     {{ overcloud_public_network_name }} {{ floating_ip_cidr }}
+
+fi
 
 ## * Create test ping stack
 ## ::
