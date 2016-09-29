@@ -1,3 +1,9 @@
 # Run tempest.
 
-{% if tempest_format == "venv" %}./tools/with_venv.sh {% endif %}./tools/run-tests.sh {{ test_regex }} {% if skip_file_src != '' %}--skip-file {{ working_dir }}/{{ skip_file }}{% endif %}
+{% if tempest_format == "venv" %}./tools/with_venv.sh {% endif %}
+./tools/run-tests.sh {{ test_regex }} {% if skip_file_src != '' %}--skip-file {{ working_dir }}/{{ skip_file }}{% endif %}
+{% if tempest_workers is defined %} --concurrency={{ tempest_workers }} {% endif %}
+{% if tempest_isolated|bool %} --isolated {% endif %}
+{% if tempest_tests_file is defined %} --load-list={{ tempest_tests_file }} {% endif %}
+{% if tempest_until_failure|bool %} --until-failure {% endif %}
+{% if tempest_failing|bool %} --failing {% endif %}
