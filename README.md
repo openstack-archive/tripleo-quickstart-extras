@@ -26,6 +26,10 @@ Role Variables
   in Zuul or Gerrit (see below). The format is:
 * `artg_requirements` -- used in roles mode, the requirements file to use for
   replacing the gated roles
+* `artg_skipped_projects` -- a list of projects that are not going to be gated.
+  This is useful if the project is directly checked out by the gate job as this
+  retains "Depends-On" functionality for the rest of the projects. Also useful
+  to skip projects that DLRN cannot build.
 
 ```yaml
 artg_change_list:

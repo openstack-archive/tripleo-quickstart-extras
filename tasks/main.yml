@@ -1,6 +1,8 @@
 ---
-- include: dlrn.yml
+- name: Run DLRN gate
+  include: dlrn.yml
   when: artg_mode == 'dlrn'
 
-- include: roles.yml
+- name: Run roles gate
+  include: roles.yml
   when: artg_mode == 'roles'

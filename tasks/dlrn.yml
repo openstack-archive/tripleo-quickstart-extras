@@ -74,8 +74,10 @@
     changes: "{{ lookup('env', 'ZUUL_CHANGES') }}"
   when: artg_change_list is not defined and "{{ lookup('env', 'ZUUL_HOST') }}" != ""
 
-- include: dlrn-build.yml artg_change={{ item }}
+- name: Clone and build the specific DLRN projects
+  include: dlrn-build.yml artg_change={{ item }}
   with_items: '{{ artg_change_list }}'
+  when: item.project not in artg_skipped_projects
 
 - name: Create a directory to hold the rpms
   file:
