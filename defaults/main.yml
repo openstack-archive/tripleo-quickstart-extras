@@ -45,6 +45,10 @@ flavor_args: >-
   if flavor_map is defined and 'compute' in flavor_map else 'oooq_compute'}}
   --ceph-storage-flavor {{flavor_map.ceph
   if flavor_map is defined and 'ceph' in flavor_map else 'oooq_ceph'}}
+  --block-storage-flavor {{flavor_map.block
+  if flavor_map is defined and 'blockstorage' in flavor_map else 'oooq_blockstorage'}}
+  --swift-storage-flavor {{flavor_map.swift
+  if flavor_map is defined and 'objectstorage' in flavor_map else 'oooq_objectstorage'}}
 
 timeout_args: "--timeout {{deploy_timeout}}"
 
