@@ -58,5 +58,35 @@ scale_args: >-
   {{ timeout_args }}
   {{ scale_extra_args }}
 
+# options below direct automatic doc generation by tripleo-collect-logs
+artcl_gen_docs: true
+artcl_create_docs_payload:
+  included_deployment_scripts:
+    - undercloud-install
+    - overcloud-custom-tht-script
+    - overcloud-prep-flavors
+    - overcloud-prep-images
+    - overcloud-prep-network
+    - overcloud-deploy
+    - overcloud-deploy-post
+    - overcloud-validate
+    - scale-deployment
+    - delete-node
+  included_static_docs:
+    - env-setup-virt
+  table_of_contents:
+    - env-setup-virt
+    - undercloud-install
+    - overcloud-custom-tht-script
+    - overcloud-prep-flavors
+    - overcloud-prep-images
+    - overcloud-prep-network
+    - overcloud-deploy
+    - overcloud-deploy-post
+    - overcloud-validate
+    - scale-deployment
+    - delete-node
+    - overcloud-validate
+
 # Sample call
 # ./deploy.sh -v --playbook scale_nodes --config-file config/scale/scale_compute.yml

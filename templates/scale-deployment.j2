@@ -1,14 +1,18 @@
----
-# tasks file for ansible-role-tripleo-overcloud-scale-nodes
-
 #!/bin/bash
-
-# Simple overcloud scale script
 
 set -eux
 
-# Source in undercloud credentials.
+### --start_docs
+
+## Scale the overcloud
+## ===================
+
+## * Source in undercloud credentials.
+## ::
+
 source {{ artosn_working_dir }}/stackrc
+
+### --stop_docs
 
 # Wait until there are hypervisors available.
 while true; do
@@ -20,9 +24,15 @@ done
 
 deploy_status=0
 
-# Scale the overcloud!
+### --start_docs
+
+## * Scale the overcloud
+## ::
+
 openstack overcloud deploy --templates {{ scale_args }} \
     ${DEPLOY_ENV_YAML:+-e $DEPLOY_ENV_YAML} || deploy_status=1
+
+### --stop_docs
 
 # We don't always get a useful error code from the openstack deploy command,
 # so check `heat stack-list` for a CREATE_FAILED status.
