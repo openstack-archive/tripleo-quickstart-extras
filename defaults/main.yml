@@ -27,3 +27,6 @@ tempest_source: rdo # rdo or upstream
 tempest_format: venv # venv or packages
 skip_file_src: "{{ release }}_skip_file.j2"
 skip_file: skip_file
+tempest_isolated: false
+tempest_until_failure: false
+tempest_failing: false

@@ -9,7 +9,11 @@ rm -rf {{ working_dir }}/tempest
 
 # clean up network if it exists from previous run
 for i in $(neutron router-list -c id -f value); do neutron router-gateway-clear $i; done
-for r in $(neutron router-list -c id -f value); do for p in $(neutron router-port-list $r -c id -f value); do neutron router-interface-delete $r port=$p; done; done
+for r in $(neutron router-list -c id -f value); do
+    for p in $(neutron router-port-list $r -c id -f value); do
+        neutron router-interface-delete $r port=$p || true
+    done
+done
 for i in $(neutron router-list -c id -f value); do neutron router-delete $i; done
 for i in $(neutron port-list -c id -f value); do neutron port-delete $i; done
 for i in $(neutron net-list -c id -f value); do neutron net-delete $i; done
