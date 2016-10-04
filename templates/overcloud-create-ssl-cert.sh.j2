@@ -1,0 +1,52 @@
+#!/bin/bash
+
+set -eux
+
+### --start_docs
+## Generating the overcloud SSL Certificates
+## =========================================
+
+## * Generate a private key
+## ::
+
+openssl genrsa 2048 > {{ working_dir }}/overcloud-ca-privkey.pem 2> /dev/null
+
+## * Generate a self-signed CA certificate
+## ::
+
+openssl req -new -x509 -key {{ working_dir }}/overcloud-ca-privkey.pem \
+    -out {{ working_dir }}/overcloud-cacert.pem -days 365 \
+    -subj "/C=US/ST=NC/L=Raleigh/O=Red Hat/OU=OOOQ/CN=overcloud"
+
+## * Add the self-signed CA certificate to the undercloud's trusted certificate
+##   store.
+## ::
+
+sudo cp {{ working_dir }}/overcloud-cacert.pem /etc/pki/ca-trust/source/anchors/
+sudo update-ca-trust extract
+
+## * Generate the leaf certificate request and key that will be used for the
+##   public VIP
+## ::
+
+openssl req -newkey rsa:2048 -days 365 \
+     -nodes -keyout {{ working_dir }}/server-key.pem \
+     -out {{ working_dir }}/server-req.pem \
+     -subj "/C=US/ST=NC/L=Raleigh/O=Red Hat/OU=OOOQ/CN={{overcloud_public_vip}}"
+
+## * Process the server RSA key
+## ::
+
+openssl rsa -in {{ working_dir }}/server-key.pem \
+    -out {{ working_dir }}/server-key.pem
+
+## * Sign the leaf certificate with the CA certificate and generate
+##   the certificate
+## ::
+
+openssl x509 -req -in server-req.pem -days 365 \
+      -CA {{ working_dir }}/overcloud-cacert.pem \
+      -CAkey {{ working_dir }}/overcloud-ca-privkey.pem \
+      -set_serial 01 -out {{ working_dir }}/server-cert.pem
+
+## --stop_docs

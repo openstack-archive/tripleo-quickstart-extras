@@ -1,54 +1,32 @@
 ---
 # tasks file for ansible-role-tripleo-ssl
-- name: Ensure rpm requirements for ssl are installed
-  yum: name={{ item }} state=latest
-  with_items:
-    - openssl
-  when: ssl_overcloud or ssl_undercloud
+- when: ssl_overcloud
+  block:
+    - name: Ensure rpm requirements for ssl are installed
+      yum: name={{ item }} state=latest
+      with_items:
+        - openssl
 
-- name: Ensure tripleo heat template rpm requirements for ssl are installed
-  yum: name={{ item }} state=latest
-  with_items:
-    - openstack-tripleo-heat-templates
-  when: ssl_overcloud
+    - name: Ensure tripleo heat template rpm requirements for ssl are installed
+      yum: name={{ item }} state=latest
+      with_items:
+        - openstack-tripleo-heat-templates
 
-- name: create self-signed SSL cert
-  command: openssl req -x509 -nodes -newkey rsa:2048 -subj "/CN={{ undercloud_undercloud_public_vip }}" -days 3650 -keyout test-privkey.pem -out test-cacert.pem -extensions v3_ca
-  when: ssl_overcloud or ssl_undercloud
+    - name: Create overcloud-create-ssl-cert.sh
+      template:
+        src: "{{ overcloud_ssl_cert_script }}"
+        dest: "{{ working_dir }}/overcloud-create-ssl-cert.sh"
+        mode: 0755
 
-- name: Combine CA and key for HAproxy
-  shell: >
-    cat test-cacert.pem test-privkey.pem > undercloud.pem
-  when: ssl_undercloud
+    - name: Generate SSL certificates
+      shell: |
+        {{ working_dir }}/overcloud-create-ssl-cert.sh > {{ overcloud_ssl_cert_log }} 2>&1
 
-- name: Combine CA and key for HAproxy
-  sudo: yes
-  shell: >
-    mkdir /etc/pki/instack-certs;
-    cp undercloud.pem /etc/pki/instack-certs;
-    semanage fcontext -a -t etc_t "/etc/pki/instack-certs(/.*)?";
-    restorecon -R /etc/pki/instack-certs;
-  when: ssl_undercloud
-
-- name: Copy self-signed certificate
-  sudo: yes
-  shell: >
-      cp test-cacert.pem /etc/pki/ca-trust/source/anchors/;
-      update-ca-trust extract;
-  when: ssl_undercloud
-
-- name: fetch template from single remote host
-  tls_tht:
-      source_dir: "/usr/share/openstack-tripleo-heat-templates/"
-      dest_dir: "{{ working_dir }}/"
-      cert_filename: "test-cacert.pem"
-      cert_ca_filename: "test-cacert.pem"
-      key_filename: "test-privkey.pem"
-  when: ssl_overcloud
-
-- name: copy the self-signed SSL cert
-  shell: >
-      cp test-cacert.pem /etc/pki/ca-trust/source/anchors/;
-      update-ca-trust extract;
-  sudo: true
-  when: ssl_overcloud
+    - name: fetch template from single remote host
+      tls_tht:
+          source_dir: "/usr/share/openstack-tripleo-heat-templates/"
+          dest_dir: "{{ working_dir }}/"
+          cert_filename: "{{ working_dir }}/server-cert.pem"
+          cert_ca_filename: "{{ working_dir }}/overcloud-cacert.pem"
+          key_filename: "{{ working_dir }}/server-key.pem"
+          tht_release: '{{ release }}'

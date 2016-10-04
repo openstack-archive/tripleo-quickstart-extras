@@ -1,8 +1,8 @@
 ---
 # defaults file for ansible-role-tripleo-ssl
-local_working_dir: "{{ lookup('env', 'HOME') }}/.cat"
 working_dir: /home/stack
 ssl_overcloud: false
-ssl_undercloud: false
 
-undercloud_undercloud_public_vip: 172.16.23.110
+overcloud_public_vip: 10.0.0.5
+overcloud_ssl_cert_log: "{{working_dir}}/overcloud_create_ssl_cert.log"
+overcloud_ssl_cert_script: overcloud-create-ssl-cert.sh.j2
