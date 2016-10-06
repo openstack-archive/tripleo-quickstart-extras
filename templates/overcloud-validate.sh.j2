@@ -13,7 +13,7 @@ function cleanup() {
 {% if release in ['kilo', 'liberty', 'rhos-7'] %}
     heat stack-delete {{ validate_stack_name }}
 {% else  %}
-     openstack stack delete -y {{ validate_stack_name }}
+     openstack stack delete --yes {{ validate_stack_name }}
 {% endif %}
     if [[ $(tripleo wait_for -w 300 -d 30 -s "Stack not found" -- "heat stack-show {{ validate_stack_name }}") ]]; then
         echo "openstack stack delete"
@@ -22,7 +22,7 @@ function cleanup() {
         {% if release in ['kilo', 'liberty', 'rhos-7'] %}
             heat stack-delete {{ validate_stack_name }}
         {% else  %}
-             openstack stack delete -y {{ validate_stack_name }}
+             openstack stack delete --yes {{ validate_stack_name }}
         {% endif %}
         fi
     fi
