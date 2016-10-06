@@ -23,6 +23,7 @@ external_network_gateway: "{{ floating_ip_cidr|nthhost(1) }}"
 # Minutes to wait before giving up on the deploy.
 deploy_timeout: 90
 extra_args: ""
+ssl_overcloud: false
 libvirt_args: "--libvirt-type qemu"
 
 # we generally assume that the argument to --control-flavor will
@@ -53,6 +54,8 @@ network_args: ""
 pacemaker_args: ""
 workers_args: ""
 
+ssl_args: ""
+
 deploy_args: >-
   {{ libvirt_args }}
   {{ flavor_args }}
@@ -60,6 +63,7 @@ deploy_args: >-
   {{ network_args }}
   {{ pacemaker_args }}
   {{ workers_args }}
+  {{ ssl_args }}
   {{ extra_tht_config_args|default('') }}
   {{ extra_args }}
 
