@@ -6,6 +6,9 @@ set -eux
 ## Validate the overcloud deployment
 ## =================================
 
+## .. note: The following set of scripts are generated from a jinja template
+##    which may be viewed here: https://github.com/redhat-openstack/ansible-role-tripleo-overcloud-validate/blob/master/templates/overcloud-validate.sh.j2
+
 ## * Create cleanup env function for heat
 ## ::
 
@@ -65,8 +68,8 @@ openstack image create {{ validate_image_name }} --public --container-format ami
 
 ## * Create external network
 
-## ..note: Liberty comparability:
-##   heat can't create an external network in liberty)
+## .. note: Liberty comparability:
+##    (heat can't create an external network in liberty)
 ## ::
 
 if ! neutron net-list | grep 'nova'; then
@@ -87,6 +90,9 @@ neutron subnet-create --name ext-subnet \
     {{ overcloud_public_network_name }} {{ floating_ip_cidr }}
 
 fi
+
+## .. note: The heat template, tenantvm_floatingip.yaml, below may be viewed here:
+##    https://github.com/redhat-openstack/ansible-role-tripleo-overcloud-validate/blob/master/templates/tenantvm_floatingip.yaml.j2
 
 ## * Create test ping stack
 ## ::
