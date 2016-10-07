@@ -16,6 +16,9 @@
     - name: yum list installed
       shell: yum list installed >/var/log/extra/yum-list-installed.txt
 
+    - name: Collecting cpu information
+      shell: cat /proc/cpuinfo &> /var/log/extra/cpuinfo.txt
+
     # used by rel-eng to import into internal builds
     - name: package import delorean
       shell: |
