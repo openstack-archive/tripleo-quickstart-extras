@@ -18,3 +18,9 @@
       {{ pacemaker_args }}
       -e $HOME/neutronl3ha.yaml
   when: enable_pacemaker and overcloud_nodes|length < 3
+
+- name: set workers_args fact
+  set_fact:
+    workers_args: >-
+      -e {{overcloud_templates_path}}/environments/low-memory-usage.yaml
+  when: release not in ['mitaka', 'liberty']

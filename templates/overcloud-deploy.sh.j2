@@ -25,7 +25,7 @@ done
 
 ### --start_docs
 
-{% if test_ping %}
+{% if release in ['mitaka', 'liberty'] %}
 ## * Include configuration necessary for the ping test here if requested via the
 ##   ansible `test_ping` variable.
 ## ::
@@ -40,13 +40,11 @@ DEPLOY_ENV_YAML=/tmp/deploy_env.yaml
 cat > $DEPLOY_ENV_YAML << EOENV
 parameter_defaults:
   controllerExtraConfig:
-{% if release in ['mitaka','liberty'] %}
   # In releases before Mitaka, HeatWorkers doesn't modify
   # num_engine_workers, so handle via heat::config
     heat::config::heat_config:
       DEFAULT/num_engine_workers:
         value: 1
-{% endif %}
     heat::api_cloudwatch::enabled: false
     heat::api_cfn::enabled: false
   HeatWorkers: 1
