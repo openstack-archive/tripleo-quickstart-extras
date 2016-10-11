@@ -21,6 +21,12 @@ onerror(){
 }
 trap onerror ERR
 
+{% if target_upgrade_version in ['newton', 'master'] %}
+pushd tripleo-heat-templates
+swift download overcloud
+popd
+{% endif %}
+
 source {{ upgrade_working_dir }}/stackrc
 if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
     echo "execute aodh upgrade"
