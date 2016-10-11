@@ -19,7 +19,7 @@ onerror(){
     done
     exit 1
 }
-trap onerror ERR
+#trap onerror ERR
 
 {% if target_upgrade_version in ['newton', 'master'] %}
 pushd tripleo-heat-templates
