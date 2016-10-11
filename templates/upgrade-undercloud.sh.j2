@@ -8,7 +8,7 @@ sudo systemctl stop openstack-*
 sudo systemctl stop neutron-*
 sudo yum -y update instack-undercloud openstack-puppet-modules openstack-tripleo-common python-tripleoclient
 {% endif %}
-{% if target_upgrade_version == 'master' and major_upgrade|bool or mixed_upgrade|bool %}
+{% if target_upgrade_version in ['newton', 'master'] and major_upgrade|bool or mixed_upgrade|bool %}
 sudo yum -y update python-cachetools
 sudo yum clean all && sudo yum clean metadata && sudo yum clean dbcache && sudo yum makecache
 sudo systemctl stop openstack-*
