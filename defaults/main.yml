@@ -11,7 +11,6 @@ undercloud_install_script: undercloud-install.sh.j2
 undercloud_pre_install_log: "{{ working_dir }}/undercloud_pre_install.log"
 undercloud_install_log: "{{ working_dir }}/undercloud_install.log"
 
-overcloud_image_url: "http://209.132.178.27/{{ release }}/delorean/consistent/stable/"
 overcloud_images_script: overcloud-images.sh.j2
 overcloud_images_log: "{{ working_dir }}/overcloud_images.log"
 
