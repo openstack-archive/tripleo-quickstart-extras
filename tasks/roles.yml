@@ -9,5 +9,5 @@
 
 - name: Clone and inject the specific changes
   include: roles-clone.yml artg_change={{ item }}
-  with_items: artg_change_list
+  with_items: '{{ artg_change_list }}'
   when: item.project not in artg_skipped_projects
