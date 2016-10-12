@@ -19,7 +19,15 @@ onerror(){
     done
     exit 1
 }
-#trap onerror ERR
+trap onerror ERR
+
+{% if target_upgrade_version == 'newton' %}
+# Note, tripleo-heat-templates rdo package is not up to date.
+# It simlpier to clone the stable branch instead, while waiting of the
+# latest fixes.
+rm -rf /home/stack/tripleo-heat-templates
+git clone https://github.com/openstack/tripleo-heat-templates.git -b stable/newton
+{% endif %}
 
 source {{ upgrade_working_dir }}/stackrc
 if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
@@ -55,12 +63,6 @@ if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COM
         -e {{ tht_dir }}/environments/major-upgrade-keystone-liberty-mitaka.yaml
     {% endif %}
 fi
-
-{% if target_upgrade_version in ['newton', 'master'] %}
-pushd tripleo-heat-templates
-swift download overcloud
-popd
-{% endif %}
 
 if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
     echo "execute script delivery"
