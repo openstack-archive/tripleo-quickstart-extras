@@ -88,5 +88,7 @@ do
        jq -r .output_values.deploy_stderr |
        sed -r "s:\x1B\[[0-9;]*[mK]::g" >> failed_deployments.log
    echo "######################################################" >> failed_deployments.log
+   # We need to exit with 1 because of the above || true
+   exit 1
 done
 fi
