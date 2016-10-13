@@ -58,6 +58,7 @@ deploy_args: >-
   {{ network_args }}
   {{ pacemaker_args }}
   {{ workers_args }}
+  {{ extra_tht_config_args|default('') }}
   {{ extra_args }}
 
 step_deploy_overcloud: true
