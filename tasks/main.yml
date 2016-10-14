@@ -1,20 +1,20 @@
 ---
 - include: undercloud-config.yml
-  when: tempest_undercloud
+  when: tempest_undercloud|bool
   tags:
     - tempest-undercloud-config
 
 - include: pre-tempest.yml
-  when: tempest_config
+  when: tempest_config|bool
   tags:
     - pre-tempest-config
 
 - include: run-tempest.yml
-  when: run_tempest
+  when: run_tempest|bool
   tags:
     - run-tempest
 
 - include: post-tempest.yml
-  when: post_tempest
+  when: post_tempest|bool
   tags:
     - post-tempest
