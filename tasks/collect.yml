@@ -125,6 +125,15 @@
       set_fact:
         oom_killer_problems_found: "{{ result.stdout_lines }}"
 
+    - name: Ensure sos package is installed when collect sosreport(s)
+      yum: name=sos state=present
+      when: artcl_collect_sosreport|bool
+
+    - name: Collect sosreport
+      command: >
+        sosreport --batch
+      when: artcl_collect_sosreport|bool
+
     - name: Erase temporary log directory if exists
       file:
         path: "/tmp/{{ inventory_hostname }}"

@@ -93,6 +93,8 @@ artcl_create_docs_payload:
   remove the uploaded objects, the default is 2678400 seconds = 31 days.
 * `artcl_artifact_url` -- a HTTP URL at which the uploaded logs will be
   accessible after upload.
+* `artcl_collect_sosreport` -- true/false -- If true, create and collect a
+  sosreport for each host.
 
 Example Playbook
 ----------------
@@ -121,6 +123,14 @@ has several simple rules:
 4. Other lines beginning with `## <anything else>` will have the prepended
    `## ` removed. This is how and where general rST formatting is added.
 5. All other lines, including shell comments, will be indented by four spaces.
+
+Enabling sosreport Collection
+-----------------------------
+
+[sosreport](https://github.com/sosreport/sos) is a unified tool for collecting
+system logs and other debug information. To enable creation of sosreport(s)
+with this role, create a custom config (you can use centosci-logs.yml
+as a template) and ensure that `artcl_collect_sosreport: true` is set.
 
 License
 -------
