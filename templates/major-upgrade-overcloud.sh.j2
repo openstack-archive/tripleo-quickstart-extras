@@ -30,9 +30,9 @@ git clone https://github.com/openstack/tripleo-heat-templates.git -b stable/newt
 {% endif %}
 
 source {{ upgrade_working_dir }}/stackrc
+{% if target_upgrade_version == 'mitaka' %}
 if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
     echo "execute aodh upgrade"
-    {% if target_upgrade_version == 'mitaka' %}
     openstack overcloud deploy --templates {{ tht_dir }} \
         -e tripleo-heat-templates/overcloud-resource-registry-puppet.yaml \
     {% if network_isolation == true %}
@@ -61,8 +61,28 @@ if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COM
         -e {{ item }} \
     {% endfor %}
         -e {{ tht_dir }}/environments/major-upgrade-keystone-liberty-mitaka.yaml
-    {% endif %}
 fi
+{% endif %}
+
+{% if target_upgrade_version == 'newton' %}
+if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
+    echo "execute ceilometer migration"
+    openstack overcloud deploy --templates {{ tht_dir }} \
+        -e tripleo-heat-templates/overcloud-resource-registry-puppet.yaml \
+    {% if network_isolation == true %}
+        -e {{ tht_dir }}/environments/network-isolation.yaml \
+        -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
+        -e ~/network-environment.yaml \
+    {% endif %}
+        -e {{ tht_dir }}/environments/puppet-pacemaker.yaml \
+    {% for item in upgrade_custom_templates_controller %}
+        -e {{ item }} \
+    {% endfor %}
+        -e {{ tht_dir }}/environments/major-upgrade-ceilometer-wsgi-mitaka-newton.yaml \
+        -e {{ tht_dir }}/environments/updates/update-from-overcloud-compute-hostnames.yaml
+fi
+{% endif %}
+
 
 if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
     echo "execute script delivery"
