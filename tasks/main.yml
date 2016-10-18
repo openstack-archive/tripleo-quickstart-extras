@@ -14,6 +14,7 @@
     src: "{{ workarounds_script }}"
     dest: "{{ working_dir }}/workarounds.sh"
     mode: 0755
+  when: apply_workarounds
 
 - name: Execute workarounds script on the undercloud
   delegate_to: undercloud
@@ -51,19 +52,19 @@
   delegate_to: overcloud-controller-0
   shell: >
     {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_pacemaker-light-a -r {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_pacemaker-light > {{ overcloud_working_dir }}/test_ha_ng-a.log 2>&1
-  when: release == "master"
+  when: release == "newton"
 
 - name: HA test NG B (overcloud)
   delegate_to: overcloud-controller-0
   shell: >
     {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_pacemaker-light-b -r {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_pacemaker-light > {{ overcloud_working_dir }}/test_ha_ng-b.log 2>&1
-  when: release == "master"
+  when: release == "newton"
 
 - name: HA test NG C (overcloud)
   delegate_to: overcloud-controller-0
   shell: >
     {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_pacemaker-light-c -r {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_pacemaker-light > {{ overcloud_working_dir }}/test_ha_ng-c.log 2>&1
-  when: release == "master"
+  when: release == "newton"
 
 - name: HA Test instance deploy on the overcloud (undercloud)
   delegate_to: undercloud
