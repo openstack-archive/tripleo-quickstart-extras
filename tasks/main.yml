@@ -19,6 +19,7 @@
   delegate_to: undercloud
   shell: >
     "{{ working_dir }}/workarounds.sh"
+  when: apply_workarounds
 
 - name: Get overcloud-ha-test-suite on undercloud and controllers
   vars:

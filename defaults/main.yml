@@ -4,6 +4,7 @@ working_dir: /home/stack
 overcloud_working_dir: /home/heat-admin
 
 environment_file: environment.j2
+apply_workarounds: false
 workarounds_script: workarounds.sh.j2
 
 floating_ip_cidr: "{{ undercloud_network_cidr|default('192.0.2.0/24') }}"
