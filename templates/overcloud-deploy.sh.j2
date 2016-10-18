@@ -25,7 +25,7 @@ done
 
 ### --start_docs
 
-{% if release in ['mitaka', 'liberty'] %}
+{% if release in ['mitaka', 'liberty'] and set_overcloud_workers|bool %}
 ## * Include configuration necessary for the ping test here if requested via the
 ##   ansible `test_ping` variable.
 ## ::
