@@ -15,6 +15,7 @@ artcl_collect_list:
   - /home/stack/*.yaml
   - /home/stack/*.sh
   - /home/stack/*.rst
+  - /home/stack/*.pem
   - /home/stack/deploy-overcloudrc
   - /home/stack/network-environment.yaml
   - /home/stack/tempest/*.xml
