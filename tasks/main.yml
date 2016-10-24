@@ -47,13 +47,11 @@
   copy:
     src: "{{ item }}"
     dest: "{{ working_dir }}"
-  with_items: "{{ extra_tht_configs }}"
-  when: extra_tht_configs is defined
+  with_items: "{{ extra_tht_configs|default([]) }}"
 
 - name: Add extra THT config file to the deploy command
   set_fact:
     extra_tht_config_args: >-
       {{ extra_tht_config_args|default('') }}
       -e {{ working_dir }}/{{ item | basename }}
-  with_items: "{{ extra_tht_configs }}"
-  when: extra_tht_configs is defined
+  with_items: "{{ extra_tht_configs|default([]) }}"
