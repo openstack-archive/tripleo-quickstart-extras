@@ -21,7 +21,7 @@ validate_key_name: pingtest_key
 step_validate_overcloud: true
 test_ping: true
 release: mitaka
-floating_ip_cidr: "{{ undercloud_network_cidr|default('192.0.2.0/24') }}"
+floating_ip_cidr: "{{ undercloud_network_cidr|default('192.168.24.0/24') }}"
 public_net_pool_start: "{{ floating_ip_cidr|nthhost(100) }}"
 public_net_pool_end: "{{ floating_ip_cidr|nthhost(120) }}"
 public_net_gateway: "{{ floating_ip_cidr|nthhost(1) }}"
