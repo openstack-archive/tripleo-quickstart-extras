@@ -32,7 +32,7 @@
       shell: rm -rf /var/lib/libvirt/images/*.qcow2
 
     - name: remove tripleo-quickstart image cache (/var/cache/tripleo-quickstart/images)
-      shell: find /var/cache/tripleo-quickstart/images/*  -mtime +7 -exec rm -rf {} \;
+      shell: find /var/cache/tripleo-quickstart/images/*  -mtime +3 -exec rm -rf {} \;
 
     - name: remove tripleo-quickstart /var/oooqvms
       shell: rm -rf /var/oooqvms/
