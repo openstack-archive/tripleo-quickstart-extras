@@ -19,6 +19,11 @@ source {{ working_dir }}/stackrc
 
 openstack overcloud image upload {% if bash_deploy_ramdisk %}--old-deploy-image{% endif %}
 
+## note:: Workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1391602
+## ::
+
+sudo systemctl restart openstack-ironic-conductor && sleep 30
+
 ## * Register nodes with Ironic.
 ## ::
 
