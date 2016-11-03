@@ -4,3 +4,5 @@
 - include: adjust-mtu-dnsmasq-ironic.yml
 
 - include: allow-traffic-for-controller.yml
+
+- include: install-upstream-ipxe.yml

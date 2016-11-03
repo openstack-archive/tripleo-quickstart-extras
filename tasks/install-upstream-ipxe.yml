@@ -1,0 +1,14 @@
+---
+
+- name: Copy install upstream ipxe script template
+  template:
+    src: install-upstream-ipxe.sh.j2
+    dest: "{{ working_dir }}/install-upstream-ipxe.sh"
+    mode: 0755
+
+- name: Run install upstream ipxe script
+  shell: >
+    "{{ working_dir }}"/install-upstream-ipxe.sh
+  when: step_install_upstream_ipxe
+
+

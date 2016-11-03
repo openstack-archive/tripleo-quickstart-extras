@@ -3,6 +3,7 @@ working_dir: /home/stack
 
 step_root_device_size: false
 disk_root_device_size: 1843
+step_install_upstream_ipxe: false
 
 step_adjust_mtu: false
 mtu: 1350
