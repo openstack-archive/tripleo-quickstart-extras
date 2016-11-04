@@ -1,17 +1,31 @@
 #!/bin/bash
-# Prepare overcloud images
 
 set -eux
 
-# Retrieving images
+### --start_docs
+## Prepare the images to be used in the overcloud
+## ==============================================
+
+## Prepare the images
+## ------------------
+
+## * Retrieve images from the known urls
+## ::
+
 wget "{{ overcloud_image_url }}"
 wget "{{ ipa_image_url }}"
 for i in *.tar; do
 tar xvfp $i
 done
 
-# Checking libvirtd"
+## * Ensure libvirtd is started (otherwise virt-customize won't work
+## ::
+
 sudo systemctl restart libvirtd
 
-# Changing root password of the overcloud
+## * Change root password on the image
+## ::
+
 virt-customize -a overcloud-full.qcow2 --root-password password:redhat
+
+### --stop_docs

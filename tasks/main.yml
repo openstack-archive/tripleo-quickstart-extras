@@ -1,29 +1,23 @@
 ---
 # tasks file for ansible-role-tripleo-baremetal-undercloud
 
+# Do machine provisioning
 - include: machine-provisioning.yml
   tags:
     - machine-provision
 
+# Prepare machine to be used with TripleO
 - include: machine-setup.yml
   tags:
     - machine-setup
 
-- include: undercloud-scripts.yml
+# Configure repos and packages
+- include: undercloud-repos-conf.yml
   delegate_to: "{{ virthost }}"
   tags:
-    - undercloud-scripts
+    - undercloud-repos-conf
 
-- include: undercloud-pre-install.yml
-  delegate_to: "{{ virthost }}"
-  tags:
-    - undercloud-pre-install
-
-- include: undercloud-install.yml
-  delegate_to: "{{ virthost }}"
-  tags:
-    - undercloud-install
-
+# Get overcloud images
 - include: overcloud-images.yml
   delegate_to: "{{ virthost }}"
   tags:

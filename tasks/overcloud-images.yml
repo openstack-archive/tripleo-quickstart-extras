@@ -1,3 +1,10 @@
+# Copy overcloud images script
+- name: Copy repositories configuration script
+  template:
+    src: "{{ overcloud_images_script }}"
+    dest: "{{ working_dir }}/overcloud-images.sh"
+    mode: 0755
+
 - name: Overcloud images
   shell: >
     {{ working_dir }}/overcloud-images.sh > {{ overcloud_images_log }} 2>&1

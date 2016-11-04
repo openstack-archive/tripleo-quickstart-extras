@@ -1,4 +1,0 @@
-- name: Preparing machine for undercloud installation
-  shell: >
-    {{ working_dir }}/undercloud-pre-install.sh > {{ undercloud_pre_install_log }} 2>&1
-  when: step_prepare_undercloud

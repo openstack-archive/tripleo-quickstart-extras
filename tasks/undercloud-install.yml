@@ -1,4 +1,0 @@
-- name: Install the undercloud
-  shell: >
-    {{ working_dir }}/undercloud-install.sh > {{ undercloud_install_log }} 2>&1
-  when: step_install_undercloud
