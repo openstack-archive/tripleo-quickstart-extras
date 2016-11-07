@@ -4,6 +4,8 @@
 artcl_collect_list:
   - /var/log/
   - /var/lib/mysql
+  - /var/lib/heat-config/heat-config-puppet/
+  - /var/lib/heat-config/heat-config-script/
   - /etc/
   - /home/stack/.instack/install-undercloud.log
   - /home/stack/stackrc
