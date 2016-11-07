@@ -27,6 +27,7 @@ artcl_collect_list:
   - /home/stack/browbeat/ansible/bug_report.log
   - /home/stack/browbeat/results
   - /usr/share/openstack-tripleo-heat-templates
+  - /tmp/tripleoclient*
 artcl_collect_dir: "{{ lookup('env', 'PWD') }}/collected_files"
 artcl_gzip_only: true
 artcl_collect: true
