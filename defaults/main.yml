@@ -9,7 +9,7 @@ tempest_log_file: 'tempest_output.log'
 test_regex: '.*smoke'
 working_dir: '/home/stack'
 
-public_net_name: nova
+public_net_name: public
 public_network_type: flat
 public_physical_network: datacentre
 public_segmentation_id: ''
