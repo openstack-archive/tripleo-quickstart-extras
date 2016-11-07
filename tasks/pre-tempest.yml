@@ -1,6 +1,11 @@
 ---
 # tasks file for ansible-role-tripleo-tempest
 
+- name: Set the number of workers in tempest
+  set_fact:
+      tempest_workers: "{{ ansible_processor_count|int // 2 }}"
+  when: tempest_workers is not defined
+
 - name: Create overcloud tempest setup script
   template:
     src: tempest-setup.j2
