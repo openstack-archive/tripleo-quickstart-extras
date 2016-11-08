@@ -122,6 +122,9 @@ if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COM
     {% for item in upgrade_custom_templates_controller %}
         -e {{ item }} \
     {% endfor %}
+    {% if enable_ceph|bool %}
+        -e ceph-upgrade.yaml \
+    {% endif %}
         -e {{ tht_dir }}/environments/major-upgrade-pacemaker.yaml
 fi
 

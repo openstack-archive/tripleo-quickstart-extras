@@ -5,6 +5,12 @@
     dest: "{{ upgrade_working_dir }}/{{ item.value.name }}"
   with_dict: "{{ upgrade_templates }}"
 
+- name: Copy ignore warnings template file for ceph upgrade
+  template:
+    src: "ceph-upgrade.yaml.J2"
+    dest: "{{ upgrade_working_dir }}/ceph-upgrade.yaml"
+  when: enable_ceph|bool
+
 - name: Make sure no Tht repo is present
   when: not mixed_upgrade|bool
   file: path={{ upgrade_working_dir }}/{{ tht_dir }} state=absent
