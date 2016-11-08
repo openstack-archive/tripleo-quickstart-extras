@@ -19,13 +19,13 @@
     - name: Collecting cpu information
       shell: cat /proc/cpuinfo &> /var/log/extra/cpuinfo.txt
 
-    # used by rel-eng to import into internal builds
+    # used by OSP Release Engineering to import into internal builds
     - name: package import delorean
       shell: |
         repoquery --disablerepo='*' --enablerepo='delorean'\
         -a --qf '%{sourcerpm}'|sort -u|sed 's/.src.rpm//g' >> /var/log/extra/import-delorean.txt
 
-    # used by rel-eng to import into internal builds
+    # used by OSP Release Engineering to import into internal builds
     - name: package import delorean-testing
       shell: |
         repoquery --disablerepo='*' --enablerepo='delorean-*-testing'\
