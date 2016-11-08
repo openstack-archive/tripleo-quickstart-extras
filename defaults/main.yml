@@ -4,5 +4,5 @@ overcloud_prep_images_log: "{{ working_dir }}/overcloud_prep_images.log"
 step_introspect: false
 bash_deploy_ramdisk: false
 step_install_undercloud: true
-
-
+step_root_device_size: false
+disk_root_device_size: 1843

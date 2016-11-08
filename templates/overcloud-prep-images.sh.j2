@@ -30,6 +30,36 @@ sudo systemctl restart openstack-ironic-conductor && sleep 30
 openstack baremetal import --json instackenv.json
 openstack baremetal configure boot
 
+{% if step_root_device_size|bool %}
+
+## * Get nodes UUID
+## ::
+
+export items="$( ironic node-list | awk '/power/ {print $2}' )"
+
+## * Find disk size from instackenv.json
+## ::
+
+export DISK_SIZE="$( jq '.["nodes"][]["disk"] | tonumber' instackenv.json )"
+
+## * Update nodes with disk size hint
+## ::
+
+count=0
+ARRAY_DISK_SIZE=($(echo $DISK_SIZE))
+ROOT_DEVICE_SIZE={{ disk_root_device_size }}
+for item in $items; do
+    if  [ $ROOT_DEVICE_SIZE -ge ${ARRAY_DISK_SIZE[$count]} ]; then
+        declare i ADS
+        ADS=${ARRAY_DISK_SIZE[$count]}
+        ironic node-update $item add properties/root_device='{"size": '$ADS'}'
+    fi
+    count=$((count+1))
+done
+
+{% endif %}
+
+
 {% if step_introspect %}
 
 ## * Introspect hardware attributes of nodes.

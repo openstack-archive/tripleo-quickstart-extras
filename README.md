@@ -17,6 +17,8 @@ Role Variables
 - baremetal_instackenv: <"{{ working_dir }}/instackenv.json"> -- location of instackenv.json to copy over
 - baremetal_network_environment: <"{{ working_dir }}/network-isolation.yml"> -- location of network-environment file to copy over
 - undercloud_type: <virtual> -- can be overwritten with values like 'baremetal' or 'ovb'
+- step_root_device_size: <false> -- add disk size hints if needed for the environment under test
+- disk_root_device_size: <1843> -- size hint for selecting the correct disk during introspection
 
 Dependencies
 ------------

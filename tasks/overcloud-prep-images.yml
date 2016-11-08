@@ -2,4 +2,3 @@
   shell: |
     {{ working_dir }}/overcloud-prep-images.sh > \
     {{ overcloud_prep_images_log }} 2>&1
-
