@@ -13,6 +13,6 @@ source ./stackrc
 ## * Delete the {{ node_to_scale }} node from the original deployment
 ## ::
 
-openstack overcloud node delete --debug --stack {{ overcloud_id.stdout }} --templates {{ scale_extra_configs }}  {{ node_id_to_delete.stdout }}
+openstack overcloud node delete --debug --stack overcloud --templates {{ overcloud_templates_path }} {{ scale_extra_configs }}  {{ node_id_to_delete.stdout }}
 
 ### ---stop_docs

@@ -11,12 +11,6 @@
   fail: msg='Overcloud heat stack is not in a complete state'
   when: heat_stack_list_result.stdout.find('COMPLETE') == -1
 
-- name: Get id for the overcloud stack
-  shell: >
-    source "{{ artosn_working_dir }}"/stackrc;
-    heat stack-list | grep overcloud | sed -e 's/|//g' | awk '{print $1}'
-  register: overcloud_id
-
 - name: Register uuid of original "{{ node_to_scale}}" node
   shell: >
     source "{{ artosn_working_dir }}"/stackrc;

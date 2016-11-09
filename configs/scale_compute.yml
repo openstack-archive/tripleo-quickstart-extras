@@ -1,10 +1,7 @@
 ---
 
-control_memory: 6144
-compute_memory: 6144
-
-undercloud_memory: 8192
-undercloud_vcpu: 2
+control_memory: 16384
+control_vcpu: 4
 
 overcloud_nodes:
   - name: control_0
@@ -16,26 +13,28 @@ overcloud_nodes:
   - name: compute_1
     flavor: compute
 
-  - name: compute_2
-    flavor: compute
-
-tempest: false
-pingtest: true
+run_tempest: false
+tempest_config: false
+test_ping: true
+enable_pacemaker: true
+network_isolation: true
 deploy_timeout: 60
 
 # General deployment info
 libvirt_args: "--libvirt-type qemu"
+
 flavor_args: >-
   --control-flavor {{flavor_map.control
   if flavor_map is defined and 'control' in flavor_map else 'oooq_control'}}
   --compute-flavor {{flavor_map.compute
   if flavor_map is defined and 'compute' in flavor_map else 'oooq_compute'}}
-  --ceph-storage-flavor {{flavor_map.ceph
-  if flavor_map is defined and 'ceph' in flavor_map else 'oooq_ceph'}}
+
 timeout_args: "--timeout {{ deploy_timeout }}"
-extra_args: "--compute-scale 1 --neutron-network-type vxlan --neutron-tunnel-types vxlan -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/net-single-nic-with-vlans.yaml -e ~/network-environment.yaml --ntp-server pool.ntp.org"
+
+extra_args: "--compute-scale 1 --neutron-network-type vxlan --neutron-tunnel-types vxlan -e {{ overcloud_templates_path }}/environments/network-isolation.yaml -e {{ overcloud_templates_path }}/environments/net-single-nic-with-vlans.yaml -e ~/network-environment.yaml --ntp-server pool.ntp.org"
+
 # Pulled this out so we can hand these configs to the openstack overcloud node delete command
-scale_extra_configs: "-e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/net-single-nic-with-vlans.yaml -e ~/network-environment.yaml"
+scale_extra_configs: "-e {{ overcloud_templates_path }}/environments/network-isolation.yaml -e {{ overcloud_templates_path }}/environments/net-single-nic-with-vlans.yaml -e /home/stack/network-environment.yaml"
 scale_extra_args: "--{{ node_to_scale }}-scale {{ final_scale_value }} --neutron-network-type vxlan --neutron-tunnel-types vxlan {{ scale_extra_configs }} --ntp-server pool.ntp.org"
 
 
@@ -44,18 +43,12 @@ node_to_scale: compute # Type of node to scale
 initial_scale_value: 1 # Initial number of nodes to deploy
 final_scale_value: 2   # Number of additional nodes to add during the scale
 
-# Initial deployment arguments
-deploy_args: >-
-  {{ libvirt_args }}
-  {{ flavor_args }}
-  {{ timeout_args }}
-  {{ extra_args  }}
-
 # Scale deployment arguments
 scale_args: >-
   {{ libvirt_args }}
   {{ flavor_args }}
   {{ timeout_args }}
+  {{ pacemaker_args }}
   {{ scale_extra_args }}
 
 # options below direct automatic doc generation by tripleo-collect-logs
@@ -87,6 +80,9 @@ artcl_create_docs_payload:
     - scale-deployment
     - delete-node
     - overcloud-validate
+
+# Path to tripleo-heat-templates
+overcloud_templates_path: /usr/share/openstack-tripleo-heat-templates
 
 # Sample call
 # ./deploy.sh -v --playbook scale_nodes --config-file config/scale/scale_compute.yml

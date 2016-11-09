@@ -29,7 +29,7 @@ deploy_status=0
 ## * Scale the overcloud
 ## ::
 
-openstack overcloud deploy --templates {{ scale_args }} \
+openstack overcloud deploy --templates {{ overcloud_templates_path }} {{ scale_args }} \
     ${DEPLOY_ENV_YAML:+-e $DEPLOY_ENV_YAML} || deploy_status=1
 
 ### --stop_docs

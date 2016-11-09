@@ -1,0 +1,6 @@
+# Note: we need to disable the L3 HA for Neutron if we want to use pacemaker
+# and only 1 controller.
+# This particular use case is used with the upgrade CI workflow
+
+parameter_defaults:
+  NeutronL3HA: false
