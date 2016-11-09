@@ -1,4 +1,17 @@
 ---
+- name: Add PublicVirtualFixedIPs Argument to network environment file
+  set_fact:
+    network_environment_args: >-
+      {{ network_environment_args | combine(public_virtual_fixed_ips) }}
+  when: ssl_overcloud|bool and undercloud_type != "baremetal"
+
+- name: Create network environment file for network isolation
+  template:
+    src: "{{ network_environment_file }}"
+    dest: "{{ working_dir }}/network-environment.yaml"
+    mode: 0644
+  when: network_isolation|bool and undercloud_type != "baremetal"
+
 - when: undercloud_type == "baremetal"
   block:
 
