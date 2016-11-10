@@ -23,7 +23,7 @@
   tags:
     - undercloud-install
   roles:
-    - tripleo/undercloud          
+    - tripleo/undercloud
 
 # Baremetal preparation (with workarounds)
 - name: Prepare baremetal for the overcloud deployment
