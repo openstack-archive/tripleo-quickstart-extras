@@ -14,21 +14,39 @@ set -eux
 
 source {{ working_dir }}/stackrc
 
+{% if step_overcloud_image|bool %}
+
 ## * Upload images to glance.
 ## ::
 
 openstack overcloud image upload {% if bash_deploy_ramdisk %}--old-deploy-image{% endif %}
+
+{% endif %}
+
+{% if step_glance_upload|bool %}
+
+## * Upload images to glance, this step is specific to nodepool based deployments.
+## ::
+
+ glance image-create --container-format bare --disk-format qcow2 --name overcloud-full --file overcloud-full.qcow2
+
+{% endif %}
+
 
 ## note:: Workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1391602
 ## ::
 
 sudo systemctl restart openstack-ironic-conductor && sleep 30
 
+{% if step_register|bool %}
+
 ## * Register nodes with Ironic.
 ## ::
 
 openstack baremetal import --json instackenv.json
 openstack baremetal configure boot
+
+{% endif %}
 
 {% if step_root_device_size|bool %}
 
