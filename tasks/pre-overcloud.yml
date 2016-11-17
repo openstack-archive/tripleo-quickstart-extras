@@ -61,11 +61,17 @@
   set_fact:
     heat_workers="{{ core.stdout|int / 2 }}"
 
+# Hardcode the number of heat workers, to try to avoid the badstatusline in
+# centos ci:
+# 1 / append after the commented line
+# 2 / make sure all heat engine workers are set to 6
+# TODO: remove this with a smarter fix
 - name: Set the num of heat workers
   when: set_heat_workers
   sudo: yes
   shell: >
-    sed -i "/#num_engine_workers/a num_engine_workers = {{ heat_workers|int }}" /etc/heat/heat.conf;
+    sed -i "/#num_engine_workers/a num_engine_workers = 6" /etc/heat/heat.conf;
+    sed -i "s/num_engine_workers.*$/num_engine_workers = 6/" /etc/heat/heat.conf;
     systemctl restart openstack-heat-engine
 
 - name: upgrade workaround for Newton
