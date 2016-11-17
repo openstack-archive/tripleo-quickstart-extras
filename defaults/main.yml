@@ -78,3 +78,6 @@ enable_ceph: false
 set_heat_workers: true
 # Update:
 update_heat_stack_template: update-dnsserver.yaml
+# TBR:
+libvirt_uri: qemu:///session
+undercloud_workers: 6

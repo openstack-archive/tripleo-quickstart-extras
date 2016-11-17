@@ -21,6 +21,11 @@
   sudo: yes
   shell: yum clean all
 
+- name: Push hieradata override file for workers
+  template:
+    src: "quickstart-hieradata-overrides.yaml.j2"
+    dest: "{{ upgrade_working_dir }}/quickstart-hieradata-overrides.yaml"
+
 - name: Create undercloud upgrade script
   template:
     src: "{{ undercloud_upgrade_script }}"
