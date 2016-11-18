@@ -4,7 +4,7 @@
       -e {{overcloud_templates_path}}/environments/network-isolation.yaml
       -e {{overcloud_templates_path}}/environments/net-single-nic-with-vlans.yaml
       -e $HOME/network-environment.yaml
-    when: network_isolation|bool and not overcloud_ipv6|bool
+  when: network_isolation|bool and not overcloud_ipv6|bool
 
 - name: set network_args fact for IPv6
   set_fact:
