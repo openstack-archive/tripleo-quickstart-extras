@@ -1,0 +1,14 @@
+---
+- name: Copy over provisioning nic script template
+  template:
+    src: add-provisioning-interface.sh.j2
+    dest: "{{ working_dir }}/add-provisioning-interface.sh"
+    mode: 0755
+
+- name: wait for  script file to exist
+  wait_for: path="{{ working_dir }}/add-provisioning-interface.sh"
+
+- name: Add provisioning interface to the "brovc" bridge
+  become: yes
+  shell: >
+    "{{ working_dir }}"/add-provisioning-interface.sh
