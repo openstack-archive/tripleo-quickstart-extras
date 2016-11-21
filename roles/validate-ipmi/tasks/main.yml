@@ -1,0 +1,16 @@
+---
+- when: validate_ipmi_step
+  block:
+
+      - name: Copy validate IPMI template to the undercloud
+        template:
+            src: validate-overcloud-ipmi-connection.sh.j2
+            dest: "{{ working_dir }}/validate-overcloud-ipmi-connection.sh"
+            mode: 0755
+
+      - name: wait for  script file to exist
+        wait_for: path="{{ working_dir }}/validate-overcloud-ipmi-connection.sh"
+
+      - name: Run the validate IPMI overclcoud connection script
+        shell: >
+          "{{ working_dir }}"/validate-overcloud-ipmi-connection.sh

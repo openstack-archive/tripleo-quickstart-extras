@@ -1,0 +1,3 @@
+---
+validate_ipmi_step: true
+working_dir: /home/stack

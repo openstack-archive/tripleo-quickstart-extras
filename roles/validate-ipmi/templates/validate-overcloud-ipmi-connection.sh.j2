@@ -1,0 +1,38 @@
+#! /bin/bash
+
+set -eux
+
+### --start_docs
+
+## Validate IPM connection to overcloud nodes
+## ==========================================
+
+## * Check if instackenv.json exists in the working directory
+## ::
+
+if [[ ! -f {{ working_dir }}/instackenv.json ]]; then
+    echo 'File "instackenv.json" is not in the working directory, aborting.'
+    exit
+fi
+
+## * Install IPMI tools
+## ::
+
+sudo yum install -y git OpenIPMI OpenIPMI-tools
+
+## * Git clone tools to validate instackenv.json
+## ::
+
+[ -d {{ working_dir }}/clapper ] && rm -rf "{{ working_dir }}/clapper"
+git clone "https://github.com/rthallisey/clapper.git" "{{ working_dir }}/clapper"
+
+## * Validate instackenv.json
+## ::
+
+export IPMI_VALIDATE="$(python {{ working_dir }}/clapper/instackenv-validator.py -f {{ working_dir }}/instackenv.json)"
+if [[ $IPMI_VALIDATE != *SUCCESS* ]] ; then
+   echo "instackenv.json did not validate."
+   echo $IPMI_VALIDATE
+fi
+
+### --stop_docs
