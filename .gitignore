@@ -1,3 +1,0 @@
-*.pyc
-*.egg-info
-ansible_role_tripleo_overcloud.egg-info
