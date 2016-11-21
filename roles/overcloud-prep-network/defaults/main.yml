@@ -1,0 +1,4 @@
+overcloud_prep_network_script: overcloud-prep-network.sh.j2
+overcloud_prep_network_log: "{{ working_dir }}/overcloud_prep_network.log"
+
+undercloud_network_cidr: 192.168.24.0/24

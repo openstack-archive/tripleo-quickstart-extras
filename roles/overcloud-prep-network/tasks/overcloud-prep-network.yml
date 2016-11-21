@@ -1,0 +1,4 @@
+- name: Prepare the network-isolation required networks on the undercloud
+  shell: |
+    {{ working_dir }}/overcloud-prep-network.sh > \
+    {{ overcloud_prep_network_log }} 2>&1

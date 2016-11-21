@@ -1,0 +1,7 @@
+# Creat the overcloud-prep-network scripts that will be used to setup the undercloud for network isolation
+
+- name: Create overcloud-prep-network script
+  template:
+    src: "{{ overcloud_prep_network_script }}"
+    dest: "{{ working_dir }}/overcloud-prep-network.sh"
+    mode: 0755
