@@ -1,0 +1,123 @@
+#!/bin/bash
+
+set -eux
+
+### --start_docs
+## Validate the overcloud deployment
+## =================================
+
+## .. note: The following set of scripts are generated from a jinja template
+##    which may be viewed here: https://github.com/redhat-openstack/ansible-role-tripleo-overcloud-validate/blob/master/templates/overcloud-validate.sh.j2
+
+## * Create cleanup env function for heat
+## ::
+
+function cleanup() {
+{% if release in ['kilo', 'liberty', 'rhos-7'] %}
+    heat stack-delete {{ validate_stack_name }}
+{% else  %}
+     openstack stack delete --yes {{ validate_stack_name }}
+{% endif %}
+    if [[ $(tripleo wait_for -w 300 -d 30 -s "Stack not found" -- "heat stack-show {{ validate_stack_name }}") ]]; then
+        echo "openstack stack delete"
+    else
+        if [[ $(heat stack-list | grep {{ validate_stack_name }} | grep -i failed) ]]; then
+        {% if release in ['kilo', 'liberty', 'rhos-7'] %}
+            heat stack-delete {{ validate_stack_name }}
+        {% else  %}
+             openstack stack delete --yes {{ validate_stack_name }}
+        {% endif %}
+        fi
+    fi
+    # Remove images and network
+    rm -f {{ validate_image_dir }}/cirros.*
+    glance image-list | grep pingtest | awk '{print $2}' | while read IMAGEID; do glance image-delete $IMAGEID; done
+    #neutron net-delete {{ overcloud_public_network_name }} > /dev/null 2>&1 || true
+    neutron net-delete {{ overcloud_public_network_name }}
+}
+# trap on exit #nodocs
+trap cleanup EXIT #nodocs
+
+## * Source tenantrc file
+## ::
+
+source {{ working_dir }}/{{ tenantrc }}
+
+## * Check if an environment is already deployed and, in case, cleanup it
+## ::
+
+[ "x$(heat stack-list | grep pingtest_stack || true)" != "x" ] && cleanup
+# get validate image
+if [[ ! -d {{ validate_image_dir }} ]]; then
+    mkdir {{ validate_image_dir }};
+fi
+IMAGE_PATH={{ validate_image_dir }}/cirros.img
+INITRAMFS_PATH={{ validate_image_dir }}/cirros.initramfs
+KERNEL_PATH={{ validate_image_dir }}/cirros.kernel
+curl -L -o $IMAGE_PATH {{ validate_image_url }}{{ image_disk }}
+curl -L -o $INITRAMFS_PATH {{ validate_image_url }}{{ image_initramfs }}
+curl -L -o $KERNEL_PATH {{ validate_image_url }}{{ image_kernel }}
+
+## * Upload cirros image into glance
+## ::
+
+ramdisk_id=$(openstack image create pingtest_initramfs --public --container-format ari --disk-format ari --file $INITRAMFS_PATH | grep ' id ' | awk '{print $4}')
+kernel_id=$(openstack image create pingtest_kernel --public --container-format aki --disk-format aki --file $KERNEL_PATH | grep ' id ' | awk '{print $4}')
+openstack image create {{ validate_image_name }} --public --container-format ami --disk-format ami \
+    --property kernel_id=$kernel_id --property ramdisk_id=$ramdisk_id --file $IMAGE_PATH
+
+## * Create external network
+
+## .. note: Liberty comparability:
+##    (heat can't create an external network in liberty)
+## ::
+
+if ! neutron net-list | grep 'nova'; then
+
+neutron net-create {{ overcloud_public_network_name }} --router:external=True \
+    --provider:network_type {{ public_network_type }} \
+    --provider:physical_network {{ public_physical_network }} \
+{% if public_segmentation_id != '' %}
+    --provider:segmentation_id {{ public_segmentation_id }}
+{% endif %}
+
+
+neutron subnet-create --name ext-subnet \
+    --allocation-pool \
+    start={{ public_net_pool_start }},end={{ public_net_pool_end }} \
+    --disable-dhcp \
+    --gateway {{ public_net_gateway }} \
+    {{ overcloud_public_network_name }} {{ floating_ip_cidr }}
+
+fi
+
+## .. note: The heat template, tenantvm_floatingip.yaml, below may be viewed here:
+##    https://github.com/redhat-openstack/ansible-role-tripleo-overcloud-validate/blob/master/templates/tenantvm_floatingip.yaml.j2
+
+## * Create test ping stack
+## ::
+
+heat stack-create {{ validate_stack_name }} --template-file  tenantvm_floatingip.yaml
+
+### --stop_docs
+# wait for stack complete or failed
+/bin/bash /usr/libexec/openstack-tripleo/wait_for -w 600 --delay 30 \
+  --success-match {{ validate_success_status }} -- heat stack-show {{ validate_stack_name }}
+# let time to the instance to boot
+sleep 30
+
+### --start_docs
+## * Get the floating ip
+## ::
+
+novaid=`nova list|grep {{ validate_server_name }} |awk  '{print $2}'`
+floating_ip=`nova floating-ip-list | grep $novaid | awk  '{print $4}'`
+nova console-log {{ validate_server_name }}
+ping -c 1 $floating_ip
+nova show {{ validate_server_name }} || :
+nova service-list || :
+neutron agent-list ||:
+nova console-log {{ validate_server_name }}
+
+### --stop_docs
+
