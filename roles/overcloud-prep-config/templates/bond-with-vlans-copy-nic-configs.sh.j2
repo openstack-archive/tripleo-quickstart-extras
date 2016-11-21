@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Script to modify nic-configs for bond-with-vlans deployments
+
+set -eux
+
+### --start_docs
+
+## LACP bonding using Linux bonds for bond-with-vlans deployments
+## ==============================================================
+
+## * Copy the yaml file from the standard template files directory
+## ::
+
+mkdir -p {{ working_dir }}/nic-configs
+ORIGIN_TEMPLATES_DIR=/usr/share/openstack-tripleo-heat-templates/network/config/bond-with-vlans
+cp $ORIGIN_TEMPLATES_DIR/*.yaml {{ working_dir }}/nic-configs/
+
+## * Modify the yaml files to use Linux bonds
+## ::
+
+grep -rl 'type: ovs_bond' {{ working_dir }}/nic-configs/ | xargs sed -i 's/type: ovs_bond/type: linux_bond/g'
+grep -rl 'ovs_options' {{ working_dir }}/nic-configs/ | xargs sed -i 's/ovs_options/bonding_options/g'
+
+### --stop_docs
+

@@ -1,0 +1,33 @@
+#!/bin/bash
+
+set -eux
+
+### --start_docs
+## --------------------------------------------------
+## Checkout custom tripleo heat templates
+## --------------------------------------------------
+
+## ########################
+## Prepare Your Environment
+## ########################
+
+{% if overcloud_templates_repo is defined and overcloud_templates_path is defined %}
+## * Clone the t-h-t templates if needed.
+## ::
+
+rm -rf {{ overcloud_templates_path }}
+git clone {% if overcloud_templates_branch is defined %}-b {{ overcloud_templates_branch }} \
+    --single-branch{% endif %} {{ overcloud_templates_repo }} {{ overcloud_templates_path }}
+
+{% if overcloud_templates_refspec is defined %}
+## * Checkout an open t-h-t review if specified
+##    (this will stomp on the overcloud_templates_branch, so only one should be used).
+## ::
+
+pushd {{overcloud_templates_path}}
+git fetch {{ overcloud_templates_repo }} {{ overcloud_templates_refspec }} && git checkout FETCH_HEAD
+popd
+{% endif %}
+{% endif %}
+
+### --stop_docs

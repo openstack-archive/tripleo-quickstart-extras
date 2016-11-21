@@ -1,0 +1,70 @@
+---
+- name: Add PublicVirtualFixedIPs Argument to network environment file
+  set_fact:
+    network_environment_args: >-
+      {{ network_environment_args | combine(public_virtual_fixed_ips) }}
+  when: ssl_overcloud|bool and undercloud_type != "baremetal"
+
+- name: Create network environment file for network isolation
+  template:
+    src: "{{ network_environment_file }}"
+    dest: "{{ working_dir }}/network-environment.yaml"
+    mode: 0644
+  when: network_isolation|bool and undercloud_type != "baremetal"
+
+- when: undercloud_type == "baremetal"
+  block:
+
+    - name: "Push baremetal instackenv.json"
+      copy:
+        src: "{{ baremetal_instackenv }}"
+        dest: "{{ working_dir }}/instackenv.json"
+
+    - name: "Push network-environment.yaml"
+      copy:
+        src: "{{ baremetal_network_environment }}"
+        dest: "{{ working_dir }}/network-environment.yaml"
+
+- when: network_isolation_type is defined and network_isolation_type == "bond_with_vlans"
+  block:
+
+    - name: Create bond-with-vlans nic-configs script
+      template:
+        src: "{{ bond_with_vlans_copy_nic_configs_script }}"
+        dest: "{{ working_dir }}/bond-with-vlans-copy-nic-configs.sh"
+        mode: 0755
+
+    - name: Modify the nic-configs file to use Linux bonds
+      shell: |
+        {{ working_dir }}/bond-with-vlans-copy-nic-configs.sh > \
+        {{ bond_with_vlans_nic_configs_log }} 2>&1
+
+- name: "Push baremetal nic-configs directory (if defined)"
+  copy:
+    src: "{{ baremetal_nic_configs }}"
+    dest: "{{ working_dir }}"
+  when: baremetal_nic_configs is defined
+
+- name: Create overcloud custom tht script
+  template:
+    src: "{{ overcloud_custom_tht_script }}"
+    dest: "{{ working_dir }}/overcloud-custom-tht-script.sh"
+    mode: 0755
+
+- name: Checkout custom tht heat templates from src
+  shell: |
+    {{ working_dir }}/overcloud-custom-tht-script.sh > \
+    {{ overcloud_custom_tht_log }} 2>&1
+
+- name: Copy extra THT config files on the undercloud
+  copy:
+    src: "{{ item }}"
+    dest: "{{ working_dir }}"
+  with_items: "{{ extra_tht_configs|default([]) }}"
+
+- name: Add extra THT config file to the deploy command
+  set_fact:
+    extra_tht_config_args: >-
+      {{ extra_tht_config_args|default('') }}
+      -e {{ working_dir }}/{{ item | basename }}
+  with_items: "{{ extra_tht_configs|default([]) }}"
