@@ -1,0 +1,217 @@
+---
+
+- name: Ensure required rpms for logging are installed
+  yum: name={{ item }} state=present
+  with_flattened:
+    - gzip
+    - tar
+
+- block:
+    - name: Prepare directory with extra logs
+      file: dest=/var/log/extra state=directory
+
+    - name: rpm -qa
+      shell: rpm -qa | sort -f >/var/log/extra/rpm-list.txt
+
+    - name: yum list installed
+      shell: yum list installed >/var/log/extra/yum-list-installed.txt
+
+    - name: Collecting cpu information
+      shell: cat /proc/cpuinfo &> /var/log/extra/cpuinfo.txt
+
+    # used by OSP Release Engineering to import into internal builds
+    - name: package import delorean
+      shell: |
+        repoquery --disablerepo='*' --enablerepo='delorean'\
+        -a --qf '%{sourcerpm}'|sort -u|sed 's/.src.rpm//g' >> /var/log/extra/import-delorean.txt
+
+    # used by OSP Release Engineering to import into internal builds
+    - name: package import delorean-testing
+      shell: |
+        repoquery --disablerepo='*' --enablerepo='delorean-*-testing'\
+        -a --qf '%{sourcerpm}'|sort -u|sed 's/.src.rpm//g' >> /var/log/extra/import-delorean-testing.txt
+
+    - name: Collect logs from all failed systemd services
+      shell: >
+        systemctl -t service --failed --no-legend | awk '{print $1}'
+            | xargs -r -n1 journalctl -u > /var/log/extra/services.txt 2>&1
+
+    - name: Collect network status info
+      shell: >
+        (ip a; ip r; iptables-save; iptables -nL) &> /var/log/extra/network.txt;
+        (for NS in $(ip netns list); do
+        echo "==== $NS ====";
+        ip netns exec $NS ip a;
+        ip netns exec $NS ip r;
+        ip netns exec $NS ip iptables-save;
+        PIDS="$(ip netns pids $NS)";
+        [[ ! -z "$PIDS" ]] && ps --no-headers -f --pids "$PIDS";
+        echo "";
+        done) &> /var/log/extra/network-netns;
+        (for NB in $(ovs-vsctl show | grep Bridge |awk '{print $2}'); do
+        echo "==== Bridge name - $NB ====";
+        ovs-ofctl show $NB;
+        ovs-ofctl dump-flows $NB;
+        echo "";
+        done;
+        ovsdb-client dump) &> /var/log/extra/network-bridges;
+
+    - name: lsof -P
+      shell: "lsof -P &> /var/log/extra/lsof.txt"
+
+    - name: pstree -p
+      shell: "pstree -p &> /var/log/extra/pstree.txt"
+
+    - name: sysctl -a
+      shell: "sysctl -a &> /var/log/extra/sysctl.txt"
+
+    - name: netstat -lnp
+      shell: "netstat -lnp &> /var/log/extra/netstat.txt"
+
+    - name: openstack-status
+      shell: "which openstack-status &> /dev/null && (. ~/keystonerc_admin; openstack-status &> /var/log/extra/openstack-status.txt)"
+      when: "'controller' in inventory_hostname"
+
+    - name: lsmod
+      shell: "lsmod &> /var/log/extra/lsmod.txt"
+
+    - name: lspci
+      shell: "lspci &> /var/log/extra/lspci.txt"
+
+    - name: pip list
+      shell: "pip list &> /var/log/extra/pip.txt"
+
+    - name: lvm debug
+      shell: "(vgs; pvs; lvs) &> /var/log/extra/lvm.txt"
+
+    - name: Generate human-readable SAR logs
+      shell: "[[ -f /usr/lib64/sa/sa2 ]] && /usr/lib64/sa/sa2 -A"
+
+    - name: check for dstat log file
+      stat: path=/var/log/extra/dstat-csv.log
+      register: dstat_logfile
+
+    - name: Get dstat_graph tool
+      git: repo="https://github.com/Dabz/dstat_graph.git" dest="/tmp/dstat_graph"
+      when: dstat_logfile.stat.exists
+
+    - name: Generate HTML dstat graphs if it exists
+      shell: "/tmp/dstat_graph/generate_page.sh /var/log/extra/dstat-csv.log > /var/log/extra/dstat.html"
+      when: dstat_logfile.stat.exists
+      args:
+        chdir: "/tmp/dstat_graph"
+
+    - name: Search for AVC denied
+      shell: "! grep -i denied /var/log/audit/audit*"
+      register: result
+
+    - name: Publish the count of AVC denials as fact
+      set_fact:
+        selinux_problems_found: "{{ result.stdout_lines }}"
+
+    - name: Search for segfaults in logs
+      shell: "! grep -v ansible-command /var/log/messages | grep segfault"
+      register: result
+
+    - name: Publish the count of segfaults as fact
+      set_fact:
+        segfault_problems_found: "{{ result.stdout_lines }}"
+
+    - name: Search for oom-killer instances in logs
+      shell: "! grep -v ansible-command /var/log/messages | grep oom-killer"
+      register: result
+
+    - name: Publish the count of oom-killer instances as fact
+      set_fact:
+        oom_killer_problems_found: "{{ result.stdout_lines }}"
+
+    - name: Ensure sos package is installed when collect sosreport(s)
+      yum: name=sos state=present
+      when: artcl_collect_sosreport|bool
+
+    - name: Collect sosreport
+      command: >
+        sosreport --batch
+      when: artcl_collect_sosreport|bool
+
+    - name: Erase temporary log directory if exists
+      file:
+        path: "/tmp/{{ inventory_hostname }}"
+        state: absent
+  become: yes
+  become_user: root
+  ignore_errors: true
+
+- name: Set default collect list
+  set_fact: collect_list="{{ artcl_collect_list | join(' ') }}"
+
+- name: Override collect list
+  set_fact: collect_list="{{ artcl_collect_override[inventory_hostname] | join(' ') }}"
+  when: artcl_collect_override is defined and artcl_collect_override[inventory_hostname] is defined
+
+- name: Gather the logs to /tmp
+  become: yes
+  become_user: root
+  shell: >
+    mkdir -p /tmp/{{ inventory_hostname }};
+    for F in $(ls -d1 /var/log/rpm.list /var/log/extra {{ collect_list }}); do
+      cp -rL --parents $F /tmp/{{ inventory_hostname }};
+    done;
+    find /tmp/{{ inventory_hostname }} -not -type f -not -type d -delete;
+    find /tmp/{{ inventory_hostname }} -type d -print0 | xargs -0 chmod 755;
+    find /tmp/{{ inventory_hostname }} -type f -print0 | xargs -0 chmod 644;
+    chown -R {{ ansible_user }}: /tmp/{{ inventory_hostname }};
+
+- name: Compress logs to tar.gz
+  shell: >
+    chdir=/tmp
+    tar czf {{ inventory_hostname }}.tar.gz {{ inventory_hostname }};
+  when: not artcl_gzip_only|bool
+
+- name: gzip logs individually and tar them
+  shell: >
+    chdir=/tmp
+    gzip -r ./{{ inventory_hostname }};
+    tar cf {{ inventory_hostname }}.tar {{ inventory_hostname }};
+  when: artcl_gzip_only|bool
+
+- name: Fetch log archive (tar.gz)
+  fetch:
+    src: "/tmp/{{ inventory_hostname }}.tar.gz"
+    dest: "{{ artcl_collect_dir }}/{{ inventory_hostname }}.tar.gz"
+    flat: yes
+    validate_checksum: no
+  when: not artcl_gzip_only|bool
+
+- name: Fetch log archive (tar)
+  fetch:
+    src: "/tmp/{{ inventory_hostname }}.tar"
+    dest: "{{ artcl_collect_dir }}/{{ inventory_hostname }}.tar"
+    flat: yes
+    validate_checksum: no
+  when: artcl_gzip_only|bool
+
+- name: Delete temporary log directory after collection
+  file:
+    path: "/tmp/{{ inventory_hostname }}"
+    state: absent
+  ignore_errors: true
+
+- block:
+    - name: Extract the logs
+      shell: >
+        chdir={{ artcl_collect_dir }}
+        tar xf {{ inventory_hostname }}.tar;
+      when: artcl_gzip_only|bool
+
+    - name: delete the tar file after extraction
+      file:
+        path: "{{ artcl_collect_dir }}/{{ inventory_hostname }}.tar"
+        state: absent
+      when: artcl_gzip_only|bool
+
+    - name: fetch and gzip the console log
+      shell: >
+        curl {{ lookup('env', 'BUILD_URL') }}/consoleText | gzip > {{ artcl_collect_dir }}/console.txt.gz
+      when: artcl_publish|bool and "{{ lookup('env', 'BUILD_URL') }}" != ""
+  delegate_to: localhost

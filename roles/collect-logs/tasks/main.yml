@@ -1,0 +1,14 @@
+---
+# tasks file for ansible-role-tripleo-collect-logs
+
+- name: Collect logs
+  include: collect.yml
+  when: artcl_collect|bool
+
+- name: Generate docs
+  include: create-docs.yml
+  when: artcl_gen_docs|bool
+
+- name: Publish logs
+  include: publish.yml
+  when: artcl_publish|bool

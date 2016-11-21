@@ -1,0 +1,35 @@
+---
+
+- run_once: true
+  delegate_to: localhost
+  block:
+    - name: upload to the artifact server using pubkey auth
+      command: rsync -av --quiet -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" {{ artcl_collect_dir }}/ {{ artcl_rsync_path }}/{{ lookup('env', 'BUILD_TAG') }}
+      retries: 5
+      delay: 60
+      when: artcl_use_rsync|bool and not artcl_rsync_use_daemon|bool
+
+    - name: upload to the artifact server using password auth
+      environment:
+        RSYNC_PASSWORD: "{{ lookup('env', 'RSYNC_PASSWORD') }}"
+      command: rsync -av --quiet {{ artcl_collect_dir }}/ {{ artcl_rsync_path }}/{{ lookup('env', 'BUILD_TAG') }}
+      retries: 5
+      delay: 60
+      when: artcl_use_rsync|bool and artcl_rsync_use_daemon|bool
+
+    - name: upload to swift based artifact server
+      shell: swift upload --quiet --header "X-Delete-After:{{ artcl_swift_delete_after }}" {{ artcl_swift_container }}/{{ lookup('env', 'BUILD_TAG') }} *
+      args:
+        chdir: "{{ artcl_collect_dir }}"
+      changed_when: true
+      environment:
+        OS_AUTH_URL: "{{ artcl_swift_auth_url }}"
+        OS_USERNAME: "{{ artcl_swift_username }}"
+        OS_PASSWORD: "{{ artcl_swift_password }}"
+        OS_TENANT_NAME: "{{ artcl_swift_tenant_name }}"
+      when: artcl_use_swift|bool
+
+    - name: create the artifact location redirect file
+      template:
+        src: full_logs.html.j2
+        dest: "{{ artcl_collect_dir }}/full_logs.html"

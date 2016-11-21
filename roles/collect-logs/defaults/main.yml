@@ -1,0 +1,51 @@
+---
+# defaults file for ansible-role-tripleo-collect-logs
+
+artcl_collect_list:
+  - /var/log/
+  - /var/lib/mysql
+  - /var/lib/heat-config/heat-config-puppet/
+  - /var/lib/heat-config/heat-config-script/
+  - /var/tmp/sosreport*
+  - /etc/
+  - /home/stack/.instack/install-undercloud.log
+  - /home/stack/stackrc
+  - /home/stack/overcloudrc
+  - /home/stack/*.log
+  - /home/stack/*.json
+  - /home/stack/*.conf
+  - /home/stack/*.yml
+  - /home/stack/*.yaml
+  - /home/stack/*.sh
+  - /home/stack/*.rst
+  - /home/stack/*.pem
+  - /home/stack/deploy-overcloudrc
+  - /home/stack/network-environment.yaml
+  - /home/stack/tempest/*.xml
+  - /home/stack/tempest/*.html
+  - /home/stack/tempest/*.log
+  - /home/stack/tempest/etc/*.conf
+  - /home/stack/local_tht
+  - /home/stack/gating_repo.tar.gz
+  - /home/stack/browbeat/ansible/bug_report.log
+  - /home/stack/browbeat/results
+  - /usr/share/openstack-tripleo-heat-templates
+  - /tmp/tripleoclient*
+artcl_collect_dir: "{{ lookup('env', 'PWD') }}/collected_files"
+artcl_gzip_only: true
+artcl_collect: true
+artcl_publish: false
+artcl_use_rsync: false
+artcl_rsync_use_daemon: false
+
+artcl_use_swift: false
+# clean up the logs after 31 days
+artcl_swift_delete_after: 2678400
+artcl_swift_container: logs
+
+artcl_collect_sosreport: false
+
+## Doc generation specific vars
+artcl_gen_docs: false
+artcl_docs_source_dir: "{{ local_working_dir }}/usr/local/share/ansible/roles/tripleo-collect-logs/docs/source"
+artcl_docs_build_dir: "{{ artcl_collect_dir }}/docs/build"
