@@ -1,0 +1,32 @@
+---
+# defaults file for ansible-role-tripleo-tempest
+configure_tempest: true
+floating_ip_cidr: "{{ undercloud_network_cidr|default('192.168.24.0/24') }}"
+public_net_pool_start: "{{ floating_ip_cidr|nthhost(100) }}"
+public_net_pool_end: "{{ floating_ip_cidr|nthhost(120) }}"
+public_net_gateway: "{{ floating_ip_cidr|nthhost(1) }}"
+tempest_log_file: 'tempest_output.log'
+test_regex: '.*smoke'
+working_dir: '/home/stack'
+
+public_net_name: public
+public_network_type: flat
+public_physical_network: datacentre
+public_segmentation_id: ''
+tenant_network_cidr: 192.168.0.0/24
+undercloud_public_net_name: ctlplane
+
+tempest_deployer_input_file: tempest-deployer-input.conf
+# steps:
+tempest_undercloud: false
+tempest_config: true
+tempest_overcloud: true
+run_tempest: true
+post_tempest: true
+tempest_source: rdo # rdo or upstream
+tempest_format: venv # venv or packages
+skip_file_src: "{{ release }}_skip_file.j2"
+skip_file: skip_file
+tempest_isolated: false
+tempest_until_failure: false
+tempest_failing: false

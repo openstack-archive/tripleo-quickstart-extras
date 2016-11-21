@@ -1,0 +1,27 @@
+---
+# tasks file for ansible-role-tripleo-tempest-undercloud
+
+- name: Add fake driver to Ironic config
+  sudo: yes
+  lineinfile:
+    backup: true
+    backrefs: true
+    dest: '/etc/ironic/ironic.conf'
+    regexp: '^(enabled_drivers=(?:(?!fake).)*)$'
+    line: '\1,fake'
+
+- name: Restart the Ironic conductor service
+  sudo: yes
+  service: name=openstack-ironic-conductor state=restarted
+
+- name: Ensure the fake driver is enabled
+  shell: >
+    source {{ working_dir }}/stackrc;
+    ironic driver-list;
+  register: driver_list
+  failed_when: "'fake' not in driver_list.stdout"
+
+- name: Copy tempest input file to undercloud
+  copy:
+    src: "tempest-undercloud-config.conf"
+    dest: "/home/stack/{{ tempest_deployer_input_file }}"

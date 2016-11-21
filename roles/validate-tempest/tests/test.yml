@@ -1,0 +1,21 @@
+---
+# When you want to run tempest against the Undercloud,
+# make sure you disable tempest against the overcloud too
+- name:  Run tempest against the Undercloud
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - { role: ansible-role-tripleo-tempest,
+        tempest_undercloud: true,
+        tempest_overcloud: false,
+        test_regex: 'tempest\.api\.baremetal.*'}
+
+# The test_regex here is an example on how to run a specific
+# test on the overcloud.
+# The default regex is 'smoke' tests
+- name:  Run tempest against the Overcloud
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - { role: ansible-role-tripleo-tempest,
+        test_regex: 'tempest\.api\.compute\.test_quotas'}
