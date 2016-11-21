@@ -1,0 +1,37 @@
+---
+
+# Do the scale
+- name: Call scale deployment script
+  shell: >
+    source "{{ artosn_working_dir }}/stackrc";
+    "{{ artosn_working_dir }}"/scale-deployment.sh &> overcloud_deployment_scale_console.log;
+
+- name: Poll heat stack-list to determine when node scale is complete
+  shell: >
+    source "{{ artosn_working_dir }}"/stackrc;
+    heat stack-list
+  register: heat_stack_list_result
+  until: heat_stack_list_result.stdout.find("COMPLETE") != -1
+  retries: 20
+  delay: 90
+
+- name: Register post-scale nova list
+  shell: >
+    source "{{ artosn_working_dir }}/stackrc";
+    nova list
+  register: post_scale_nova_list
+
+- name: Display post-scale nova list
+  debug: msg={{ post_scale_nova_list.stdout_lines }}
+  when: post_scale_nova_list is defined
+
+# Verify the scale
+- name: Determine the post scale node count
+  shell: >
+    source "{{ artosn_working_dir }}/stackrc";
+    nova list | grep "{{ node_to_scale }}" | cut -f2- -d':' | wc -l
+  register: post_scale_node_count
+
+- name: Check that post scale node count is correct
+  fail: msg="Overcloud nova list does not show expected number of {{ node_to_scale }} services"
+  when: post_scale_node_count.stdout != "{{ final_scale_value }}"

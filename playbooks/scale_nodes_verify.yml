@@ -1,0 +1,21 @@
+---
+
+# NOTE(hrybacki: inventory regeneration and overcloud validation must be completed in a second playbook. The
+# deleted node is removed from the hosts file. However, it still exists in memory and will cause the
+# 'ansible-role-tripleo-inventory: regenerate ssh config' task to fail when attempting to acces non-existant host vars
+
+# Re-inventory the overcloud
+- name: Inventory the overcloud
+  hosts: undercloud
+  gather_facts: yes
+  vars:
+    inventory: all
+  roles:
+    - tripleo-inventory
+
+# Validate the overcloud
+- name: Validate the overcloud post-delete-node
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - tripleo-overcloud-validate

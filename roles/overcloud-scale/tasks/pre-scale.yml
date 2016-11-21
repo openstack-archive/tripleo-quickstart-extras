@@ -1,0 +1,60 @@
+---
+
+# Prepare deployment args
+- name: Enable pacemaker
+  set_fact:
+    pacemaker_args: >-
+      -e {{ overcloud_templates_path }}/environments/puppet-pacemaker.yaml
+  when: enable_pacemaker
+
+- name: extract the number of controllers to be deployed
+  set_fact: number_of_controllers="{{ scale_args| regex_replace('^.*--control-scale +([0-9]+).*$', '\\1') | regex_replace('^[^ 0-9]*.*$', '1') }}"
+
+- name: disable L3 HA
+  set_fact:
+    pacemaker_args: >-
+      {{ pacemaker_args }}
+      -e $HOME/neutronl3ha.yaml
+  when: enable_pacemaker and number_of_controllers|int < 3
+
+# Prep for scaling overcloud
+- name: Determine initial number of node(s) that will be scaled
+  shell: >
+    source "{{ artosn_working_dir }}/stackrc";
+    nova list | grep "{{ node_to_scale }}" | cut -f2- -d':' | wc -l
+  register: initial_node_count
+
+- name: Register uuid of original "{{ node_to_scale}}" node
+  shell: >
+    source "{{ artosn_working_dir }}"/stackrc;
+    nova list | grep -m 1 "{{ node_to_scale }}" | sed -e 's/|//g' | awk '{print $1}'
+  register: node_id_to_delete
+
+- name: Register the Name of the original "{{ node_to_scale }}" node
+  shell: >
+    source "{{ artosn_working_dir }}"/stackrc;
+    nova list | grep -m 1 "{{ node_to_scale }}" | sed -e 's/|//g' | awk '{print $2}'
+  register: node_name_to_delete
+
+- name: Register pre-scale nova list
+  shell: >
+    source "{{ artosn_working_dir }}/stackrc";
+    nova list
+  register: pre_scale_nova_list
+
+- name: Display pre-scale nova list
+  debug: msg={{ pre_scale_nova_list.stdout_lines }}
+  when: pre_scale_nova_list is defined
+
+- name: Copy scale deployment template to undercloud
+  template:
+    src: scale-deployment.j2
+    dest: "{{ artosn_working_dir }}/scale-deployment.sh"
+    mode: 0755
+
+- name: Copy neutron l3 ha heat template
+  when: enable_pacemaker and number_of_controllers|int < 3
+  template:
+    src: "neutronl3ha.yaml.j2"
+    dest: "{{ artosn_working_dir }}/neutronl3ha.yaml"
+    mode: 0755
