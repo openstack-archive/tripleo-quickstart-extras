@@ -1,0 +1,20 @@
+working_dir: /home/stack
+
+non_root_user: stack
+undercloud_key: "{{ local_working_dir }}/id_rsa_undercloud"
+
+baremetal_provisioning_log: "{{ local_working_dir }}/baremetal_provision.log"
+
+undercloud_repos_conf_script: undercloud-repos-conf.sh.j2
+undercloud_repos_conf_log: "{{ working_dir }}/undercloud_repos_conf.log"
+
+overcloud_images_script: overcloud-images.sh.j2
+overcloud_images_log: "{{ working_dir }}/overcloud_images.log"
+
+undercloud_local_interface: eth1
+undercloud_network_cidr: 192.0.2.0/24
+
+step_provide_undercloud: true
+step_prepare_undercloud: true
+step_undercloud_repos: true
+step_overcloud_images: true

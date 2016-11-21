@@ -1,0 +1,12 @@
+# Copy repo configuration script
+- name: Copy repositories configuration script
+  template:
+    src: "{{ undercloud_repos_conf_script }}"
+    dest: "{{ working_dir }}/undercloud-repos-conf.sh"
+    mode: 0755
+
+- name: Execute repositories configuration script
+  shell: >
+    {{ working_dir }}/undercloud-repos-conf.sh > {{ undercloud_repos_conf_log }} 2>&1
+  when: step_prepare_undercloud
+  become: true
