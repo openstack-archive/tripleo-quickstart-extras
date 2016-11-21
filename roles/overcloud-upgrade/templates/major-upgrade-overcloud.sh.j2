@@ -1,0 +1,169 @@
+#!/bin/bash
+set -ux
+
+onerror(){
+    echo "Command failed"
+    # get the failures list
+    heat resource-list overcloud >> failed_upgrade_list.log || true
+    for failed in $(heat resource-list \
+        --nested-depth 5 overcloud | grep FAIL |
+        grep 'StructuredDeployment ' | cut -d '|' -f3)
+    do echo -n "heat deployment-show out put for deployment: $failed" >> failed_upgrade.log
+       echo -n "######################################################" >> failed_upgrade.log
+       heat deployment-show $failed >> failed_upgrade.log
+       echo -n "######################################################" >> failed_upgrade.log
+       echo "puppet standard error for deployment: $failed" >> failed_upgrade.log
+       echo -n "######################################################" >> failed_upgrade.log
+       echo -e $(heat deployment-show $failed | jq .output_values.deploy_stderr) >> failed_upgrade.log
+       echo -n "######################################################" >> failed_upgrade.log
+    done
+    exit 1
+}
+trap onerror ERR
+
+{% if target_upgrade_version == 'newton' %}
+# Note, tripleo-heat-templates rdo package is not up to date.
+# It simlpier to clone the stable branch instead, while waiting of the
+# latest fixes.
+rm -rf /home/stack/tripleo-heat-templates
+git clone https://github.com/openstack/tripleo-heat-templates.git -b stable/newton
+{% endif %}
+
+source {{ upgrade_working_dir }}/stackrc
+{% if target_upgrade_version == 'mitaka' %}
+if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
+    echo "execute aodh upgrade"
+    openstack overcloud deploy --templates {{ tht_dir }} \
+        -e tripleo-heat-templates/overcloud-resource-registry-puppet.yaml \
+    {% if network_isolation == true %}
+        -e {{ tht_dir }}/environments/network-isolation.yaml \
+        -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
+        -e ~/network-environment.yaml \
+    {% endif %}
+        -e {{ tht_dir }}/environments/puppet-pacemaker.yaml \
+    {% for item in upgrade_custom_templates_controller %}
+        -e {{ item }} \
+    {% endfor %}
+        -e {{ tht_dir }}/environments/major-upgrade-aodh.yaml
+fi
+
+if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
+    echo "execute keystone upgrade"
+    openstack overcloud deploy --templates {{ tht_dir }} \
+        -e tripleo-heat-templates/overcloud-resource-registry-puppet.yaml \
+    {% if network_isolation == true %}
+        -e {{ tht_dir }}/environments/network-isolation.yaml \
+        -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
+        -e ~/network-environment.yaml \
+    {% endif %}
+        -e {{ tht_dir }}/environments/puppet-pacemaker.yaml \
+    {% for item in upgrade_custom_templates_controller %}
+        -e {{ item }} \
+    {% endfor %}
+        -e {{ tht_dir }}/environments/major-upgrade-keystone-liberty-mitaka.yaml
+fi
+{% endif %}
+
+{% if target_upgrade_version == 'newton' %}
+if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
+    echo "execute ceilometer migration"
+    openstack overcloud deploy --templates {{ tht_dir }} \
+        -e tripleo-heat-templates/overcloud-resource-registry-puppet.yaml \
+    {% if network_isolation == true %}
+        -e {{ tht_dir }}/environments/network-isolation.yaml \
+        -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
+        -e ~/network-environment.yaml \
+    {% endif %}
+        -e {{ tht_dir }}/environments/puppet-pacemaker.yaml \
+    {% for item in upgrade_custom_templates_controller %}
+        -e {{ item }} \
+    {% endfor %}
+        -e {{ tht_dir }}/environments/major-upgrade-ceilometer-wsgi-mitaka-newton.yaml
+fi
+{% endif %}
+
+
+if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
+    echo "execute script delivery"
+    openstack overcloud deploy --templates {{ tht_dir }} \
+        -e tripleo-heat-templates/overcloud-resource-registry-puppet.yaml \
+    {% if network_isolation == true %}
+        -e {{ tht_dir }}/environments/network-isolation.yaml \
+        -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
+        -e ~/network-environment.yaml \
+    {% endif %}
+        -e {{ tht_dir }}/environments/puppet-pacemaker.yaml \
+        -e {{ tht_dir }}/environments/major-upgrade-pacemaker-init.yaml \
+    {% for item in upgrade_custom_templates_script_delivery %}
+        -e {{ item }} \
+    {% endfor %}
+    #required blank line because of previous backslash
+
+fi
+
+if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
+    echo "get ceph uuid and update swift"
+    for swift in $(nova list | grep swift  | awk '{ print $2; }'); do
+        echo "Run upgrade on $swift"
+        {{ upgrade_non_controller_script }} --upgrade  $swift
+    done
+fi
+
+if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
+    echo "execute major upgrade controller"
+    openstack overcloud deploy --templates {{ tht_dir }} \
+        -e tripleo-heat-templates/overcloud-resource-registry-puppet.yaml \
+    {% if network_isolation == true %}
+        -e {{ tht_dir }}/environments/network-isolation.yaml \
+        -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
+        -e ~/network-environment.yaml \
+    {% endif %}
+        -e {{ tht_dir }}/environments/puppet-pacemaker.yaml \
+    {% for item in upgrade_custom_templates_controller %}
+        -e {{ item }} \
+    {% endfor %}
+    {% if enable_ceph|bool %}
+        -e ceph-upgrade.yaml \
+    {% endif %}
+        -e {{ tht_dir }}/environments/major-upgrade-pacemaker.yaml
+fi
+
+if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
+
+    echo "get compute uuid and update compute"
+    for compute in $(nova list | grep compute  | awk '{ print $2; }'); do
+        echo "Run upgrade on $compute"
+        {{ upgrade_non_controller_script }} --upgrade  $compute
+    done
+fi
+
+if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
+
+    echo "get ceph uuid and update ceph"
+    for ceph in $(nova list | grep cephstorage  | awk '{ print $2; }'); do
+        echo "Run upgrade on $ceph"
+        {{ upgrade_non_controller_script }} --upgrade  $ceph
+    done
+fi
+
+if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
+    echo "execute converge"
+    openstack overcloud deploy --templates {{ tht_dir }} \
+        -e tripleo-heat-templates/overcloud-resource-registry-puppet.yaml \
+        -e tripleo-heat-templates/environments/puppet-pacemaker.yaml \
+        -e tripleo-heat-templates/environments/major-upgrade-pacemaker-converge.yaml \
+    {% for item in upgrade_custom_templates_converge %}
+        -e {{ item }} \
+    {% endfor %}
+    {% if network_isolation == true %}
+        -e {{ tht_dir }}/environments/network-isolation.yaml \
+        -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
+        -e ~/network-environment.yaml
+    {% endif %}
+fi
+
+if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
+    echo "Update successful"
+else
+    exit 1
+fi

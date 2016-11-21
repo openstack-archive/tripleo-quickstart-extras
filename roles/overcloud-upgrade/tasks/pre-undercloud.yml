@@ -1,0 +1,43 @@
+---
+- name: Clean up the repos
+  sudo: yes
+  file: path=/etc/yum.repos.d/{{ item }} state=absent
+  with_items: "{{ repos }}"
+  when: step_pre_undercloud_upgrade
+
+- name: Create upgrade repo script for undercloud
+  template:
+    src: "{{ upgrade_undercloud_repo_script }}"
+    dest: "{{ upgrade_working_dir }}/upgrade-undercloud-repo.sh"
+    mode: 0744
+
+- name: Execute upgrade repo script
+  sudo: yes
+  shell: |
+    {{ upgrade_working_dir }}/upgrade-undercloud-repo.sh > upgrade-undercloud-repo.sh.log 2>&1
+  when: step_pre_undercloud_upgrade
+
+- name: Clean yum cache
+  sudo: yes
+  shell: yum clean all
+
+- name: Push hieradata override file for workers
+  template:
+    src: "quickstart-hieradata-overrides.yaml.j2"
+    dest: "{{ upgrade_working_dir }}/quickstart-hieradata-overrides.yaml"
+
+- name: Create undercloud upgrade script
+  template:
+    src: "{{ undercloud_upgrade_script }}"
+    dest: "{{ upgrade_working_dir }}/undercloud-upgrade.sh"
+    mode: 0755
+
+- name: Make sure no Tht repo is present
+  when: mixed_upgrade|bool
+  file: path={{ upgrade_working_dir }}/{{ tht_dir }} state=absent
+
+- name: Copy current Tht directory to the upgrade working dir
+  when: mixed_upgrade|bool
+  shell: >
+      cp -R /usr/share/openstack-tripleo-heat-templates \
+      {{ upgrade_working_dir }}/{{ tht_dir }};

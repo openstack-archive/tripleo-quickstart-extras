@@ -1,0 +1,17 @@
+#!/bin/bash
+set -eux
+source {{ upgrade_working_dir }}/stackrc
+
+openstack overcloud deploy --templates {{ tht_dir }} \
+    -e tripleo-heat-templates/overcloud-resource-registry-puppet.yaml \
+{% if network_isolation == true %}
+    -e {{ tht_dir }}/environments/network-isolation.yaml \
+    -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
+    -e ~/network-environment.yaml \
+{% endif %}
+{% for item in update_custom_templates %}
+    -e {{ item }} \
+{% endfor %}
+
+echo "check upgrade status"
+heat stack-list | grep -i COMPLETE

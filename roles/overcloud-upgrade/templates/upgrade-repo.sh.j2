@@ -1,0 +1,6 @@
+#!/bin/bash
+pushd /etc/yum.repos.d/
+{% for item in repos_url %}
+    wget {{ item }}
+{% endfor %}
+popd

@@ -1,0 +1,5 @@
+---
+- name: Upgrade the overcloud
+  shell: >
+      {{ upgrade_working_dir }}/overcloud-upgrade.sh > {{ upgrade_log }} 2>&1
+  when: step_upgrade_overcloud
