@@ -1,0 +1,56 @@
+- name: set network_args fact
+  set_fact:
+    network_args: >-
+      -e {{overcloud_templates_path}}/environments/network-isolation.yaml
+      -e {{overcloud_templates_path}}/environments/net-single-nic-with-vlans.yaml
+      -e $HOME/network-environment.yaml
+  when: network_isolation|bool and not overcloud_ipv6|bool
+
+- name: set network_args fact for IPv6
+  set_fact:
+    network_args: >-
+      -e {{overcloud_templates_path}}/environments/network-isolation-v6.yaml
+      -e {{overcloud_templates_path}}/environments/net-multiple-nics-v6.yaml
+      -e $HOME/network-environment.yaml
+  when: network_isolation|bool and overcloud_ipv6|bool
+
+- name: enable pacemaker
+  set_fact:
+    pacemaker_args: >-
+      -e {{overcloud_templates_path}}/environments/puppet-pacemaker.yaml
+  when: enable_pacemaker|bool
+
+- name: extract the number of controllers to be deployed
+  set_fact: number_of_controllers="{{ deploy_args| regex_replace('^.*--control-scale +([0-9]+).*$', '\\1') | regex_replace('^[^ 0-9]*.*$', '1') }}"
+
+- name: set ssl_args fact for master/newton
+  set_fact:
+    ssl_args: >-
+      -e $HOME/enable-tls.yaml
+      -e {{overcloud_templates_path}}/environments/tls-endpoints-public-ip.yaml
+      -e $HOME/inject-trust-anchor.yaml
+  when: ssl_overcloud|bool and release in ['newton', 'master']
+
+- name: set ssl_args fact for mitaka/liberty
+  set_fact:
+    ssl_args: >-
+      -e $HOME/enable-tls.yaml
+      -e $HOME/inject-trust-anchor.yaml
+  when: ssl_overcloud|bool and release in ['mitaka', 'liberty']
+
+- name: disable L3 HA
+  set_fact:
+    pacemaker_args: >-
+      {{ pacemaker_args }}
+      -e $HOME/neutronl3ha.yaml
+  when: enable_pacemaker|bool and number_of_controllers|int < 3
+
+- name: set workers_args fact
+  set_fact:
+    workers_args: >-
+      -e {{overcloud_templates_path}}/environments/low-memory-usage.yaml
+  when: release not in ['mitaka', 'liberty']
+
+- name: Use KVM for Red Hat distro
+  set_fact: libvirt_args="--libvirt-type kvm"
+  when: ansible_distribution == 'RedHat'

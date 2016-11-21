@@ -1,0 +1,20 @@
+- include: pre-deploy.yml
+  tags:
+    - overcloud-scripts
+
+- include: create-scripts.yml
+  tags:
+    - overcloud-scripts
+
+- include: deploy-overcloud.yml
+  tags:
+    - overcloud-deploy
+
+- include: overcloud-status.yml
+  tags:
+    - overcloud-deploy
+
+- include: post-deploy.yml
+  tags:
+    - overcloud-post-deploy
+  when: overcloud_deploy_result is defined and overcloud_deploy_result == "passed"
