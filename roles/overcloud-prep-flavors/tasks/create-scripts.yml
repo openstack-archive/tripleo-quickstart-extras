@@ -1,0 +1,7 @@
+# Creat the scripts that will be used to setup flavors for the overcloud
+
+- name: Create overcloud-prep-flavors script
+  template:
+    src: "{{ overcloud_prep_flavors_script }}"
+    dest: "{{ working_dir }}/overcloud-prep-flavors.sh"
+    mode: 0755

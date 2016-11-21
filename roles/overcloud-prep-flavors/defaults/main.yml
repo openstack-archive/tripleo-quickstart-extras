@@ -1,0 +1,2 @@
+overcloud_prep_flavors_script: overcloud-prep-flavors.sh.j2
+overcloud_prep_flavors_log: "{{ working_dir }}/overcloud_prep_flavors.log"

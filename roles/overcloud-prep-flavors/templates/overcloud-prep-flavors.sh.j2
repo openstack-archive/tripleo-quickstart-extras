@@ -1,0 +1,49 @@
+#!/bin/bash
+
+set -eux
+
+### --start_docs
+## Prepare flavors for deploying the overcloud
+## ===========================================
+
+## Prepare Your Environment
+## ------------------------
+
+## * Source in the undercloud credentials.
+## ::
+
+source {{ working_dir }}/stackrc
+
+## Create flavors required for deployment
+## --------------------------------------
+
+{% for name, flavor in (flavors|default({})).items() if name != 'undercloud' %}
+
+## * Ensure oooq_{{ name }} flavor does not exist before attempting to create a new one.
+
+## ::
+
+nova flavor-delete oooq_{{ name }} > /dev/null 2>&1 || true
+
+## .. note: We subtract one from the total disk size here to resolve problems
+##    encountered in CI in which the available disk space on the virtual
+##    nodes was slightly less than what we requested.
+
+## ::
+
+openstack flavor create --id auto \
+    --ram {{ flavor.memory }} \
+    --disk $(( {{ flavor.disk }} - 1)) \
+    --vcpus {{ flavor.vcpu }} \
+    oooq_{{ name }}
+openstack flavor set \
+    --property "cpu_arch"="x86_64" \
+    --property "capabilities:boot_option"="local" \
+    --property "capabilities:profile"="{{ name }}" oooq_{{ name }}
+{% for propname,propval in (flavor.properties|default({})).items() %}
+openstack flavor set --property "{{ propname }}={{ propval }}" oooq_{{ name }}
+{% endfor %}
+
+{% endfor %}
+
+### --stop_docs

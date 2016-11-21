@@ -1,0 +1,4 @@
+- name: Prepare the scripts for overcloud flavors
+  shell: |
+    {{ working_dir }}/overcloud-prep-flavors.sh > \
+    {{ overcloud_prep_flavors_log }} 2>&1
