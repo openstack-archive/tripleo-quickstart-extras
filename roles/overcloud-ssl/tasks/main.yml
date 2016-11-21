@@ -1,0 +1,32 @@
+---
+# tasks file for ansible-role-tripleo-ssl
+- when: ssl_overcloud
+  block:
+    - name: Ensure rpm requirements for ssl are installed
+      yum: name={{ item }} state=latest
+      with_items:
+        - openssl
+
+    - name: Ensure tripleo heat template rpm requirements for ssl are installed
+      yum: name={{ item }} state=latest
+      with_items:
+        - openstack-tripleo-heat-templates
+
+    - name: Create overcloud-create-ssl-cert.sh
+      template:
+        src: "{{ overcloud_ssl_cert_script }}"
+        dest: "{{ working_dir }}/overcloud-create-ssl-cert.sh"
+        mode: 0755
+
+    - name: Generate SSL certificates
+      shell: |
+        {{ working_dir }}/overcloud-create-ssl-cert.sh > {{ overcloud_ssl_cert_log }} 2>&1
+
+    - name: fetch template from single remote host
+      tls_tht:
+          source_dir: "/usr/share/openstack-tripleo-heat-templates/"
+          dest_dir: "{{ working_dir }}/"
+          cert_filename: "{{ working_dir }}/server-cert.pem"
+          cert_ca_filename: "{{ working_dir }}/overcloud-cacert.pem"
+          key_filename: "{{ working_dir }}/server-key.pem"
+          tht_release: '{{ release }}'
