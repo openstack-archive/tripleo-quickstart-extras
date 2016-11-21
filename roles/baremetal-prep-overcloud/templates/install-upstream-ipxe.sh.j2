@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Script to install the ipxe upstream version
+
+set -eux
+
+### --start_docs
+
+## Use
+## ===================
+
+##.. note:: it may be necessary to install the upstream version of ipxe, to avoid this kind of problems:
+##          <https://bugzilla.redhat.com/show_bug.cgi?id=1324422>
+
+## * Install package dependencies
+## ::
+sudo yum -y install xz-devel
+
+## * Clone upstream repo
+## ::
+git clone git://git.ipxe.org/ipxe.git /tmp/ipxe
+
+## * Compile and replace undionly.kpxe
+## ::
+pushd /tmp/ipxe/src
+make
+sudo cp /tmp/ipxe/src/bin/undionly.kpxe /tftpboot/undionly.kpxe
+popd
+
+### --stop_docs

@@ -1,0 +1,13 @@
+---
+working_dir: /home/stack
+
+step_install_upstream_ipxe: false
+
+step_adjust_mtu: false
+mtu: 1350
+mtu_interface:
+  - eth1
+
+undercloud_type: virtual
+network_isolation: true
+network_isolation_ipv4_cidr: "172.16.23.0/24"
