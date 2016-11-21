@@ -1,0 +1,73 @@
+---
+# tasks file for ansible-role-tripleo-overcloud-validate-ha
+
+- name: Creating the environment file on undercloud
+  delegate_to: undercloud
+  template:
+    src: "{{ environment_file }}"
+    dest: "{{ working_dir }}/environment"
+    mode: 0600
+
+- name: Load the workarounds script on the undercloud
+  delegate_to: undercloud
+  template:
+    src: "{{ workarounds_script }}"
+    dest: "{{ working_dir }}/workarounds.sh"
+    mode: 0755
+  when: apply_workarounds
+
+- name: Execute workarounds script on the undercloud
+  delegate_to: undercloud
+  shell: >
+    "{{ working_dir }}/workarounds.sh"
+  when: apply_workarounds
+
+- name: Get overcloud-ha-test-suite on undercloud and controllers
+  vars:
+    nodes:
+      - "undercloud"
+      - "{{ groups['controller'] }}"
+  shell: >
+    rm -rf tripleo-director-ha-test-suite;
+    git clone https://github.com/rscarazz/tripleo-director-ha-test-suite/ tripleo-director-ha-test-suite;
+  delegate_to: "{{ item }}"
+  with_items: "{{ nodes }}"
+
+- name: HA test failed actions (overcloud)
+  delegate_to: overcloud-controller-0
+  shell: >
+    {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_check-failed-actions > {{ overcloud_working_dir }}/test_ha_failed-actions.log 2>&1
+
+- name: HA test Master/Slave core resource stop and start (overcloud)
+  delegate_to: overcloud-controller-0
+  shell: >
+    {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_master-slave -r {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_master-slave  > {{ overcloud_working_dir }}/test_ha_master-slave.log 2>&1
+
+- name: HA test Keystone removal (overcloud)
+  delegate_to: overcloud-controller-0
+  shell: >
+    {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_keystone-constraint-removal -r {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_keystone-constraint-removal > {{ overcloud_working_dir }}/test_ha_keystone-constraint-removal.log 2>&1
+  when: release == "mitaka"
+
+- name: HA test NG A (overcloud)
+  delegate_to: overcloud-controller-0
+  shell: >
+    {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_pacemaker-light-a -r {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_pacemaker-light > {{ overcloud_working_dir }}/test_ha_ng-a.log 2>&1
+  when: release == "newton"
+
+- name: HA test NG B (overcloud)
+  delegate_to: overcloud-controller-0
+  shell: >
+    {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_pacemaker-light-b -r {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_pacemaker-light > {{ overcloud_working_dir }}/test_ha_ng-b.log 2>&1
+  when: release == "newton"
+
+- name: HA test NG C (overcloud)
+  delegate_to: overcloud-controller-0
+  shell: >
+    {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_pacemaker-light-c -r {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_pacemaker-light > {{ overcloud_working_dir }}/test_ha_ng-c.log 2>&1
+  when: release == "newton"
+
+- name: HA Test instance deploy on the overcloud (undercloud)
+  delegate_to: undercloud
+  shell: >
+    {{ working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ working_dir }}/tripleo-director-ha-test-suite/test/test_instance-creation -r {{ working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_instance-creation -u > {{ working_dir }}/test_ha_instance.log 2>&1
