@@ -1,0 +1,17 @@
+---
+- name: Add virthost to inventory
+  hosts: localhost
+  tasks:
+    - name: Add the virthost to the inventory
+      add_host:
+        name: "{{virthost}}"
+        groups: "virthost"
+        ansible_fqdn: "{{ virthost }}"
+        ansible_user: "root"
+        ansible_host: "{{ virthost }}"
+
+- name:  Clean up tripleo packages and libvirt
+  hosts: virthost
+  gather_facts: no
+  roles:
+    - { role: tripleo-cleanup-nfo }

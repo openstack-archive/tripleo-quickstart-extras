@@ -1,0 +1,188 @@
+# tasks file for ansible-role-tripleo-cleanup-nfo
+---
+- name: remove sudoers requiretty
+  lineinfile: dest=/etc/sudoers state=absent regexp="Defaults    requiretty"
+
+- block:
+
+    - name: unregister rhn via subscription manager
+      redhat_subscription: state=absent
+
+    - debug: msg="All errors in this block are ignored"
+
+    - name: ensure libvirt-python is installed
+      yum: name=libvirt-python state=present
+
+    - name: get list of running libvirt guests
+      virt: command=list_vms
+      register: vms
+
+    - name: display list of vms
+      debug: var=vms.list_vms
+
+    - name: undefine vms
+      virt: command=undefine name={{ item }}
+      with_items: vms.list_vms
+
+    - name: destroy any remaining vms
+      virt : command=destroy name={{ item }}
+      with_items: vms.list_vms
+
+    - name: remove images from /var/lib/libvirt/images
+      shell: rm -rf /var/lib/libvirt/images/*.qcow2
+
+    - name: remove tripleo-quickstart image cache (/var/cache/tripleo-quickstart/images)
+      shell: find /var/cache/tripleo-quickstart/images/*  -mtime +3 -exec rm -rf {} \;
+
+    - name: remove tripleo-quickstart /var/oooqvms
+      shell: rm -rf /var/oooqvms/
+
+    - name: remove ansible-role-tripleo-image-build artifacts
+      shell: >
+        rm -rf /var/log/artib;
+        rm -rf /home/oooq-images;
+        rm -rf /var/lib/oooq-images;
+
+    - name: destroy brbm network
+      command: virsh net-destroy brbm
+
+    - name: destroy default network
+      command: virsh net-destroy default
+
+    - name: destroy default pool
+      sudo: yes
+      command: virsh pool-destroy default
+
+    - name: destroy local libvirt storage, networks and config
+      become: yes
+      shell: rm -rf /home/stack/.config/libvirt
+
+    - name: destroy /run/user/ for stack
+      shell: >
+        user_id=`cat /etc/passwd | grep stack | awk -F ':' '{ print $3 }'`;
+        rm -Rf /run/user/$user_id/libvirt
+
+    - name: destroy virbr0 network if present
+      command: brctl delbr virbr0
+
+    - name: stop libvirtd
+      service: name=libvirtd state=stopped
+
+    - name: remove remaining libvirt config
+      command: rm -Rf /etc/libvirt
+
+    - name: remove epel-release
+      yum: name=epel-release state=absent
+
+    - name: ensure yum repos metadata and cache are clean
+      shell: >
+        yum-complete-transaction;
+        yum clean all;
+        rm -Rfv /var/cache/yum;
+
+    - name: remove files from /tmp
+      shell: >
+        rm -Rfv /tmp/*;
+
+    - name: remove any openvswitch bridge networks
+      openvswitch_bridge: bridge=brbm state=absent
+
+    - name: stop openvswitch
+      service: name=openvswitch state=stopped
+
+    - name: kill all processes owned by stack
+      command: killall -u {{ non_root_user }}
+
+    - name: destroy the stack user
+      user: name={{ non_root_user }} remove=yes force=yes state=absent
+
+    - name: remove stack home dir
+      shell: rm -Rf {{ item }}
+
+      with_items:
+        - /home/{{ non_root_user }}
+        - /var/spool/mail/{{ non_root_user }}
+
+    - name: remove files automation files from /root
+      file: name={{item}} state=absent
+      with_items:
+        - /root/KEYS
+        - /root/fedora-prep
+        - /root/.ssh/known_hosts
+        - /root/.ssh/id_rsa_virt_power
+
+    - name: kill all the network managers processes
+      shell: kill -9 $(ps aux | grep NetworkManager | awk '{print $2}')
+      ignore_errors: yes    # When no NM running, killall exits with 1
+
+    - name: ensure the network service is enabled
+      service: name=network enabled=yes
+
+    - name: remove files automation files from /root
+      file: name={{item}} state=absent
+      with_items:
+        - /usr/share/instack-undercloud
+        - /usr/bin/instack-setup-host
+
+    - name: remove any instack rpms from the host
+      yum: name={{item}} state=absent
+      ignore_errors: yes
+      with_flattened:
+        - instack-*
+        - rdo-release
+        - rhos-release
+        - libvirt
+        - libvirt-daemon
+        - openvswitch
+        - NetworkManager
+        - qemu-*
+        - openstack-*
+        - python-qpid-*
+        - pexpect
+        - python-pexpect
+        - python-tuskarclient*
+        - python-keystone*
+        - python-openstackclient
+        - python-oslo*
+        - python-qpid
+        - python-ironic*
+        - python-eventlet
+        - tripleo-*
+        - python-rdomanager-*
+        - jq
+        - python-tripleo*
+
+    - name: find any remaining rpms from director repos
+      shell: "yumdb search from_repo rhelosp-*-director* | egrep -v from_repo | grep -v '^$' | tail -n +2 "
+      register: director_rpms
+
+    - name: find any remaining rpms from rhos repos
+      shell: "yumdb search from_repo rhelosp-*-p* | egrep -v from_repo | grep -v '^$' | tail -n +2 "
+      register: rhos_rpms
+
+    - name: find any remaining rpms from delorean repos
+      shell: "yumdb search from_repo delorean* | egrep -v from_repo | grep -v '^$' | tail -n +2 "
+      register: delorean_rpms
+
+    # BUG: when this task encounters an rpm of the form "1:somerpm" it fails
+    #- name: debug
+    #  debug: var={{ item }}
+    #  with_flattened:
+    #    - director_rpms.stdout_lines
+    #    - rhos_rpms.stdout_lines
+    #    - delorean_rpms.stdout_lines
+
+    - name: remove any openstack rpms from the host
+      yum: name={{item}} state=absent
+      ignore_errors: yes
+      with_flattened:
+        - director_rpms.stdout_lines
+        - rhos_rpms.stdout_lines
+        - delorean_rpms.stdout_lines
+
+    # this task *MUST* be the last task that is run
+    - name: remove all the yum repos <nuke>
+      shell: rm -Rf /etc/yum.repos.d/*
+
+  # end of block
+  ignore_errors: true
