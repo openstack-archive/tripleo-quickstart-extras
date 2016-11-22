@@ -1,0 +1,6 @@
+---
+- name: Prepare for the containerized deployment
+  shell: |
+    "{{ working_dir }}/overcloud-prep-containers.sh" > \
+    {{ overcloud_prep_containers_log }} 2>&1
+  when: containerized_overcloud|bool

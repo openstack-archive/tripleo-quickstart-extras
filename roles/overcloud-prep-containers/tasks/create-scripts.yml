@@ -1,0 +1,20 @@
+# Create the scripts that will be used to setup the overcloud images
+
+- name: Create overcloud prep-containers script
+  template:
+    src: "{{ overcloud_prep_containers_script }}"
+    dest: "{{ working_dir }}/overcloud-prep-containers.sh"
+    mode: 0755
+
+- name: Create the default parameters for the container deployment
+  template:
+    src: "{{ containers_default_parameters }}"
+    dest: "{{ working_dir }}/containers-default-parameters.yaml"
+    mode: 0755
+
+- name: Create the python script to upload images to the local registry
+  template:
+    src: upload_images_to_local_registry.py.j2
+    dest: "{{ working_dir }}/upload_images_to_local_registry.py"
+    mode: 0755
+

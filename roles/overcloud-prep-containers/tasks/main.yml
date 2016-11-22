@@ -1,0 +1,9 @@
+---
+# tasks file for ansible-role-tripleo-overcloud-prep-containers
+- include: create-scripts.yml
+  tags:
+    - undercloud-scripts
+
+- include: overcloud-prep-containers.yml
+  tags:
+    - containers
