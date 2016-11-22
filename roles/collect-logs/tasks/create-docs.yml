@@ -3,7 +3,7 @@
 - block:
     - name: Ensure required python packages are installed
       pip:
-        requirements: "{{ local_working_dir }}/usr/local/share/ansible/roles/tripleo-collect-logs/doc-requirements.txt"
+        requirements: "{{ local_working_dir }}/usr/local/share/ansible/roles/collect-logs/doc-requirements.txt"
 
     - name: Unarchive shell scripts
       shell: >
@@ -15,7 +15,7 @@
 
     - name: Generate rST docs from scripts and move to Sphinx src dir
       shell: >
-         awk -f "{{ local_working_dir }}/usr/local/share/ansible/roles/tripleo-collect-logs/scripts/doc_extrapolation.awk" \
+         awk -f "{{ local_working_dir }}/usr/local/share/ansible/roles/collect-logs/scripts/doc_extrapolation.awk" \
            "{{ artcl_collect_dir }}/undercloud/home/stack/{{ item }}.sh" > \
            "{{ artcl_docs_source_dir }}/{{ item }}.rst"
       with_items: "{{ artcl_create_docs_payload.included_deployment_scripts }}"

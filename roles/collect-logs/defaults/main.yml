@@ -1,5 +1,4 @@
 ---
-# defaults file for ansible-role-tripleo-collect-logs
 
 artcl_collect_list:
   - /var/log/
@@ -47,5 +46,5 @@ artcl_collect_sosreport: false
 
 ## Doc generation specific vars
 artcl_gen_docs: false
-artcl_docs_source_dir: "{{ local_working_dir }}/usr/local/share/ansible/roles/tripleo-collect-logs/docs/source"
+artcl_docs_source_dir: "{{ local_working_dir }}/usr/local/share/ansible/roles/collect-logs/docs/source"
 artcl_docs_build_dir: "{{ artcl_collect_dir }}/docs/build"

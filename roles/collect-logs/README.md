@@ -1,5 +1,5 @@
-ansible-role-tripleo-collect-logs
-=================================
+collect-logs
+============
 
 An Ansible role for aggregating logs from TripleO nodes.
 
@@ -104,7 +104,7 @@ Example Playbook
 - name: Gather logs
   hosts: all:!localhost
   roles:
-    - tripleo-collect-logs
+    - collect-logs
 ```
 
 Templated Bash to rST Conversion Notes

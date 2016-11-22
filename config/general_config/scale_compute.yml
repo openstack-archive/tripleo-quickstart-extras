@@ -51,7 +51,7 @@ scale_args: >-
   {{ pacemaker_args }}
   {{ scale_extra_args }}
 
-# options below direct automatic doc generation by tripleo-collect-logs
+# options below direct automatic doc generation by collect-logs
 artcl_gen_docs: true
 artcl_create_docs_payload:
   included_deployment_scripts:
