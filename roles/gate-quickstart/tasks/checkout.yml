@@ -9,8 +9,11 @@
     dest: '{{ lookup("env", "WORKSPACE") }}/{{ gated_project_name }}'
     refspec: '{{ gated_change.refspec }}'
     version: 'FETCH_HEAD'
+  # do not check out the gated change if it was already cloned by the jenkins job
+  when: gated_change.project != "{{ lookup('env', 'GERRIT_PROJECT') }}"
 
-- when: gated_project_name != "tripleo-quickstart"
+# do this only for the roles
+- when: gated_change.project != "openstack/tripleo-quickstart"
   block:
     - name: Modify requirements
       replace:
