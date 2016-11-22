@@ -15,13 +15,13 @@
 - name: Scale overcloud nodes
   hosts: undercloud
   roles:
-    - { role: tripleo-overcloud-scale, artosn_scale_nodes: true, artosn_delete_original_node: false }
+    - { role: overcloud-scale, artosn_scale_nodes: true, artosn_delete_original_node: false }
 
 # Delete the original node of type that was scaled - ensure overcloud validates after reducing scale
 - name: Delete original node of type scaled
   hosts: undercloud
   roles:
-    - { role: tripleo-overcloud-scale, artosn_scale_nodes: false, artosn_delete_original_node: true }
+    - { role: overcloud-scale, artosn_scale_nodes: false, artosn_delete_original_node: true }
 
 # NOTE(hrybacki: inventory regeneration and overcloud validation must be completed in a second playbook. The
 # deleted node is removed from the hosts file. However, it still exists in memory and will cause the
