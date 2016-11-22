@@ -1,0 +1,19 @@
+- name: Remove stack
+  os_stack:
+      name: "{{ stack_name }}"
+      cloud: "{{ cloud_name }}"
+      state: absent
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ local_working_dir }}/clouds.yaml"
+  ignore_errors: true
+
+- name: Remove associated keypair
+  shell: >
+      export OS_USERNAME="{{ os_username }}";
+      export OS_PASSWORD="{{ os_password }}";
+      export OS_TENANT_NAME="{{ os_tenant_name }}";
+      export OS_AUTH_URL="{{ os_auth_url }}";
+      nova keypair-delete {{ prefix }}key
+  ignore_errors: true
+  no_log: true
+

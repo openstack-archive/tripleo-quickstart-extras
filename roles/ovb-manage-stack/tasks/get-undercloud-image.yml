@@ -1,0 +1,31 @@
+---
+- name: Ensure local working dir exists
+  file:
+    path: "{{ local_working_dir }}"
+
+- name: generate prefix for all run-related entities
+  set_fact:
+    prefix="{{ tmp.node_prefix }}"
+
+- name: get the latest uploaded image
+  shell: >
+      export OS_AUTH_URL="{{ os_auth_url }}";
+      export OS_USERNAME="{{ os_username }}";
+      export OS_PASSWORD="{{ os_password }}";
+      export OS_TENANT_NAME="{{ os_tenant_name }}";
+      glance image-list --sort-key 'created_at' | grep "{{ osp_release | default(release) }}-undercloud.qcow2" | head -n1 | cut -d'|' -f3 | sed 's/ //g'
+  register: latest_undercloud_image_name
+  no_log: true
+
+- name: set fact for undercloud image
+  set_fact: latest_undercloud_image="{{ latest_undercloud_image_name.stdout }}"
+
+- name: copy key inserted in image to undercloud_key location
+  copy:
+      src: "{{ existing_key_location }}/{{ item }}"
+      dest: "{{ local_working_dir }}/{{ item }}"
+      mode: 0600
+  with_items:
+      - id_rsa_undercloud
+      - id_rsa_undercloud.pub
+

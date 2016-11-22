@@ -1,0 +1,18 @@
+---
+- name: Create the OVB stack
+  hosts: localhost
+  roles:
+    - { role: ovb-manage-stack, ovb_manage_stack_mode: 'create' }
+
+- name:  Inventory the undercloud instance
+  hosts: localhost
+  gather_facts: yes
+  roles:
+    - { role: tripleo-inventory }
+
+- name: Setup the undercloud
+  hosts: undercloud
+  vars:
+      ansible_ssh_user: root
+  roles:
+    - { role: ovb-manage-stack, ovb_manage_stack_mode: 'setup-undercloud' }

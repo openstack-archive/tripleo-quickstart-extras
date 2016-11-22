@@ -1,0 +1,57 @@
+#! /bin/bash
+
+set -eux
+
+### --start_docs
+
+## Set up the undercloud for installation
+## ======================================
+
+## * Configure external interface
+## ::
+
+sudo ifconfig {{ external_interface }} {{ external_interface_ip }} netmask {{ external_interface_netmask }}
+
+## * Get mac address of external interface
+## ::
+
+MAC_ADDR_EXT_INTERFACE=$( ifconfig | grep -n3 {{ external_interface }} | grep -A1 ether | cut -d " " -f 10 )
+
+## * Set up external interface
+## ::
+
+sudo bash -c 'cat <<EOF > /etc/sysconfig/network-scripts/ifcfg-{{ external_interface }}
+NAME={{ external_interface }}
+IPADDR={{ external_interface_ip }}
+NETMASK={{ external_interface_netmask }}
+NM_CONTROLLED=no
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+ONBOOT=yes
+HWADDR=$MAC_ADDR_EXT_INTERFACE
+PEERDNS=yes
+PEERROUTES=yes
+IPV6_PEERDNS=yes
+IPV6_PEERROUTES=yes
+EOF'
+
+## * Set MTU values
+## ::
+
+{% for interface in (mtu_interface) %}
+  ip link set {{ interface }} mtu {{ mtu }}
+  echo "MTU={{ mtu }}" >> /etc/sysconfig/network-scripts/ifcfg-{{ interface }}
+{% endfor %}
+
+## * Add nameserver to resolv.conf
+## ::
+
+cat <<EOF >> /etc/resolv.conf
+nameserver {{ pvt_nameserver }}
+EOF
+
+### --stop_docs

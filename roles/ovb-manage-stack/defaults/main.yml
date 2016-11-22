@@ -1,0 +1,78 @@
+---
+# defaults for all ovb-stack related tasks
+local_working_dir: "{{ lookup('env', 'HOME') }}/.quickstart"
+working_dir: /home/stack
+
+release: mitaka
+
+node:
+    prefix:
+        - "{{ 1000 |random }}"
+        - "{{ lookup('env', 'USER') }}"
+        - "{{ lookup('env', 'BUILD_NUMBER') }}"
+tmp:
+    node_prefix: '{{ node.prefix | reject("none") | join("-") }}-'
+
+os_username: admin
+os_password: password
+os_tenant_name: admin
+os_auth_url: 'http://10.0.1.10:5000/v2.0'
+cloud_name: qeos7
+
+stack_name: 'oooq-{{ prefix }}stack'
+rc_file: /home/stack/overcloudrc
+node_name: 'undercloud'
+ssh_extra_args: '-F "{{ local_working_dir }}/ssh.config.ansible"'
+undercoud_key: "{{ local_working_dir }}/id_rsa_undercloud"
+node_groups:
+    - 'undercloud'
+    - 'tester'
+templates_dir: "{{ local_working_dir }}/openstack-virtual-baremetal/templates"
+ovb_dir: "{{ local_working_dir }}/openstack-virtual-baremetal"
+heat_template: "{{ templates_dir }}/quintupleo.yaml"
+environment_list:
+    - "{{ templates_dir }}/resource-registry.yaml"
+    - "{{ local_working_dir }}/{{ prefix }}env.yaml"
+
+existing_key_location: '{{ local_working_dir }}'
+remove_image_from_host_cloud: false
+
+bmc_flavor: m1.medium
+bmc_image: 'bmc-base'
+bmc_prefix: '{{ prefix }}bmc'
+
+baremetal_flavor: m1.large
+baremetal_image: 'ipxe-boot'
+baremetal_prefix: '{{ prefix }}baremetal'
+
+key_name: '{{ prefix }}key'
+private_net: '{{ prefix }}private'
+node_count: 2
+public_net: '{{ prefix }}public'
+provision_net: '{{ prefix }}provision'
+
+# QuintupleO-specific params ignored by virtual-baremetal.yaml
+undercloud_name: '{{ prefix }}undercloud'
+undercloud_image: '{{ prefix }}undercloud.qcow2'
+undercloud_flavor: m1.xlarge
+external_net:  '10.2.1.0/22'
+
+network_isolation_type: multi-nic
+
+setup_undercloud_connectivity_log: "{{ working_dir }}/setup_undercloud_connectivity.log"
+
+mtu: 1350
+mtu_interface:
+  - eth1
+pvt_nameserver: 8.8.8.8
+
+external_interface: eth2
+external_interface_ip: 10.0.0.1
+external_interface_netmask: 255.255.255.0
+
+registered_releases:
+  - mitaka
+  - newton
+  - master
+  - rhos-9
+
