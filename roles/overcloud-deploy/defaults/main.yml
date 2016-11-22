@@ -22,6 +22,8 @@ external_network_gateway: "{{ floating_ip_cidr|nthhost(1) }}"
 
 # Minutes to wait before giving up on the deploy.
 deploy_timeout: 90
+
+# Deployment variations
 extra_args: ""
 ssl_overcloud: false
 libvirt_args: "--libvirt-type qemu"
@@ -57,14 +59,15 @@ set_overcloud_workers: true
 network_args: ""
 pacemaker_args: ""
 workers_args: ""
-
 ssl_args: ""
 validation_args: "--validation-warnings-fatal"
+container_args: ""
 
 deploy_args: >-
   {{ libvirt_args }}
   {{ flavor_args }}
   {{ timeout_args }}
+  {{ container_args }}
   {{ network_args }}
   {{ pacemaker_args }}
   {{ workers_args }}

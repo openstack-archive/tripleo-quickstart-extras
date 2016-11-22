@@ -1,23 +1,30 @@
+# Note.. the order of heat templates and args is very important.  The last environment that sets a variable takes precedent.
+
 - name: set network_args fact
   set_fact:
     network_args: >-
-      -e {{overcloud_templates_path}}/environments/network-isolation.yaml
-      -e {{overcloud_templates_path}}/environments/net-single-nic-with-vlans.yaml
-      -e $HOME/network-environment.yaml
-  when: network_isolation|bool and not overcloud_ipv6|bool
+      -e {{ overcloud_templates_path }}/environments/network-isolation.yaml
+      -e {{ overcloud_templates_path }}/environments/net-single-nic-with-vlans.yaml
+      -e {{ working_dir }}/network-environment.yaml
+  when:
+    - network_isolation|bool
+    - not overcloud_ipv6|bool
+    - not containerized_overcloud|bool
 
 - name: set network_args fact for IPv6
   set_fact:
     network_args: >-
-      -e {{overcloud_templates_path}}/environments/network-isolation-v6.yaml
-      -e {{overcloud_templates_path}}/environments/net-multiple-nics-v6.yaml
-      -e $HOME/network-environment.yaml
-  when: network_isolation|bool and overcloud_ipv6|bool
+      -e {{ overcloud_templates_path }}/environments/network-isolation-v6.yaml
+      -e {{ overcloud_templates_path }}/environments/net-multiple-nics-v6.yaml
+      -e {{ working_dir }}/network-environment.yaml
+  when:
+    - network_isolation|bool
+    - overcloud_ipv6|bool
 
 - name: enable pacemaker
   set_fact:
     pacemaker_args: >-
-      -e {{overcloud_templates_path}}/environments/puppet-pacemaker.yaml
+      -e {{ overcloud_templates_path }}/environments/puppet-pacemaker.yaml
   when: enable_pacemaker|bool
 
 - name: extract the number of controllers to be deployed
@@ -26,17 +33,21 @@
 - name: set ssl_args fact for master/newton
   set_fact:
     ssl_args: >-
-      -e $HOME/enable-tls.yaml
-      -e {{overcloud_templates_path}}/environments/tls-endpoints-public-ip.yaml
-      -e $HOME/inject-trust-anchor.yaml
-  when: ssl_overcloud|bool and release in ['newton', 'master']
+      -e {{ working_dir }}/enable-tls.yaml
+      -e {{ overcloud_templates_path }}/environments/tls-endpoints-public-ip.yaml
+      -e {{ working_dir }}/inject-trust-anchor.yaml
+  when:
+    - ssl_overcloud|bool
+    - release in ['newton', 'master']
 
 - name: set ssl_args fact for mitaka/liberty
   set_fact:
     ssl_args: >-
-      -e $HOME/enable-tls.yaml
-      -e $HOME/inject-trust-anchor.yaml
-  when: ssl_overcloud|bool and release in ['mitaka', 'liberty']
+      -e {{ working_dir }}/enable-tls.yaml
+      -e {{ working_dir }}/inject-trust-anchor.yaml
+  when:
+    - ssl_overcloud|bool
+    - release in ['mitaka', 'liberty']
 
 - name: set validation_args fact for mitaka/liberty
   set_fact:
@@ -47,15 +58,41 @@
   set_fact:
     pacemaker_args: >-
       {{ pacemaker_args }}
-      -e $HOME/neutronl3ha.yaml
-  when: enable_pacemaker|bool and number_of_controllers|int < 3
+      -e {{ working_dir }}/neutronl3ha.yaml
+  when:
+    - enable_pacemaker|bool
+    - number_of_controllers|int < 3
 
 - name: set workers_args fact
   set_fact:
     workers_args: >-
-      -e {{overcloud_templates_path}}/environments/low-memory-usage.yaml
+      -e {{ overcloud_templates_path }}/environments/low-memory-usage.yaml
   when: release not in ['mitaka', 'liberty']
 
 - name: Use KVM for Red Hat distro
   set_fact: libvirt_args="--libvirt-type kvm"
   when: ansible_distribution == 'RedHat'
+
+- name: set container_args fact
+  set_fact:
+    container_args: >-
+      -e {{ overcloud_templates_path }}/environments/docker.yaml
+      -e {{ overcloud_templates_path }}/environments/docker-network.yaml
+      -e {{ working_dir }}/containers-default-parameters.yaml
+  when:
+    - containerized_overcloud|bool
+    - not network_isolation|bool
+
+- name: set network_args fact for containers
+  set_fact:
+    network_args: >-
+      -e {{ overcloud_templates_path }}/environments/docker.yaml
+      -e {{ overcloud_templates_path }}/environments/docker-network.yaml
+      -e {{ overcloud_templates_path }}/environments/docker-network-isolation.yaml
+      -e {{ overcloud_templates_path }}/environments/network-isolation.yaml
+      -e {{ overcloud_templates_path }}/environments/net-single-nic-with-vlans.yaml
+      -e {{ working_dir }}/network-environment.yaml
+      -e {{ working_dir }}/containers-default-parameters.yaml
+  when:
+    - network_isolation|bool
+    - containerized_overcloud|bool
