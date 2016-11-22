@@ -6,4 +6,4 @@
   hosts: undercloud
   gather_facts: no
   roles:
-    - { role: tripleo-overcloud-upgrade, deployment_type: baremetal }
+    - { role: overcloud-upgrade, deployment_type: baremetal }

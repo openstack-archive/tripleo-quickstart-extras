@@ -14,4 +14,4 @@
   hosts: virthost
   gather_facts: no
   roles:
-    - { role: tripleo-cleanup-nfo }
+    - virthost-full-cleanup

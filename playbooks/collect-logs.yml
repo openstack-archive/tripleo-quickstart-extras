@@ -4,4 +4,4 @@
   hosts: all:!localhost
   gather_facts: no
   roles:
-    - role: tripleo-collect-logs
+    - role: collect-logs

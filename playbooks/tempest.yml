@@ -3,4 +3,4 @@
   hosts: undercloud
   gather_facts: no
   roles:
-    - tripleo-tempest
+    - validate-tempest

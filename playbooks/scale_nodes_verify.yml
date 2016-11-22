@@ -18,4 +18,4 @@
   hosts: undercloud
   gather_facts: no
   roles:
-    - tripleo-overcloud-validate
+    - validate-simple

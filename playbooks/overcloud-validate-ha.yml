@@ -4,4 +4,4 @@
   hosts: localhost
   gather_facts: no
   roles:
-    - tripleo-overcloud-validate-ha
+    - validate-ha
