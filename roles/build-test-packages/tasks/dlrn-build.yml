@@ -17,12 +17,18 @@
   loop_control:
       loop_var: project_item
 
+- name: Fetch local rdoinfo copy
+  git:
+    repo: '{{ artg_rdoinfo_repo_url }}'
+    dest: '{{ ansible_user_dir }}/DLRN/rdoinfo'
+    version: 'master'
+
 - name: Map project name to DLRN project name
   register: project_name_mapped
   shell: >
     source {{ ansible_user_dir }}/dlrn-venv/bin/activate;
     export PROJECT_NAME=$(echo {{ artg_change.project }} | sed "s|openstack/||");
-    ./scripts/map-project-name $PROJECT_NAME {{ artg_rdoinfo_repo_url }}
+    rdopkg findpkg $PROJECT_NAME -l rdoinfo | grep ^name | awk '{print $2}'
   args:
       chdir: '{{ ansible_user_dir }}/DLRN'
 
