@@ -29,10 +29,12 @@ sudo update-ca-trust extract
 ##   public VIP
 ## ::
 
+{% set _vip = overcloud_public_vip if not overcloud_ipv6|bool else overcloud_public_vip6 %}
+
 openssl req -newkey rsa:2048 -days 365 \
      -nodes -keyout {{ working_dir }}/server-key.pem \
      -out {{ working_dir }}/server-req.pem \
-     -subj "/C=US/ST=NC/L=Raleigh/O=Red Hat/OU=OOOQ/CN={{overcloud_public_vip}}"
+     -subj "/C=US/ST=NC/L=Raleigh/O=Red Hat/OU=OOOQ/CN={{_vip}}"
 
 ## * Process the server RSA key
 ## ::
