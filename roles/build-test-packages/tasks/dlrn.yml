@@ -30,10 +30,15 @@
   args:
     creates: '{{ ansible_user_dir }}/dlrn-venv'
 
+- name: Check if DLRN was already cloned by other means
+  stat: path='{{ ansible_user_dir }}/DLRN'
+  register: dlrn_cloned
+
 - name: Clone DLRN
   git:
     repo: '{{ artg_dlrn_repo_url }}'
     dest: '{{ ansible_user_dir }}/DLRN'
+  when: not dlrn_cloned.stat.exists
 
 #Remove the rpm install test to speed up delorean
 #TODO: add an option for this in delorean
@@ -104,9 +109,14 @@
     path: '{{ item }}'
     state: absent
   with_items:
-    - '{{ ansible_user_dir }}/DLRN'
     - '{{ ansible_user_dir }}/dlrn-venv'
     - '{{ ansible_user_dir }}/gating_repo'
+
+- name: Clean up DLRN if it was cloned by the playbook
+  file:
+    path: '{{ ansible_user_dir }}/DLRN'
+    state: absent
+  when: not dlrn_cloned.stat.exists
 
 - name: Trigger repo injection for quickstart
   set_fact: compressed_gating_repo={{ artg_compressed_gating_repo }}
