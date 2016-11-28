@@ -23,7 +23,7 @@ stack_name: 'oooq-{{ prefix }}stack'
 rc_file: /home/stack/overcloudrc
 node_name: 'undercloud'
 ssh_extra_args: '-F "{{ local_working_dir }}/ssh.config.ansible"'
-undercoud_key: "{{ local_working_dir }}/id_rsa_undercloud"
+undercloud_key: "{{ local_working_dir }}/id_rsa_undercloud"
 node_groups:
     - 'undercloud'
     - 'tester'
