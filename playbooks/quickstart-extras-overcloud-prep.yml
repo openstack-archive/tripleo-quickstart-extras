@@ -19,6 +19,17 @@
   roles:
     - overcloud-prep-images
 
+- name: Run tripleo-validations pre-introspection tests
+  hosts: undercloud
+  gather_facts: no
+  tags:
+    - tripleo-validations
+  vars:
+    validations_group: ['pre-introspection']
+  roles:
+    - { role: tripleo-validations,
+        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
+
 # Prepare the overcloud flavor configuration
 - name:  Prepare overcloud flavors
   hosts: undercloud
@@ -32,6 +43,17 @@
   gather_facts: no
   roles:
     - overcloud-prep-network
+
+- name: Run tripleo-validations pre-deployment tests
+  hosts: undercloud
+  gather_facts: no
+  tags:
+    - tripleo-validations
+  vars:
+    validations_group: ['pre-deployment']
+  roles:
+    - { role: tripleo-validations,
+        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
 
 - name: Prepare the SSL Configuration for the overcloud deployment
   hosts: undercloud

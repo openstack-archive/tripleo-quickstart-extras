@@ -1,0 +1,67 @@
+#!/bin/bash
+
+set -eux
+set -o pipefail
+
+### --start_docs
+## Run all validations for one group name
+## ======================================
+
+## Prepare Your Environment
+## ------------------------
+
+## * Source in the undercloud credentials.
+## ::
+
+source {{ val_working_dir }}/stackrc
+
+GROUP_NAME="${1:-}"
+
+if [ -z "$GROUP_NAME" ]; then
+    echo "You must specify the validation group name."
+    exit 1
+fi
+
+## * Getting the list of validations belonging to the group.
+## ::
+
+LIST_VALIDATIONS=$(openstack action execution \
+        run tripleo.validations.list_validations \
+        "{\"groups\": [\"$GROUP_NAME\"]}" | jq ".result[] | .id" | tr -d '"')
+
+## * Run validations tests one by one defined in the group.
+## ::
+
+if [ -f "{{ failed_validations_log }}" ]; then
+    rm -Rf "{{ failed_validations_log }}"
+fi
+
+for validation_name in $LIST_VALIDATIONS; do
+        ID=$(openstack workflow execution create \
+            -f value \
+            -c ID    \
+            tripleo.validations.v1.run_validation \
+            "{\"validation_name\": \"$validation_name\"}")
+
+        STATE=RUNNING
+        TRIES=0
+        while [ "$STATE" = RUNNING ]; do
+            sleep 1
+            STATE=$(mistral execution-get -f value -c State "$ID")
+            TRIES=$((TRIES+1))
+            if [ "$TRIES" -gt 40 ]; then
+                exit 1
+            fi
+        done
+
+        STATUS=$(mistral execution-get-output "$ID" | jq .status -r)
+        if [ "$STATUS" == "FAILED" ]; then
+            echo "### ${validation_name} ###" | tee -a {{ failed_validations_log }}
+            mistral execution-get-output "$ID" | jq .stdout -r 2>&1 | tee -a {{ failed_validations_log }}
+        else
+            mistral execution-get-output "$ID" | jq .stdout -r
+        fi
+done
+
+## --stop_docs
+
