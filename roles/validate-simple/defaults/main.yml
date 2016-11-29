@@ -15,7 +15,7 @@ image_initramfs: cirros-0.3.4-x86_64-initramfs
 image_kernel: cirros-0.3.4-x86_64-kernel
 validate_image_name: pingtest_image
 validate_flavor_id: 2
-validate_image_dir: /home/stack/cirros_images
+validate_image_dir: "{{ working_dir }}/cirros_images"
 overcloud_public_network_name: nova
 validate_key_name: pingtest_key
 step_validate_overcloud: true
