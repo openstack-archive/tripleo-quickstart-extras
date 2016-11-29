@@ -5,7 +5,7 @@
   set_fact:
     pacemaker_args: >-
       -e {{ overcloud_templates_path }}/environments/puppet-pacemaker.yaml
-  when: enable_pacemaker
+  when: enable_pacemaker|bool
 
 - name: extract the number of controllers to be deployed
   set_fact: number_of_controllers="{{ scale_args| regex_replace('^.*--control-scale +([0-9]+).*$', '\\1') | regex_replace('^[^ 0-9]*.*$', '1') }}"
@@ -15,7 +15,7 @@
     pacemaker_args: >-
       {{ pacemaker_args }}
       -e $HOME/neutronl3ha.yaml
-  when: enable_pacemaker and number_of_controllers|int < 3
+  when: enable_pacemaker|bool and number_of_controllers|int < 3
 
 # Prep for scaling overcloud
 - name: Determine initial number of node(s) that will be scaled
@@ -53,7 +53,7 @@
     mode: 0755
 
 - name: Copy neutron l3 ha heat template
-  when: enable_pacemaker and number_of_controllers|int < 3
+  when: enable_pacemaker|bool and number_of_controllers|int < 3
   template:
     src: "neutronl3ha.yaml.j2"
     dest: "{{ artosn_working_dir }}/neutronl3ha.yaml"

@@ -3,6 +3,7 @@
 control_memory: 16384
 control_vcpu: 4
 
+# Define single controller node with two computes to allow for scaling
 overcloud_nodes:
   - name: control_0
     flavor: control
@@ -13,12 +14,13 @@ overcloud_nodes:
   - name: compute_1
     flavor: compute
 
+# If `run_tempest` is `true`, run tempests tests, otherwise do not
+# run them.
 run_tempest: false
 tempest_config: false
-test_ping: true
 enable_pacemaker: true
 network_isolation: true
-deploy_timeout: 60
+deploy_timeout: 75
 
 # General deployment info
 libvirt_args: "--libvirt-type qemu"
@@ -33,10 +35,10 @@ timeout_args: "--timeout {{ deploy_timeout }}"
 
 extra_args: "--compute-scale 1 --neutron-network-type vxlan --neutron-tunnel-types vxlan -e {{ overcloud_templates_path }}/environments/network-isolation.yaml -e {{ overcloud_templates_path }}/environments/net-single-nic-with-vlans.yaml -e ~/network-environment.yaml --ntp-server pool.ntp.org"
 
-# Pulled this out so we can hand these configs to the openstack overcloud node delete command
+# Pull out scale_extra_args so the same var can be reused for the call to
+# `openstack overcloud delete`
 scale_extra_configs: "-e {{ overcloud_templates_path }}/environments/network-isolation.yaml -e {{ overcloud_templates_path }}/environments/net-single-nic-with-vlans.yaml -e /home/stack/network-environment.yaml"
 scale_extra_args: "--{{ node_to_scale }}-scale {{ final_scale_value }} --neutron-network-type vxlan --neutron-tunnel-types vxlan {{ scale_extra_configs }} --ntp-server pool.ntp.org"
-
 
 # Scale deployment info
 node_to_scale: compute # Type of node to scale
@@ -51,7 +53,7 @@ scale_args: >-
   {{ pacemaker_args }}
   {{ scale_extra_args }}
 
-# options below direct automatic doc generation by collect-logs
+# Options below direct automatic doc generation by collect-logs
 artcl_gen_docs: true
 artcl_create_docs_payload:
   included_deployment_scripts:
