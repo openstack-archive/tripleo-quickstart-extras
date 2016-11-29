@@ -74,7 +74,7 @@ Example Playbook
     timeout_args: "--timeout {{ deploy_timeout }}"
     # Pulled this out so we can hand these configs to the openstack overcloud node delete command
     scale_extra_configs: "-e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/net-single-nic-with-vlans.yaml -e ~/network-environment.yaml"
-    scale_extra_args: "--{{ node_to_scale }}-scale {{ final_scale_value }} --neutron-network-type vxlan --neutron-tunnel-types vxlan {{ scale_extra_configs }} --ntp-server pool.ntp.org"
+    scale_extra_args: "--{{ node_to_scale }}-scale {{ final_scale_value }} {{ scale_extra_configs }} --ntp-server pool.ntp.org"
 
     # Scale deployment info
     node_to_scale: compute # Type of node to scale

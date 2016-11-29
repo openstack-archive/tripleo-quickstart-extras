@@ -33,12 +33,12 @@ flavor_args: >-
 
 timeout_args: "--timeout {{ deploy_timeout }}"
 
-extra_args: "--compute-scale 1 --neutron-network-type vxlan --neutron-tunnel-types vxlan -e {{ overcloud_templates_path }}/environments/network-isolation.yaml -e {{ overcloud_templates_path }}/environments/net-single-nic-with-vlans.yaml -e ~/network-environment.yaml --ntp-server pool.ntp.org"
+extra_args: "--compute-scale 1 -e {{ overcloud_templates_path }}/environments/network-isolation.yaml -e {{ overcloud_templates_path }}/environments/net-single-nic-with-vlans.yaml -e ~/network-environment.yaml --ntp-server pool.ntp.org"
 
 # Pull out scale_extra_args so the same var can be reused for the call to
 # `openstack overcloud delete`
 scale_extra_configs: "-e {{ overcloud_templates_path }}/environments/network-isolation.yaml -e {{ overcloud_templates_path }}/environments/net-single-nic-with-vlans.yaml -e /home/stack/network-environment.yaml"
-scale_extra_args: "--{{ node_to_scale }}-scale {{ final_scale_value }} --neutron-network-type vxlan --neutron-tunnel-types vxlan {{ scale_extra_configs }} --ntp-server pool.ntp.org"
+scale_extra_args: "--{{ node_to_scale }}-scale {{ final_scale_value }} {{ scale_extra_configs }} --ntp-server pool.ntp.org"
 
 # Scale deployment info
 node_to_scale: compute # Type of node to scale

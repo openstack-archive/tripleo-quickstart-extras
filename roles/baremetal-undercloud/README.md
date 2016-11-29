@@ -110,7 +110,7 @@ public_net_pool_start: "<FLOATING NETWORK POOL START>"
 public_net_pool_end: "<FLOATING NETWORK POOL END>"
 public_net_gateway: "<FLOATING NETWORK GATEWAY>"
 
-extra_args: "--ntp-server <NTP SERVER IP> --control-scale 3 --compute-scale 2 --ceph-storage-scale 0 --block-storage-scale 0 --swift-storage-scale 0 --templates -e /usr/share/openstack-tripleo-heat-templates/environments/puppet-pacemaker.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml -e /home/stack/network-environment.yaml --neutron-bridge-mappings datacentre:br-floating"
+extra_args: "--ntp-server <NTP SERVER IP> --control-scale 3 --compute-scale 2 --ceph-storage-scale 0 --block-storage-scale 0 --swift-storage-scale 0 --templates -e /usr/share/openstack-tripleo-heat-templates/environments/puppet-pacemaker.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml -e /home/stack/network-environment.yaml"
 ```
 
 A brief explanation of the variables:
