@@ -8,6 +8,7 @@
     repo: 'https://{{ gated_change.host }}/{{ gated_change.project }}'
     dest: '{{ lookup("env", "WORKSPACE") }}/{{ gated_project_name }}'
     refspec: '{{ gated_change.refspec }}'
+    force: yes
     version: 'FETCH_HEAD'
   # do not check out the gated change if it was already cloned by the jenkins job
   when: gated_change.project != "{{ lookup('env', 'GERRIT_PROJECT') }}"
