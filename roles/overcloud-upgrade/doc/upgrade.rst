@@ -40,11 +40,10 @@ execute the pre tasks for undercloud and overcloud.
 Parameters
 ----------
 
-The upgrade role takes severals parameters as input. All those values are stored
-under default/main.yml.
-All of those values could be overriden.
-With the default values, you can upgrade a basic Tripleo environment from Liberty
-to Mitaka
+The upgrade role takes several parameters as input -- defaults are located
+in default/main.yml. All of these values can be overriden.
+With the default values, you can upgrade a basic TripleO environment from Liberty
+to Mitaka.
 
 Common Parameters
 `````````````````

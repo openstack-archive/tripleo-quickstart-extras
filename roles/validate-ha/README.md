@@ -40,7 +40,7 @@ Basically this command:
 - Uses the same custom workdir where quickstart was first deployed
 - Get all the extra requirements
 - Select the specific config file (which must contain the floating network data)
-- Specifies the release (liberty, mitaka, newton or “master” for ocata)
+- Specifies the release (liberty, mitaka, newton, or “master” for ocata)
 - Performs all the tasks in the playbook overcloud-validate-ha.yml
 - Starts the installation on virthost
 

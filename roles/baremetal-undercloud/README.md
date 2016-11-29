@@ -49,7 +49,7 @@ Basically this command:
 * Uses a custom workdir that is rebuilt from scratch (so if it already exists, it is dropped, see *--clean*)
 * Get all the extra requirements
 * Select the config file
-* Chooses release (liberty, mitaka or “master” for newton)
+* Chooses release (liberty, mitaka, newton, or “master” for ocata)
 * Performs all the tasks in the playbook
 * Starts the installation on virthost
 
