@@ -32,6 +32,8 @@ def process(host, changes):
 
     for item in changes.split("^"):
         params = item.split(":")
+        if params[0] in [i['project'] for i in output]:
+            continue
         output.append({"host": host,
                        "project": params[0],
                        "branch": params[1],
