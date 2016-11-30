@@ -14,6 +14,7 @@ set -eux
 
 source {{ working_dir }}/stackrc
 
+{% if hypervisor_wait|bool %}
 ### --stop_docs
 # Wait until there are hypervisors available.
 while true; do
@@ -22,6 +23,7 @@ while true; do
         break
     fi
 done
+{% endif %}
 
 ### --start_docs
 
