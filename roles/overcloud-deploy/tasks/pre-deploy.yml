@@ -38,6 +38,11 @@
       -e $HOME/inject-trust-anchor.yaml
   when: ssl_overcloud|bool and release in ['mitaka', 'liberty']
 
+- name: set validation_args fact for mitaka/liberty
+  set_fact:
+    validation_args: "--validation-errors-fatal --validation-warnings-fatal"
+  when: release in ['mitaka', 'liberty']
+
 - name: disable L3 HA
   set_fact:
     pacemaker_args: >-
