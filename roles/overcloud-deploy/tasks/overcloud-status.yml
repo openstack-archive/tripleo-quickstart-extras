@@ -9,27 +9,44 @@
 # Other option to consider vs. grep
 #/usr/bin/awk '/Stack overcloud CREATE_/ && /FAILED/{exit 1}' {{ deploy_log }}
 
-- name: Check overcloud deploy status
+- name: Check for failed message in log
   command: >
     /usr/bin/grep 'Stack overcloud CREATE_FAILED' {{ deploy_log }}
-  register: deploy_result
-  failed_when: deploy_result.rc > 1
+  register: fail_result
+  failed_when: fail_result.rc > 1
   changed_when: false
 
+- name: Check for success message in log
+  command: >
+    /usr/bin/grep 'Stack overcloud CREATE_COMPLETE' {{ deploy_log }}
+  register: complete_result
+  failed_when: complete_result.rc > 1
+  changed_when: false
+
+# The purpose of writing the overcloud status out to a json file is to
+# allow ansible to capture the status, and then execute required steps
+# after the deployment fails e.g. inventory
+# After the deployment fails and inventory is collected the playbook then
+# checks the status via the json file and passes or fails at the appropriate
+# time.
 - name: write out overcloud status to a file on the localhost
   shell: >
     echo '{ "overcloud_deploy_result": "failed" }' > "{{ local_working_dir }}/overcloud_deployment_result.json"
   delegate_to: localhost
-  when: deploy_result.rc == 0
+  when: not (fail_result.rc == 1 and complete_result.rc == 0) or deploy_script_result.rc != 0
 
 - name: write out overcloud status to a file on the localhost
   shell: >
     echo '{ "overcloud_deploy_result": "passed" }' > "{{ local_working_dir }}/overcloud_deployment_result.json"
   delegate_to: localhost
-  when: deploy_result.rc == 1
+  when: fail_result.rc == 1 and complete_result.rc == 0
 
 - name: import deployment status from file
   include_vars: "{{ local_working_dir }}/overcloud_deployment_result.json"
 
 - name: echo deployment_status
   debug: var=overcloud_deploy_result
+
+- name: alert about incorrect status code of deploy command
+  debug: "Attention! Deploy script finished with status code {{ deploy_script_result.rc }} when deploy status is {{ overcloud_deploy_result }}"
+  when: deploy_script_result.rc == 0 and overcloud_deploy_result != "passed"
