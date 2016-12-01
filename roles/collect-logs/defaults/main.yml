@@ -34,6 +34,7 @@ artcl_collect_dir: "{{ lookup('env', 'PWD') }}/collected_files"
 artcl_gzip_only: true
 artcl_collect: true
 artcl_publish: false
+artcl_full_artifact_url: "{{ artcl_artifact_url }}/{{ lookup('env', 'BUILD_TAG') }}/"
 artcl_use_rsync: false
 artcl_rsync_use_daemon: false
 
@@ -41,6 +42,8 @@ artcl_use_swift: false
 # clean up the logs after 31 days
 artcl_swift_delete_after: 2678400
 artcl_swift_container: logs
+artcl_use_zuul_swift_upload: false
+artcl_zuul_swift_upload_path: /usr/local/bin
 
 artcl_collect_sosreport: false
 

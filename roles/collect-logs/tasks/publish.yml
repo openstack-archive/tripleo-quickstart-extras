@@ -29,6 +29,10 @@
         OS_TENANT_NAME: "{{ artcl_swift_tenant_name }}"
       when: artcl_use_swift|bool
 
+    - name: use zuul_swift_upload.py to publish the files
+      command: "{{ artcl_zuul_swift_upload_path }}/zuul_swift_upload.py --name {{ artcl_swift_container }} --delete-after {{ artcl_swift_delete_after }} {{ artcl_collect_dir }}"
+      when: artcl_use_zuul_swift_upload|bool
+
     - name: create the artifact location redirect file
       template:
         src: full_logs.html.j2
