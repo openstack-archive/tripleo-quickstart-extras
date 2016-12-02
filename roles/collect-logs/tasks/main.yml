@@ -5,8 +5,12 @@
 
 - name: Generate docs
   include: create-docs.yml
-  when: artcl_gen_docs|bool
+  when:
+    - artcl_gen_docs|bool
+    - not artcl_collect|bool
 
 - name: Publish logs
   include: publish.yml
-  when: artcl_publish|bool
+  when:
+    - artcl_publish|bool
+    - not artcl_collect|bool

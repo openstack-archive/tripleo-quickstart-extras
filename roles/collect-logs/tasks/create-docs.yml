@@ -1,43 +1,37 @@
 ---
 
-- block:
-    - name: Ensure required python packages are installed
-      pip:
-        requirements: "{{ local_working_dir }}/usr/local/share/ansible/roles/collect-logs/doc-requirements.txt"
+- name: Ensure required python packages are installed
+  pip:
+    requirements: "{{ local_working_dir }}/usr/local/share/ansible/roles/collect-logs/doc-requirements.txt"
 
-    - name: Unarchive shell scripts
-      shell: >
-        gunzip "{{ artcl_collect_dir }}/undercloud/home/stack/{{ item }}.sh.gz";
-      with_items: "{{ artcl_create_docs_payload.included_deployment_scripts }}"
-      ignore_errors: yes
-      when:  artcl_gzip_only|bool
+- name: Unarchive shell scripts
+  shell: >
+    gunzip "{{ artcl_collect_dir }}/undercloud/home/stack/{{ item }}.sh.gz";
+  with_items: "{{ artcl_create_docs_payload.included_deployment_scripts }}"
+  ignore_errors: yes
+  when:  artcl_gzip_only|bool
 
+- name: Generate rST docs from scripts and move to Sphinx src dir
+  shell: >
+     awk -f "{{ local_working_dir }}/usr/local/share/ansible/roles/collect-logs/scripts/doc_extrapolation.awk" \
+       "{{ artcl_collect_dir }}/undercloud/home/stack/{{ item }}.sh" > \
+       "{{ artcl_docs_source_dir }}/{{ item }}.rst"
+  with_items: "{{ artcl_create_docs_payload.included_deployment_scripts }}"
+  ignore_errors: yes
 
-    - name: Generate rST docs from scripts and move to Sphinx src dir
-      shell: >
-         awk -f "{{ local_working_dir }}/usr/local/share/ansible/roles/collect-logs/scripts/doc_extrapolation.awk" \
-           "{{ artcl_collect_dir }}/undercloud/home/stack/{{ item }}.sh" > \
-           "{{ artcl_docs_source_dir }}/{{ item }}.rst"
-      with_items: "{{ artcl_create_docs_payload.included_deployment_scripts }}"
-      ignore_errors: yes
+- name: Fetch static rST docs to include in output docs
+  shell: >
+    cp "{{ artcl_docs_source_dir }}/../static/{{ item }}.rst" "{{ artcl_docs_source_dir }}"
+  with_items: "{{ artcl_create_docs_payload.included_static_docs }}"
+  ignore_errors: yes
 
-    - name: Fetch static rST docs to include in output docs
-      shell: >
-        cp "{{ artcl_docs_source_dir }}/../static/{{ item }}.rst" "{{ artcl_docs_source_dir }}"
-      with_items: "{{ artcl_create_docs_payload.included_static_docs }}"
-      ignore_errors: yes
+- name: Generate fresh index.rst for Sphinx
+  template:
+    src: index.rst.j2
+    dest: "{{ artcl_docs_source_dir }}/index.rst"
+    force: yes
 
-    - name: Generate fresh index.rst for Sphinx
-      template:
-        src: index.rst.j2
-        dest: "{{ artcl_docs_source_dir }}/index.rst"
-        force: yes
-
-    - name: Build docs with Sphinx
-      shell: >
-        sphinx-build -b html "{{ artcl_docs_source_dir }}" \
-          "{{ artcl_docs_build_dir }}" &> "{{ local_working_dir }}/sphinx_build.log"
-
-  delegate_to: localhost
-  run_once: true
-  when: artcl_gen_docs|bool
+- name: Build docs with Sphinx
+  shell: >
+    sphinx-build -b html "{{ artcl_docs_source_dir }}" \
+      "{{ artcl_docs_build_dir }}" &> "{{ local_working_dir }}/sphinx_build.log"
