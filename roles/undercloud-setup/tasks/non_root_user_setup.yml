@@ -1,0 +1,27 @@
+---
+- name: Copy create non-root user script
+  template:
+    src: non_root_user_setup.sh.j2
+    dest: "/tmp/non_root_user_setup.sh"
+    mode: 0755
+
+- name: Run the non_root_user script
+  command: "/tmp/non_root_user_setup.sh"
+
+- name: Create undercloud access key
+  delegate_to: localhost
+  command: >
+    ssh-keygen -f {{ undercloud_key }} -N ''
+    -C 'ansible_generated_virt_host'
+    -t rsa -b 4096
+  args:
+    creates: "{{ undercloud_key }}"
+
+- name: Configure non-root user authorized_keys on undercloud
+  authorized_key:
+    user: "{{ non_root_user }}"
+    key: "{{ item }}"
+  with_file:
+    - "{{ undercloud_key }}.pub"
+  become: true
+
