@@ -1,5 +1,5 @@
-ansible-role-tripleo-gate
-=========================
+build-test-packages
+===================
 
 An Ansible role for generating custom RPMSs from upstream Gerrit changes in the
 TripleO project using DLRN. This repo then can be injected in the tested
@@ -15,8 +15,6 @@ Role Variables
 --------------
 
 * `local_working_dir` -- the directory where tripleo-quickstart is located
-* `artg_mode` -- either `dlrn` (the default, gating upstream tripleo packages)
-   or `roles` (gating ansible-role-tripleo repos like this one)
 * `artg_dlrn_repo_url` -- the URL of the DLRN repository
 * `artg_rdoinfo_repo_url` -- the URL of the rdoinfo repository that contains
   the project definitions for DLRN
@@ -65,7 +63,7 @@ Example Playbook
 - name: Build custom RPMs
   hosts: virthost
   roles:
-    - tripleo-gate
+    - build-test-packages
 ```
 
 License

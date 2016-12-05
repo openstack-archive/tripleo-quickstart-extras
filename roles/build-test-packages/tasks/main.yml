@@ -1,8 +1,121 @@
 ---
-- name: Run DLRN gate
-  include: dlrn.yml
-  when: artg_mode == 'dlrn'
 
-- name: Run roles gate
-  include: roles.yml
-  when: artg_mode == 'roles'
+- name: Ensure DLRN package dependencies
+  become: yes
+  yum: name={{ item }} state=present
+  with_flattened:
+    - createrepo
+    - gcc
+    - git
+    - libffi-devel
+    - mock
+    - openssl-devel
+    - python-virtualenv
+    - rpm-build
+    - sqlite
+
+- name: Create mock group
+  become: yes
+  group: name=mock state=present
+
+- name: Add user to mock group
+  become: yes
+  user:
+    name: '{{ ansible_user }}'
+    groups: mock
+
+- name: Create virtualenv for DLRN
+  command: virtualenv {{ ansible_user_dir }}/dlrn-venv
+  args:
+    creates: '{{ ansible_user_dir }}/dlrn-venv'
+
+- name: Check if DLRN was already cloned by other means
+  stat: path='{{ ansible_user_dir }}/DLRN'
+  register: dlrn_cloned
+
+- name: Clone DLRN
+  git:
+    repo: '{{ artg_dlrn_repo_url }}'
+    dest: '{{ ansible_user_dir }}/DLRN'
+  when: not dlrn_cloned.stat.exists
+
+#Remove the rpm install test to speed up delorean
+#TODO: add an option for this in delorean
+- name: Remove DLRN RPM install test
+  shell: >
+    sed -i -e 's%--postinstall%%'
+    {{ ansible_user_dir }}/DLRN/scripts/build_rpm.sh
+
+- name: Update pip before requirements install
+  pip:
+    name: pip
+    state: latest
+    virtualenv: '{{ ansible_user_dir }}/dlrn-venv'
+
+- name: Install DLRN requirements
+  pip:
+    requirements: '{{ ansible_user_dir }}/DLRN/requirements.txt'
+    virtualenv: '{{ ansible_user_dir }}/dlrn-venv'
+
+- name: Install DLRN
+  shell: >
+    source {{ ansible_user_dir }}/dlrn-venv/bin/activate;
+    python setup.py install;
+  args:
+      chdir: '{{ ansible_user_dir }}/DLRN'
+
+- name: Parse Jenkins changes
+  jenkins_deps:
+    host: "{{ lookup('env', 'GERRIT_HOST') }}"
+    change_id: "{{ lookup('env', 'GERRIT_CHANGE_ID') }}"
+    branch: "{{ lookup('env', 'GERRIT_BRANCH') }}"
+    patchset_rev: "{{ lookup('env', 'GERRIT_PATCHSET_REVISION') }}"
+  when: artg_change_list is not defined and "{{ lookup('env', 'GERRIT_HOST') }}" != ""
+
+- name: Parse Zuul changes
+  zuul_deps:
+    host: "{{ lookup('env', 'ZUUL_HOST') }}"
+    changes: "{{ lookup('env', 'ZUUL_CHANGES') }}"
+  when: artg_change_list is not defined and "{{ lookup('env', 'ZUUL_HOST') }}" != ""
+
+- name: Clone and build the specific DLRN projects
+  include: dlrn-build.yml artg_change={{ item }}
+  with_items: '{{ artg_change_list }}'
+  when: item.project not in artg_skipped_projects
+
+- name: Create a directory to hold the rpms
+  file:
+    path: '{{ ansible_user_dir }}/gating_repo'
+    state: directory
+
+- name: Copy the generated rpms
+  shell: >
+    rm -rf {{ ansible_user_dir }}/gating_repo/*;
+    find {{ ansible_user_dir }}/DLRN/data/repos -type f -name '*.rpm' -print0 | xargs -0 cp -t {{ ansible_user_dir }}/gating_repo;
+
+- name: Run createrepo on generated rpms
+  shell: 'createrepo gating_repo'
+  args:
+    chdir: '{{ ansible_user_dir }}'
+
+- name: Compress the repo
+  shell: 'tar czf {{ artg_compressed_gating_repo }} gating_repo'
+  args:
+    chdir: '{{ ansible_user_dir }}'
+
+- name: Clean up
+  file:
+    path: '{{ item }}'
+    state: absent
+  with_items:
+    - '{{ ansible_user_dir }}/dlrn-venv'
+    - '{{ ansible_user_dir }}/gating_repo'
+
+- name: Clean up DLRN if it was cloned by the playbook
+  file:
+    path: '{{ ansible_user_dir }}/DLRN'
+    state: absent
+  when: not dlrn_cloned.stat.exists
+
+- name: Trigger repo injection for quickstart
+  set_fact: compressed_gating_repo={{ artg_compressed_gating_repo }}
