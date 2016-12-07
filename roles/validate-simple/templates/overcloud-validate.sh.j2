@@ -31,7 +31,7 @@ function cleanup() {
     fi
     # Remove images and network
     rm -f {{ validate_image_dir }}/cirros.*
-    glance image-list | grep pingtest | awk '{print $2}' | while read IMAGEID; do glance image-delete $IMAGEID; done
+    openstack image list | grep pingtest | awk '{print $2}' | while read IMAGEID; do openstack image delete $IMAGEID; done
     #neutron net-delete {{ overcloud_public_network_name }} > /dev/null 2>&1 || true
     neutron net-delete {{ overcloud_public_network_name }}
 }
