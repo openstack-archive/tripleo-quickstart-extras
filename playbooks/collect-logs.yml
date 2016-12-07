@@ -1,7 +1,11 @@
 ---
 
-- name: Collect logs, create docs, publish
+- name: Collect logs
   hosts: all:!localhost
-  gather_facts: no
   roles:
-    - role: collect-logs
+    - collect-logs
+
+- name: Create docs, publish logs
+  hosts: localhost
+  roles:
+    - {role: collect-logs, artcl_collect: false }
