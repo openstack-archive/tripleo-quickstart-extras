@@ -1,5 +1,7 @@
 ---
 
+## collection related vars
+artcl_collect: true
 artcl_collect_list:
   - /var/log/
   - /var/lib/mysql
@@ -32,8 +34,11 @@ artcl_collect_list:
   - /tmp/tripleoclient*
 artcl_collect_dir: "{{ lookup('env', 'PWD') }}/collected_files"
 artcl_gzip_only: true
-artcl_collect: true
+
+## publishing related vars
 artcl_publish: false
+# give up log upload after 30 minutes
+artcl_publish_timeout: 1800
 artcl_full_artifact_url: "{{ artcl_artifact_url }}/{{ lookup('env', 'BUILD_TAG') }}/"
 artcl_use_rsync: false
 artcl_rsync_use_daemon: false

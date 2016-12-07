@@ -77,6 +77,8 @@ artcl_create_docs_payload:
   to the target specified by `artcl_rsync_url`. Uses `BUILD_URL`, `BUILD_TAG`
   vars from the environment (set during a Jenkins job run) and requires the
   next to variables to be set.
+* `artcl_publish_timeout`: the maximum seconds the role can spend uploading the
+  logs, the default is 1800 (30 minutes)
 * `artcl_use_rsync`: false/true -- use rsync to upload the logs
 * `artcl_rsync_use_daemon`: false/true -- use rsync daemon instead of ssh to connect
 * `artcl_rsync_url` -- rsync target for uploading the logs. The localhost

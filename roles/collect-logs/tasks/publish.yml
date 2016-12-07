@@ -11,6 +11,8 @@
 
 - name: upload to the artifact server using pubkey auth
   command: rsync -av --quiet -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" {{ artcl_collect_dir }}/ {{ artcl_rsync_path }}/{{ lookup('env', 'BUILD_TAG') }}
+  async: "{{ artcl_publish_timeout }}"
+  poll: 15
   retries: 5
   delay: 60
   when: artcl_use_rsync|bool and not artcl_rsync_use_daemon|bool
@@ -19,6 +21,8 @@
   environment:
     RSYNC_PASSWORD: "{{ lookup('env', 'RSYNC_PASSWORD') }}"
   command: rsync -av --quiet {{ artcl_collect_dir }}/ {{ artcl_rsync_path }}/{{ lookup('env', 'BUILD_TAG') }}
+  async: "{{ artcl_publish_timeout }}"
+  poll: 15
   retries: 5
   delay: 60
   when: artcl_use_rsync|bool and artcl_rsync_use_daemon|bool
@@ -33,10 +37,14 @@
     OS_USERNAME: "{{ artcl_swift_username }}"
     OS_PASSWORD: "{{ artcl_swift_password }}"
     OS_TENANT_NAME: "{{ artcl_swift_tenant_name }}"
+  async: "{{ artcl_publish_timeout }}"
+  poll: 15
   when: artcl_use_swift|bool
 
 - name: use zuul_swift_upload.py to publish the files
   command: "{{ artcl_zuul_swift_upload_path }}/zuul_swift_upload.py --name {{ artcl_swift_container }} --delete-after {{ artcl_swift_delete_after }} {{ artcl_collect_dir }}"
+  async: "{{ artcl_publish_timeout }}"
+  poll: 15
   when: artcl_use_zuul_swift_upload|bool
 
 - name: create the artifact location redirect file
