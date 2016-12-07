@@ -1,0 +1,5 @@
+- name: Setup repos on live host
+  shell: >
+    {{ working_dir }}/repo_setup.sh >
+    {{ repo_setup_log }} 2>&1
+  become: true

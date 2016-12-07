@@ -1,0 +1,54 @@
+#!/bin/bash
+set -eux
+
+{{ repo_cmd_before|default('') }}
+
+# Make temp dir for files
+rm -rf /tmp/repo_role_tmp && mkdir -p /tmp/repo_role_tmp
+
+{% for repo in repos %}
+{% if repo.releases is not defined or release in repo.releases %}
+
+{% if repo.type == 'file' %}
+curl -Lvo /tmp/repo_role_tmp/{{ repo.filename }} {{ repo.down_url }}
+{% if repo.priority is defined and repo.priority %}
+if ! grep -q "priority" /tmp/repo_role_tmp/{{ repo.filename }}; then
+    sed -i "s/\(baseurl=.*\)/\1\npriority={{ repo.priority }}/g" /tmp/repo_role_tmp/{{ repo.filename }}
+else
+    sed -i "s/priority=.*/priority={{ repo.priority }}/g" /tmp/repo_role_tmp/{{ repo.filename }}
+fi
+{% endif %}
+cp -f /tmp/repo_role_tmp/{{ repo.filename }} /etc/yum.repos.d/
+{% endif %}
+
+{% if repo.type == 'generic' %}
+{% if repo.hash_url is defined %}
+HASH=$(curl {{ repo.hash_url }} 2>/dev/null | grep baseurl | grep -Eo '[^/]*/[^/]*/[^/]*_.*' ||:)
+{% endif %}
+cat<<EOF >/tmp/repo_role_tmp/{{ repo.filename }}
+[{{ repo.reponame }}]
+name={{ repo.reponame }}
+{% if repo.baseurl is defined %}baseurl={{ repo.baseurl }}
+{% endif %}
+{% if repo.mirrorlist is defined %}mirrorlist={{ repo.mirrorlist }}
+{% endif %}
+gpgcheck={{ repo.gpgcheck|default('0') }}
+enabled={{ repo.enabled|default('1') }}
+{% if repo.priority is defined %}priority={{ repo.priority }}
+{% endif %}
+{% if repo.includepkgs is defined %}includepkgs={{ repo.includepkgs|join(",") }}
+{% endif %}
+{% if repo.down_url is defined %}# trunk_hash=${HASH:-}
+{% endif %}
+EOF
+cp -f /tmp/repo_role_tmp/{{ repo.filename }} /etc/yum.repos.d/
+{% endif %}
+
+{% if repo.type == 'package' %}
+{{ repo.custom_cmd|default('yum install -y') }} {{ repo.pkg_name|default(repo.pkg_url) }}
+{% endif %}
+
+{% endif %}
+{% endfor %}
+
+{{ repo_cmd_after|default('') }}

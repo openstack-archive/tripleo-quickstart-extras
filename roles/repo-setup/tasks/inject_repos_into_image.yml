@@ -1,0 +1,18 @@
+- environment:
+    LIBGUESTFS_BACKEND: direct
+    LIBVIRT_DEFAULT_URI: "{{ libvirt_uri }}"
+  block:
+  - name: Check if the image exists
+    stat:
+      path: '{{ repo_inject_image_path }}'
+    register: image_stat
+    failed_when: not image_stat.stat.exists
+
+  - name: Install libguestfs-tools-c for virt-customize
+    yum: name=libguestfs-tools-c state=latest
+
+  - name: Inject the repositories into the image
+    command: >
+      virt-customize -a {{ repo_inject_image_path }}
+      --run '{{ working_dir }}/repo_setup.sh'
+    when: image_stat.stat.exists
