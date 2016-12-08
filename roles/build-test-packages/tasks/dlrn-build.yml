@@ -54,3 +54,4 @@
     done;
   args:
       chdir: '{{ ansible_user_dir }}/DLRN'
+  register: repo_built

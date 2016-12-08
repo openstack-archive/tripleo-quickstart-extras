@@ -74,34 +74,36 @@
 
 - name: Parse Zuul changes
   zuul_deps:
-    host: "{{ lookup('env', 'ZUUL_HOST') }}"
+    host: "{{ lookup('env', 'ZUUL_HOST')|default('review.openstack.org', true) }}"
     changes: "{{ lookup('env', 'ZUUL_CHANGES') }}"
-  when: artg_change_list is not defined and "{{ lookup('env', 'ZUUL_HOST') }}" != ""
+  when: artg_change_list is not defined and "{{ lookup('env', 'ZUUL_CHANGES') }}" != ""
 
 - name: Clone and build the specific DLRN projects
   include: dlrn-build.yml artg_change={{ item }}
-  with_items: '{{ artg_change_list }}'
+  with_items: '{{ artg_change_list|default([]) }}'
   when: item.project not in artg_skipped_projects
 
-- name: Create a directory to hold the rpms
-  file:
-    path: '{{ ansible_user_dir }}/gating_repo'
-    state: directory
+- block:
+    - name: Create a directory to hold the rpms
+      file:
+        path: '{{ ansible_user_dir }}/gating_repo'
+        state: directory
 
-- name: Copy the generated rpms
-  shell: >
-    rm -rf {{ ansible_user_dir }}/gating_repo/*;
-    find {{ ansible_user_dir }}/DLRN/data/repos -type f -name '*.rpm' -print0 | xargs -0 cp -t {{ ansible_user_dir }}/gating_repo;
+    - name: Copy the generated rpms
+      shell: >
+        rm -rf {{ ansible_user_dir }}/gating_repo/*;
+        find {{ ansible_user_dir }}/DLRN/data/repos -type f -name '*.rpm' -print0 | xargs -0 cp -t {{ ansible_user_dir }}/gating_repo;
 
-- name: Run createrepo on generated rpms
-  shell: 'createrepo gating_repo'
-  args:
-    chdir: '{{ ansible_user_dir }}'
+    - name: Run createrepo on generated rpms
+      shell: 'createrepo gating_repo'
+      args:
+        chdir: '{{ ansible_user_dir }}'
 
-- name: Compress the repo
-  shell: 'tar czf {{ artg_compressed_gating_repo }} gating_repo'
-  args:
-    chdir: '{{ ansible_user_dir }}'
+    - name: Compress the repo
+      shell: 'tar czf {{ artg_compressed_gating_repo }} gating_repo'
+      args:
+        chdir: '{{ ansible_user_dir }}'
+  when: repo_built is defined
 
 - name: Clean up
   file:
@@ -119,3 +121,4 @@
 
 - name: Trigger repo injection for quickstart
   set_fact: compressed_gating_repo={{ artg_compressed_gating_repo }}
+  when: repo_built is defined
