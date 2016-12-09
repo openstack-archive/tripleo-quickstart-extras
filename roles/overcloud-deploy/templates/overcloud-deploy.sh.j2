@@ -69,15 +69,15 @@ openstack overcloud deploy \
 
 ### --stop_docs
 # We don't always get a useful error code from the openstack deploy command,
-# so check `heat stack-list` for a CREATE_FAILED status.
-if heat stack-list | grep -q 'CREATE_FAILED'; then
+# so check `openstack stack list` for a CREATE_FAILED status.
+if openstack stack list | grep -q 'CREATE_FAILED'; then
     {%if release not in ['mitaka', 'liberty'] %}
     # get the failures list
     openstack stack failures list overcloud > failed_deployment_list.log || true
     {% endif %}
 
     # get any puppet related errors
-    for failed in $(heat resource-list \
+    for failed in $(openstack stack resource list \
         --nested-depth 5 overcloud | grep FAILED |
         grep 'StructuredDeployment ' | cut -d '|' -f3)
     do
