@@ -28,7 +28,9 @@ cat <<EOF | sudo tee -a $HOSTFILE
 ## BEGIN OVERCLOUD HOSTS  #nodocs
 $(heat output-show -F raw overcloud HostsEntry)
 
+{% if enable_pacemaker|bool %}
 $(heat output-show -F raw overcloud PublicVip) overcloud-public-vip
+{% endif %}
 ## END OVERCLOUD HOSTS    #nodocs
 EOF
 
