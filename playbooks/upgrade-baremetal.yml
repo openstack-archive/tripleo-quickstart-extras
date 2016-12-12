@@ -7,3 +7,12 @@
   gather_facts: no
   roles:
     - { role: overcloud-upgrade, deployment_type: baremetal }
+
+# Validate the deployment
+- name:  validate the overcloud
+  hosts: undercloud
+  tags:
+    - overcloud-validate
+  gather_facts: no
+  roles:
+    - { role: validate-simple, when: test_ping|bool }
