@@ -50,7 +50,7 @@
       command: virsh net-destroy default
 
     - name: destroy default pool
-      sudo: yes
+      become: yes
       command: virsh pool-destroy default
 
     - name: destroy local libvirt storage, networks and config
