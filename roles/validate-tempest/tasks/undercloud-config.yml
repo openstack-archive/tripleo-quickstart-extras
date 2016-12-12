@@ -2,7 +2,7 @@
 # tasks file for ansible-role-tripleo-tempest-undercloud
 
 - name: Add fake driver to Ironic config
-  sudo: yes
+  become: yes
   lineinfile:
     backup: true
     backrefs: true
@@ -11,7 +11,7 @@
     line: '\1,fake'
 
 - name: Restart the Ironic conductor service
-  sudo: yes
+  become: yes
   service: name=openstack-ironic-conductor state=restarted
 
 - name: Ensure the fake driver is enabled
