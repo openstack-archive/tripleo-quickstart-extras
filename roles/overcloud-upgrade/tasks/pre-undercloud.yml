@@ -1,6 +1,6 @@
 ---
 - name: Clean up the repos
-  sudo: yes
+  become: yes
   file: path=/etc/yum.repos.d/{{ item }} state=absent
   with_items: "{{ repos }}"
   when: step_pre_undercloud_upgrade
@@ -12,13 +12,13 @@
     mode: 0744
 
 - name: Execute upgrade repo script
-  sudo: yes
+  become: yes
   shell: |
     {{ upgrade_working_dir }}/upgrade-undercloud-repo.sh > upgrade-undercloud-repo.sh.log 2>&1
   when: step_pre_undercloud_upgrade
 
 - name: Clean yum cache
-  sudo: yes
+  become: yes
   shell: yum clean all
 
 - name: Push hieradata override file for workers
