@@ -1,0 +1,39 @@
+### --start_docs
+
+## Validate the undercloud installation
+## ====================================
+
+## * Set the uri of TripleO UI based on SSL usage
+## ::
+{% set ui_uri = "https://%s" % undercloud_network_cidr|nthhost(2)  if undercloud_generate_service_certificate|bool else "http://%s:3000" % undercloud_network_cidr|nthhost(1) %}
+
+## * Specify the function to test UI
+## ::
+function ui_sanity_check {
+    if [ -f "/etc/httpd/conf.d/25-tripleo-ui.conf" ]; then
+        if ! curl {{ ui_uri }} 2>/dev/null | grep -q 'TripleO'; then
+            echo "ERROR: TripleO UI front page is not loading."
+            exit 1
+        fi
+    fi
+}
+
+
+## * Check the answers from each undercloud service
+## ::
+
+set -x
+source {{ working_dir}}/stackrc
+openstack user list
+openstack catalog list
+nova service-list
+glance image-list
+neutron subnet-list
+neutron net-list
+neutron agent-list
+ironic node-list
+openstack stack list
+ui_sanity_check
+set +x
+
+### --stop_docs
