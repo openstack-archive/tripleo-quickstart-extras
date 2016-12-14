@@ -12,15 +12,16 @@ set -eux
 ## * Copy the yaml file from the standard template files directory
 ## ::
 
-mkdir -p {{ working_dir }}/nic-configs
-ORIGIN_TEMPLATES_DIR=/usr/share/openstack-tripleo-heat-templates/network/config/bond-with-vlans
-cp $ORIGIN_TEMPLATES_DIR/*.yaml {{ working_dir }}/nic-configs/
+ORIGIN_TEMPLATES_DIR={{ overcloud_templates_path }}/network/config/bond-with-vlans
+CUSTOM_TEMPLATES_DIR={{ overcloud_templates_path }}/network/config/custom-bond-with-vlans
+sudo mkdir -p $CUSTOM_TEMPLATES_DIR
+sudo cp $ORIGIN_TEMPLATES_DIR/*.yaml $CUSTOM_TEMPLATES_DIR/
 
 ## * Modify the yaml files to use Linux bonds
 ## ::
 
-grep -rl 'type: ovs_bond' {{ working_dir }}/nic-configs/ | xargs sed -i 's/type: ovs_bond/type: linux_bond/g'
-grep -rl 'ovs_options' {{ working_dir }}/nic-configs/ | xargs sed -i 's/ovs_options/bonding_options/g'
+sudo grep -rl 'type: ovs_bond' $CUSTOM_TEMPLATES_DIR/ | xargs sudo sed -i 's/type: ovs_bond/type: linux_bond/g'
+sudo grep -rl 'ovs_options' $CUSTOM_TEMPLATES_DIR/ | xargs sudo sed -i 's/ovs_options/bonding_options/g'
 
 ### --stop_docs
 
