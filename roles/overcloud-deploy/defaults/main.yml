@@ -76,6 +76,8 @@ deploy_args: >-
   {{ validation_args }}
   {{ extra_args }}
 
+composable_services: false
+
 step_deploy_overcloud: true
 step_validate_overcloud: true
 prepare_tempest: false
@@ -98,3 +100,8 @@ overcloud_ipv6: false
 
 # Wait for hypervisor in the deployment script
 hypervisor_wait: true
+
+overcloud_services:
+  - name: 'ControllerServices:'
+    services:
+    - OS::TripleO::Services::Kernel

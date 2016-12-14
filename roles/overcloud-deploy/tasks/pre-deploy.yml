@@ -96,3 +96,10 @@
   when:
     - network_isolation|bool
     - containerized_overcloud|bool
+
+- name: set composable service args fact
+  set_fact:
+    extra_args: >-
+      {{ extra_args }}
+      -e {{ working_dir }}/overcloud_services.yaml
+  when: composable_services

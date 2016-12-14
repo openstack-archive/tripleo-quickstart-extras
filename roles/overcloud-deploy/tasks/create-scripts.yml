@@ -18,4 +18,9 @@
   template:
     src: "neutronl3ha.yaml.j2"
     dest: "{{ working_dir }}/neutronl3ha.yaml"
-    mode: 0755
+
+- name: Copy composable services file
+  when: composable_services
+  template:
+    src: "overcloud_services.yaml.j2"
+    dest: "{{ working_dir }}/overcloud_services.yaml"
