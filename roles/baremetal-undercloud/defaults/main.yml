@@ -18,3 +18,11 @@ step_provide_undercloud: true
 step_prepare_undercloud: true
 step_undercloud_repos: true
 step_overcloud_images: true
+
+repo_configure_list:
+  - delorean:
+    name: "delorean.repo"
+    location: "http://buildlogs.centos.org/centos/7/cloud/x86_64/rdo-trunk-{{ release }}-tested/delorean.repo"
+  - delorean-deps:
+    name: "delorean-deps.repo"
+    location: "http://trunk.rdoproject.org/centos7-{{ release }}/delorean-deps.repo"

@@ -18,11 +18,6 @@ for i in *.tar; do
 tar xvfp $i
 done
 
-## * Ensure libvirtd is started (otherwise virt-customize won't work
-## ::
-
-sudo systemctl restart libvirtd
-
 ## * Change root password on the image
 ## ::
 

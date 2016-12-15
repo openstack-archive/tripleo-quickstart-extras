@@ -3,7 +3,7 @@
 - name: Baremetal undercloud install
   hosts: localhost
   roles:
-    - tripleo-baremetal-undercloud
+    - baremetal-undercloud
   tags:
     - undercloud-bm-install
 
@@ -11,33 +11,35 @@
 - name: Add the undercloud node to the generated inventory
   hosts: localhost
   gather_facts: yes
-  tags:
-    - undercloud-scripts
   roles:
     - tripleo-inventory
+  tags:
+    - undercloud-inventory
 
 # Deploy the undercloud
 - name: Install undercloud
   hosts: undercloud
   gather_facts: no
-  tags:
-    - undercloud-install
   roles:
     - tripleo/undercloud
+  tags:
+    - undercloud-install
 
 # Baremetal preparation (with workarounds)
 - name: Prepare baremetal for the overcloud deployment
   hosts: undercloud
   roles:
-    - overcloud-prep-baremetal
+    - baremetal-prep-overcloud
   tags:
-    - overcloud-prep-baremetal
+    - baremetal-prep-overcloud
 
 # Prepare any additional configuration files required by the overcloud
 - name: Prepare configuration files for the overcloud deployment
   hosts: undercloud
   gather_facts: no
   roles:
+    - overcloud-prep-config
+  tags:
     - overcloud-prep-config
 
 # Prepare the overcloud images for deployment
@@ -46,12 +48,16 @@
   gather_facts: no
   roles:
     - overcloud-prep-images
+  tags:
+    - overcloud-prep-images
 
 # Prepare the overcloud flavor configuration
 - name: Prepare overcloud flavors
   hosts: undercloud
   gather_facts: no
   roles:
+    - overcloud-prep-flavors
+  tags:
     - overcloud-prep-flavors
 
 # Prepare the undercloud networks for the overcloud deployment
@@ -60,29 +66,31 @@
   gather_facts: no
   roles:
     - overcloud-prep-network
+  tags:
+    - overcloud-prep-network
 
 # Deploy the overcloud
 - name: Deploy the overcloud
   hosts: undercloud
   gather_facts: yes
   roles:
-    - tripleo-overcloud
+    - overcloud-deploy
+  tags:
+    - overcloud-deploy
 
 - name: Add the overcloud nodes to the generated inventory
   hosts: undercloud
   gather_facts: yes
-  tags:
-    - overcloud-deploy
   vars:
       inventory: all
   roles:
     - tripleo-inventory
+  tags:
+    - overcloud-deploy-inventory
 
 # Check the results of the deployment, note after inventory has executed
 - name: Check the result of the deployment
   hosts: localhost
-  tags:
-    - overcloud-deploy
   tasks:
     - name: ensure the deployment result has been read into memory
       include_vars: "{{ local_working_dir }}/overcloud_deployment_result.json"
@@ -91,11 +99,14 @@
     - name: did the deployment pass or fail?
       debug: var=overcloud_deploy_result
       failed_when: overcloud_deploy_result == "failed"
+  tags:
+    - overcloud-deploy-check
 
+# Validate the deployment
 - name: Validate the overcloud
   hosts: undercloud
   gather_facts: no
   roles:
-    - tripleo-overcloud-validate
+    - { role: validate-simple, when: test_ping|bool }
   tags:
     - overcloud-validate
