@@ -1,0 +1,26 @@
+---
+
+# These variable do not have a default because there is no sane default. The
+# role will fail immediately if either is not specified.
+# image_to_modify:
+# modify_script:
+
+# The extract list defaults to empty list
+modify_image_extract_list: []
+
+# By default we use the global working directory for modifying images
+modify_image_working_dir: "{{ working_dir }}"
+
+# virt-customize defaults
+# vc_args can be used to pass any arbitrary arguments to virt-customize
+vc_args: ""
+
+# the other "vc" vars below are converted to the correct virt-customize args,
+# and are provided for convenience.
+
+# ram and cpu are not set by default to take libguestfs defaults by default
+# modify_image_vc_ram:
+# modify_image_vc_cpu:
+modify_image_vc_verbose: false
+modify_image_vc_trace: false
+
