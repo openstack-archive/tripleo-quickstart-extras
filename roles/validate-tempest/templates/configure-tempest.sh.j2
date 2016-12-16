@@ -1,13 +1,20 @@
-#
-# configure-tempest
-#
+### --start_docs
+
+## Configure tempest
+## -----------------
+
 {% if tempest_overcloud %}
+## ::
 source {{ working_dir }}/overcloudrc
 
-# Clean up from any previous tempest run.
+## * Clean up from any previous tempest run
+## ::
+
 rm -rf {{ working_dir }}/tempest
 
-# clean up network if it exists from previous run
+## * Clean up network if it exists from previous run
+## ::
+
 for i in $(neutron router-list -c id -f value); do neutron router-gateway-clear $i; done
 for r in $(neutron router-list -c id -f value); do
     for p in $(neutron router-port-list $r -c id -f value); do
@@ -38,7 +45,9 @@ source {{ working_dir }}/stackrc
 public_net_id=$(neutron net-show {{ undercloud_public_net_name }} -f value -c id)
 {% endif %}
 
-# Generate a tempest configuration.
+## * Generate a tempest configuration
+## ::
+
 sudo yum install -y libffi-devel openssl-devel python-virtualenv gcc
 
 {% if tempest_source == "rdo" %}
@@ -68,9 +77,12 @@ cp /usr/share/openstack-tempest-*/etc/default-overrides.conf ./etc/
 {% endif %}
 
 {% if tempest_undercloud %}
-# config_tempest assumes that Cinder is installed and accessible. Cinder is
-# not installed on the undercloud. Remove unneeded lines to prevent the tool
-# from bawking upon execution
+
+## .. note:: config_tempest assumes that Cinder is installed and accessible. Cinder is
+##           not installed on the undercloud. Remove unneeded lines to prevent the tool
+##           from bawking upon execution
+## ::
+
 sed --in-place "/'volume'\: 'cinder',/d" tools/config_tempest.py
 sed --in-place "/'volume'\: \['v1', 'v2'\]/d" tools/config_tempest.py
 {% endif %}
@@ -91,3 +103,6 @@ sed --in-place "/'volume'\: \['v1', 'v2'\]/d" tools/config_tempest.py
   volume.build_timeout 500 \
   scenario.ssh_user cirros \
   orchestration.stack_owner_role heat_stack_owner
+
+### --stop_docs
+
