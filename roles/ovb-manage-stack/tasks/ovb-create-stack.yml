@@ -1,5 +1,23 @@
 ---
-- include: get-undercloud-image.yml
+- name: Ensure local working dir exists
+  file:
+    path: "{{ local_working_dir }}"
+
+- name: generate prefix for all run-related entities
+  set_fact:
+    prefix="{{ tmp.node_prefix }}"
+
+- name: set fact for undercloud image
+  set_fact: latest_undercloud_image="{{ latest_guest_image[osp_release | default(release)] }}"
+
+- name: copy key inserted in image to undercloud_key location
+  copy:
+      src: "{{ existing_key_location }}/{{ item }}"
+      dest: "{{ local_working_dir }}/{{ item }}"
+      mode: 0600
+  with_items:
+      - id_rsa_undercloud
+      - id_rsa_undercloud.pub
 
 - name: Copy deploy stack parameters template
   template:
@@ -74,9 +92,9 @@
       name: undercloud
       hostname: "{{ undercloud_ip }}"
       groups: "{{ node_groups| join(',') }}"
-      ansible_ssh_host: "{{ undercloud_ip }}"
+      ansible_host: "{{ undercloud_ip }}"
       ansible_fqdn: undercloud
-      ansible_ssh_user: stack
+      ansible_user: "{{ ansible_user }}"
       ansible_private_key_file: "{{ undercloud_key }}"
       ansible_ssh_extra_args: "{{ ssh_extra_args }}"
       undercloud_ip: "{{ undercloud_ip }}"

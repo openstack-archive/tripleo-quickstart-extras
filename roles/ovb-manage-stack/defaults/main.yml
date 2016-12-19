@@ -1,7 +1,6 @@
 ---
 # defaults for all ovb-stack related tasks
 local_working_dir: "{{ lookup('env', 'HOME') }}/.quickstart"
-working_dir: /home/stack
 
 release: mitaka
 
@@ -19,8 +18,9 @@ os_tenant_name: admin
 os_auth_url: 'http://10.0.1.10:5000/v2.0'
 cloud_name: qeos7
 
+ansible_user: stack
 stack_name: 'oooq-{{ prefix }}stack'
-rc_file: /home/stack/overcloudrc
+rc_file: /home/{{ ansible_user }}/overcloudrc
 node_name: 'undercloud'
 ssh_extra_args: '-F "{{ local_working_dir }}/ssh.config.ansible"'
 undercloud_key: "{{ local_working_dir }}/id_rsa_undercloud"
@@ -33,6 +33,13 @@ heat_template: "{{ templates_dir }}/quintupleo.yaml"
 environment_list:
     - "{{ templates_dir }}/resource-registry.yaml"
     - "{{ local_working_dir }}/{{ prefix }}env.yaml"
+
+latest_guest_image:
+    mitaka: CentOS-7-x86_64-GenericCloud-released-latest
+    newton: CentOS-7-x86_64-GenericCloud-released-latest
+    master: CentOS-7-x86_64-GenericCloud-released-latest
+    rhos-9: rhel-7.3-server-x86_64-latest
+    rhos-10: rhel-7.3-server-x86_64-latest
 
 existing_key_location: '{{ local_working_dir }}'
 remove_image_from_host_cloud: false
@@ -58,17 +65,6 @@ undercloud_flavor: m1.xlarge
 external_net:  '10.2.1.0/22'
 
 network_isolation_type: multi-nic
-
-setup_undercloud_connectivity_log: "{{ working_dir }}/setup_undercloud_connectivity.log"
-
-mtu: 1350
-mtu_interface:
-  - eth1
-pvt_nameserver: 8.8.8.8
-
-external_interface: eth2
-external_interface_ip: 10.0.0.1
-external_interface_netmask: 255.255.255.0
 
 registered_releases:
   - mitaka

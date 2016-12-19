@@ -3,10 +3,6 @@
   include: ovb-create-stack.yml
   when: ovb_manage_stack_mode == 'create'
 
-- name: Setup OVB undercloud
-  include: ovb-setup-undercloud.yml
-  when: ovb_manage_stack_mode == 'setup-undercloud'
-
 - name: Delete OVB stack
   include: ovb-delete-stack.yml
   when: ovb_manage_stack_mode == 'delete'

@@ -4,15 +4,24 @@
   roles:
     - { role: ovb-manage-stack, ovb_manage_stack_mode: 'create' }
 
+- name: Setup the undercloud
+  hosts: undercloud
+  gather_facts: no
+  vars:
+    ansible_user: root
+  roles:
+    - undercloud-setup
+
 - name:  Inventory the undercloud instance
   hosts: localhost
   gather_facts: yes
   roles:
-    - { role: tripleo-inventory }
+    - tripleo-inventory
 
-- name: Setup the undercloud
+- name: Fetch the overcloud images
   hosts: undercloud
+  gather_facts: no
   vars:
-      ansible_ssh_user: root
+      ansible_user: root
   roles:
-    - { role: ovb-manage-stack, ovb_manage_stack_mode: 'setup-undercloud' }
+   - fetch-images

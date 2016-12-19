@@ -53,14 +53,6 @@ Parameters used the env.yaml file to create the OVB heat stack (See defaults/mai
 - ovb_dir
 - network_isolation_type: <multi-nic> -- other options are 'none' and 'public-bond'
 
-Parameters required to setup the undercloud:
-- mtu: <1350>
-- mtu_interface: <eth1>
-- pvt_nameserver: <8.8.8.8> -- on some internal clouds external servers are blocked
-- external_interface: <eth2>
-- external_interface_ip: <10.0.0.1>
-- external_interface_netmask: <255.255.255.0>
-
 - registered_releases -- releases for which images should be available for the undercloud
 
 Dependencies
