@@ -164,6 +164,23 @@
             done;
         fi
 
+    # Collect host info as done presently in TripleO-CI.
+    # Will be deprecated.
+    - name: Create get_host_info script
+      template:
+        src: "get_host_info.sh.j2"
+        dest: "/tmp/get_host_info.sh"
+        mode: 0755
+
+    - name: Copy heat-deploy-times.py to host
+      copy:
+        src: heat-deploy-times.py
+        dest: "/tmp/heat-deploy-times.py"
+        mode: 0755
+
+    - name: Call get_host_info script
+      shell: /tmp/get_host_info.sh &>/var/log/host_info.txt
+
     - name: Erase temporary log directory if exists
       file:
         path: "/tmp/{{ inventory_hostname }}"
