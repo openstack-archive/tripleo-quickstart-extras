@@ -2,3 +2,10 @@ overcloud_ipv6: false
 containerized_overcloud: false
 overcloud_templates_path: /usr/share/openstack-tripleo-heat-templates
 
+# TODO(hrybacki): remove after https://review.openstack.org/#/c/418998/ merges
+# The overcloud-deploy role had a dependency on the tripleo role (no longer
+# exists) which depdended on the common role which /has/ `enable_pacemaker`.
+# this workaround can be removed after https://review.openstack.org/#/c/413800/
+# is merged creating a dependency chain common<-extras-common<-overcloud-deploy
+enable_pacemaker: false
+
