@@ -17,13 +17,13 @@
     - undercloud-inventory
 
 # Deploy the undercloud
-- name: Install undercloud
+- name: Deploy undercloud
   hosts: undercloud
   gather_facts: no
   roles:
-    - tripleo/undercloud
+    - undercloud-deploy
   tags:
-    - undercloud-install
+    - undercloud-deploy
 
 # Baremetal preparation (with workarounds)
 - name: Prepare baremetal for the overcloud deployment
