@@ -1,0 +1,31 @@
+---
+images_working_dir: /var/lib/oooq-images/{{ release }}
+images_destroy_working_dir: true
+overcloud_image_build_script: overcloud-image-build.sh.j2
+overcloud_image_build_log: overcloud_image_build.log
+build_image_isolated: true
+build_isolation_image_url: https://images.rdoproject.org/CentOS-7-x86_64-GenericCloud.qcow2
+build_isolation_image:
+  name: isolation-image
+  url: "{{ build_isolation_image_url }}"
+  type: qcow2
+build_undercloud: true
+package_images: true
+overcloud_repo_paths:
+  - "$(ls /etc/yum.repos.d/delorean*)"
+  - "$(ls /etc/yum.repos.d/CentOS-Ceph-*)"
+image_build_yaml_paths:
+  - "/usr/share/tripleo-common/image-yaml/overcloud-images-centos7.yaml"
+  - "/usr/share/tripleo-common/image-yaml/overcloud-images.yaml"
+image_build_extract_list:
+  - "/ironic-python-agent.initramfs"
+  - "/ironic-python-agent.kernel"
+  - "/overcloud-full.qcow2"
+  - "/overcloud-full.initrd"
+  - "/overcloud-full.vmlinuz"
+inject_images:
+  - "ironic-python-agent.initramfs"
+  - "ironic-python-agent.kernel"
+  - "overcloud-full.qcow2"
+  - "overcloud-full.initrd"
+  - "overcloud-full.vmlinuz"

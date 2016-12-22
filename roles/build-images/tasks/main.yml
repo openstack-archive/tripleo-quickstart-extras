@@ -1,0 +1,151 @@
+---
+- name: Delete prior working directory if present
+  file:
+    path: "{{ images_working_dir }}"
+    state: absent
+  become: true
+  when: "{{ images_destroy_working_dir }}|bool"
+
+- name: Create the working directory
+  file:
+    path: "{{ images_working_dir }}"
+    state: directory
+    mode: 0755
+    owner: "{{ non_root_user }}"
+  become: true
+
+- name: create the repo setup script for the build host
+  include_role:
+    name: repo-setup
+  vars:
+    repo_run_live: false
+    repo_setup_dir: "{{ images_working_dir }}"
+
+- name: create overcloud/ipa image build script
+  template:
+    src: "{{ overcloud_image_build_script }}"
+    dest: "{{ images_working_dir }}/overcloud_image_build_script.sh"
+    mode: 0755
+  become: true
+
+- when: not build_image_isolated|bool
+  block:
+    - name: run the repo script (direct)
+      shell: "{{ images_working_dir }}/repo_setup.sh"
+
+    - name: run the image build script (direct)
+      shell: >
+        {{ images_working_dir }}/overcloud_image_build_script.sh >
+        {{ overcloud_image_build_log }} 2>&1
+
+- when: build_image_isolated|bool
+  block:
+
+    - name: get image to use as isolated build env
+      include: fetch-images.yml
+      vars:
+        image_fetch_dir: "{{ images_working_dir }}"
+        images:
+          - "{{ build_isolation_image }}"
+
+    - name: run the repo setup script (isolated)
+      include: modify-image.yml
+      vars:
+        modify_image_working_dir: "{{ images_working_dir }}"
+        image_to_modify: "{{ images_working_dir }}/{{ build_isolation_image.name }}.qcow2"
+        modify_script: "{{ images_working_dir }}/repo_setup.sh"
+
+    - name: run the image build script (isolated)
+      include: modify-image.yml
+      vars:
+        modify_image_working_dir: "{{ images_working_dir }}"
+        image_to_modify: "{{ images_working_dir }}/{{ build_isolation_image.name }}.qcow2"
+        modify_script: "{{ images_working_dir }}/overcloud_image_build_script.sh"
+        modify_image_vc_ram: 16384
+        modify_image_vc_cpu: 8
+        modify_image_extract_list: "{{ image_build_extract_list }}"
+
+  rescue:
+    - set_fact: image_build_failed=true
+
+  always:
+    - shell: |
+        virt-cat -a {{ build_isolation_image.name }}.qcow2 \
+            /tmp/builder.log > builder.log 2>&1 || true
+        virt-cat -a {{ build_isolation_image.name }}.qcow2 \
+            /ironic-python-agent.log > ironic-python-agent.log 2>&1 || true
+        virt-cat -a {{ build_isolation_image.name }}.qcow2 \
+            /overcloud-full.log > overcloud-full.log 2>&1 || true
+      environment:
+        LIBGUESTFS_BACKEND: direct
+        LIBVIRT_DEFAULT_URI: "{{ libvirt_uri }}"
+      args:
+        chdir: "{{ images_working_dir }}"
+
+
+# Note(trown) We got a false positive in the RDO job which is already using this
+# because even though the fail was executed it did not actually cause ansible to
+# exit with nonzero. I suspect it is some interaction with block, so moving the
+# actual fail out of the block.
+- fail: msg='*** Image Build Error ***'
+  when: image_build_failed|default(false)|bool
+
+- when: build_undercloud|bool
+  block:
+    - name: run the repo setup script on overcloud image
+      include: modify-image.yml
+      vars:
+        modify_images_working_dir: "{{ images_working_dir }}"
+        image_to_modify: "{{ images_working_dir }}/overcloud-full.qcow2"
+        modify_script: "{{ images_working_dir }}/repo_setup.sh"
+
+    - name: convert the overcloud image to an undercloud image
+      include: convert-image.yml
+      vars:
+        convert_image_working_dir: "{{ images_working_dir }}"
+
+    - name: Inject overcloud/ipa images
+      command: >
+        virt-customize -a {{ images_working_dir }}/undercloud.qcow2
+        --upload {{ images_working_dir }}/{{ item }}:/home/{{ undercloud_user }}/{{ item }}
+        --run-command
+        'chown {{ undercloud_user }}:{{ undercloud_user}} /home/{{ undercloud_user }}/{{ item }}'
+      changed_when: true
+      environment:
+        LIBGUESTFS_BACKEND: direct
+        LIBVIRT_DEFAULT_URI: "{{ libvirt_uri }}"
+      with_items: "{{ inject_images }}"
+
+    - name: Compress the undercloud image
+      shell: |
+        qemu-img convert -c -O qcow2 undercloud.qcow2 undercloud-compressed.qcow2
+        mv undercloud-compressed.qcow2 undercloud.qcow2
+      args:
+        chdir: "{{ images_working_dir }}"
+
+    - name: Create undercloud md5sum
+      shell: md5sum undercloud.qcow2 > undercloud.qcow2.md5
+      args:
+        chdir: "{{ images_working_dir }}"
+
+- when: package_images|bool
+  block:
+    - name: Create overcloud and ironic-python-agent image tars
+      shell: |
+        tar -cf ironic-python-agent.tar \
+                ironic-python-agent.initramfs \
+                ironic-python-agent.kernel
+        tar -cf overcloud-full.tar \
+                overcloud-full.qcow2 \
+                overcloud-full.initrd \
+                overcloud-full.vmlinuz
+      args:
+        chdir: "{{ images_working_dir }}"
+
+    - name: Create md5sums
+      shell: |
+        md5sum ironic-python-agent.tar > ironic-python-agent.tar.md5
+        md5sum overcloud-full.tar > overcloud-full.tar.md5
+      args:
+        chdir: "{{ images_working_dir }}"
+

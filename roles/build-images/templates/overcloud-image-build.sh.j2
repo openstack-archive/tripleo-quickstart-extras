@@ -1,0 +1,34 @@
+#!/bin/bash
+# script to build overcloud images
+
+set -eux
+
+{% if build_image_isolated %}
+# NOTE(trown): DIB expects /dev/pts to exist and libguestfs is not mounting the guest with it
+# so we just manually mount it in the guest
+# This will be fixed when https://www.redhat.com/archives/libguestfs/2016-December/msg00024.html
+# is available in CentOS version of libguestfs
+mkdir /dev/pts
+mount devpts /dev/pts -t devpts
+{% endif %}
+
+
+sudo yum -y install python-tripleoclient
+
+export DIB_YUM_REPO_CONF=""
+{% for repo_path in overcloud_repo_paths %}
+export DIB_YUM_REPO_CONF="$DIB_YUM_REPO_CONF {{ repo_path }}"
+{% endfor %}
+
+{# note(trown): there was not support in tripleoclient for YAML config images in Newton #}
+{% if release == 'newton'-%}
+tripleo-build-images \
+{% for yaml_path in image_build_yaml_paths -%}
+    --image-config-file {{ yaml_path }} \
+{% endfor -%}
+{% else -%}
+openstack overcloud image build \
+{% for yaml_path in image_build_yaml_paths -%}
+    --config-file {{ yaml_path }} \
+{% endfor -%}
+{% endif -%}
