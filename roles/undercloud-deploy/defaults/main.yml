@@ -27,3 +27,4 @@ network_environment_args:
 # not require privileged access (but does require the setup performed by the
 # `environment/setup` role).
 libvirt_uri: qemu:///session
+enable_vbmc: true
