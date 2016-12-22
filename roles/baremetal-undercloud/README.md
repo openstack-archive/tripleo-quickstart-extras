@@ -36,7 +36,6 @@ You can invoke *quickstart.sh* like this:
   --clean \
   --playbook baremetal-undercloud-validate-ha.yml \
   --working-dir /path/to/workdir \
-  --requirements /path/to/quickstart-extras-requirements.txt \
   --config /path/to/config.yml \
   --release <RELEASE> \
   --tags all \
@@ -45,7 +44,7 @@ You can invoke *quickstart.sh* like this:
 
 Basically this command:
 
-* Uses the playbook **baremetal-undercloud.yml**
+* Uses the playbook **baremetal-undercloud-validate-ha.yml**
 * Uses a custom workdir that is rebuilt from scratch (so if it already exists, it is dropped, see *--clean*)
 * Get all the extra requirements
 * Select the config file
@@ -59,6 +58,10 @@ Role usage
 A typical config file will contain something like this:
 
 ```yaml
+# Virthost key for accessing newly provided machine
+virthost_key: ~/.ssh/customkey
+
+# Type of undercloud (we're deploying on baremetal otherwise this should be virtual)
 undercloud_type: baremetal
 
 # Specify the secondary net interface for overcloud provisioning
@@ -86,16 +89,17 @@ flavor_map:
   ceph: baremetal
   swift: baremetal
 
-# To be used ansible-role-tripleo-baremetal-undercloud
+# Will be used by baremetal-undercloud role
 step_provide_undercloud: true
-# To be used in ansible-role-tripleo-overcloud-prep-baremetal
+# Will be used by baremetal-prep-overcloud role
 step_install_upstream_ipxe: true
-# To be used in ansible-role-tripleo-overcloud-prep-images
+# Will be used by overcloud-prep-images role
 step_introspect: true
 
-# Explicitly declare kvm since we are on BM 
+# Explicitly declare kvm since we are on BM and disable vBMC
 libvirt_type: kvm
 libvirt_args: "--libvirt-type kvm"
+enable_vbmc: false
 
 # Environment specific variables
 baremetal_provisioning_script: "/path/to/undercloud-provisioning.sh"
@@ -115,7 +119,8 @@ extra_args: "--ntp-server <NTP SERVER IP> --control-scale 3 --compute-scale 2 --
 
 A brief explanation of the variables:
 
-* The variable **undercloud_type** is checked in all the dependent roles (see @Dependencies).
+* The variable **undercloud_type** is checked in some of the dependent roles (see @Dependencies).
+* The variable **virthost_key** is optional, if defined it must be a path to a private ssh key file needed to access to virthost. If you access to the virthost with the default ssh key of the user launching quickstart.sh then you don't need to set it.
 * The **undercloud_local_interface** needs to be changed accordingly to the baremetal hardware.
 * The **undercloud_external_network_cidr** will be the overcloud external network that undercloud will route.
 * A specific **flavor_map** (in this case baremetal) needs to be applied to each node kind.
@@ -132,7 +137,7 @@ The main task of the role is this one:
 
 ```yaml
 ---
-# tasks file for ansible-role-tripleo-baremetal-undercloud
+# tasks file for baremetal-undercloud
 
 # Do machine provisioning
 - include: machine-provisioning.yml
@@ -166,12 +171,9 @@ This is basically what each specific tasks does:
 
 Some notes:
 
-* Even if virthost and undercloud are the same machine, the name “undercloud” will be inventoried after (see the baremetal playbook slide)
+* Even if virthost and undercloud are the same machine, the name “undercloud” will be inventoried in any case
 * Each action is tagged so it is possible to exclude a specific section
-* In any case some variables can be controlled via config settings:
-    * step_provide_undercloud: choose if you want to do undercloud machine provisioning
-    * step_prepare_undercloud: choose if you want to install repos and basic packages on undercloud
-    * step_overcloud_images: choose if you want to download overcloud images
+* Some variables can be controlled via config settings (look above in @Role usage)
 
 Dependencies
 ------------
@@ -180,12 +182,13 @@ If you don't need to change anything in how the environments gets deployed, then
 
 In any case the roles you will need to deploy an entire environment from scratch (see @Example Playbook) are:
 
-* **ansible-role-tripleo-baremetal-undercloud** (this role)
+* **baremetal-undercloud** (this role)
 * **tripleo-inventory** (part of *tripleo-quickstart*)
 * **tripleo/undercloud** (part of *tripleo-quickstart*)
-* **ansible-role-overcloud-prep-{baremetal,config,images,flavors,network}**
-* **ansible-role-tripleo-overcloud**
-* **ansible-role-tripleo-overcloud-validate** or **ansible-role-tripleo-overcloud-validate-ha** (if you want to test HA capabilities)
+* **baremetal-prep-overcloud
+* **overcloud-prep-{config,images,flavors,network}**
+* **overcloud-deploy**
+* **overcloud-validate** or **overcloud-validate-ha** (if you want to test HA capabilities)
 
 Example Playbook
 ----------------
@@ -195,10 +198,10 @@ Here's is an example on host to use this role in combination to all the others c
 ```yaml
 ---
 # Provision and initial undercloud setup
-- name:  Baremetal undercloud install
+- name: Baremetal undercloud install
   hosts: localhost
   roles:
-    - tripleo-baremetal-undercloud
+    - baremetal-undercloud
   tags:
     - undercloud-bm-install
 
@@ -206,78 +209,86 @@ Here's is an example on host to use this role in combination to all the others c
 - name: Add the undercloud node to the generated inventory
   hosts: localhost
   gather_facts: yes
-  tags:
-    - undercloud-scripts
   roles:
     - tripleo-inventory
+  tags:
+    - undercloud-inventory
 
 # Deploy the undercloud
-- name:  Install undercloud
+- name: Install undercloud
   hosts: undercloud
   gather_facts: no
+  roles:
+    - tripleo/undercloud
   tags:
     - undercloud-install
-  roles:
-    - tripleo/undercloud          
 
 # Baremetal preparation (with workarounds)
-- name:  Prepare baremetal for the overcloud deployment
+- name: Prepare baremetal for the overcloud deployment
   hosts: undercloud
   roles:
-    - overcloud-prep-baremetal
+    - baremetal-prep-overcloud
   tags:
-    - overcloud-prep-baremetal
+    - baremetal-prep-overcloud
 
 # Prepare any additional configuration files required by the overcloud
-- name:  Prepare configuration files for the overcloud deployment
+- name: Prepare configuration files for the overcloud deployment
   hosts: undercloud
   gather_facts: no
   roles:
     - overcloud-prep-config
+  tags:
+    - overcloud-prep-config
 
 # Prepare the overcloud images for deployment
-- name:  Prepare the overcloud images for deployment
+- name: Prepare the overcloud images for deployment
   hosts: undercloud
   gather_facts: no
   roles:
     - overcloud-prep-images
+  tags:
+    - overcloud-prep-images
 
 # Prepare the overcloud flavor configuration
-- name:  Prepare overcloud flavors
+- name: Prepare overcloud flavors
   hosts: undercloud
   gather_facts: no
   roles:
     - overcloud-prep-flavors
+  tags:
+    - overcloud-prep-flavors
 
 # Prepare the undercloud networks for the overcloud deployment
-- name:  Prepare the undercloud networks for the overcloud deployment
+- name: Prepare the undercloud networks for the overcloud deployment
   hosts: undercloud
   gather_facts: no
   roles:
     - overcloud-prep-network
+  tags:
+    - overcloud-prep-network
 
 # Deploy the overcloud
-- name:  Deploy the overcloud
+- name: Deploy the overcloud
   hosts: undercloud
   gather_facts: yes
   roles:
-    - tripleo-overcloud
+    - overcloud-deploy
+  tags:
+    - overcloud-deploy
 
 - name: Add the overcloud nodes to the generated inventory
   hosts: undercloud
   gather_facts: yes
-  tags:
-    - overcloud-deploy
   vars:
       inventory: all
   roles:
     - tripleo-inventory
+  tags:
+    - overcloud-inventory
 
 # Check the results of the deployment, note after inventory has executed
 - name: Check the result of the deployment
   hosts: localhost
-  tags:
-    - overcloud-deploy
   tasks:
     - name: ensure the deployment result has been read into memory
       include_vars: "{{ local_working_dir }}/overcloud_deployment_result.json"
@@ -286,20 +297,22 @@ Here's is an example on host to use this role in combination to all the others c
     - name: did the deployment pass or fail?
       debug: var=overcloud_deploy_result
       failed_when: overcloud_deploy_result == "failed"
+  tags:
+    - overcloud-deploy-check
 
 # HA Validation
 - name: Validate the overcloud using HA tests
   hosts: undercloud
   gather_facts: no
   roles:
-    - tripleo-overcloud-validate-ha
+    - validate-ha
   tags:
     - overcloud-validate-ha
 ```
 
 The steps of the sample playbook are these:
 
-* First invoked role is tripleo-baremeal-undercloud undercloud
+* First invoked role is baremetal-undercloud
 * Then undercloud is inventoried
 * Undercloud is prepared for deploying
 * Overcloud is then deployed, inventoried and validated
