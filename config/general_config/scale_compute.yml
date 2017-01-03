@@ -1,5 +1,10 @@
 ---
 
+# NOTE(hrybacki): This is a hotfix to be removed after
+# https://review.openstack.org/#/c/414167/ has been merged.
+
+validation_args: ""
+
 control_memory: 16384
 control_vcpu: 4
 
