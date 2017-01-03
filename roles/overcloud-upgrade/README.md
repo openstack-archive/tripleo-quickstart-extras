@@ -46,7 +46,7 @@ Example Playbook
 - name:  Upgrade overcloud
   hosts: undercloud
   gather_facts: no
-  sudo: yes
+  become: yes
   roles:
     - ansible-role-tripleo-overcloud-upgrade
 ```

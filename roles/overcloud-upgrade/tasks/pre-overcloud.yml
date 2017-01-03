@@ -23,13 +23,13 @@
 
 - name: Add the no ssh finger print checking into upgrade-non-controller.sh
   when: step_upgrade_undercloud
-  sudo: yes
+  become: yes
   shell: >
       sed -i 's/ssh/ssh -o StrictHostKeyChecking=no/' \
       {{ upgrade_non_controller_script }}
 
 - name: allow traffic for the controller
-  sudo: yes
+  become: yes
   shell: >
         sudo iptables -A BOOTSTACK_MASQ -s {{ network_isolation_ipv4_cidr }} ! \
         -d {{ network_isolation_ipv4_cidr }} -j MASQUERADE -t nat;
@@ -68,7 +68,7 @@
 # TODO: remove this with a smarter fix
 - name: Set the num of heat workers
   when: set_heat_workers
-  sudo: yes
+  become: yes
   shell: >
     sed -i "/#num_engine_workers/a num_engine_workers = 6" /etc/heat/heat.conf;
     sed -i "s/num_engine_workers.*$/num_engine_workers = 6/" /etc/heat/heat.conf;
@@ -82,7 +82,7 @@
 
 - name: fix grep to upgrade-non-controller.sh
   when: major_upgrade|bool and target_upgrade_version == 'master'
-  sudo: yes
+  become: yes
   shell: >
     sudo sed -i 's/nova show \$name_or_id | grep status /nova show \$name_or_id | grep -w status /' /bin/upgrade-non-controller.sh;
 

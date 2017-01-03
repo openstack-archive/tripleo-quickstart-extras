@@ -1,6 +1,6 @@
 - name:  Set undercloud repo
   hosts: undercloud
   gather_facts: no
-  sudo: yes
+  become: yes
   roles:
     - { role: ansible-role-tripleo-overcloud-upgrade, tags: ['upgrade-repo'] }

@@ -8,7 +8,7 @@
 
 - name: create vlan if doesn't exist
   ignore_errors: yes
-  sudo: yes
+  become: yes
   shell: >
     ifconfig {{ network_isolation_vlan }};
     if [[ $? != 0 ]]; then \
@@ -19,7 +19,7 @@
 
 - name: set vlan up
   ignore_errors: yes
-  sudo: yes
+  become: yes
   shell: >
     ip l set dev {{ network_isolation_vlan }} up; ip addr add {{ network_isolation_ipv4_cidr }} dev {{ network_isolation_vlan }};
   when: network_isolation|bool and deployment_type == "virtual"
