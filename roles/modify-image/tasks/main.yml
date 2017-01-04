@@ -1,0 +1,50 @@
+---
+
+- name: make sure an image and script are provided
+  fail:
+    msg:
+        "In order to use this role image_to_modify and modify_script must be
+         provided."
+  when: image_to_modify is not defined or modify_script is not defined
+
+- name: ensure libguestfs is installed
+  yum: name=libguestfs-tools-c state=latest
+  become: true
+
+- name: virt-customize args --> memory
+  set_fact: vc_args="{{ vc_args }} -m {{ modify_image_vc_ram }}"
+  when: modify_image_vc_ram is defined
+
+- name: virt-customize args --> cpu
+  set_fact: vc_args="{{ vc_args }} --smp {{ modify_image_vc_cpu }}"
+  when: modify_image_vc_cpu is defined
+
+- name: virt-customize args --> verbose output
+  set_fact: vc_args="{{ vc_args }} -v"
+  when: modify_image_vc_verbose|bool
+
+- name: virt-customize args --> trace/debug output
+  set_fact: vc_args="{{ vc_args }} -x"
+  when: modify_image_vc_trace|bool
+
+- name: Run virt-customize on the provided image
+  shell: virt-customize {{ vc_args }}
+         -a {{ image_to_modify }}
+         --run {{ modify_script }}
+         > {{ modify_script }}.log 2>&1
+  environment:
+    LIBGUESTFS_BACKEND: direct
+  args:
+    chdir: "{{ modify_image_working_dir }}"
+
+- name: Extract artifacts from the image
+  shell: virt-copy-out
+         -a {{ image_to_modify }}
+         {{ item }}
+         {{ modify_image_working_dir }}
+  environment:
+      LIBGUESTFS_BACKEND: direct
+  args:
+      chdir: "{{ modify_image_working_dir }}"
+  with_items: "{{ modify_image_extract_list }}"
+
