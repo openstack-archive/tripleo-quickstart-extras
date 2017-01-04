@@ -10,7 +10,7 @@ network_isolation_ipv4_cidr: "10.0.0.1/24"
 network_isolation_vlan_tag: 10
 network_isolation_vlan: "vlan{{ network_isolation_vlan_tag }}"
 # set-repo settings:
-target_upgrade_version: mitaka
+target_upgrade_version: master
 upgrade_delorean_hash: current-passed-ci
 repos:
   - delorean.repo
@@ -52,6 +52,7 @@ upgrade_custom_templates_script_delivery:
   - overcloud-repo.yaml
 upgrade_custom_templates_controller: {}
 upgrade_custom_templates_converge: {}
+upgrade_custom_templates: {}
 update_custom_templates: {}
 # custom templates:
 # example:
@@ -75,6 +76,7 @@ step_upgrade_overcloud: true
 major_upgrade: true
 mixed_upgrade: false
 enable_ceph: false
+enable_pacemaker: true
 # heat workers:
 set_heat_workers: true
 # Update:

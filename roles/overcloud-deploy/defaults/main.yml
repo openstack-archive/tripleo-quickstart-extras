@@ -34,6 +34,10 @@ extra_args: ""
 ssl_overcloud: false
 libvirt_args: "--libvirt-type qemu"
 
+use_git_tht_repo: false
+tht_branch: master
+overcloud_release: "{{ release }}"
+
 # we generally assume that the argument to --control-flavor will
 # always be the `oooq_control` that we create from the flavors: key.
 # If the deployer needs to use a different name, she can configure a

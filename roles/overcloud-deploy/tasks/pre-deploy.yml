@@ -122,7 +122,7 @@
     extra_args: >-
       {{ extra_args }}
       -e {{ working_dir }}/overcloud_services.yaml
-  when: composable_services
+  when: composable_services|bool
 
 - name: set the scenario args for composable roles
   set_fact:

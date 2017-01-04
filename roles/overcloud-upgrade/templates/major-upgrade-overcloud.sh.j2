@@ -30,6 +30,7 @@ git clone https://github.com/openstack/tripleo-heat-templates.git -b stable/newt
 {% endif %}
 
 source {{ upgrade_working_dir }}/stackrc
+{% if target_upgrade_version in ['mitaka', 'newton'] %}
 {% if target_upgrade_version == 'mitaka' %}
 if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
     echo "execute aodh upgrade"
@@ -161,6 +162,35 @@ if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COM
         -e ~/network-environment.yaml
     {% endif %}
 fi
+{% endif %}
+
+{% if target_upgrade_version in ['ocata', 'master'] %}
+
+if openstack stack show -c stack_status  overcloud -f value | egrep "(CREATE|UPDATE)_COMPLETE"; then
+    echo "execute overcloud upgrade"
+    openstack overcloud deploy --templates {{ tht_dir }} \
+        -e {{ tht_dir }}/overcloud-resource-registry-puppet.yaml \
+    {% if network_isolation|bool == true %}
+        -e {{ tht_dir }}/environments/network-isolation.yaml \
+        -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
+        -e ~/network-environment.yaml \
+    {% endif %}
+    {% if enable_pacemaker|bool %}
+        -e {{ tht_dir }}/environments/puppet-pacemaker.yaml \
+    {% endif %}
+        -e {{ tht_dir }}/environments/major-upgrade-all-in-one.yaml \
+    {% for item in upgrade_custom_templates_script_delivery %}
+        -e {{ item }} \
+    {% endfor %}
+    {% for item in upgrade_custom_templates %}
+        -e {{ item }} \
+    {% endfor %}
+
+
+fi
+
+
+{% endif %}
 
 if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
     echo "Update successful"

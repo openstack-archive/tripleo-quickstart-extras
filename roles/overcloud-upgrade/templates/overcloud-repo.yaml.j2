@@ -1,10 +1,29 @@
 parameter_defaults:
   UpgradeInitCommand: |
     set -e
+    pushd /etc/yum.repos.d/
+    rm -rf delorean*
 {% if upgrade_delorean_hash == 'current-passed-ci' %}
-    curl -o /etc/yum.repos.d/delorean.repo http://buildlogs.centos.org/centos/7/cloud/x86_64/rdo-trunk-{{ target_upgrade_version }}-tested/delorean.repo
+    curl -o -L http://buildlogs.centos.org/centos/7/cloud/x86_64/rdo-trunk-{{ target_upgrade_version }}-tested/delorean.repo
 {% else %}
-    curl -o /etc/yum.repos.d/delorean.repo http://buildlogs.centos.org/centos/7/cloud/x86_64/rdo-trunk-{{ target_upgrade_version }}/delorean.repo
+    curl -o -L http://buildlogs.centos.org/centos/7/cloud/x86_64/rdo-trunk-{{ target_upgrade_version }}/delorean.repo
 {% endif %}
-    curl -o /etc/yum.repos.d/delorean-deps.repo http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/delorean-deps.repo
+    curl -o -L http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/delorean-deps.repo
+    popd
     yum clean all
+{% if target_upgrade_version in ['ocata', 'master'] %}
+    yum install -y python-heat-agent-*
+
+    # update ansible.cfg
+    # FIXME: Workaround for bigswitch vendor pluging
+    # we need to remove those package which is broken with Ocata neutron python code
+    yum remove -y python-UcsSdk openstack-neutron-bigswitch-agent python-networking-bigswitch openstack-neutron-bigswitch-lldp python-networking-odl
+    crudini --set /etc/ansible/ansible.cfg DEFAULT library /usr/share/ansible-modules/
+
+    # Ref https://review.openstack.org/#/c/392615 disable the old hiera hook
+    # FIXME - this should probably be handled via packaging?
+    rm -f /usr/libexec/os-apply-config/templates/etc/puppet/hiera.yaml
+    rm -f /usr/libexec/os-refresh-config/configure.d/40-hiera-datafiles
+    rm -f /etc/puppet/hieradata/*.yaml
+
+{% endif %}

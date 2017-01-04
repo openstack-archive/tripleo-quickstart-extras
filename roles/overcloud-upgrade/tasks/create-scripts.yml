@@ -1,0 +1,33 @@
+---
+- name: Create upgrade repo script for undercloud
+  template:
+    src: "{{ upgrade_undercloud_repo_script }}"
+    dest: "{{ upgrade_working_dir }}/upgrade-undercloud-repo.sh"
+    mode: 0744
+
+- name: Copy custom heat templates files if provided
+  template:
+    src: "{{ item.value.src }}"
+    dest: "{{ upgrade_working_dir }}/{{ item.value.name }}"
+  with_dict: "{{ upgrade_templates }}"
+
+# Need to set fact here because tht_dir is used in the templated script
+# in "Create major overcloud upgrade script" task
+- name: set fact for tht_dir
+  when: target_upgrade_version in ['ocata', 'master']
+  set_fact:
+    tht_dir: "/usr/share/openstack-tripleo-heat-templates"
+
+- name: Create major overcloud upgrade script
+  when: major_upgrade|bool
+  template:
+    src: "{{ major_upgrade_script }}"
+    dest: "{{ upgrade_working_dir }}/overcloud-upgrade.sh"
+    mode: 0755
+
+- name: Create minor overcloud upgrade script
+  when: not major_upgrade|bool
+  template:
+    src: "{{ minor_upgrade_script }}"
+    dest: "{{ upgrade_working_dir }}/overcloud-upgrade.sh"
+    mode: 0755
