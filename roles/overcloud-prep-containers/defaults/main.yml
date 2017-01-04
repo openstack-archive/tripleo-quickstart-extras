@@ -1,6 +1,7 @@
 ---
 # defaults file for ansible-role-tripleo-overcloud-prep-containers
 working_dir: /home/stack
+tripleo_common_dir: /usr/share/openstack-tripleo-common
 containerized_overcloud: false
 overcloud_prep_containers_script: overcloud-prep-containers.sh.j2
 containers_default_parameters: container-default-parameters.yaml.j2

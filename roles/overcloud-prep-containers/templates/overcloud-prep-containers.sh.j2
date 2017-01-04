@@ -7,7 +7,7 @@ set -eux
 ## ===================================================================
 
 ## note:: In progress documentation is available at https://etherpad.openstack.org/p/tripleo-containers-work
-##::
+## ::
 
 ## Prepare Your Environment
 ## ------------------------
@@ -26,18 +26,19 @@ echo $subnet_uuid
 neutron subnet-update $subnet_uuid --dns-nameserver 192.168.23.1
 neutron subnet-show $subnet_uuid
 
-{% if containerized_overcloud %}
 ## * Download the Cloud Atomic Image and upload to glance
 ## ::
 
-wget {{ container_url }}
-gunzip -f "{{ container_image }}.gz"
-glance image-create --name atomic-image --file {{ container_image }} --disk-format qcow2 --container-format bare
+if ! [[ -e {{ container_image }} ]]; then
+  curl -O {{ container_url }}
+  gunzip -f "{{ container_image }}.gz"
+fi
 
-{% endif %}
+glance image-list | grep atomic-image || glance image-create --name atomic-image --file {{ container_image }} --disk-format qcow2 --container-format bare
+
 
 {% if release != "master" %}
-## note:: On TripleO master, docker and docker-registry are installed and enabled. On older releases the following may be required:
+## .. note:: On TripleO master, docker and docker-registry are installed and enabled. On older releases the following may be required:
 ## ::
 
 sudo yum install -y docker
@@ -54,26 +55,15 @@ sudo easy_install docker-py
 sudo sed -i 's/#max_nested_stack_depth = 5/max_nested_stack_depth = 6/' /etc/heat/heat.conf
 sudo systemctl restart openstack-heat-engine
 
-## * Set the REGISTRY ADDRESS to 127.0.0.1 for the upload
-## ::
-
-# **WORKAROUND** unable to push when registry address is 192.168.24.1 / control_plane_ip
-# testing fix https://review.openstack.org/#/c/396460/
 
 # **WORKAROUND** port 8787 is not open on the undercloud
+# https://bugs.launchpad.net/tripleo/+bug/1651621
 sudo iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 8787 -j ACCEPT
-
-## * Checkout TripleO-Common
-## ::
-if [ ! -d tripleo-common ]; then
-  git clone https://github.com/openstack/tripleo-common.git
-fi
 
 ## * Create Overcloud Containers Uploads template
 ## ::
 
-bash -c 'cat <<EOF > {{ working_dir }}/tripleo-common/contrib/overcloud_containers.yaml
-# put this in {{ working_dir }}/tripleo-common/contrib/
+sudo bash -c 'cat <<EOF > {{ tripleo_common_dir }}/contrib/overcloud_containers.yaml
 uploads:
     - imagename: tripleoupstream/centos-binary-nova-compute:newton
       uploader: docker
@@ -115,24 +105,18 @@ echo "============================="
 ## * Rebuild heat-agents image and push to local registry
 ## ::
 
-sudo docker build -t "{{ ctl_plane_ip }}:8787/tripleoupstream/heat-docker-agents:newton" {{ working_dir }}/tripleo-common/heat_docker_agent/
+sudo docker build -t "{{ ctl_plane_ip }}:8787/tripleoupstream/heat-docker-agents:newton" {{ tripleo_common_dir }}/heat_docker_agent/
 sudo docker push {{ ctl_plane_ip }}:8787/tripleoupstream/heat-docker-agents:newton
-
-
-## * Set the REGISTRY ADDRESS back to the original ip
-## ::
-
-# **WORKAROUND** unable to push when registry address is 192.168.24.1 / control_plane_ip
-# testing fix https://review.openstack.org/#/c/396460/
 
 ## * Deploy Puppet Artifacts to the Overcloud
 ## ::
 
-wget https://raw.githubusercontent.com/mandre/dotfiles/master/bin/pull_puppet_modules.sh
+# should be replaced by https://review.openstack.org/#/c/416355/
+curl -O https://raw.githubusercontent.com/mandre/dotfiles/master/bin/pull_puppet_modules.sh
 chmod +x pull_puppet_modules.sh
 bash pull_puppet_modules.sh
 
-bash tripleo-common/scripts/upload-puppet-modules --directory ~/puppet-modules/
+upload-puppet-modules --directory ~/puppet-modules/
 
 ## * Get the journal logs for docker
 sudo journalctl -u docker > docker_journalctl.log
