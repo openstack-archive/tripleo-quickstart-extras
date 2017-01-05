@@ -65,7 +65,7 @@ EOENV
 openstack overcloud deploy \
     --templates {{overcloud_templates_path}} \
     {{ deploy_args }} \
-    ${DEPLOY_ENV_YAML:+-e $DEPLOY_ENV_YAML} "$@" || status_code=$?
+    ${DEPLOY_ENV_YAML:+-e $DEPLOY_ENV_YAML} "$@" && status_code=0 || status_code=$?
 
 ### --stop_docs
 # We don't always get a useful error code from the openstack deploy command,
