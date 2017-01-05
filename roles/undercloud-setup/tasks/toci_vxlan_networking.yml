@@ -8,7 +8,7 @@
   when: toci_vxlan_networking_multinode|bool
 
 - name: Run the TripleO-CI VXLAN networking script on subnodes
-  shell: "{{ working_dir }}/toci_vxlan_networking_multinode.sh > {{ working_dir }}/toci_vxlan_networking_multinode.sh.log 2>&1"
+  shell: "timeout --preserve-status 60s {{ working_dir }}/toci_vxlan_networking_multinode.sh > {{ working_dir }}/toci_vxlan_networking_multinode.sh.log 2>&1"
   when: toci_vxlan_networking_multinode|bool
 
 - name: Install the TripleO-CI VXLAN networking script
