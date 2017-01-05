@@ -1,0 +1,35 @@
+---
+- name: Cloning stackviz from openstack
+  git: repo=git://git.openstack.org/openstack/stackviz dest="{{ working_dir }}/stackviz"
+
+- name: Copying stackviz static files
+  synchronize:
+      src: stackviz/
+      dest: "{{ working_dir }}/stackviz_static"
+      use_ssh_args: true
+
+- name: Install stackviz
+  pip:
+    name: "."
+    chdir: "{{ working_dir }}/stackviz"
+  become: true
+
+- name: Check if dstats file exists
+  stat: path=/var/log/extra/dstat-csv.log
+  register: dstat_result
+
+- name: Set dstat fact
+  set_fact:
+      tempest_dstat_opt: '--dstat /var/log/extra/dstat-csv.log'
+  when: dstat_result.stat.exists
+
+- name: Collecting data from tempest
+  shell: >
+    source {{ working_dir }}/tempest/.venv/bin/activate;
+    testr last --subunit | stackviz-export {{ tempest_dstat_opt | default('') }} --env --stdin {{ working_dir }}/stackviz_static/data
+  args:
+      chdir: "{{ working_dir }}/tempest"
+
+- name: Moving stackviz to /var/log/extra
+  shell: mv {{ working_dir }}/stackviz_static/ /var/log/extra/stackviz
+  become: true
