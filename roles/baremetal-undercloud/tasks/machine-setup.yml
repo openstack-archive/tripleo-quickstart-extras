@@ -13,6 +13,18 @@
     path: "{{ local_working_dir }}/ssh.config.ansible"
     state: touch
 
+- name: Create initial ssh config file with virthost_key (if defined)
+  blockinfile:
+    dest: "{{ local_working_dir }}/ssh.config.ansible"
+    block: |
+      Host {{ virthost }}
+          Hostname {{ virthost }}
+          IdentityFile {{ virthost_key }}
+          User root
+          StrictHostKeyChecking no
+          UserKnownHostsFile=/dev/null
+  when: virthost_key is defined
+
 - name: Add the virthost to the inventory
   add_host:
     name: "{{ virthost }}"
