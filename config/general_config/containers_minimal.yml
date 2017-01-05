@@ -20,7 +20,11 @@ extra_args: >-
 network_isolation: true
 enable_pacemaker: false
 overcloud_ipv6: false
+
 containerized_overcloud: true
+# 192.168.23.1 is the dns server on the virthost
+# 8.8.8.8 also works across virthost and ovb env
+containers_compute_dns_server: 8.8.8.8
 
 # This enables TLS for the undercloud which will also make haproxy bind to the
 # configured public-vip and admin-vip.
