@@ -65,7 +65,7 @@ EOENV
 openstack overcloud deploy \
     --templates {{overcloud_templates_path}} \
     {{ deploy_args }} \
-    ${DEPLOY_ENV_YAML:+-e $DEPLOY_ENV_YAML} "$@" || true
+    ${DEPLOY_ENV_YAML:+-e $DEPLOY_ENV_YAML} "$@" || status_code=$?
 
 ### --stop_docs
 # We don't always get a useful error code from the openstack deploy command,
@@ -93,6 +93,6 @@ if heat stack-list | grep -q 'CREATE_FAILED'; then
         sed -r "s:\x1B\[[0-9;]*[mK]::g" >> failed_deployments.log
     echo "######################################################" >> failed_deployments.log
     # We need to exit with 1 because of the above || true
-    exit 1
     done
 fi
+exit $status_code
