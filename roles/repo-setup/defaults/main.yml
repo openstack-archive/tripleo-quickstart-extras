@@ -9,13 +9,13 @@ stable:
   - mitaka
   - liberty
 repo_cmd_before: |
-  yum install -y yum-plugin-priorities;
-  yum clean all;
-  rm -rf /etc/yum.repos.d/delorean*;
-  rm -rf /etc/yum.repos.d/*.rpmsave;
+  sudo yum install -y yum-plugin-priorities;
+  sudo yum clean all;
+  sudo rm -rf /etc/yum.repos.d/delorean*;
+  sudo rm -rf /etc/yum.repos.d/*.rpmsave;
 repo_cmd_after: |
-  yum repolist;
-  yum update -y
+  sudo yum repolist;
+  sudo yum update -y
 
 # Repositories definitions
 repos:
