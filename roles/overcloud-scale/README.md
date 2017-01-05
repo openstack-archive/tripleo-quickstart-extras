@@ -6,9 +6,9 @@ An Ansible role for scaling and deleting nodes from an overcloud.
 Requirements
 ------------
 
-This role assumes it will be executed against a host on which a Liberty or Mitaka under/overcloud have already been deployed.
+This role assumes it will be executed against a host on which a Liberty, Mitaka, Newton, or Ocata under/overcloud have already been deployed.
 
-**Note:** The ansible-role-tripleo-overcloud-validate role must be accessible.
+**Note:** The validate-simple role must be accessible.
 
 Role Variables
 --------------

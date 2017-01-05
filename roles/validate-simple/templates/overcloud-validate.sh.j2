@@ -68,8 +68,8 @@ openstack image create {{ validate_image_name }} --public --container-format ami
 
 ## * Create external network
 
-## .. note: Liberty comparability:
-##    (heat can't create an external network in liberty)
+## .. note: Liberty compatibility:
+##    (heat can't create an external network in Liberty)
 ## ::
 
 if ! neutron net-list | grep 'nova'; then
