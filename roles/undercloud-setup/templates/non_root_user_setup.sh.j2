@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -eux
+
+### --start_docs
+
+## Set up the non-root user for installation and deployment tasks
+## ==============================================================
+
+
+## * Create non-root user on undercloud
+## ::
+
+id -u "{{ non_root_user }}" || \
+useradd -s /bin/bash -d /home/"{{ non_root_user }}" "{{ non_root_user }}"
+
+## * Grant sudo privileges to non-root user on undercloud
+## ::
+
+echo "{{ non_root_user }} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/{{ non_root_user }}
+chown root:root  /etc/sudoers.d/{{ non_root_user }}
+chmod 440 /etc/sudoers.d/{{ non_root_user }}
+
+### --stop_docs

@@ -10,17 +10,17 @@ set -eux
 ## * Configure external interface
 ## ::
 
-sudo ifconfig {{ external_interface }} {{ external_interface_ip }} netmask {{ external_interface_netmask }}
+sudo ip addr add {{ external_interface_ip }} dev {{ external_interface }}
 
 ## * Get mac address of external interface
 ## ::
 
-MAC_ADDR_EXT_INTERFACE=$( ifconfig | grep -n3 {{ external_interface }} | grep -A1 ether | cut -d " " -f 10 )
+export MAC_ADDR_EXT_INTERFACE=$( ip link show {{ external_interface }} | awk '/ether/ {print $2}' )
 
 ## * Set up external interface
 ## ::
 
-sudo bash -c 'cat <<EOF > /etc/sysconfig/network-scripts/ifcfg-{{ external_interface }}
+sudo -E bash -c 'cat <<EOF > /etc/sysconfig/network-scripts/ifcfg-{{ external_interface }}
 NAME={{ external_interface }}
 IPADDR={{ external_interface_ip }}
 NETMASK={{ external_interface_netmask }}
@@ -39,6 +39,8 @@ IPV6_PEERDNS=yes
 IPV6_PEERROUTES=yes
 EOF'
 
+sudo ifup {{ external_interface }}
+
 ## * Set MTU values
 ## ::
 
@@ -50,8 +52,9 @@ EOF'
 ## * Add nameserver to resolv.conf
 ## ::
 
+sudo sed -i 's/^nameserver/#nameserver/g' /etc/resolv.conf
 cat <<EOF >> /etc/resolv.conf
-nameserver {{ pvt_nameserver }}
+nameserver {{ custom_nameserver }}
 EOF
 
 ### --stop_docs

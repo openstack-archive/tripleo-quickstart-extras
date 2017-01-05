@@ -1,0 +1,11 @@
+---
+
+- name: Install package installation script
+  copy:
+    src: install_packages.sh
+    dest: "{{ working_dir }}/install_packages.sh"
+    mode: 0755
+
+- name: Run the package installation script
+  shell: "{{ working_dir }}/install_packages.sh > {{ working_dir }}/install_packages.sh.log 2>&1"
+

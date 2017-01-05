@@ -1,0 +1,18 @@
+---
+- name: Copy instackenv.json to undercloud
+  copy:
+    src: "{{ local_working_dir }}/nodes.json"
+    dest: "{{ working_dir }}/instackenv.json"
+
+- name: Copy over setup undercloud connectivity script template
+  template:
+    src: ovb-undercloud-connectivity.sh.j2
+    dest: "{{ working_dir }}/ovb-undercloud-connectivity.sh"
+    mode: 0755
+
+- name: Setup interfaces, connectivity on the undercloud
+  become: yes
+  shell: >
+    {{ working_dir }}/ovb-undercloud-connectivity.sh >
+    {{ ovb_undercloud_connectivity_log }} 2>&1
+

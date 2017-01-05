@@ -1,0 +1,25 @@
+local_working_dir: "{{ lookup('env', 'HOME') }}/.quickstart"
+
+non_root_user: stack
+undercloud_key: "{{ local_working_dir }}/id_rsa_undercloud"
+non_root_user_setup: true
+
+toci_vxlan_networking: false
+toci_vxlan_networking_multinode: false
+
+step_set_undercloud_hostname: false
+undercloud_hostname: localhost
+hostname_correction: false
+
+package_installs: true
+
+ovb_setup_connectivity: false
+ovb_undercloud_connectivity_log: "{{ working_dir }}/ovb_undercloud_connectivity.log"
+mtu: 1350
+mtu_interface:
+  - eth1
+external_interface: eth2
+external_interface_ip: 10.0.0.1
+external_interface_netmask: 255.255.255.0
+custom_nameserver: 8.8.8.8
+

@@ -1,0 +1,22 @@
+---
+
+- name: Install the TripleO-CI VXLAN networking script on subnodes
+  copy:
+    src: toci_vxlan_networking_multinode.sh
+    dest: "{{ working_dir }}/toci_vxlan_networking_multinode.sh"
+    mode: 0755
+  when: toci_vxlan_networking_multinode|bool
+
+- name: Run the TripleO-CI VXLAN networking script on subnodes
+  shell: "{{ working_dir }}/toci_vxlan_networking_multinode.sh > {{ working_dir }}/toci_vxlan_networking_multinode.sh.log 2>&1"
+  when: toci_vxlan_networking_multinode|bool
+
+- name: Install the TripleO-CI VXLAN networking script
+  copy:
+    src: toci_vxlan_networking.sh
+    dest: "{{ working_dir }}/toci_vxlan_networking.sh"
+    mode: 0755
+
+- name: Run the TripleO-CI VXLAN networking script
+  shell: "{{ working_dir }}/toci_vxlan_networking.sh > {{ working_dir }}/toci_vxlan_networking.sh.log 2>&1"
+
