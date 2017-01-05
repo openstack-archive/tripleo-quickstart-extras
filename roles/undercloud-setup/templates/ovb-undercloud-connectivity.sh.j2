@@ -45,15 +45,15 @@ sudo ifup {{ external_interface }}
 ## ::
 
 {% for interface in (mtu_interface) %}
-  ip link set {{ interface }} mtu {{ mtu }}
-  echo "MTU={{ mtu }}" >> /etc/sysconfig/network-scripts/ifcfg-{{ interface }}
+  sudo ip link set {{ interface }} mtu {{ mtu }}
+  echo "MTU={{ mtu }}" | sudo tee /etc/sysconfig/network-scripts/ifcfg-{{ interface }}
 {% endfor %}
 
 ## * Add nameserver to resolv.conf
 ## ::
 
 sudo sed -i 's/^nameserver/#nameserver/g' /etc/resolv.conf
-cat <<EOF >> /etc/resolv.conf
+cat <<EOF | sudo tee /etc/resolv.conf
 nameserver {{ custom_nameserver }}
 EOF
 
