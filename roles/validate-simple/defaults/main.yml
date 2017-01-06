@@ -1,6 +1,5 @@
 ---
-# defaults file for ansible-role-tripleo-overcloud-validate
-working_dir: /home/stack
+
 tenantrc: overcloudrc
 validate_script: overcloud-validate.sh.j2
 validate_template: tenantvm_floatingip.yaml.j2

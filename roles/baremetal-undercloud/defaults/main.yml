@@ -1,6 +1,5 @@
-working_dir: /home/stack
+---
 
-non_root_user: stack
 undercloud_key: "{{ local_working_dir }}/id_rsa_undercloud"
 
 baremetal_provisioning_log: "{{ local_working_dir }}/baremetal_provision.log"

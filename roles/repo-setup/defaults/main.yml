@@ -1,4 +1,5 @@
-working_dir: /home/stack
+---
+
 repo_setup_script: repo_setup.sh.j2
 repo_setup_log: "{{ working_dir }}/repo_setup.log"
 repo_run_live: true

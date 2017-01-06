@@ -10,14 +10,14 @@ set -eux
 ## * Create non-root user on undercloud
 ## ::
 
-id -u "{{ non_root_user }}" || \
-sudo useradd -s /bin/bash -d /home/"{{ non_root_user }}" "{{ non_root_user }}"
+id -u "{{ undercloud_user }}" || \
+sudo useradd -s /bin/bash -d /home/"{{ undercloud_user }}" "{{ undercloud_user }}"
 
 ## * Grant sudo privileges to non-root user on undercloud
 ## ::
 
-echo "{{ non_root_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/{{ non_root_user }}
-sudo chown root:root  /etc/sudoers.d/{{ non_root_user }}
-sudo chmod 440 /etc/sudoers.d/{{ non_root_user }}
+echo "{{ undercloud_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/{{ undercloud_user }}
+sudo chown root:root  /etc/sudoers.d/{{ undercloud_user }}
+sudo chmod 440 /etc/sudoers.d/{{ undercloud_user }}
 
 ### --stop_docs

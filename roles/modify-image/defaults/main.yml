@@ -1,4 +1,5 @@
 ---
+#  defaults file for modify-image
 
 # These variable do not have a default because there is no sane default. The
 # role will fail immediately if either is not specified.
@@ -23,4 +24,3 @@ vc_args: ""
 # modify_image_vc_cpu:
 modify_image_vc_verbose: false
 modify_image_vc_trace: false
-

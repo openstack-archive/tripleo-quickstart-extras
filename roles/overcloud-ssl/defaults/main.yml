@@ -1,6 +1,5 @@
 ---
-# defaults file for ansible-role-tripleo-ssl
-working_dir: /home/stack
+
 ssl_overcloud: false
 
 overcloud_public_vip: 10.0.0.5

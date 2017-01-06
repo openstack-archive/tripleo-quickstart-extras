@@ -1,6 +1,5 @@
-local_working_dir: "{{ lookup('env', 'HOME') }}/.quickstart"
+---
 
-non_root_user: stack
 undercloud_key: "{{ local_working_dir }}/id_rsa_undercloud"
 non_root_user_setup: true
 
@@ -22,4 +21,3 @@ external_interface: eth2
 external_interface_ip: 10.0.0.1
 external_interface_netmask: 255.255.255.0
 custom_nameserver: 8.8.8.8
-

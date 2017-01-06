@@ -1,6 +1,5 @@
 ---
-# defaults file for ansible-role-tripleo-overcloud-validate-ha
-working_dir: /home/stack
+
 overcloud_working_dir: /home/heat-admin
 
 environment_file: environment.j2
