@@ -10,14 +10,14 @@ set -eux
 ## * Correct the host's transient hostname to a static one
 ## ::
 
-hostnamectl set-hostname --transient $(hostnamectl --static)
+sudo hostnamectl set-hostname --transient $(hostnamectl --static)
 
 {% elif step_set_undercloud_hostname|bool %}
 ## * Set the host's transient and static hostnames
 ## ::
 
-hostnamectl set-hostname --transient {{ undercloud_hostname }}
-hostnamectl set-hostname --static {{ undercloud_hostname }}
+sudo hostnamectl set-hostname --transient {{ undercloud_hostname }}
+sudo hostnamectl set-hostname --static {{ undercloud_hostname }}
 
 {% endif %}
 
