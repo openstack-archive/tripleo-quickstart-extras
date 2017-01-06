@@ -10,3 +10,4 @@ container_image: CentOS-Atomic-Host-7-GenericCloud.qcow2
 container_url: "http://cloud.centos.org/centos/7/atomic/images/{{ container_image }}.gz"
 undercloud_network_cidr: 192.168.24.0/24
 ctl_plane_ip: "{{undercloud_network_gateway|default(undercloud_network_cidr|nthhost(1))}}"
+containers_compute_dns_server: 8.8.8.8

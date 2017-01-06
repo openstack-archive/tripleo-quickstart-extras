@@ -23,7 +23,7 @@ cd {{ working_dir }}
 
 subnet_uuid=`neutron subnet-list | grep 192.168.24 | awk '{ print $2 }'`
 echo $subnet_uuid
-neutron subnet-update $subnet_uuid --dns-nameserver 192.168.23.1
+neutron subnet-update $subnet_uuid --dns-nameserver {{ containers_compute_dns_server }}
 neutron subnet-show $subnet_uuid
 
 ## * Download the Cloud Atomic Image and upload to glance
