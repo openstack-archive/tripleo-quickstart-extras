@@ -15,6 +15,7 @@ A description of the settable variables for this role should go here, including 
 
 * `overcloud_ipv6`: enables IPv6 deployment on the overcloud
 * `enable_cinder_backup`: false/true - enables cinder-backup service.
+* `deployed_server`: false/true - enables support for nodepool deployed server deployment (default: false)
 
 Dependencies
 ------------

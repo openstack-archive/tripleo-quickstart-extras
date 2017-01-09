@@ -1,0 +1,24 @@
+---
+
+- name: Create deployed_server_prepare script
+  template:
+    src: "{{ deployed_server_prepare_script }}"
+    dest: "{{ working_dir }}/deployed_server_prepare.sh"
+    mode: 0755
+
+- name: Run the deployed-server_prepare script
+  shell: |
+    {{ working_dir }}/deployed_server_prepare.sh > {{ deployed_server_prepare_log }} 2>&1
+  async: 10800
+  poll: 0
+  environment:
+    OPT_WORKDIR: "{{ lookup('env', 'OPT_WORKDIR') }}"
+    http_proxy: "{{ lookup('env', 'http_proxy') }}"
+    no_proxy: "{{ lookup('env', 'no_proxy') }}"
+    TRIPLEO_ROOT: "{{ lookup('env','TRIPLEO_ROOT') }}"
+    CONTROLLER_HOSTS: "{{ lookup('env','CONTROLLER_HOSTS') }}"
+    COMPUTE_HOSTS: "{{ lookup('env', 'COMPUTE_HOSTS') }}"
+    BLOCKSTORAGE_HOSTS: "{{ lookup('env', 'BLOCKSTORAGE_HOSTS') }}"
+    OBJECTSTORAGE_HOSTS: "{{ lookup('env', 'OBJECTSTORAGE_HOSTS') }}"
+    CEPHSTORAGE_HOSTS: "{{ lookup('env', 'CEPHSTORAGE_HOSTS') }}"
+    SUBNODES_SSH_KEY: "/etc/nodepool/id_rsa"

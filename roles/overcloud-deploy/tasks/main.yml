@@ -6,6 +6,11 @@
   tags:
     - overcloud-scripts
 
+- include: deployed-server.yml
+  when: deployed_server|bool
+  tags:
+    - overcloud-deploy
+
 - include: deploy-overcloud.yml
   tags:
     - overcloud-deploy
