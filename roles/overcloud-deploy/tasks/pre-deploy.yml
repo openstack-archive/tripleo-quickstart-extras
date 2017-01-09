@@ -30,6 +30,12 @@
 - name: extract the number of controllers to be deployed
   set_fact: number_of_controllers="{{ deploy_args| regex_replace('^.*--control-scale +([0-9]+).*$', '\\1') | regex_replace('^[^ 0-9]*.*$', '1') }}"
 
+- name: Set cinder-backup
+  set_fact:
+    backup_args: >-
+      -e {{ overcloud_templates_path }}/environments/cinder-backup.yaml
+  when: enable_cinder_backup|bool
+
 - name: set ssl_args fact for master/newton
   set_fact:
     ssl_args: >-
