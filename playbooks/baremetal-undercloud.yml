@@ -1,13 +1,11 @@
 ---
-# Provision and initial undercloud setup
 - name: Baremetal undercloud install
   hosts: localhost
   roles:
     - baremetal-undercloud
   tags:
-    - undercloud-bm-install
+    - baremetal-undercloud
 
-# Machine at this point is provided
 - name: Add the undercloud node to the generated inventory
   hosts: localhost
   gather_facts: yes
@@ -16,7 +14,22 @@
   tags:
     - undercloud-inventory
 
-# Deploy the undercloud
+- name: Setup repositories
+  hosts: undercloud
+  gather_facts: yes
+  roles:
+    - repo-setup
+  tags:
+    - undercloud-repo-setup
+
+- name: Install packages
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - baremetal-undercloud/packages
+  tags:
+    - undercloud-pkgs-install
+
 - name: Deploy the undercloud
   hosts: undercloud
   gather_facts: no
@@ -25,7 +38,6 @@
   tags:
     - undercloud-deploy
 
-# Baremetal preparation (with workarounds)
 - name: Prepare baremetal for the overcloud deployment
   hosts: undercloud
   roles:
@@ -33,7 +45,6 @@
   tags:
     - baremetal-prep-overcloud
 
-# Prepare any additional configuration files required by the overcloud
 - name: Prepare configuration files for the overcloud deployment
   hosts: undercloud
   gather_facts: no
@@ -42,7 +53,15 @@
   tags:
     - overcloud-prep-config
 
-# Prepare the overcloud images for deployment
+- name: Fetch the overcloud images
+  hosts: undercloud
+  gather_facts: no
+  become: true
+  roles:
+    - fetch-images
+  tags:
+    - overcloud-fetch-images
+
 - name: Prepare the overcloud images for deployment
   hosts: undercloud
   gather_facts: no
@@ -51,7 +70,6 @@
   tags:
     - overcloud-prep-images
 
-# Prepare the overcloud flavor configuration
 - name: Prepare overcloud flavors
   hosts: undercloud
   gather_facts: no
@@ -60,7 +78,6 @@
   tags:
     - overcloud-prep-flavors
 
-# Prepare the undercloud networks for the overcloud deployment
 - name: Prepare the undercloud networks for the overcloud deployment
   hosts: undercloud
   gather_facts: no
@@ -69,7 +86,6 @@
   tags:
     - overcloud-prep-network
 
-# Deploy the overcloud
 - name: Deploy the overcloud
   hosts: undercloud
   gather_facts: yes
@@ -86,9 +102,8 @@
   roles:
     - tripleo-inventory
   tags:
-    - overcloud-deploy-inventory
+    - overcloud-inventory
 
-# Check the results of the deployment, note after inventory has executed
 - name: Check the result of the deployment
   hosts: localhost
   tasks:
@@ -102,7 +117,6 @@
   tags:
     - overcloud-deploy-check
 
-# Validate the deployment
 - name: Validate the overcloud
   hosts: undercloud
   gather_facts: no

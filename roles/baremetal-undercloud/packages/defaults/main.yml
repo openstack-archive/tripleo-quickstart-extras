@@ -1,0 +1,22 @@
+# Base tripleo package
+undercloud_tripleo_pkg: python-tripleoclient
+
+# Additional packages
+undercloud_additional_pkgs:
+  - vim
+  - tmux
+  - openssl
+  - wget
+  - bind-utils
+  - net-tools
+  - git
+  - lftp
+  - libguestfs-tools
+  - sos
+
+# Configure ntp on undercloud
+step_undercloud_ntp: true
+
+# Custom ntp servers
+undercloud_custom_ntps:
+  - clock.redhat.com

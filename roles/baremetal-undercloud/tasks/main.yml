@@ -1,5 +1,5 @@
 ---
-# tasks file for ansible-role-tripleo-baremetal-undercloud
+# tasks file for baremetal-undercloud
 
 # Do machine provisioning
 - include: machine-provisioning.yml
@@ -10,15 +10,3 @@
 - include: machine-setup.yml
   tags:
     - machine-setup
-
-# Configure repos and packages
-- include: undercloud-repos-conf.yml
-  delegate_to: "{{ virthost }}"
-  tags:
-    - undercloud-repos-conf
-
-# Get overcloud images
-- include: overcloud-images.yml
-  delegate_to: "{{ virthost }}"
-  tags:
-    - overcloud-images
