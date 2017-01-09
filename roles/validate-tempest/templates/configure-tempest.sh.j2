@@ -39,7 +39,7 @@ public_net_id=$(neutron net-show {{ undercloud_public_net_name }} -f value -c id
 {% endif %}
 
 # Generate a tempest configuration.
-sudo yum install -y libffi-devel openssl-devel python-virtualenv
+sudo yum install -y libffi-devel openssl-devel python-virtualenv gcc
 
 {% if tempest_source == "rdo" %}
 {% if tempest_format == "packages" %}
