@@ -185,6 +185,21 @@ enable_monitoring = {{undercloud_enable_monitoring}}
 #enable_monitoring = false
 {% endif %}
 
+# Whether to install novajoin metadata service in the Undercloud.
+{% if undercloud_enable_novajoin is defined %}
+enable_novajoin = {{undercloud_enable_novajoin}}
+{% else %}
+#enable_novajoin = false
+{% endif %}
+
+# One Time Password to register Undercloud node with IPA server.
+# Required when enable_novajoin = true.
+{% if undercloud_ipa_otp is defined %}
+ipa_otp = {{undercloud_ipa_otp}}
+{% else %}
+# ipa_otp =
+{% endif %}
+
 [auth]
 
 #
