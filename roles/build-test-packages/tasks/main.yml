@@ -53,10 +53,7 @@
     {{ ansible_user_dir }}/DLRN/scripts/build_rpm.sh
 
 - name: Update pip before requirements install
-  pip:
-    name: pip
-    state: latest
-    virtualenv: '{{ ansible_user_dir }}/dlrn-venv'
+  shell: source {{ ansible_user_dir }}/dlrn-venv/bin/activate && pip install -U pip
 
 - name: Install DLRN requirements
   pip:
