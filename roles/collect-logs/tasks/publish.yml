@@ -10,7 +10,7 @@
   when: lookup('env', 'BUILD_URL') != ""
 
 - name: upload to the artifact server using pubkey auth
-  command: rsync -av --quiet -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" {{ artcl_collect_dir }}/ {{ artcl_rsync_path }}/{{ lookup('env', 'BUILD_TAG') }}
+  shell: rsync -av --quiet -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" {{ artcl_collect_dir }}/ {{ artcl_rsync_path }}/{{ lookup('env', 'BUILD_TAG') }}
   async: "{{ artcl_publish_timeout }}"
   poll: 15
   retries: 5
@@ -20,7 +20,7 @@
 - name: upload to the artifact server using password auth
   environment:
     RSYNC_PASSWORD: "{{ lookup('env', 'RSYNC_PASSWORD') }}"
-  command: rsync -av --quiet {{ artcl_collect_dir }}/ {{ artcl_rsync_path }}/{{ lookup('env', 'BUILD_TAG') }}
+  shell: rsync -av --quiet {{ artcl_collect_dir }}/ {{ artcl_rsync_path }}/{{ lookup('env', 'BUILD_TAG') }}
   async: "{{ artcl_publish_timeout }}"
   poll: 15
   retries: 5
@@ -42,7 +42,7 @@
   when: artcl_use_swift|bool
 
 - name: use zuul_swift_upload.py to publish the files
-  command: "{{ artcl_zuul_swift_upload_path }}/zuul_swift_upload.py --name {{ artcl_swift_container }} --delete-after {{ artcl_swift_delete_after }} {{ artcl_collect_dir }}"
+  shell: "{{ artcl_zuul_swift_upload_path }}/zuul_swift_upload.py --name {{ artcl_swift_container }} --delete-after {{ artcl_swift_delete_after }} {{ artcl_collect_dir }}"
   async: "{{ artcl_publish_timeout }}"
   poll: 15
   when: artcl_use_zuul_swift_upload|bool
