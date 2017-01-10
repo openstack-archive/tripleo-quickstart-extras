@@ -32,12 +32,22 @@
   args:
       chdir: '{{ ansible_user_dir }}/DLRN'
 
+- name: Create data directory if doesn't exist yet
+  file: path="{{ ansible_user_dir }}/DLRN/data/" state=directory
+
 - name: Clone the gated change
   git:
     repo: 'https://{{ artg_change.host }}/{{ artg_change.project }}'
     dest: '{{ ansible_user_dir }}/DLRN/data/{{ project_name_mapped.stdout }}'
     refspec: '{{ artg_change.refspec }}'
     version: 'FETCH_HEAD'
+  when: artg_repos_dir is not defined
+
+- name: Copy from ready directories if configured
+  command: >
+    cp -raf {{ artg_repos_dir }}/{{ artg_change.project|regex_replace('openstack[^/]*/', '') }}
+    {{ ansible_user_dir }}/DLRN/data/{{ project_name_mapped.stdout }}
+  when: artg_repos_dir is defined
 
 - name: Run DLRN
   shell: >

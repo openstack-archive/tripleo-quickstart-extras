@@ -33,6 +33,12 @@
   stat: path='{{ ansible_user_dir }}/DLRN'
   register: dlrn_cloned
 
+- name: Remove data files from previous runs
+  file:
+    path: '{{ ansible_user_dir }}/DLRN/data'
+    state: absent
+  when: dlrn_cloned.stat.exists
+
 - name: Clone DLRN
   git:
     repo: '{{ artg_dlrn_repo_url }}'
