@@ -6,10 +6,38 @@
     dest: "./undercloud.conf"
     mode: 0600
 
+- when: undercloud_hieradata_override_file is defined
+  block:
+    - name: deprecation message
+      vars:
+        deprecation_warning_msg: |
+             WARNING: The variable undercloud_hieradata_override_file
+             is deprecated for removal since Pike.
+             Reason: Both the undercloud and overcloud can use
+             hieradata overrides and we must distinguish between the two.
+             The variable will be removed in the "R" release.
+             Please revise your code to use the new variable,
+             and file name.
+
+      debug:
+        msg: "{{ deprecation_warning_msg.split('\n') }}"
+
+    - name: Create the deprecated undercloud hieradata overrides
+      template:
+        src: "{{ undercloud_hieradata_override_file }}"
+        dest: "./hieradata-overrides-overcloud.yaml"
+        mode: 0600
+
 - name: Create undercloud hieradata overrides
   template:
-    src: "{{ undercloud_hieradata_override_file }}"
-    dest: "./quickstart-hieradata-overrides.yaml"
+    src: "{{ hieradata_override_file_undercloud }}"
+    dest: "./hieradata-overrides-undercloud.yaml"
+    mode: 0600
+
+- name: Create overcloud hieradata overrides
+  template:
+    src: "{{ hieradata_override_file_overcloud }}"
+    dest: "./hieradata-overrides-overcloud.yaml"
     mode: 0600
 
 - name: Create undercloud install script

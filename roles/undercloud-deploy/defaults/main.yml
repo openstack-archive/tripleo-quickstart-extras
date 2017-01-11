@@ -1,10 +1,19 @@
 ---
 
 undercloud_config_file: undercloud.conf.j2
-undercloud_install_script: undercloud-install.sh.j2
+undercloud_post_install_script: undercloud-install-post.sh.j2
 undercloud_install_log: "{{ working_dir }}/undercloud_install.log"
 network_environment_file: network-environment.yaml.j2
-undercloud_hieradata_override_file: quickstart-hieradata-overrides.yaml.j2
+
+# default undercloud install method
+# containerized_undercloud is an EXPERIMENTAL FEATURE
+containerized_undercloud: false
+undercloud_install_script: undercloud-install.sh.j2
+
+# The undercloud can also be deployed with heat
+# thus requiring an undercloud *and* overcloud override file
+hieradata_override_file_overcloud: hieradata-overrides-overcloud.yaml.j2
+hieradata_override_file_undercloud: hieradata-overrides-undercloud.yaml.j2
 
 step_introspect: false
 bash_deploy_ramdisk: false
