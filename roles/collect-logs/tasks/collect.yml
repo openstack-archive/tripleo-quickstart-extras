@@ -135,6 +135,26 @@
         sosreport --batch
       when: artcl_collect_sosreport|bool
 
+    - name: Collect docker info and logs
+      shell: >
+        if command -v docker; then
+            All_FILE=/var/log/extra/docker_allinfo.log;
+            docker ps --all --size &> $All_FILE;
+            docker images &>> $All_FILE;
+            docker stats --all --no-stream &>> $All_FILE;
+            docker info &>> $All_FILE;
+            for cont in $(docker ps | awk {'print $NF'} | grep -v NAMES); do
+                INFO_FILE=/var/log/extra/docker_${cont}_info.log;
+                echo "+ docker top $cont auxw" > $INFO_FILE;
+                docker top $cont auxw &>> $INFO_FILE;
+                echo "+ docker exec $cont top -bwn1" >> $INFO_FILE;
+                docker exec $cont top -bwn1 &>> $INFO_FILE;
+                echo "+ docker inspect $cont" >> $INFO_FILE;
+                docker inspect $cont &>> $INFO_FILE;
+                docker logs $cont &> /var/log/extra/docker_${cont}.log;
+            done;
+        fi
+
     - name: Erase temporary log directory if exists
       file:
         path: "/tmp/{{ inventory_hostname }}"
