@@ -103,28 +103,19 @@
         chdir: "/tmp/dstat_graph"
 
     - name: Search for AVC denied
-      shell: "! grep -i denied /var/log/audit/audit*"
-      register: result
-
-    - name: Publish the count of AVC denials as fact
-      set_fact:
-        selinux_problems_found: "{{ result.stdout_lines }}"
+      shell: >
+        grep -i denied /var/log/audit/audit* &&
+        grep -i denied /var/log/audit/audit* > /var/log/extra/denials.txt
 
     - name: Search for segfaults in logs
-      shell: "! grep -v ansible-command /var/log/messages | grep segfault"
-      register: result
-
-    - name: Publish the count of segfaults as fact
-      set_fact:
-        segfault_problems_found: "{{ result.stdout_lines }}"
+      shell: >
+        grep -v ansible-command /var/log/messages | grep segfault &&
+        grep -v ansible-command /var/log/messages | grep segfault > /var/log/extra/segfaults.txt
 
     - name: Search for oom-killer instances in logs
-      shell: "! grep -v ansible-command /var/log/messages | grep oom-killer"
-      register: result
-
-    - name: Publish the count of oom-killer instances as fact
-      set_fact:
-        oom_killer_problems_found: "{{ result.stdout_lines }}"
+      shell: >
+        grep -v ansible-command /var/log/messages | grep oom-killer &&
+        grep -v ansible-command /var/log/messages | grep oom-killer > /var/log/extra/oom-killers.txt
 
     - name: Ensure sos package is installed when collect sosreport(s)
       yum: name=sos state=present
