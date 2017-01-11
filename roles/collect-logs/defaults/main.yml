@@ -37,8 +37,10 @@ artcl_gzip_only: true
 
 ## publishing related vars
 artcl_publish: false
+artcl_txt_rename: false
 # give up log upload after 30 minutes
 artcl_publish_timeout: 1800
+artcl_artifact_url: "file://{{ lookup('env', 'PWD') }}"
 artcl_full_artifact_url: "{{ artcl_artifact_url }}/{{ lookup('env', 'BUILD_TAG') }}/"
 artcl_use_rsync: false
 artcl_rsync_use_daemon: false
