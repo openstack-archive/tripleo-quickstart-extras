@@ -15,13 +15,13 @@ Role Variables
 * `repo_setup_log` - path to repositories setup script log
 * `repo_run_live`: false/true - where to run repo setup script on host (live host that playbook runs on it) (default: true)
 * `repo_inject_image_path` - path to image, in case of injecting repositories into the image (default: not defined)
-* `repo_cmd_before`: false/true  - whether to run `yum update` after repositories are set up (default: true)
-* `repo_cmd_after`: false/true - whether to include Ceph repositories (default: true)
+* `repo_cmd_before`:  - shell commands to run before repos setup
+* `repo_cmd_after`: - shell commands to run after repos setup
 * `libvirt_uri` - URI of libvirt in case of using virt-customize to inject repos into the image
 * `repos` - dictionary or repositories to set, the keys are explained below:
 * `repos.type` - file / generic / package / rpm_url
 * `repos.releases` - for which releases to set up this repo, if not defined - for all releases.
-                     It support shortcut for all stable releases - '{{ stable }}'
+                     It supports shortcut for all stable releases - '{{ stable }}'
 
   *File*
   ------
@@ -33,7 +33,7 @@ Role Variables
   *Generic*
   ------
   Construct repository file from various parameters and use parameters from downloaded file
-  if required (for example delorean hash).
+  if required (for example DLRN hash).
     * `repos.filename` - filename for saving the resulting repo (mandatory)
     * `repos.reponame` - name of repository (mandatory)
     * `repos.baseurl` - base URL of the repository (mandatory)
