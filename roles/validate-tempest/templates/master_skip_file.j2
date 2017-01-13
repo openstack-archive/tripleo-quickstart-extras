@@ -20,3 +20,6 @@
 -tempest.api.identity.admin.v2.test_services.ServicesTestJSON
 #rhbz1380187
 -tempest.api.network.test_routers.RoutersIpV6Test.test_add_multiple_router_interfaces
+# TripleO does not deploy Barbican by default, which is needed for this test to pass
+-tempest.scenario.test_encrypted_cinder_volumes.TestEncryptedCinderVolumes.test_encrypted_cinder_volumes_cryptsetup
+-tempest.scenario.test_encrypted_cinder_volumes.TestEncryptedCinderVolumes.test_encrypted_cinder_volumes_luks

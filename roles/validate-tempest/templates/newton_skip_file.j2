@@ -11,3 +11,6 @@
 -tempest.scenario.test_network_basic_ops.TestNetworkBasicOps
 # rhbz1386421
 -tempest.api.compute.servers.test_server_actions.ServerActionsTestJSON
+# TripleO does not deploy Barbican by default, which is needed for this test to pass
+-tempest.scenario.test_encrypted_cinder_volumes.TestEncryptedCinderVolumes.test_encrypted_cinder_volumes_cryptsetup
+-tempest.scenario.test_encrypted_cinder_volumes.TestEncryptedCinderVolumes.test_encrypted_cinder_volumes_luks
