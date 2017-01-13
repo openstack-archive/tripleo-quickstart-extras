@@ -19,4 +19,4 @@ step_undercloud_ntp: true
 
 # Custom ntp servers
 undercloud_custom_ntps:
-  - clock.redhat.com
+  - pool.ntp.org
