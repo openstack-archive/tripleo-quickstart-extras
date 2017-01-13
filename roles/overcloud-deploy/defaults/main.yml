@@ -66,6 +66,11 @@ backup_args: ""
 
 ssl_args: ""
 validation_args: "--validation-warnings-fatal"
+
+deployed_server: false
+deployed_server_prepare_script: deployed_server_prepare.sh.j2
+deployed_server_prepare_log: "{{ working_dir }}/deployed_server_prepare.txt"
+
 container_args: ""
 
 deploy_args: >-

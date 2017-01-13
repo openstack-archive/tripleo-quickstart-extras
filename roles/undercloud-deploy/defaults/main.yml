@@ -28,3 +28,4 @@ network_environment_args:
 # `environment/setup` role).
 libvirt_uri: qemu:///session
 enable_vbmc: true
+undercloud_conf_extra: ""

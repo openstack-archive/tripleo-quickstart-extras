@@ -32,6 +32,7 @@ properly with the option --old-deploy-image
 - `libvirt_uri`: <'qemu:///session'> -- the URI used by libvirt, by default tripleo-quickstart uses
 user sessions to provide greater flexixiblity to our users. ** additional documentation ** is at
 http://docs.openstack.org/developer/tripleo-quickstart/accessing-libvirt.html
+- `undercloud_conf_extra`: "" -- extra options to be added to ~/undercloud.conf
 
 Role Network Variables
 ----------------------
