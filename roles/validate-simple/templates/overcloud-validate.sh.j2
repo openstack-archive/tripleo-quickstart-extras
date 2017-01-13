@@ -97,7 +97,7 @@ fi
 ## * Create test ping stack
 ## ::
 
-heat stack-create {{ validate_stack_name }} --template-file  tenantvm_floatingip.yaml
+heat stack-create {{ validate_stack_name }} --template-file  {{ working_dir }}/tenantvm_floatingip.yaml
 
 ### --stop_docs
 # wait for stack complete or failed
