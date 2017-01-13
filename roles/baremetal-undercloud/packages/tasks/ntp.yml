@@ -1,0 +1,64 @@
+# Ensure ntp packages are installed
+- name: Install ntp packages
+  package:
+    name: [ 'ntp', 'ntpdate' ]
+    state: present
+
+# Enable ntpd service
+- name: Enable ntpd service
+  service:
+    name: 'ntpd'
+    enabled: yes
+
+# Enable ntpdate service
+- name: Enable ntpdate service
+  service:
+    name: 'ntpdate'
+    enabled: yes
+
+# Stop ntpd service
+- name: Ensure ntp service is stopped to be able to launch ntpdate
+  service:
+    name: 'ntpd'
+    state: stopped
+
+# Disable default ntp servers if custom servers are defined
+- name: Disable configured servers in ntp.conf (if custom servers are defined)
+  replace:
+    destfile: /etc/ntp.conf
+    regexp: '^server (.*)'
+    replace: '#server \1'
+  when: undercloud_custom_ntps is defined
+
+# Enable custom ntp servers if custom servers are defined
+- name: Add new server in ntp.conf (if custom servers are defined)
+  lineinfile:
+    destfile: /etc/ntp.conf
+    line: 'server {{ item }} iburst'
+  with_items: '{{ undercloud_custom_ntps|default([]) }}'
+
+# Setup custom ntp servers in step-tickers if custom servers are defined
+- name: Set step-ticker (if custom servers are defined)
+  lineinfile:
+    destfile: /etc/ntp/step-tickers
+    line: '{{ item }}'
+    create: yes
+  with_items: '{{ undercloud_custom_ntps|default([]) }}'
+
+# Configure ntpdate hardware synchronization
+- name: Configure ntpdate to synchronize the hardware clock
+  lineinfile:
+    destfile: /etc/sysconfig/ntpdate
+    regexp: '^SYNC_HWCLOCK=.*'
+    line: 'SYNC_HWCLOCK=yes'
+
+# Sync time now
+- name: Synchronize time immediately with ntpdate
+  shell: ntpdate $(grep ^server /etc/ntp.conf | tail -1 | awk '{print $2}')
+  changed_when: false
+
+# Start ntpd
+- name: Start ntpd service
+  service:
+    name: 'ntpd'
+    state: started
