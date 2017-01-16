@@ -9,6 +9,10 @@
     curl {{ lookup('env', 'BUILD_URL') }}/consoleText | gzip > {{ artcl_collect_dir }}/console.txt.gz
   when: lookup('env', 'BUILD_URL') != ""
 
+- name: Retrieve the ARA static playbook report
+  command: cp -a {{ local_working_dir }}/ara {{ artcl_collect_dir }}/ara
+  ignore_errors: "yes"
+
 - name: upload to the artifact server using pubkey auth
   shell: rsync -av --quiet -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" {{ artcl_collect_dir }}/ {{ artcl_rsync_path }}/{{ lookup('env', 'BUILD_TAG') }}
   async: "{{ artcl_publish_timeout }}"
