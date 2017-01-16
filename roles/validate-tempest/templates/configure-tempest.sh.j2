@@ -15,6 +15,11 @@ rm -rf {{ working_dir }}/tempest
 ## * Clean up network if it exists from previous run
 ## ::
 
+for i in $(neutron floatingip-list -c id -f value)
+do
+    neutron floatingip-disassociate $i
+    neutron floatingip-delete $i
+done
 for i in $(neutron router-list -c id -f value); do neutron router-gateway-clear $i; done
 for r in $(neutron router-list -c id -f value); do
     for p in $(neutron router-port-list $r -c id -f value); do
