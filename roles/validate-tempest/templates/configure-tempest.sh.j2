@@ -50,6 +50,10 @@ source {{ working_dir }}/stackrc
 public_net_id=$(neutron net-show {{ undercloud_public_net_name }} -f value -c id)
 {% endif %}
 
+## * Ensure heat_stack_owner role is present
+## ::
+openstack role show heat_stack_owner > /dev/null || openstack role create heat_stack_owner
+
 ## * Generate a tempest configuration
 ## ::
 
