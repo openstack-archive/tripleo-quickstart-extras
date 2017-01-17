@@ -16,6 +16,12 @@ A description of the settable variables for this role should go here, including 
 * `overcloud_ipv6`: enables IPv6 deployment on the overcloud
 * `enable_cinder_backup`: false/true - enables cinder-backup service.
 * `deployed_server`: false/true - enables support for nodepool deployed server deployment (default: false)
+* `overcloud_cloud_name`: Sets the FQDN for the overcloud's public VIP.
+* `overcloud_cloud_name_internal`: Sets the FQDN for the overcloud's VIP for the internal network.
+* `overcloud_cloud_name_storage`: Sets the FQDN for the overcloud's VIP for the storage network.
+* `overcloud_cloud_name_storage_management`: Sets the FQDN for the overcloud's VIP for the storage management network.
+* `overcloud_cloud_name_ctlplane`: Sets the FQDN for the overcloud's VIP for the ctlplane network.
+* `overcloud_cloud_domain`: Sets the domain for the nodes' internal hostnames.
 
 Dependencies
 ------------

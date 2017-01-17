@@ -36,6 +36,12 @@
       -e {{ overcloud_templates_path }}/environments/cinder-backup.yaml
   when: enable_cinder_backup|bool
 
+- name: Set cloud-name variables
+  set_fact:
+      cloud_name_args: >-
+          -e {{ working_dir }}/cloud-names.yaml
+  when: release not in ['mitaka', 'liberty']
+
 - name: set ssl_args fact for master/newton
   set_fact:
     ssl_args: >-

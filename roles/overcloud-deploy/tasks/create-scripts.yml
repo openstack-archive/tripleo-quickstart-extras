@@ -24,3 +24,10 @@
   template:
     src: "overcloud_services.yaml.j2"
     dest: "{{ working_dir }}/overcloud_services.yaml"
+
+- name: Cloud names heat environment
+  when: release not in ['mitaka', 'liberty']
+  template:
+    src: "cloud-names.yaml.j2"
+    dest: "{{ working_dir }}/cloud-names.yaml"
+

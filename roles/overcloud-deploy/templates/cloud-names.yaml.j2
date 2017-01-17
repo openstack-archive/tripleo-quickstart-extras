@@ -1,0 +1,9 @@
+# Defines the cloud names based on parameters given.
+
+parameter_defaults:
+  CloudName: {{overcloud_cloud_name|default('overcloud.localdomain')}}
+  CloudNameInternal: {{overcloud_cloud_name_internal|default('overcloud.internalapi.localdomain')}}
+  CloudNameStorage: {{overcloud_cloud_name_storage|default('overcloud.storage.localdomain')}}
+  CloudNameStorageManagement: {{overcloud_cloud_name_storage_management|default('overcloud.storagemgmt.localdomain')}}
+  CloudNameCtlplane: {{overcloud_cloud_name_ctlplane|default('overcloud.ctlplane.localdomain')}}
+  CloudDomain: {{overcloud_cloud_domain|default('localdomain')}}
