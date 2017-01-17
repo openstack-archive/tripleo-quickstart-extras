@@ -38,6 +38,7 @@ latest_guest_image:
     mitaka: CentOS-7-x86_64-GenericCloud-released-latest
     newton: CentOS-7-x86_64-GenericCloud-released-latest
     master: CentOS-7-x86_64-GenericCloud-released-latest
+    rhos-8: rhel-7.3-server-x86_64-latest
     rhos-9: rhel-7.3-server-x86_64-latest
     rhos-10: rhel-7.3-server-x86_64-latest
 
@@ -70,5 +71,7 @@ registered_releases:
   - mitaka
   - newton
   - master
+  - rhos-8
   - rhos-9
+  - rhos-10
 
