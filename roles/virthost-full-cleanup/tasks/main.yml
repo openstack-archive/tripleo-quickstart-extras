@@ -55,7 +55,7 @@
 
     - name: destroy local libvirt storage, networks and config
       become: yes
-      shell: rm -rf /home/stack/.config/libvirt
+      shell: "rm -rf {{ working_dir }}/.config/libvirt"
 
     - name: get user_id for stack user
       shell: >
@@ -103,7 +103,6 @@
 
     - name: remove stack home dir
       shell: rm -Rf {{ item }}
-
       with_items:
         - /home/{{ non_root_user }}
         - /var/spool/mail/{{ non_root_user }}

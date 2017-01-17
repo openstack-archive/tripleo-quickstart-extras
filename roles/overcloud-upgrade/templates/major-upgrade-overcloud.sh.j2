@@ -25,7 +25,7 @@ trap onerror ERR
 # Note, tripleo-heat-templates rdo package is not up to date.
 # It simlpier to clone the stable branch instead, while waiting of the
 # latest fixes.
-rm -rf /home/stack/tripleo-heat-templates
+rm -rf "{{ working_dir }}/tripleo-heat-templates"
 git clone https://github.com/openstack/tripleo-heat-templates.git -b stable/newton
 {% endif %}
 

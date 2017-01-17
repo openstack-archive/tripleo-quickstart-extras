@@ -90,7 +90,7 @@
     groups: undercloud
     ansible_host: undercloud
     ansible_fqdn: undercloud
-    ansible_user: stack
+    ansible_user: "{{ undercloud_user }}"
     ansible_private_key_file: "{{ undercloud_key }}"
     ansible_ssh_extra_args: '-F "{{local_working_dir}}/ssh.config.ansible"'
     ansible_scp_extra_args: '-F "{{local_working_dir}}/ssh.config.ansible"'
