@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -eux
+
+### --start_docs
+
+## Set up the necessary permissions/privileges in novajoin
+## =======================================================
+
+
+## * Set up FreeIPA permissions and privileges and get the OTP.
+## ::
+
+sudo /usr/libexec/novajoin-ipa-setup \
+    --principal admin \
+    --password {{freeipa_admin_password}} \
+    --server {{freeipa_server_hostname}} \
+    --realm $(echo {{overcloud_cloud_domain}} | awk '{print toupper($0)}') \
+    --domain {{overcloud_cloud_domain}} \
+    --hostname {{undercloud_undercloud_hostname}} \
+    --otp-file /tmp/ipa-otp.txt \
+    --precreate
+
+### --stop_docs

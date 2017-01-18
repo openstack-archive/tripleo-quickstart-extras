@@ -61,6 +61,16 @@
     - ssl_overcloud|bool
     - release in ['mitaka', 'liberty']
 
+- name: set novajoin/TLS everywhere fact
+  set_fact:
+      tls_everywhere_novajoin_args: >-
+          -e {{ overcloud_templates_path }}/environments/services/haproxy-public-tls-certmonger.yaml
+          -e {{ overcloud_templates_path }}/environments/enable-internal-tls.yaml
+          -e {{ overcloud_templates_path }}/environments/tls-everywhere-endpoints-dns.yaml
+  when:
+    - enable_tls_everywhere|bool
+    - release not in ['mitaka', 'liberty', 'newton']
+
 - name: set validation_args fact for mitaka/liberty
   set_fact:
     validation_args: "--validation-errors-fatal --validation-warnings-fatal"

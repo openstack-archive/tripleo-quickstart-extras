@@ -1,0 +1,43 @@
+---
+- name: Validate FreeIPA Admin password was passed
+  fail: msg="freeipa_admin_password is not passed and or blank"
+  when: freeipa_admin_password is not defined or ( freeipa_admin_password is defined and freeipa_admin_password == "" )
+
+- name: Validate FreeIPA Server hostname was passed
+  fail: msg="freeipa_server_hostname is not passed and or blank"
+  when: freeipa_server_hostname is not defined or ( freeipa_server_hostname is defined and freeipa_server_hostname == "" )
+
+- name: Validate a domain for the cloud was given
+  fail: msg="overcloud_cloud_domain is not passed and or blank"
+  when: overcloud_cloud_domain is not defined or ( overcloud_cloud_domain is defined and overcloud_cloud_domain == "" )
+
+- name: Validate a undercloud hostname was given
+  fail: msg="undercloud_undercloud_hostname is not passed and or blank"
+  when: undercloud_undercloud_hostname is not defined or ( undercloud_undercloud_hostname is defined and undercloud_undercloud_hostname == "" )
+
+- name: Install novajoin package installation script
+  copy:
+    src: install_novajoin.sh
+    dest: "{{ working_dir }}/install_novajoin.sh"
+    mode: 0755
+
+- name: Run the novajoin installation script
+  shell: "{{ working_dir }}/install_novajoin.sh > {{ working_dir }}/install_novajoin.sh.log 2>&1"
+
+- name: Install novajoin preparation script
+  template:
+    src: novajoin_prep.sh.j2
+    dest: "{{ working_dir }}/novajoin_prep.sh"
+    mode: 0755
+
+- name: Run the novajoin preparation script
+  shell: "{{ working_dir }}/novajoin_prep.sh > {{ working_dir }}/novajoin_prep.sh.log 2>&1"
+
+- name: Register OTP output
+  command: cat /tmp/ipa-otp.txt
+  register: ipa_otp_register
+
+- name: Set OTP Fact for undercloud enrollment
+  set_fact:
+    undercloud_ipa_otp: "{{ ipa_otp_register.stdout }}"
+  when: ipa_otp_register.rc == 0
