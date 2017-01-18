@@ -3,7 +3,7 @@
 - name: Ensure DLRN package dependencies
   become: yes
   yum: name={{ item }} state=present
-  with_flattened:
+  with_items:
     - createrepo
     - gcc
     - git
@@ -43,6 +43,7 @@
   git:
     repo: '{{ artg_dlrn_repo_url }}'
     dest: '{{ ansible_user_dir }}/DLRN'
+    version: master
   when: not dlrn_cloned.stat.exists
 
 #Remove the rpm install test to speed up delorean

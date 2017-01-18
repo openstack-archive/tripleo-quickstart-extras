@@ -4,7 +4,7 @@
   block:
     - name: Ensure required rpms for logging are installed
       yum: name={{ item }} state=present
-      with_flattened:
+      with_items:
         - gzip
         - tar
 
@@ -100,7 +100,10 @@
       register: dstat_logfile
 
     - name: Get dstat_graph tool
-      git: repo="https://github.com/Dabz/dstat_graph.git" dest="/tmp/dstat_graph"
+      git:
+        repo: "https://github.com/Dabz/dstat_graph.git"
+        dest: "/tmp/dstat_graph"
+        version: master
       when: dstat_logfile.stat.exists
 
     - name: Generate HTML dstat graphs if it exists
