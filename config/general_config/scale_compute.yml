@@ -12,12 +12,15 @@ control_vcpu: 4
 overcloud_nodes:
   - name: control_0
     flavor: control
+    virtualbmc_port: 6230
 
   - name: compute_0
     flavor: compute
+    virtualbmc_port: 6231
 
   - name: compute_1
     flavor: compute
+    virtualbmc_port: 6232
 
 # If `run_tempest` is `true`, run tempests tests, otherwise do not
 # run them.
