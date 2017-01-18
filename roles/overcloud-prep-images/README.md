@@ -19,6 +19,7 @@ Role Variables
 - undercloud_type: <virtual> -- can be overwritten with values like 'baremetal' or 'ovb'
 - step_root_device_size: <false> -- add disk size hints if needed for the environment under test
 - disk_root_device_size: <1843> -- size hint for selecting the correct disk during introspection
+- whole_disk_images: false -- shows if we want to use partition or whole disk images (this will be available starting on Ocata)
 
 Dependencies
 ------------
