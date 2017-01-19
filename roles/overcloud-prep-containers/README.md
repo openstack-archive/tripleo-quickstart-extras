@@ -29,8 +29,6 @@ overcloud-prep-containers variables
 * overcloud_prep_containers_script: overcloud-prep-containers.sh.j2
 * containers_default_parameters: container-default-parameters.yaml.j2
 * overcloud_prep_containers_log: overcloud_prep_containers.log
-* container_image: CentOS-Atomic-Host-7-GenericCloud.qcow2
-* container_url: "http://cloud.centos.org/centos/7/atomic/images/{{ container_image}}.gz"
 * undercloud_network_cidr: 192.168.24.0/24
 * ctl_plane_ip: "{{undercloud_network_gateway|default(undercloud_network_cidr|nthhost(1))}}"
 

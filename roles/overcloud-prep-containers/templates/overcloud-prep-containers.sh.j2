@@ -26,16 +26,6 @@ echo $subnet_uuid
 neutron subnet-update $subnet_uuid --dns-nameserver {{ containers_compute_dns_server }}
 neutron subnet-show $subnet_uuid
 
-## * Download the Cloud Atomic Image and upload to glance
-## ::
-
-if ! [[ -e {{ container_image }} ]]; then
-    curl -O {{ container_url }}
-    gunzip -f "{{ container_image }}.gz"
-fi
-
-glance image-list | grep atomic-image || glance image-create --name atomic-image --file {{ container_image }} --disk-format qcow2 --container-format bare
-
 
 # **WORKAROUND** port 8787 is not open on the undercloud
 # https://bugs.launchpad.net/tripleo/+bug/1651621
