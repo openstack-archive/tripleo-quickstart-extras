@@ -45,16 +45,6 @@ echo "Containers default parameters:"
 cat {{ working_dir }}/containers-default-parameters.yaml
 echo "============================="
 
-## * Deploy Puppet Artifacts to the Overcloud
-## ::
-
-# should be replaced by https://review.openstack.org/#/c/416355/
-curl -O https://raw.githubusercontent.com/mandre/dotfiles/master/bin/pull_puppet_modules.sh
-chmod +x pull_puppet_modules.sh
-bash pull_puppet_modules.sh
-
-upload-puppet-modules --directory ~/puppet-modules/
-
 ## * Get the journal logs for docker
 ## ::
 
