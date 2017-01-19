@@ -9,3 +9,4 @@ bash_deploy_ramdisk: false
 step_install_undercloud: true
 step_root_device_size: false
 disk_root_device_size: 1843
+whole_disk_images: false

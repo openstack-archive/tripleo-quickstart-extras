@@ -19,7 +19,7 @@ source {{ working_dir }}/stackrc
 ## * Upload images to glance.
 ## ::
 
-openstack overcloud image upload {% if bash_deploy_ramdisk %}--old-deploy-image{% endif %}
+openstack overcloud image upload {% if bash_deploy_ramdisk %}--old-deploy-image{% endif %} {% if whole_disk_images|bool %}--whole-disk{% endif %}
 
 {% endif %}
 
