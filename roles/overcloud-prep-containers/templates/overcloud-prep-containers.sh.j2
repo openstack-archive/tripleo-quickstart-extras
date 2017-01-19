@@ -6,7 +6,7 @@ set -eux
 ## Prepare the undercloud for deploying the containerized compute node
 ## ===================================================================
 
-## note:: In progress documentation is available at https://etherpad.openstack.org/p/tripleo-containers-work
+## .. note:: In progress documentation is available at https://etherpad.openstack.org/p/tripleo-containers-work
 ## ::
 
 ## Prepare Your Environment
@@ -119,7 +119,8 @@ bash pull_puppet_modules.sh
 upload-puppet-modules --directory ~/puppet-modules/
 
 ## * Get the journal logs for docker
-sudo journalctl -u docker > docker_journalctl.log
+## ::
 
+sudo journalctl -u docker > docker_journalctl.log
 
 ### --stop_docs
