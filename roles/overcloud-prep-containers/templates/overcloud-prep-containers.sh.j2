@@ -37,12 +37,6 @@ fi
 glance image-list | grep atomic-image || glance image-create --name atomic-image --file {{ container_image }} --disk-format qcow2 --container-format bare
 
 
-## * Update heat's max_nested_stack_depth
-## ::
-sudo sed -i 's/#max_nested_stack_depth = 5/max_nested_stack_depth = 6/' /etc/heat/heat.conf
-sudo systemctl restart openstack-heat-engine
-
-
 # **WORKAROUND** port 8787 is not open on the undercloud
 # https://bugs.launchpad.net/tripleo/+bug/1651621
 sudo iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 8787 -j ACCEPT
