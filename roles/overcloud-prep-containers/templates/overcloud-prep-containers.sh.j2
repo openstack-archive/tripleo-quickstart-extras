@@ -37,19 +37,6 @@ fi
 glance image-list | grep atomic-image || glance image-create --name atomic-image --file {{ container_image }} --disk-format qcow2 --container-format bare
 
 
-{% if release != "master" %}
-## .. note:: On TripleO master, docker and docker-registry are installed and enabled. On older releases the following may be required:
-## ::
-
-sudo yum install -y docker
-sudo systemctl enable docker
-sudo systemctl start docker
-sudo systemctl enable docker-registry
-sudo systemctl start docker-registry
-sudo easy_install docker-py
-
-{% endif %}
-
 ## * Update heat's max_nested_stack_depth
 ## ::
 sudo sed -i 's/#max_nested_stack_depth = 5/max_nested_stack_depth = 6/' /etc/heat/heat.conf
