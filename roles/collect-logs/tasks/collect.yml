@@ -230,37 +230,3 @@
       file:
         path: "{{ artcl_collect_dir }}/{{ inventory_hostname }}.tar"
         state: absent
-
-    - name: Check for stackviz report data
-      stat: path="{{ artcl_collect_dir }}/undercloud/var/log/extra/stackviz/data"
-      register: stackviz
-
-    - name: Copy stackviz to root level
-      command: cp -r "{{ artcl_collect_dir }}/undercloud/var/log/extra/stackviz/" {{ artcl_collect_dir }}/stackviz
-      when: stackviz.stat.exists
-
-    - name: Unzip stackviz files
-      command: gzip -d -r "{{ artcl_collect_dir }}/stackviz"
-      when: stackviz.stat.exists
-
-    # Collect the tempest artifacts for reporting
-    - name: check for tempest html results
-      stat: path="{{ artcl_collect_dir }}/undercloud/home/stack/tempest/tempest.html.gz"
-      register: st_tempest_html
-
-    - name: unzip the tempest html file
-      command: gzip -d "{{ artcl_collect_dir }}/undercloud/home/stack/tempest/tempest.html.gz"
-      when: st_tempest_html.stat.exists
-
-    - name: check for tempest xml results
-      stat: path="{{ artcl_collect_dir }}/undercloud/home/stack/tempest/tempest.xml.gz"
-      register: st_tempest_xml
-
-    - name: unzip the tempest xml file
-      command: gzip -d "{{ artcl_collect_dir }}/undercloud/home/stack/tempest/tempest.xml.gz"
-      when: st_tempest_xml.stat.exists
-
-    - name: Copy the tempest html to the base dir of the logs
-      command: cp -r "{{ artcl_collect_dir }}/undercloud/home/stack/tempest/tempest.html" {{ artcl_collect_dir }}/tempest.html
-      when: st_tempest_html.stat.exists
-

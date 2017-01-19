@@ -77,6 +77,9 @@ artcl_create_docs_payload:
   to the target specified by `artcl_rsync_url`. Uses `BUILD_URL`, `BUILD_TAG`
   vars from the environment (set during a Jenkins job run) and requires the
   next to variables to be set.
+* `artcl_txt_rename`: false/true -- rename text based file to end in .txt.gz to
+  make upstream log servers display them in the browser instead of offering
+  them to download
 * `artcl_publish_timeout`: the maximum seconds the role can spend uploading the
   logs, the default is 1800 (30 minutes)
 * `artcl_use_rsync`: false/true -- use rsync to upload the logs

@@ -13,6 +13,25 @@
   command: cp -a {{ local_working_dir }}/ara {{ artcl_collect_dir }}/ara
   ignore_errors: "yes"
 
+- name: fetch stackviz results to the root of the collect_dir
+  shell: >
+    if [ -d {{ artcl_collect_dir }}/undercloud/var/log/extra/stackviz/data ]; then
+        cp -r {{ artcl_collect_dir }}/undercloud/var/log/extra/stackviz {{ artcl_collect_dir }};
+        gunzip -r {{ artcl_collect_dir }}/stackviz;
+    fi;
+
+- name: fetch tempest results to the root of the collect_dir
+  shell: >
+    cp {{ artcl_collect_dir }}/undercloud/home/stack/tempest/tempest.{xml,html}{,.gz} {{ artcl_collect_dir }} || true;
+    gunzip {{ artcl_collect_dir }}/tempest.{xml,html}.gz || true;
+
+- name: Rename text based files to end with txt.gz extension
+  shell: >
+    find {{ artcl_collect_dir }} -type f |
+    awk '/\.(conf|ini|json|sh|log|yaml|yml)\.gz$/ {
+    renamed=$0; sub(/\.gz$/, ".txt.gz", renamed); system("mv " $0 " " renamed) }';
+  when: artcl_txt_rename|bool
+
 - name: upload to the artifact server using pubkey auth
   shell: rsync -av --quiet -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" {{ artcl_collect_dir }}/ {{ artcl_rsync_path }}/{{ lookup('env', 'BUILD_TAG') }}
   async: "{{ artcl_publish_timeout }}"
