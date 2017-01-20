@@ -60,6 +60,23 @@ You need some software available on your local system before you can run
 Setup your virtual environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Deploy your virtual environment by running::
+Deploy with the most basic default options virtual environment by running::
 
     bash quickstart.sh $VIRTHOST
+
+There are many configuration options available in
+tripleo-quickstart/config/general_config/ and also in
+tripleo-quickstart-extras/config/general_config/
+In the examples below the ha.yml config is located in the tripleo-quickstart repository
+and the containers_minimal.yml is located in the tripleo-quickstart-extras repository.
+All the configuration files will be installed to your working_directory.
+
+This does require the user to know what the working directory is set to. The variable OPT_WORKDIR
+by default is ~/.quickstart but can be overriden with -w or --working_dir
+
+Please review these options and use the appropriate configuration for your deployment.
+
+Below are some examples.::
+
+    bash quickstart.sh --config=~/.quickstart/config/general_config/ha.yml $VIRTHOST
+    bash quickstart.sh --config=~/.quickstart/config/general_config/containers_minimal.yml $VIRTHOST
