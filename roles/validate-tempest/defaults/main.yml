@@ -34,3 +34,4 @@ tempest_exit_on_failure: true
 tempest_version_dict: { 'mitaka': 'mitaka', 'newton': 'newton',
                          'ocata': '16.0.0', 'master': 'master'}
 tempest_version: "{{ tempest_version_dict[release] }}"
+tempestmail_config: config.yaml
