@@ -115,12 +115,15 @@
   with_items:
     - '{{ ansible_user_dir }}/dlrn-venv'
     - '{{ ansible_user_dir }}/gating_repo'
+  when: dlrn_cleanup|bool
 
 - name: Clean up DLRN if it was cloned by the playbook
   file:
     path: '{{ ansible_user_dir }}/DLRN'
     state: absent
-  when: not dlrn_cloned.stat.exists
+  when:
+    - not dlrn_cloned.stat.exists
+    - dlrn_cleanup|bool
 
 - name: Trigger repo injection for quickstart
   set_fact: compressed_gating_repo={{ artg_compressed_gating_repo }}

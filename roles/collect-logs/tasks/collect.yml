@@ -135,6 +135,17 @@
         sosreport --batch
       when: artcl_collect_sosreport|bool
 
+    - name: Collect delorean logs
+      shell: >
+        if [[ -e /home/{{ undercloud_user }}/DLRN/data/repos ]]; then
+        rm -rf /tmp/delorean_logs && mkdir /tmp/delorean_logs;
+        find /home/{{ undercloud_user }}/DLRN/data/repos/ -name '*.log' -exec cp --parents \{\} /tmp/delorean_logs/ \; ;
+        find /tmp/delorean_logs -name '*.log' -exec gzip \{\} \; ;
+        find /tmp/delorean_logs -name '*.log.gz' -exec sh -c 'x="{}"; mv "$x" "${x%.log.gz}.log.txt.gz"' \; ;
+        rm -rf {{ artcl_collect_dir }}/delorean_logs && mkdir {{ artcl_collect_dir }}/delorean_logs;
+        mv /tmp/delorean_logs/home/{{ undercloud_user }}/DLRN/data/repos/* {{ artcl_collect_dir }}/delorean_logs/;
+        fi
+
     - name: Collect docker info and logs
       shell: >
         if command -v docker && systemctl is-active docker; then
