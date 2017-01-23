@@ -1,5 +1,4 @@
-# set working dir so that the deployment can run independently
-working_dir: /home/stack
+---
 
 # Script and log locations used during the deploy process.
 deploy_script: overcloud-deploy.sh.j2

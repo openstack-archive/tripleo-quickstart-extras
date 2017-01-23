@@ -19,7 +19,6 @@ A description of the settable variables for this role should go here, including 
 
 - artosn_scale_nodes: <true> -- boolean value that will scale nodes if true
 - artosn_delete_original_node: <false> -- boolean value that will delete the original node of type that was scaled
-- artosn_working_dir: <'/home/stack'> -- working directory for the role. Assumes stackrc file is present at this location
 
 
 Dependencies

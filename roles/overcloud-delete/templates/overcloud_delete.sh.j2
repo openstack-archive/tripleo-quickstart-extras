@@ -5,7 +5,7 @@
 ## * Gather informations on the deployment
 ## ::
 
-source {{ working_dir}}/stackrc
+source {{ working_dir }}/stackrc
 OVERCLOUD_NAME="overcloud"
 OVERCLOUD_ID=$(openstack stack list | grep "$OVERCLOUD_NAME" | awk '{print $2}')
 echo $OVERCLOUD_ID > {{ working_dir }}/overcloud_id

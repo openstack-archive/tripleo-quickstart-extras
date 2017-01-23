@@ -1,6 +1,5 @@
 ---
 
-## collection related vars
 artcl_collect: true
 artcl_collect_list:
   - /var/log/

@@ -1,7 +1,7 @@
 ---
+
 undercloud_sanity_check_script: undercloud-sanity-check.sh.j2
 undercloud_sanity_check_log: "{{ working_dir }}/undercloud_sanity_check.log"
 undercloud_check_idempotency: false
 undercloud_check_sanity: false
 undercloud_reinstall_log: "{{ working_dir }}/undercloud_reinstall.log"
-

@@ -24,4 +24,4 @@
 - name: Copy tempest input file to undercloud
   copy:
     src: "tempest-undercloud-config.conf"
-    dest: "/home/stack/{{ tempest_deployer_input_file }}"
+    dest: "{{ working_dir }}/{{ tempest_deployer_input_file }}"

@@ -27,7 +27,8 @@ Role Variables
 --------------
 
 - local_working_dir: <"{{ lookup('env', 'HOME') }}/.quickstart"> -- Directory for quickstart.sh script
-- non_root_user: <stack>  -- Default user to execute TripleO Quickstart
+- non_root_user: <stack>  -- The non-root user operating on the virthost
+- undercloud_user: <stack> -- The non-root user operating on the undercloud
 - undercloud_key: <"{{ local_working_dir }}/id_rsa_undercloud"> -- Key to access the undercloud node/machine
 - non_root_user_setup: <true> -- Switch to setup a non-root user
 - toci_vxlan_networking: <false> -- Switch to setup the VXLAN networking from devstack-gate

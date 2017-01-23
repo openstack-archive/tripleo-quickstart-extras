@@ -1,3 +1,5 @@
+---
+
 undercloud_config_file: undercloud.conf.j2
 undercloud_install_script: undercloud-install.sh.j2
 undercloud_post_install_script: undercloud-install-post.sh.j2

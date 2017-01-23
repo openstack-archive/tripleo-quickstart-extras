@@ -1,5 +1,4 @@
 ---
-working_dir: /home/stack
 
 step_install_upstream_ipxe: false
 

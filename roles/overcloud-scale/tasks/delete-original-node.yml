@@ -3,7 +3,7 @@
 # Delete the scaled node
 - name: Check the overcloud heat stack-list state
   shell: >
-    source "{{ artosn_working_dir }}"/stackrc;
+    source {{ working_dir }}/stackrc;
     heat stack-list
   register: heat_stack_list_result
 
@@ -11,16 +11,16 @@
   fail: msg='Overcloud heat stack is not in a complete state'
   when: heat_stack_list_result.stdout.find('COMPLETE') == -1
 
-- name: Register uuid of original "{{ node_to_scale}}" node
+- name: Register uuid of original {{ node_to_scale }} node
   shell: >
-    source "{{ artosn_working_dir }}"/stackrc;
-    nova list | grep -m 1 "{{ node_to_scale }}" | sed -e 's/|//g' | awk '{print $1}'
+    source {{ working_dir }}/stackrc;
+    nova list | grep -m 1 {{ node_to_scale }} | sed -e 's/|//g' | awk '{print $1}'
   register: node_id_to_delete
 
-- name: Register the Name of the original "{{ node_to_scale }}" node
+- name: Register the Name of the original {{ node_to_scale }} node
   shell: >
-    source "{{ artosn_working_dir }}"/stackrc;
-    nova list | grep -m 1 "{{ node_to_scale }}" | sed -e 's/|//g' | awk '{print $2}'
+    source {{ working_dir }}/stackrc;
+    nova list | grep -m 1 {{ node_to_scale }} | sed -e 's/|//g' | awk '{print $2}'
   register: node_name_to_delete
 
 - name: Display node name to be deleted
@@ -29,18 +29,18 @@
 - name: Copy delete node script to undercloud
   template:
     src: delete-node.j2
-    dest: "{{ artosn_working_dir }}/delete-node.sh"
+    dest: "{{ working_dir }}/delete-node.sh"
     mode: 0755
 
 - name: Delete node by id
   shell: >
-    cat "{{ artosn_working_dir }}"/delete-node.sh;
-    "{{ artosn_working_dir }}"/delete-node.sh &> delete_node_scale_console.log;
+    cat {{ working_dir }}/delete-node.sh;
+    {{ working_dir }}/delete-node.sh &> delete_node_scale_console.log;
 
 # Verify the delete was successful
 - name: Poll heat stack-list to determine when node delete is complete
   shell: >
-    source "{{ artosn_working_dir }}"/stackrc;
+    source {{ working_dir }}/stackrc;
     heat stack-list
   register: heat_stack_list_result
   until: heat_stack_list_result.stdout.find("COMPLETE") != -1
@@ -49,8 +49,8 @@
 
 - name: Determine the post scale node count
   shell: >
-    source "{{ artosn_working_dir }}/stackrc";
-    nova list | grep "{{ node_to_scale }}" | cut -f2- -d':' | wc -l
+    source {{ working_dir }}/stackrc;
+    nova list | grep {{ node_to_scale }} | cut -f2- -d':' | wc -l
   register: post_scale_node_count
 
 - name: Remove deleted hosts from the host file
@@ -59,5 +59,5 @@
   delegate_to: localhost
 
 - name: Check that post delete node count is correct
-  fail: msg="Overcloud nova list does not show expected number of {{ node_to_scale }} services"
-  when: post_scale_node_count.stdout != "{{ initial_scale_value }}"
+  fail: msg=Overcloud nova list does not show expected number of {{ node_to_scale }} services
+  when: post_scale_node_count.stdout != {{ initial_scale_value }}
