@@ -137,7 +137,7 @@
 
     - name: Collect docker info and logs
       shell: >
-        if command -v docker; then
+        if command -v docker && systemctl is-active docker; then
             All_FILE=/var/log/extra/docker_allinfo.log;
             docker ps --all --size &> $All_FILE;
             docker images &>> $All_FILE;
