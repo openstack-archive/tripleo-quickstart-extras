@@ -6,7 +6,7 @@
 
 - name: fetch and gzip the console log
   shell: >
-    curl {{ lookup('env', 'BUILD_URL') }}/consoleText | gzip > {{ artcl_collect_dir }}/console.txt.gz
+    curl -k {{ lookup('env', 'BUILD_URL') }}/consoleText | gzip > {{ artcl_collect_dir }}/console.txt.gz
   when: lookup('env', 'BUILD_URL') != ""
 
 - name: Retrieve the ARA static playbook report
