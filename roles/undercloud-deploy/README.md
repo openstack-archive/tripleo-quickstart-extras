@@ -33,6 +33,10 @@ properly with the option --old-deploy-image
 user sessions to provide greater flexixiblity to our users. ** additional documentation ** is at
 http://docs.openstack.org/developer/tripleo-quickstart/accessing-libvirt.html
 - `undercloud_conf_extra`: "" -- extra options to be added to ~/undercloud.conf
+- undercloud_undercloud_public_host: Sets up the 'undercloud_public_host'
+  parameter from undercloud.conf.
+- undercloud_undercloud_admin_host: Sets up the 'undercloud_admin_host' from
+  undercloud.conf.
 
 Role Network Variables
 ----------------------
