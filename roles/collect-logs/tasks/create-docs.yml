@@ -31,7 +31,13 @@
     dest: "{{ artcl_docs_source_dir }}/index.rst"
     force: yes
 
+- name: Ensure docs dir exists
+  file:
+    path: "{{ artcl_collect_dir }}/docs"
+    state: directory
+
 - name: Build docs with Sphinx
   shell: >
     sphinx-build -b html "{{ artcl_docs_source_dir }}"
     "{{ artcl_docs_build_dir }}" &> "{{ artcl_collect_dir }}/docs/sphinx_build.log"
+  ignore_errors: yes
