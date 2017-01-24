@@ -28,8 +28,10 @@
 - name: Rename text based files to end with txt.gz extension
   shell: >
     find {{ artcl_collect_dir }} -type f |
-    awk '/\.(conf|ini|json|sh|log|yaml|yml)\.gz$/ {
-    renamed=$0; sub(/\.gz$/, ".txt.gz", renamed); system("mv " $0 " " renamed) }';
+    awk 'function rename(orig)
+    { new=orig; sub(/\.gz$/, ".txt.gz", new); system("mv " orig " " new) }
+    /\.(conf|ini|json|sh|log|yaml|yml)\.gz$/ { rename($0) }
+    /(\/var\/log\/|\/etc\/)[^ \/\.]+\.gz$/ { rename($0) }';
   when: artcl_txt_rename|bool
 
 - name: upload to the artifact server using pubkey auth
