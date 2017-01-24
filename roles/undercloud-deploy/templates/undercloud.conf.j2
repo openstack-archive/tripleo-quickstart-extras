@@ -44,6 +44,7 @@ local_ip = {{undercloud_local_ip|default(
 network_gateway = {{undercloud_network_gateway|default(
     undercloud_network_cidr|nthhost(1))}}
 
+{% if release in ['mitaka', 'newton'] %}
 # Virtual IP address to use for the public endpoints of Undercloud
 # services.  Only used if undercloud_service_certficate is set.
 # (string value)
@@ -55,6 +56,21 @@ undercloud_public_vip = {{undercloud_undercloud_public_vip|default(
 # (string value)
 undercloud_admin_vip = {{undercloud_undercloud_admin_vip|default(
     undercloud_network_cidr|nthhost(3))}}
+{% else %}
+# Virtual IP or DNS address to use for the public endpoints of
+# Undercloud services. Only used with SSL. (string value)
+# Deprecated group/name - [DEFAULT]/undercloud_public_vip
+#undercloud_public_host = 192.168.24.2
+undercloud_public_host = {{undercloud_undercloud_public_host|default(
+    undercloud_network_cidr|nthhost(2))}}
+
+# Virtual IP or DNS address to use for the admin endpoints of
+# Undercloud services. Only used with SSL. (string value)
+# Deprecated group/name - [DEFAULT]/undercloud_admin_vip
+#undercloud_admin_host = 192.168.24.3
+undercloud_admin_host = {{undercloud_undercloud_admin_host|default(
+    undercloud_network_cidr|nthhost(3))}}
+{% endif %}
 
 # Nameserver for the Undercloud node.
 # (string value)
