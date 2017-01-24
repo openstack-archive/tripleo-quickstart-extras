@@ -31,6 +31,7 @@
     rdopkg findpkg $PROJECT_NAME -l rdoinfo | grep ^name | awk '{print $2}'
   args:
       chdir: '{{ ansible_user_dir }}/DLRN'
+  failed_when: project_name_mapped.stdout == ''
 
 - name: Create data directory if doesn't exist yet
   file: path="{{ ansible_user_dir }}/DLRN/data/" state=directory

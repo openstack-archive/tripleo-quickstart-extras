@@ -7,4 +7,4 @@ artg_compressed_gating_repo: "/home/stack/gating_repo.tar.gz"
 artg_skipped_projects:
   - openstack/tripleo-quickstart
   - openstack/tripleo-quickstart-extras
-  - openstack/tripleo-ci
+  - openstack-infra/tripleo-ci
