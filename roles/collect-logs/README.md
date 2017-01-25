@@ -34,6 +34,9 @@ artcl_collect_list:
     - /home/stack/*.log
     - /var/log
 ```
+* `artcl_exclude_list` -- A list of files and directories to remove from
+  the collected logs. First of all we collect everything and then remove all
+  we have in `artcl_exclude_list` (`/etc/puppet/modules` by default).
 
 * `artcl_collect_dir` -- A local directory where the logs should be
   gathered, without a trailing slash.

@@ -3,7 +3,6 @@
 artcl_collect: true
 artcl_collect_list:
   - /var/log/
-  - /var/lib/mysql
   - /var/lib/heat-config/heat-config-puppet/
   - /var/lib/heat-config/heat-config-script/
   - /var/tmp/sosreport*
@@ -31,6 +30,13 @@ artcl_collect_list:
   - /home/stack/browbeat/results
   - /usr/share/openstack-tripleo-heat-templates
   - /tmp/tripleoclient*
+artcl_exclude_list:
+  - /etc/udev/hwdb.bin
+  - /etc/puppet/modules
+  - /etc/project-config
+  - /etc/services
+  - /etc/selinux/targeted
+  - /etc/pki/ca-trust/extracted
 artcl_collect_dir: "{{ local_working_dir }}/collected_files"
 artcl_gzip_only: true
 artcl_tar_gz: false
