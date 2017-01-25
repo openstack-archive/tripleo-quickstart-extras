@@ -67,23 +67,37 @@
   args:
       chdir: '{{ ansible_user_dir }}/DLRN'
 
+- name: get env variables for changes and default change list
+  set_fact:
+    gerrit_host: "{{ lookup('env', 'GERRIT_HOST') }}"
+    zuul_changes: "{{ lookup('env', 'ZUUL_CHANGES') }}"
+    artg_change_list: "{{ artg_change_list|default([]) }}"
+
 - name: Parse Jenkins changes
   jenkins_deps:
     host: "{{ lookup('env', 'GERRIT_HOST') }}"
     change_id: "{{ lookup('env', 'GERRIT_CHANGE_ID') }}"
     branch: "{{ lookup('env', 'GERRIT_BRANCH') }}"
     patchset_rev: "{{ lookup('env', 'GERRIT_PATCHSET_REVISION') }}"
-  when: artg_change_list is not defined and "{{ lookup('env', 'GERRIT_HOST') }}" != ""
+  when: gerrit_host != ""
+
+- name: Add Jenkins changes to the change list
+  set_fact:
+    artg_change_list: "{{ artg_change_list|union(jenkins_change_list|default([])) }}"
 
 - name: Parse Zuul changes
   zuul_deps:
     host: "{{ lookup('env', 'ZUUL_HOST')|default('review.openstack.org', true) }}"
     changes: "{{ lookup('env', 'ZUUL_CHANGES') }}"
-  when: artg_change_list is not defined and "{{ lookup('env', 'ZUUL_CHANGES') }}" != ""
+  when: zuul_changes != ""
+
+- name: Add Zuul changes to the change list
+  set_fact:
+    artg_change_list: "{{ artg_change_list|union(zuul_change_list|default([])) }}"
 
 - name: Clone and build the specific DLRN projects
   include: dlrn-build.yml artg_change={{ item }}
-  with_items: '{{ artg_change_list|default([]) }}'
+  with_items: '{{ artg_change_list }}'
   when: item.project not in artg_skipped_projects
 
 - block:

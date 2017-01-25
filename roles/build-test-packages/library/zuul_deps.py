@@ -39,7 +39,7 @@ def process(host, changes):
                        "branch": params[1],
                        "refspec": params[2]})
     return {'changed': True,
-            'ansible_facts': {'artg_change_list': output}}
+            'ansible_facts': {'zuul_change_list': output}}
 
 
 def main():
