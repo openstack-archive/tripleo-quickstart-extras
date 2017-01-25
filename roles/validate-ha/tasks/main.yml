@@ -23,15 +23,13 @@
   when: apply_workarounds
 
 - name: Get overcloud-ha-test-suite on undercloud and controllers
-  vars:
-    nodes:
-      - "undercloud"
-      - "{{ groups['controller'] }}"
   shell: >
     rm -rf tripleo-director-ha-test-suite;
     git clone https://github.com/rscarazz/tripleo-director-ha-test-suite/ tripleo-director-ha-test-suite;
   delegate_to: "{{ item }}"
-  with_items: "{{ nodes }}"
+  with_items:
+    - "undercloud"
+    - "{{ groups['controller'] }}"
 
 - name: HA test failed actions (overcloud)
   delegate_to: overcloud-controller-0
