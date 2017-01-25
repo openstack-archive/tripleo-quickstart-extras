@@ -64,7 +64,8 @@ cd {{ working_dir }}/tempest
 git clone https://github.com/redhat-openstack/tempest {{ working_dir }}/tempest
 cd {{ working_dir }}/tempest
 virtualenv --no-site-packages .venv
-./tools/with_venv.sh pip install -U pip setuptools
+# Fix version for setuptools due https://github.com/pypa/setuptools/issues/945
+./tools/with_venv.sh pip install -U pip setuptools==33.1.1
 ./tools/with_venv.sh pip install junitxml httplib2 -r test-requirements.txt -r requirements.txt
 {% endif %}
 
@@ -72,7 +73,8 @@ virtualenv --no-site-packages .venv
 git clone https://github.com/openstack/tempest {{ working_dir }}/tempest
 cd {{ working_dir }}/tempest
 virtualenv --no-site-packages .venv
-./tools/with_venv.sh pip install -U pip setuptools
+# Fix version for setuptools due https://github.com/pypa/setuptools/issues/945
+./tools/with_venv.sh pip install -U pip setuptools==33.1.1
 ./tools/with_venv.sh pip install junitxml httplib2 -r test-requirements.txt -r requirements.txt
 cp /usr/share/openstack-tempest-*/tools/config_tempest.py ./tools/
 cp /usr/share/openstack-tempest-*/tools/run-tests.sh ./tools/
