@@ -31,7 +31,7 @@ artcl_collect_list:
   - /home/stack/browbeat/results
   - /usr/share/openstack-tripleo-heat-templates
   - /tmp/tripleoclient*
-artcl_collect_dir: "{{ lookup('env', 'PWD') }}/collected_files"
+artcl_collect_dir: "{{ local_working_dir }}/collected_files"
 artcl_gzip_only: true
 artcl_tar_gz: false
 
@@ -58,3 +58,4 @@ artcl_collect_sosreport: false
 artcl_gen_docs: false
 artcl_docs_source_dir: "{{ local_working_dir }}/usr/local/share/ansible/roles/collect-logs/docs/source"
 artcl_docs_build_dir: "{{ artcl_collect_dir }}/docs/build"
+artcl_verify_sphinx_build: false

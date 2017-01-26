@@ -14,3 +14,8 @@
   when:
     - artcl_publish|bool
     - not artcl_collect|bool
+
+- name: Verify Sphinx build
+  shell: grep "{{ item }}" "{{ artcl_collect_dir }}/docs/build/index.html"
+  with_items: "{{ artcl_create_docs_payload.table_of_contents }}"
+  when: artcl_verify_sphinx_build|bool

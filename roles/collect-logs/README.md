@@ -43,8 +43,8 @@ artcl_collect_list:
 
 ### Documentation generation related
 
-* `artcl_gen_docs`: true/false -- If true, the role will use build artifacts
-  and Sphinx and produce user friendly documentation.
+* `artcl_gen_docs`: false/true -- If true, the role will use build artifacts
+  and Sphinx and produce user friendly documentation (default: false)
 * `artcl_docs_source_dir` -- a local directory that serves as the Sphinx source
   directory.
 * `artcl_docs_build_dir` -- A local directory that serves as the Sphinx build
@@ -57,6 +57,9 @@ artcl_collect_list:
       included in the output documentation.
     * `table_of_contents` -- List that defines the order in which rST files
       will be laid out in the output documentation.
+* `artcl_verify_sphinx_build` -- false/true -- If true, verify items defined
+  in `artcl_create_docs_payload.table_of_contents` exist in sphinx generated
+  index.html (default: false)
 
 ```yaml
 artcl_create_docs_payload:
