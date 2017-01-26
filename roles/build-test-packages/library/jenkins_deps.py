@@ -185,7 +185,7 @@ def resolve_dep(host, change_id, branch, revision):
                 'msg': ', '.join(output_msg)}
     else:
         return {'changed': True,
-                'ansible_facts': {'artg_change_list': deps},
+                'ansible_facts': {'jenkins_change_list': deps},
                 'msg': ', '.join(output_msg)}
 
 
