@@ -189,7 +189,7 @@
   shell: >
     chdir=/tmp
     tar czf {{ inventory_hostname }}.tar.gz {{ inventory_hostname }};
-  when: not artcl_gzip_only|bool
+  when: artcl_tar_gz|bool
 
 - name: gzip logs individually and tar them
   shell: >
@@ -204,7 +204,7 @@
     dest: "{{ artcl_collect_dir }}/{{ inventory_hostname }}.tar.gz"
     flat: yes
     validate_checksum: no
-  when: not artcl_gzip_only|bool
+  when: artcl_tar_gz|bool
 
 - name: Fetch log archive (tar)
   fetch:
