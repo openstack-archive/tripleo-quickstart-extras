@@ -1,0 +1,7 @@
+test_ha_failed_actions: true
+test_ha_master_slave: true
+test_ha_keystone_constraint_removal: true
+test_ha_ng_a: false
+test_ha_ng_b: false
+test_ha_ng_c: false
+test_ha_instance: true
