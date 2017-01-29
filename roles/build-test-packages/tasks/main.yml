@@ -97,7 +97,7 @@
 
 - name: Clone and build the specific DLRN projects
   include: dlrn-build.yml artg_change={{ item }}
-  with_items: '{{ artg_change_list }}'
+  with_items: '{{ artg_change_list|default([]) }}'
   when: item.project not in artg_skipped_projects
 
 - block:
