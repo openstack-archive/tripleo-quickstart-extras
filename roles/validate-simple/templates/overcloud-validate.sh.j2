@@ -54,9 +54,9 @@ fi
 IMAGE_PATH={{ validate_image_dir }}/cirros.img
 INITRAMFS_PATH={{ validate_image_dir }}/cirros.initramfs
 KERNEL_PATH={{ validate_image_dir }}/cirros.kernel
-curl -L -o $IMAGE_PATH {{ validate_image_url }}{{ image_disk }}
-curl -L -o $INITRAMFS_PATH {{ validate_image_url }}{{ image_initramfs }}
-curl -L -o $KERNEL_PATH {{ validate_image_url }}{{ image_kernel }}
+curl -L -s -S -o $IMAGE_PATH {{ validate_image_url }}{{ image_disk }}
+curl -L -s -S -o $INITRAMFS_PATH {{ validate_image_url }}{{ image_initramfs }}
+curl -L -s -S -o $KERNEL_PATH {{ validate_image_url }}{{ image_kernel }}
 
 ## * Upload cirros image into glance
 ## ::
@@ -99,25 +99,41 @@ fi
 
 heat stack-create {{ validate_stack_name }} --template-file  {{ working_dir }}/tenantvm_floatingip.yaml
 
+## * Wait for the stack creation to complete
+## * Give time to the instance to boot
+
 ### --stop_docs
-# wait for stack complete or failed
 /bin/bash /usr/libexec/openstack-tripleo/wait_for -w 600 --delay 30 \
   --success-match {{ validate_success_status }} -- heat stack-show {{ validate_stack_name }}
-# let time to the instance to boot
 sleep 30
 
 ### --start_docs
 ## * Get the floating ip
 ## ::
 
-novaid=`nova list|grep {{ validate_server_name }} |awk  '{print $2}'`
-floating_ip=`nova floating-ip-list | grep $novaid | awk  '{print $4}'`
-nova console-log {{ validate_server_name }}
-ping -c 1 $floating_ip
-nova show {{ validate_server_name }} || :
-nova service-list || :
-neutron agent-list ||:
-nova console-log {{ validate_server_name }}
+### --stop_docs
+set +e
+### --start_docs
+
+vm1_ip=`openstack stack output show {{ validate_stack_name }} server1_public_ip --f json | \
+        jq -r '.["output_value"]'`
+
+ping -c 1 $vm1_ip
+
+## * Print debug output if ping fails
+## ::
+
+if [ "$?" == "0" ]; then
+    echo "Overcloud pingtest, SUCCESS"
+    exit 0
+else
+    nova console-log {{ validate_server_name }}
+    nova show {{ validate_server_name }}
+    nova service-list
+    neutron agent-list
+    openstack stack show {{ validate_stack_name }}
+    echo "Overcloud pingtest, FAIL"
+    exit 1
+fi
 
 ### --stop_docs
-
