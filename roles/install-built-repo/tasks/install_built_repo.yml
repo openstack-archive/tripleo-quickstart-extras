@@ -1,0 +1,5 @@
+- name: Setup repos on live host
+  shell: >
+    {{ ib_repo_workdir }}/install-built-repo.sh >
+    {{ ib_repo_install_log }} 2>&1
+  become: true

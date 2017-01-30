@@ -1,0 +1,18 @@
+#!/bin/bash
+
+mkdir -p /opt
+pushd /opt
+tar xzf /tmp/gating_repo.tar.gz
+
+cat > /etc/yum.repos.d/gating.repo << EOF
+[gating-repo]
+name=Gating repository
+baseurl=file:///opt/gating_repo
+enabled={{ ib_gating_repo_enabled | bool | ternary('1', '0') }}
+gpgcheck=0
+priority=1
+EOF
+
+{% if ib_gating_repo_enabled|bool %}
+yum --disablerepo="*" --enablerepo="gating-repo" update -y
+{% endif %}
