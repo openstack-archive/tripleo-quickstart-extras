@@ -15,12 +15,8 @@ Role Variables
 used as the base for the undercloud.conf
 - `undercloud_install_script`: <'undercloud-install.j2'> -- the name of the jinja template
 used as the base for the undercloud-install bash script
-- `undercloud_post_install_script`: <'undercloud-install-post.sh.j2'> -- the name of the
-jinja template used as the base for the undercloud-install-post bash script
 - `undercloud_install_log`: <'{{ working_dir }}/undercloud_install.log'> -- the full path
 to the undercloud install log file.
-- `undercloud_post_install.log`: <'{{ working_dir }}/undercloud_post_install.log'> -- the full
-path to the undercloud-post-install.sh log file.
 - `network_environment_file`: <'network-environment.yaml.j2'> -- the name of the jinja template
 used as the base for the network-environment for tripleo.
 - `undercloud_hieradata_override_file`: <'quickstart-hieradata-overrides.yaml.j2'> -- the name of
