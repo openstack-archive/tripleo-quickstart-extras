@@ -47,7 +47,8 @@ parameters:
 {% endif %}
 
 resources:
-  key:
+
+  key_pair:
     type: OS::Nova::KeyPair
     properties:
       save_private_key: true
@@ -100,7 +101,7 @@ resources:
 {% else  %}
       flavor: { get_resource: test_flavor }
 {% endif %}
-      key_name: { get_resource: key }
+      key_name: { get_resource: key_pair }
       networks:
         - port: { get_resource: server1_port }
 
