@@ -56,3 +56,7 @@ target/
 
 # virtualenv
 .venv/
+
+# Files created by releasenotes build
+releasenotes/build
+
