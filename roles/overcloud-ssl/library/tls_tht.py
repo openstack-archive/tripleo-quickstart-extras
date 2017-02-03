@@ -76,7 +76,7 @@ def _open_yaml(filename):
 def create_enable_file(certpem, keypem, source_dir, dest_dir, tht_release):
     output_dict = _open_yaml("{}environments/enable-tls.yaml".format(source_dir))
 
-    if tht_release not in ['master', 'newton']:
+    if tht_release == 'mitaka':
         for key in output_dict["parameter_defaults"]["EndpointMap"]:
             if output_dict["parameter_defaults"]["EndpointMap"][key]["host"] == "CLOUDNAME":
                 output_dict["parameter_defaults"]["EndpointMap"][key]["host"] = "IP_ADDRESS"
