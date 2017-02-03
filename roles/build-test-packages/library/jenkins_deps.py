@@ -1,4 +1,16 @@
 #!/usr/bin/env python
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 DOCUMENTATION = '''
 ---
@@ -40,8 +52,6 @@ EXAMPLES = '''
 import json
 import logging
 import re
-import sys
-
 import requests
 
 # we ignore any other host reference
@@ -70,7 +80,7 @@ def parse_commit_msg(current_host, msg):
                         break
                 else:
                     logging.warning('Cannot resolve "%s" to a host from the '
-                                'ALLOWED HOSTS list', target)
+                                    'ALLOWED HOSTS list', target)
                     continue
             tags.append({'host': host,
                          'change_id': change_id,
@@ -119,7 +129,7 @@ def get_details(host, change_id, branch, revision):
         revision = data['current_revision']
     if revision not in data['revisions']:
         return {'fail_msg': ''.join(['warning: cannot find revision ',
-                                     revision, ' of change ',  change_id,
+                                     revision, ' of change ', change_id,
                                      ' at ', url])}
     return {'host': host,
             'change_id': str(data['change_id']),
@@ -131,7 +141,8 @@ def get_details(host, change_id, branch, revision):
 
 
 def resolve_dep(host, change_id, branch, revision):
-    '''
+    '''Dependency resolution.
+
     Resolve the dependencies in the target commits until there are no more
     dependent changes. If the branch or revision is None, it can still resolve
     the dependencies. It only uses the branch when the change_id is ambigiuous
@@ -141,6 +152,7 @@ def resolve_dep(host, change_id, branch, revision):
     project to be added to the output list.
 
     Returns a list of dictionaries with the dependent changes.
+
     '''
     resolved_ids = []
     deps = []
@@ -199,9 +211,9 @@ def main():
         )
     )
     result = resolve_dep(module.params['host'],
-                           module.params['change_id'],
-                           module.params['branch'],
-                           module.params['patchset_rev'])
+                         module.params['change_id'],
+                         module.params['branch'],
+                         module.params['patchset_rev'])
     module.exit_json(**result)
 
 
