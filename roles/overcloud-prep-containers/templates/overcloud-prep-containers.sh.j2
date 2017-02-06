@@ -30,8 +30,8 @@ neutron subnet-show $subnet_uuid
 ## ::
 
 if ! [[ -e {{ container_image }} ]]; then
-  curl -O {{ container_url }}
-  gunzip -f "{{ container_image }}.gz"
+    curl -O {{ container_url }}
+    gunzip -f "{{ container_image }}.gz"
 fi
 
 glance image-list | grep atomic-image || glance image-create --name atomic-image --file {{ container_image }} --disk-format qcow2 --container-format bare

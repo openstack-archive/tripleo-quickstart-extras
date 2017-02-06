@@ -11,8 +11,8 @@ set -eux
 ## ::
 
 {% for interface in (mtu_interface) %}
-  ip link set {{ interface }} mtu {{ mtu }}
-  echo "MTU={{ mtu }}" >> /etc/sysconfig/network-scripts/ifcfg-{{ interface }}
+    ip link set {{ interface }} mtu {{ mtu }}
+    echo "MTU={{ mtu }}" >> /etc/sysconfig/network-scripts/ifcfg-{{ interface }}
 {% endfor %}
 
 ## * Modify dnsmasq-ironic.conf

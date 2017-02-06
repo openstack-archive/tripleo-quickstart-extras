@@ -31,8 +31,8 @@ git clone "https://github.com/rthallisey/clapper.git" "{{ working_dir }}/clapper
 
 export IPMI_VALIDATE="$(python {{ working_dir }}/clapper/instackenv-validator.py -f {{ working_dir }}/instackenv.json)"
 if [[ $IPMI_VALIDATE != *SUCCESS* ]] ; then
-   echo "instackenv.json did not validate."
-   echo $IPMI_VALIDATE
+    echo "instackenv.json did not validate."
+    echo $IPMI_VALIDATE
 fi
 
 ### --stop_docs

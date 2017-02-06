@@ -15,15 +15,15 @@ while read sub; do
 ## * Create the expected directories and symlinks
 ## ::
 
-  ssh $SSH_ARGS $sub mkdir -p $WORKSPACE/tripleo
-  ssh $SSH_ARGS $sub ln -sf $WORKSPACE/tripleo $WORKSPACE/tripleo/new
+    ssh $SSH_ARGS $sub mkdir -p $WORKSPACE/tripleo
+    ssh $SSH_ARGS $sub ln -sf $WORKSPACE/tripleo $WORKSPACE/tripleo/new
 
 ## * Clone the appropriate repositories in the expected locations
 ## ::
 
-  ssh $SSH_ARGS $sub git clone https://git.openstack.org/openstack-infra/tripleo-ci $WORKSPACE/tripleo/tripleo-ci
-  ssh $SSH_ARGS $sub git clone https://git.openstack.org/openstack-dev/devstack $WORKSPACE/tripleo/devstack
-  ssh $SSH_ARGS $sub git clone https://git.openstack.org/openstack-infra/devstack-gate $WORKSPACE/tripleo/devstack-gate
+    ssh $SSH_ARGS $sub git clone https://git.openstack.org/openstack-infra/tripleo-ci $WORKSPACE/tripleo/tripleo-ci
+    ssh $SSH_ARGS $sub git clone https://git.openstack.org/openstack-dev/devstack $WORKSPACE/tripleo/devstack
+    ssh $SSH_ARGS $sub git clone https://git.openstack.org/openstack-infra/devstack-gate $WORKSPACE/tripleo/devstack-gate
 
 done < /etc/nodepool/sub_nodes_private
 

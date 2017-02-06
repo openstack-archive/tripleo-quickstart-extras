@@ -28,7 +28,10 @@ openstack overcloud image upload {% if bash_deploy_ramdisk %}--old-deploy-image{
 ## * Upload images to glance, this step is specific to nodepool based deployments.
 ## ::
 
- glance image-create --container-format bare --disk-format qcow2 --name overcloud-full --file overcloud-full.qcow2
+    glance image-create --container-format bare \
+        --disk-format qcow2 \
+        --name overcloud-full \
+        --file overcloud-full.qcow2
 
 {% endif %}
 

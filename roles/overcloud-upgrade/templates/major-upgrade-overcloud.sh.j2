@@ -9,13 +9,13 @@ onerror(){
         --nested-depth 5 overcloud | grep FAIL |
         grep 'StructuredDeployment ' | cut -d '|' -f3)
     do echo -n "heat deployment-show out put for deployment: $failed" >> failed_upgrade.log
-       echo -n "######################################################" >> failed_upgrade.log
-       heat deployment-show $failed >> failed_upgrade.log
-       echo -n "######################################################" >> failed_upgrade.log
-       echo "puppet standard error for deployment: $failed" >> failed_upgrade.log
-       echo -n "######################################################" >> failed_upgrade.log
-       echo -e $(heat deployment-show $failed | jq .output_values.deploy_stderr) >> failed_upgrade.log
-       echo -n "######################################################" >> failed_upgrade.log
+        echo -n "######################################################" >> failed_upgrade.log
+        heat deployment-show $failed >> failed_upgrade.log
+        echo -n "######################################################" >> failed_upgrade.log
+        echo "puppet standard error for deployment: $failed" >> failed_upgrade.log
+        echo -n "######################################################" >> failed_upgrade.log
+        echo -e $(heat deployment-show $failed | jq .output_values.deploy_stderr) >> failed_upgrade.log
+        echo -n "######################################################" >> failed_upgrade.log
     done
     exit 1
 }
