@@ -1,0 +1,9 @@
+---
+sanity_content_name: sanity_test
+sanity_scripts: validate-sanity-checks.sh.j2
+sanity_checks_log: validate_sanity_test.log
+# sanitytest step
+sanitytest_create: true
+sanitytest_cleanup: true
+# step
+sanity_step_sanity_checks: true

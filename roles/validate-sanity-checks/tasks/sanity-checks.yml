@@ -1,0 +1,4 @@
+---
+- name: Run sanity checks
+  shell: >
+      {{ working_dir }}/validate-sanity-check.sh > {{ sanity_checks_log }} 2>&1
