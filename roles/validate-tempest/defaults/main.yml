@@ -29,3 +29,4 @@ skip_file: skip_file
 tempest_isolated: false
 tempest_until_failure: false
 tempest_failing: false
+tempest_exit_on_failure: true
