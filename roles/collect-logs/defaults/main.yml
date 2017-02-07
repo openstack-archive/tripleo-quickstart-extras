@@ -33,6 +33,7 @@ artcl_collect_list:
   - /tmp/tripleoclient*
 artcl_collect_dir: "{{ lookup('env', 'PWD') }}/collected_files"
 artcl_gzip_only: true
+artcl_tar_gz: false
 
 ## publishing related vars
 artcl_publish: false
