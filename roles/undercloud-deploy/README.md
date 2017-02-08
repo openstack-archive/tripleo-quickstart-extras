@@ -21,6 +21,8 @@ to the undercloud install log file.
 used as the base for the network-environment for tripleo.
 - `undercloud_hieradata_override_file`: <'quickstart-hieradata-overrides.yaml.j2'> -- the name of
 jinja template used to override the undercloud's install hieradata
+- `undercloud_ironic_ipxe_port`: <'3816'> -- port to use for httpd ipxe server
+for ironic deploy
 - `step_introspect`: <'false'> -- boolean value to enable/disable ironic introspection
 - `bash_deploy_ramdisk`: <'false'> -- the variable allows older versions of tripleo to upload images
 properly with the option --old-deploy-image

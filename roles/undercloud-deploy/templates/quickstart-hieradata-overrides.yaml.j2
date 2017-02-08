@@ -3,6 +3,10 @@
 # the value of libvirt_uri into /etc/ironic/ironic.conf.
 ironic::drivers::ssh::libvirt_uri: '{{libvirt_uri}}'
 
+# The default httpd ipxe port is 8080, but this conflicts with the telnet
+# server which streams the console log in CI. So we allow override here.
+ironic::drivers::deploy::http_port: '{{undercloud_ironic_ipxe_port}}'
+
 # The following are configurations for the different workers for the undercloud
 # services.
 {% if undercloud_workers is defined %}

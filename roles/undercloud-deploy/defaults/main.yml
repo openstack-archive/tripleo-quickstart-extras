@@ -27,5 +27,9 @@ network_environment_args:
 # not require privileged access (but does require the setup performed by the
 # `environment/setup` role).
 libvirt_uri: qemu:///session
+
+# port to use for httpd ipxe server for ironic deploy
+undercloud_ironic_ipxe_port: 3816
+
 enable_vbmc: true
 undercloud_conf_extra: ""
