@@ -35,7 +35,7 @@
     - name: Collect logs from all failed systemd services
       shell: >
         systemctl -t service --failed --no-legend | awk '{print $1}'
-            | xargs -r -n1 journalctl -u > /var/log/extra/services.txt 2>&1
+        | xargs -r -n1 journalctl -u > /var/log/extra/services.txt 2>&1
 
     - name: Collect network status info
       shell: >
