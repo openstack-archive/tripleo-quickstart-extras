@@ -73,6 +73,13 @@
       shell: "which openstack-status &> /dev/null && (. ~/keystonerc_admin; openstack-status &> /var/log/extra/openstack-status.txt)"
       when: "'controller' in inventory_hostname"
 
+    - name: List nova servers on undercloud
+      shell: >
+        if [[ -e {{ working_dir }}/stackrc ]]; then
+        source {{ working_dir }}/stackrc;
+        nova list &> /var/log/extra/nova_list.txt;
+        fi
+
     - name: lsmod
       shell: "lsmod &> /var/log/extra/lsmod.txt"
 
