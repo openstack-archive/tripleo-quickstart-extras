@@ -32,9 +32,9 @@ sudo update-ca-trust extract
 {% set _vip = overcloud_public_vip if not overcloud_ipv6|bool else overcloud_public_vip6 %}
 
 openssl req -newkey rsa:2048 -days 365 \
-     -nodes -keyout {{ working_dir }}/server-key.pem \
-     -out {{ working_dir }}/server-req.pem \
-     -subj "/C=US/ST=NC/L=Raleigh/O=Red Hat/OU=OOOQ/CN={{_vip}}"
+    -nodes -keyout {{ working_dir }}/server-key.pem \
+    -out {{ working_dir }}/server-req.pem \
+    -subj "/C=US/ST=NC/L=Raleigh/O=Red Hat/OU=OOOQ/CN={{_vip}}"
 
 ## * Process the server RSA key
 ## ::
@@ -47,8 +47,8 @@ openssl rsa -in {{ working_dir }}/server-key.pem \
 ## ::
 
 openssl x509 -req -in server-req.pem -days 365 \
-      -CA {{ working_dir }}/overcloud-cacert.pem \
-      -CAkey {{ working_dir }}/overcloud-ca-privkey.pem \
-      -set_serial 01 -out {{ working_dir }}/server-cert.pem
+    -CA {{ working_dir }}/overcloud-cacert.pem \
+    -CAkey {{ working_dir }}/overcloud-ca-privkey.pem \
+    -set_serial 01 -out {{ working_dir }}/server-cert.pem
 
 ## --stop_docs
