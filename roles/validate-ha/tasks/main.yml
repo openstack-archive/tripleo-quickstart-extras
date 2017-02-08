@@ -1,13 +1,11 @@
 ---
 - name: Creating the environment file on undercloud
-  delegate_to: undercloud
   template:
     src: "{{ environment_file }}"
     dest: "{{ working_dir }}/environment"
     mode: 0600
 
 - name: Load the workarounds script on the undercloud
-  delegate_to: undercloud
   template:
     src: "{{ workarounds_script }}"
     dest: "{{ working_dir }}/workarounds.sh"
@@ -15,7 +13,6 @@
   when: apply_workarounds
 
 - name: Execute workarounds script on the undercloud
-  delegate_to: undercloud
   shell: >
     "{{ working_dir }}/workarounds.sh"
   when: apply_workarounds
@@ -34,44 +31,109 @@
     dir: "vars"
     files_matching: "test_list_{{ release }}.yml"
 
-- name: HA test failed actions (overcloud)
-  delegate_to: overcloud-controller-0
-  shell: >
-    {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_check-failed-actions > {{ overcloud_working_dir }}/test_ha_failed-actions.log 2>&1
+- name: Create directory on the undercloud to store test results
+  file: path={{ validate_ha_logs_dir }} state=directory
+
+# Test: failed actions
+- block:
+    - name: HA test - Failed actions (overcloud)
+      delegate_to: overcloud-controller-0
+      shell: >
+        {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_check-failed-actions
+      register: test_ha_failed_actions_cmd
+  always:
+    - name: copy stdout test result to undercloud and check command
+      copy: content="{{ test_ha_failed_actions_cmd.stdout }}" dest="{{ validate_ha_logs_dir }}/test_ha_failed_actions_stdout.log"
+  rescue:
+    - name: copy stderr test result to undercloud and check command
+      copy: content="{{ test_ha_failed_actions_cmd.stderr }}" dest="{{ validate_ha_logs_dir }}/test_ha_failed_actions_stderr.log"
   when: test_ha_failed_actions|bool
 
-- name: HA test Master/Slave core resource stop and start (overcloud)
-  delegate_to: overcloud-controller-0
-  shell: >
-    {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_master-slave -r {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_master-slave  > {{ overcloud_working_dir }}/test_ha_master-slave.log 2>&1
+# Test: Master/Slave
+- block:
+    - name: HA test - Master/Slave core resource stop and start (overcloud)
+      delegate_to: overcloud-controller-0
+      shell: >
+        {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_master-slave -r {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_master-slave
+      register: test_ha_master_slave_cmd
+  always:
+    - name: copy stdout test result to undercloud and check command
+      copy: content="{{ test_ha_master_slave_cmd.stdout }}" dest="{{ validate_ha_logs_dir }}/test_ha_master_slave_stdout.log"
+  rescue:
+    - name: copy stderr test result to undercloud and check command
+      copy: content="{{ test_ha_master_slave_cmd.stderr }}" dest="{{ validate_ha_logs_dir }}/test_ha_master_slave_stderr.log"
   when: test_ha_master_slave|bool
 
-- name: HA test Keystone removal (overcloud)
-  delegate_to: overcloud-controller-0
-  shell: >
-    {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_keystone-constraint-removal -r {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_keystone-constraint-removal > {{ overcloud_working_dir }}/test_ha_keystone-constraint-removal.log 2>&1
+# Test: Keystone removal
+- block:
+    - name: HA test Keystone removal (overcloud)
+      delegate_to: overcloud-controller-0
+      shell: >
+        {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_keystone-constraint-removal -r {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_keystone-constraint-removal
+      register: test_ha_keystone_constraint_removal_cmd
+  always:
+    - name: copy stdout test result to undercloud and check command
+      copy: content="{{ test_ha_keystone_constraint_removal_cmd.stdout }}" dest="{{ validate_ha_logs_dir }}/test_ha_keystone_constraint_removal_stdout.log"
+  rescue:
+    - name: copy stderr test result to undercloud and check command
+      copy: content="{{ test_ha_keystone_constraint_removal_cmd.stderr }}" dest="{{ validate_ha_logs_dir }}/test_ha_keystone_constraint_removal_stderr.log"
   when: test_ha_keystone_constraint_removal|bool
 
-- name: HA test NG A (overcloud)
-  delegate_to: overcloud-controller-0
-  shell: >
-    {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_pacemaker-light-a -r {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_pacemaker-light > {{ overcloud_working_dir }}/test_ha_ng-a.log 2>&1
+# Test: NG A
+- block:
+    - name: HA test NG A (overcloud)
+      delegate_to: overcloud-controller-0
+      shell: >
+        {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_pacemaker-light-a -r {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_pacemaker-light
+      register: test_ha_ng_a_cmd
+  always:
+    - name: copy stdout test result to undercloud and check command
+      copy: content="{{ test_ha_ng_a_cmd.stdout }}" dest="{{ validate_ha_logs_dir }}/test_ha_ng_a_stdout.log"
+  rescue:
+    - name: copy stderr test result to undercloud and check command
+      copy: content="{{ test_ha_ng_a_cmd.stderr }}" dest="{{ validate_ha_logs_dir }}/test_ha_ng_a_stderr.log"
   when: test_ha_ng_a|bool
 
-- name: HA test NG B (overcloud)
-  delegate_to: overcloud-controller-0
-  shell: >
-    {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_pacemaker-light-b -r {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_pacemaker-light > {{ overcloud_working_dir }}/test_ha_ng-b.log 2>&1
+# Test: NG B
+- block:
+    - name: HA test NG B (overcloud)
+      delegate_to: overcloud-controller-0
+      shell: >
+        {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_pacemaker-light-b -r {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_pacemaker-light
+      register: test_ha_ng_b_cmd
+  always:
+    - name: copy stdout test result to undercloud and check command
+      copy: content="{{ test_ha_ng_b_cmd.stdout }}" dest="{{ validate_ha_logs_dir }}/test_ha_ng_b_stdout.log"
+  rescue:
+    - name: copy stderr test result to undercloud and check command
+      copy: content="{{ test_ha_ng_b_cmd.stderr }}" dest="{{ validate_ha_logs_dir }}/test_ha_ng_b_stderr.log"
   when: test_ha_ng_b|bool
 
-- name: HA test NG C (overcloud)
-  delegate_to: overcloud-controller-0
-  shell: >
-    {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_pacemaker-light-c -r {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_pacemaker-light > {{ overcloud_working_dir }}/test_ha_ng-c.log 2>&1
+# Test: NG C
+- block:
+    - name: HA test NG C (overcloud)
+      delegate_to: overcloud-controller-0
+      shell: >
+        {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/test/test_pacemaker-light-c -r {{ overcloud_working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_pacemaker-light
+      register: test_ha_ng_c_cmd
+  always:
+    - name: copy stdout test result to undercloud and check command
+      copy: content="{{ test_ha_ng_c_cmd.stdout }}" dest="{{ validate_ha_logs_dir }}/test_ha_ng_c_stdout.log"
+  rescue:
+    - name: copy stderr test result to undercloud and check command
+      copy: content="{{ test_ha_ng_c_cmd.stderr }}" dest="{{ validate_ha_logs_dir }}/test_ha_ng_c_stderr.log"
   when: test_ha_ng_c|bool
 
-- name: HA Test instance deploy on the overcloud (undercloud)
-  delegate_to: undercloud
-  shell: >
-    {{ working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ working_dir }}/tripleo-director-ha-test-suite/test/test_instance-creation -r {{ working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_instance-creation -u > {{ working_dir }}/test_ha_instance.log 2>&1
+# Test: Instance deployment
+- block:
+    - name: HA Test instance deploy on the overcloud (undercloud)
+      shell: >
+        {{ working_dir }}/tripleo-director-ha-test-suite/TD-ha-test-suite.sh -t {{ working_dir }}/tripleo-director-ha-test-suite/test/test_instance-creation -r {{ working_dir }}/tripleo-director-ha-test-suite/recovery/recovery_instance-creation -u
+      register: test_ha_instance_cmd
+  always:
+    - name: copy stdout test result to undercloud and check command
+      copy: content="{{ test_ha_instance_cmd.stdout }}" dest="{{ validate_ha_logs_dir }}/test_ha_instance_stdout.log"
+  rescue:
+    - name: copy stderr test result to undercloud and check command
+      copy: content="{{ test_ha_instance_cmd.stderr }}" dest="{{ validate_ha_logs_dir }}/test_ha_instance_stderr.log"
   when: test_ha_instance|bool
