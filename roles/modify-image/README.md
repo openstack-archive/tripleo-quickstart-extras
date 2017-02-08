@@ -19,6 +19,8 @@ Role Variables
 
 * `image_to_modify` -- the image that virt-customize will operate on
 * `modify_script` -- the script that will be run inside the image
+* `modify_image_upload_files` -- list of src/dest of files to upload to image
+  (files are uploaded before running the script)
 * `modify_image_extract_list` -- list of artifacts to extract after the image
    is modified
 * `modify_image_working_dir` -- directory containing image and script. This is
@@ -68,6 +70,31 @@ Example Usage
     image_to_modify: "{{ working_dir }}/undercloud.qcow2"
     modify_script: "{{ working_dir }}/undercloud_convert.sh"
     modify_image_verbose: true
+  roles:
+    - modify-image
+
+- name: Upload files to image
+  hosts: virthost
+  vars:
+    image_to_modify: "{{ working_dir }}/undercloud.qcow2"
+    modify_image_upload_files:
+      - src: /tmp/file_to_upload.tar.gz
+        dest: /home/user/renamed_file.tar.gz
+      - src: /home/local_user/file
+        dest: /home/image_user/
+  roles:
+    - modify-image
+
+- name: Upload files to image and run script
+  hosts: virthost
+  vars:
+    image_to_modify: "{{ working_dir }}/undercloud.qcow2"
+    modify_image_upload_files:
+      - src: /tmp/file_to_upload.tar.gz
+        dest: /home/user/renamed_file.tar.gz
+      - src: /home/local_user/file
+        dest: /tmp/
+    modify_script: "{{ working_dir }}/undercloud_convert.sh"
   roles:
     - modify-image
 

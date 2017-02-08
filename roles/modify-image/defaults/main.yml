@@ -6,6 +6,9 @@
 # image_to_modify:
 # modify_script:
 
+# The upload list of files
+modify_image_upload_files: []
+
 # The extract list defaults to empty list
 modify_image_extract_list: []
 
