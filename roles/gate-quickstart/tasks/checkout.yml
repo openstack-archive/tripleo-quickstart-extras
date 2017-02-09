@@ -3,6 +3,11 @@
   set_fact:
     gated_project_name: '{{ gated_change.project | regex_replace("^.*/", "") }}'
 
+- name: Set project name when there is a dependency on tripleo-quickstart
+  set_fact:
+    gated_project_name: 'tripleo-quickstart-gate-repo'
+  when: gated_change.project == "openstack/tripleo-quickstart"
+
 - name: |
         Remove previously checked out git repo
         (workaround for ansible bug https://github.com/ansible/ansible-modules-core/issues/5504 )
