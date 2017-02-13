@@ -8,6 +8,12 @@
       dest: "{{ working_dir }}/stackviz_static"
       use_ssh_args: true
 
+- name: Install pip
+  easy_install:
+    name: pip
+    state: present
+  become: true
+
 - name: Install stackviz
   pip:
     name: "."
