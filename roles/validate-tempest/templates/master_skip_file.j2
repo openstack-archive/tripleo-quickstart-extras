@@ -26,3 +26,11 @@
 #rhbz1411690
 -tempest.scenario.test_security_groups_basic_ops.TestSecurityGroupsBasicOps.test_cross_tenant_traffic
 -tempest.scenario.test_security_groups_basic_ops.TestSecurityGroupsBasicOps.test_multiple_security_groups
+{% if not enable_cinder_backup|default(false)|bool %}
+# Cinder backup is not enabled by default in tripleo only in particular
+# scenarios
+-tempest.api.volume.admin.test_volumes_backup.VolumesBackupsAdminV1Test
+-tempest.api.volume.admin.test_volumes_backup.VolumesBackupsAdminV2Test
+-tempest.api.volume.test_volumes_backup.VolumesBackupsV1Test
+-tempest.api.volume.test_volumes_backup.VolumesBackupsV2Test
+{% endif %}
