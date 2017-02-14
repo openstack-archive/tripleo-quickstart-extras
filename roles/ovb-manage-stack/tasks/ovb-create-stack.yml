@@ -110,10 +110,8 @@
 - name: Build nodes.json file to be used as instackenv.json
   shell: >
       chdir={{ local_working_dir }}
-      export OS_USERNAME="{{ os_username }}";
-      export OS_PASSWORD="{{ os_password }}";
-      export OS_TENANT_NAME="{{ os_tenant_name }}";
-      export OS_AUTH_URL="{{ os_auth_url }}";
+      export OS_CLIENT_CONFIG_FILE="{{ local_working_dir }}/clouds.yaml";
+      export OS_CLOUD="{{ cloud_name}}";
       {{ ovb_dir }}/bin/build-nodes-json --env {{ local_working_dir }}/{{ prefix }}env.yaml
   register: nodes_json
   no_log: true
