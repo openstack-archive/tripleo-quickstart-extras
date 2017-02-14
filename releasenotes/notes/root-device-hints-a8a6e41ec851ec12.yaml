@@ -1,0 +1,21 @@
+---
+features:
+  - Added the possibility to give root device hints
+    for nodes, covering the same type of hints as
+    Ironic allows.
+deprecations:
+  - Currently only support for disk size hint was possible
+    on OOOQ. This was using the ``disk_root_device_size``
+    setting, as well as the disk property on instackenv.json
+    This feature is not being removed, but the usage of new
+    root device hintes feature is prefered. If some device
+    hints are given using this new env setting, the old
+    way will be ignored.
+    In the future, ``disk_root_device_size`` hint will need
+    to be deprecated.
+fixes:
+  - Currently OOOQ deploys on baremetal, on servers with multiple
+    disks, is not behaving correctly. There was the possibility
+    of giving root device hints, but only based on size. On systems
+    where the disk size was the same, it was impossible to target
+    the right disk.
