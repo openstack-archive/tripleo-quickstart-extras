@@ -8,28 +8,28 @@ artcl_collect_list:
   - /var/lib/heat-config/heat-config-script/
   - /var/tmp/sosreport*
   - /etc/
-  - /home/stack/.instack/install-undercloud.log
-  - /home/stack/stackrc
-  - /home/stack/overcloudrc
-  - /home/stack/*.log
-  - /home/stack/*.json
-  - /home/stack/*.conf
-  - /home/stack/*.yml
-  - /home/stack/*.yaml
-  - /home/stack/*.sh
-  - /home/stack/*.rst
-  - /home/stack/*.pem
-  - /home/stack/deploy-overcloudrc
-  - /home/stack/network-environment.yaml
-  - /home/stack/skip_file
-  - /home/stack/tempest/*.xml
-  - /home/stack/tempest/*.html
-  - /home/stack/tempest/*.log
-  - /home/stack/tempest/etc/*.conf
-  - /home/stack/local_tht/
-  - /home/stack/gating_repo.tar.gz
-  - /home/stack/browbeat/ansible/bug_report.log
-  - /home/stack/browbeat/results/
+  - /home/*/.instack/install-undercloud.log
+  - /home/*/stackrc
+  - /home/*/overcloudrc
+  - /home/*/*.log
+  - /home/*/*.json
+  - /home/*/*.conf
+  - /home/*/*.yml
+  - /home/*/*.yaml
+  - /home/*/*.sh
+  - /home/*/*.rst
+  - /home/*/*.pem
+  - /home/*/deploy-overcloudrc
+  - /home/*/network-environment.yaml
+  - /home/*/skip_file
+  - /home/*/tempest/*.xml
+  - /home/*/tempest/*.html
+  - /home/*/tempest/*.log
+  - /home/*/tempest/etc/*.conf
+  - /home/*/local_tht/
+  - /home/*/gating_repo.tar.gz
+  - /home/*/browbeat/ansible/bug_report.log
+  - /home/*/browbeat/results/
   - /usr/share/openstack-tripleo-heat-templates/
   - /tmp/tripleoclient*
 artcl_exclude_list:
