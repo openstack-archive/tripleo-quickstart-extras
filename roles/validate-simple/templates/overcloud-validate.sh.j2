@@ -18,7 +18,7 @@ function cleanup {
 {% else  %}
     openstack stack delete --yes {{ validate_stack_name }}
 {% endif %}
-    if [[ $(tripleo wait_for -w 300 -d 30 -s "Stack not found" -- "heat stack-show {{ validate_stack_name }}") ]]; then
+    if [[ $({{ working_dir }}/wait_for -w 300 -d 30 -s "Stack not found" -- "heat stack-show {{ validate_stack_name }}") ]]; then
         echo "openstack stack delete"
     else
         if [[ $(heat stack-list | grep {{ validate_stack_name }} | grep -i failed) ]]; then
@@ -103,7 +103,7 @@ heat stack-create {{ validate_stack_name }} --template-file  {{ working_dir }}/t
 ## * Give time to the instance to boot
 
 ### --stop_docs
-/bin/bash /usr/libexec/openstack-tripleo/wait_for -w 600 --delay 30 \
+/bin/bash {{ working_dir }}/wait_for -w 600 --delay 30 \
     --success-match {{ validate_success_status }} -- heat stack-show {{ validate_stack_name }}
 sleep 30
 
