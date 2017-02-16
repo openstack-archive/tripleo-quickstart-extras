@@ -33,5 +33,5 @@
   register: post_scale_node_count
 
 - name: Check that post scale node count is correct
-  fail: msg=Overcloud nova list does not show expected number of {{ node_to_scale }} services
-  when: post_scale_node_count.stdout != {{ final_scale_value }}
+  fail: msg="Overcloud nova list does not show expected number of {{ node_to_scale }} services"
+  when: post_scale_node_count.stdout|int != {{ final_scale_value|int }}
