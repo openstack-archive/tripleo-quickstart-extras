@@ -41,26 +41,6 @@ Role Network Variables
 - `undercloud_network_cidr`: <'192.168.24.0/24'> -- the network cidr for the undercloud, note this
 also currently the default cidr used in other CI environments for tripleo.
 
-The following variables are nested under network_environment_args.  The values are calculated at
-run time using ansible jinja filters.
-
-**Note:** See additional documentation at http://docs.ansible.com/ansible/playbooks_filters_ipaddr.html and
-the ansible code base ansible/plugins/filter/ipaddr.py
-
-```
-network_environment_args:
-  ExternalNetCidr: "{{ undercloud_external_network_cidr }}"
-  ExternalAllocationPools: >
-    [{'start': '{{ undercloud_external_network_cidr|nthhost(4) }}',
-    'end': '{{ undercloud_external_network_cidr|nthhost(250) }}'}]
-  NeutronExternalNetworkBridge: ""
-  ControlPlaneSubnetCidr: "{{ undercloud_network_cidr|ipaddr('prefix') }}"
-  ControlPlaneDefaultRoute: "{{ undercloud_network_cidr|nthhost(1) }}"
-  EC2MetadataIp: "{{ undercloud_network_cidr|nthhost(1) }}"
-  DnsServers: [ '{{ external_network_cidr|nthhost(1) }}' ]
-
-```
-
 Example Playbook
 ----------------
 
