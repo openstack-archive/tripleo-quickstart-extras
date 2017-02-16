@@ -38,6 +38,7 @@ artcl_exclude_list:
   - /etc/services
   - /etc/selinux/targeted
   - /etc/pki/ca-trust/extracted
+  - /etc/alternatives
 artcl_collect_dir: "{{ local_working_dir }}/collected_files"
 artcl_gzip_only: true
 artcl_tar_gz: false
