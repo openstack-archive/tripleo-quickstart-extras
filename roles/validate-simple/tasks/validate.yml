@@ -12,6 +12,12 @@
     src: "{{ validate_template }}"
     dest: "{{ working_dir }}/tenantvm_floatingip.yaml"
 
+- name: Create wait_for script
+  copy:
+    src: wait_for
+    dest: "{{ working_dir }}/wait_for"
+    mode: 0755
+
 - name: Validate the overcloud
   shell: |
     {{ working_dir }}/overcloud-validate.sh > {{ validate_log }} 2>&1
