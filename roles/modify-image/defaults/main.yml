@@ -12,6 +12,9 @@ modify_image_upload_files: []
 # The extract list defaults to empty list
 modify_image_extract_list: []
 
+# The package install list defaults to empty list
+modify_image_install_packages: []
+
 # By default we use the global working directory for modifying images
 modify_image_working_dir: "{{ working_dir }}"
 

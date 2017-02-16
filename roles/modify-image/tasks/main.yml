@@ -31,6 +31,10 @@
   set_fact: vc_args="{{ vc_args }} --upload {{ item.src }}:{{ item.dest }}"
   with_items: "{{ modify_image_upload_files }}"
 
+- name: virt-customize args --> install packages
+  set_fact: vc_args="{{ vc_args }} --install {{ modify_image_install_packages|join(",") }}"
+  when: modify_image_install_packages
+
 - name: virt-customize args --> modify script
   set_fact: vc_args="{{ vc_args }} --run {{ modify_script }}"
   when: modify_script is defined
