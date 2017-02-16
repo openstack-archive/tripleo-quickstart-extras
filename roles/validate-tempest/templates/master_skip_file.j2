@@ -34,3 +34,8 @@
 -tempest.api.volume.test_volumes_backup.VolumesBackupsV1Test
 -tempest.api.volume.test_volumes_backup.VolumesBackupsV2Test
 {% endif %}
+# Glance isn't populating metadata definition database LP1664995
+-tempest.api.image.v2.test_images_metadefs_namespaces.MetadataNamespacesTest.test_basic_metadata_definition_namespaces
+-tempest.api.image.v2.test_images_metadefs_resource_types.MetadataResourceTypesTest.test_basic_meta_def_resource_type_association
+-tempest.api.image.v2.test_images_metadefs_namespace_properties.MetadataNamespacePropertiesTest.test_basic_meta_def_namespace_property
+
