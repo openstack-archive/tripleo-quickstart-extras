@@ -113,3 +113,9 @@
       {{ extra_args }}
       -e {{ working_dir }}/overcloud_services.yaml
   when: composable_services
+
+- name: set the scenario args for composable roles
+  set_fact:
+    scenario_args: >-
+      -e {{ overcloud_templates_path }}/ci/environments/{{ composable_scenario }}
+  when: deploy_composable_scenario|bool

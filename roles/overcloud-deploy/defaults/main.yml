@@ -7,6 +7,10 @@ post_deploy_script: overcloud-deploy-post.sh.j2
 post_deploy_log: "{{ working_dir }}/overcloud_deploy_post.log"
 validate_script: overcloud-validate.sh.j2
 
+# Deploy a specific scenario THT to the Overcloud
+deploy_composable_scenario: false
+composable_scenario: ""
+
 # `floating_ip_cidr` controls the address range used in the network
 # created for tempest tests.  We use Ansible's [ipaddr][] filter to
 # calculate addresses within this range so that you can provide a
@@ -72,6 +76,7 @@ deployed_server_prepare_script: deployed_server_prepare.sh.j2
 deployed_server_prepare_log: "{{ working_dir }}/deployed_server_prepare.txt"
 
 container_args: ""
+scenario_args: ""
 
 deploy_args: >-
   {{ libvirt_args }}
@@ -79,6 +84,7 @@ deploy_args: >-
   {{ timeout_args }}
   {{ cloud_name_args }}
   {{ container_args }}
+  {{ scenario_args }}
   {{ network_args }}
   {{ pacemaker_args }}
   {{ workers_args }}
