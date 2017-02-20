@@ -90,7 +90,7 @@ sudo mistral-db-manage populate
 ## * Introspect hardware attributes of nodes.
 ## ::
 
-    {% if release == 'mitaka' %}
+    {% if release in ['liberty', 'mitaka', 'newton' ] %}
 
         openstack baremetal introspection bulk start
 
