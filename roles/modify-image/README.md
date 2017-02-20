@@ -21,6 +21,8 @@ Role Variables
 * `modify_script` -- the script that will be run inside the image
 * `modify_image_upload_files` -- list of src/dest of files to upload to image
   (files are uploaded before running the script)
+* `modify_image_install_packages` -- list of packages to install in the image
+  (packages are installed before running the script)
 * `modify_image_extract_list` -- list of artifacts to extract after the image
    is modified
 * `modify_image_working_dir` -- directory containing image and script. This is
@@ -97,6 +99,29 @@ Example Usage
     modify_script: "{{ working_dir }}/undercloud_convert.sh"
   roles:
     - modify-image
+
+- name: Install packages in the image
+  hosts: virthost
+  vars:
+    image_to_modify: "{{ working_dir }}/overcloud-full.qcow2"
+    modify_image_install_packages:
+      - 'package_to_be_installed_1'
+      - 'package_to_be_installed_2'
+      - 'package_to_be_installed_3'
+  include_role:
+    name: modify-image
+
+- name: Upload an RPM file and install it in the image
+  hosts: virthost
+  vars:
+    image_to_modify: "{{ working_dir }}/overcloud-full.qcow2"
+    modify_image_upload_files:
+      - src: "/tmp/rpm_to_be_uploaded.rpm"
+        dest: /root/rpm_to_be_installed.rpm
+    modify_image_install_packages:
+      - '/root/rpm_to_be_installed.rpm'
+  include_role:
+    name: modify-image
 
 ```
 
