@@ -29,6 +29,11 @@ Role Variables
 
 Role Network Variables
 ----------------------
+- `overcloud_dns_servers`: -- a list of nameservers to be used for the
+  overcloud nodes. These will result in the 'DnsServers' parameter in heat, and
+  will be added to the `network_environment_args` (see below). Defaults to
+  [ '{{ external_network_cidr|nthhost(1) }}' ]
+
 The following variables are nested under network_environment_args.  The values
 are calculated at run time using ansible jinja filters. This are, in turn,
 persisted to a heat environment file that is used in for the overcloud
@@ -47,7 +52,7 @@ network_environment_args:
   ControlPlaneSubnetCidr: "{{ undercloud_network_cidr|ipaddr('prefix') }}"
   ControlPlaneDefaultRoute: "{{ undercloud_network_cidr|nthhost(1) }}"
   EC2MetadataIp: "{{ undercloud_network_cidr|nthhost(1) }}"
-  DnsServers: [ '{{ external_network_cidr|nthhost(1) }}' ]
+  DnsServers: "{{ overcloud_dns_servers }}"
 
 ```
 
