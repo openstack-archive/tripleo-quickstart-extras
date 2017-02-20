@@ -1,0 +1,7 @@
+---
+
+freeipa_hostname: "ipa.tripleodomain"
+freeipa_ip: "{{ undercloud_network_cidr|nthhost(250) }}"
+undercloud_fqdn: "undercloud.tripleodomain"
+provisioning_cidr: "{{ undercloud_network_cidr }}"
+supplemental_user: "stack"
