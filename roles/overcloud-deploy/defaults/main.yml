@@ -69,6 +69,7 @@ workers_args: ""
 backup_args: ""
 
 ssl_args: ""
+tls_everywhere_args: ""
 validation_args: "--validation-warnings-fatal"
 
 deployed_server: false
@@ -90,6 +91,7 @@ deploy_args: >-
   {{ workers_args }}
   {{ backup_args }}
   {{ ssl_args }}
+  {{ tls_everywhere_args }}
   {{ extra_tht_config_args|default('') }}
   {{ validation_args }}
   {{ extra_args }}

@@ -1,3 +1,6 @@
+- include: novajoin_prep.yml
+  when: enable_tls_everywhere|bool and prepare_novajoin|bool
+
 - include: create-scripts.yml
   tags:
     - undercloud-scripts

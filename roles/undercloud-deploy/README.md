@@ -35,6 +35,19 @@ http://docs.openstack.org/developer/tripleo-quickstart/accessing-libvirt.html
   parameter from undercloud.conf.
 - undercloud_undercloud_admin_host: Sets up the 'undercloud_admin_host' from
   undercloud.conf.
+- `undercloud_undercloud_hostname`: Sets up the 'undercloud_hostname' value from
+  undercloud.conf.
+- `prepare_novajoin`: If set to true, it will install novajoin in the undercloud,
+  and run a script that will create the required privileges/permissions in
+  FreeIPA, as well as the undercloud host entry. this requires
+  'enable_tls_everywhere' to be set to true, and the following variables to be
+  properly defined: 'freeipa_admin_password', 'freeipa_server_hostname',
+  'overcloud_cloud_domain', 'undercloud_undercloud_hostname'. If you plan to do
+  this yourself, you can set this variable to false. Defaults to true.
+- `freeipa_admin_password`: The password for the admin principal for FreeIPA.
+  This will be used to run the script to prepare FreeIPA for novajoin.
+- `freeipa_server_hostname`: The hostname for the FreeIPA server.
+  This will be used to run the script to prepare FreeIPA for novajoin.
 
 Role Network Variables
 ----------------------
