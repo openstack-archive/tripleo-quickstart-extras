@@ -66,4 +66,17 @@ sudo ifup ifcfg-eth6
 
 {%endif%}
 
+{% if enable_tls_everywhere|bool and overcloud_dns_servers and release not in ['mitaka', 'newton'] %}
+
+## * Set the DNS server for the overcloud's ctlplane subnet. This will be used briefly before
+##   os-net-config runs in the overcloud nodes, but for TLS-everywhere, we need it for discovery to
+##   work in the FreeIPA enrollment.
+## ::
+
+CTLPLANE_SUBNET=$(openstack subnet show ctlplane-subnet -f value -c id)
+neutron subnet-update $CTLPLANE_SUBNET \
+    {% for nameserver in overcloud_dns_servers %} --dns-nameserver "{{ nameserver }}" {% endfor %}
+
+{% endif %}
+
 ### --stop_docs
