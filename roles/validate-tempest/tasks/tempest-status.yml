@@ -1,0 +1,16 @@
+---
+- name: Tempest failed if rc code is not 0
+  set_fact:
+    tempest_status: failed
+  when: tempest_result.rc != 0
+
+- name: Write down tempest result
+  shell: >
+    echo '{ "tempest_status": "{{ tempest_status|default('passed') }}" }' >
+    "{{ local_working_dir }}/tempest_status.json"
+
+- name: import tempest_status from file
+  include_vars: "{{ local_working_dir }}/tempest_status.json"
+
+- name: echo tempest status
+  debug: var=tempest_status
