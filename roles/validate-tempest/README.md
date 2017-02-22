@@ -14,11 +14,10 @@ Role Variables
 
 * `tempest_undercloud`: false/true - whether to run tempest on installed undercloud
 * `tempest_overcloud`: false/true - whether to run tempest on installed overcloud
-* `tempest_source`: rdo/upstream - Where to take tempest sources from - RDO package or upstream git repo
 * `tempest_format`: venv/packages - Which tempest installation to use - either install python virtual environment
                     with installed there python modules from requirements file, or to use installed with RDO RPM packages
 * `tempest_log_file` - name of log file for tempest run
-* `test_regex` - tests regular expression for testr run, i.e. ".*smoke"
+* `test_regex` - tests regular expression for testr run, i.e. smoke
 * `run_tempest`: false/true - to run tempest or not
 * `skip_file_src`: path to skip tests file, set it empty if running without skip list: `skip_file_src=''`
 * `tempest_workers`: int - how many parallel workers to run (default is number of cores)

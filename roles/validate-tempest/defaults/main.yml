@@ -6,7 +6,7 @@ public_net_pool_start: "{{ floating_ip_cidr|nthhost(100) }}"
 public_net_pool_end: "{{ floating_ip_cidr|nthhost(120) }}"
 public_net_gateway: "{{ floating_ip_cidr|nthhost(1) }}"
 tempest_log_file: 'tempest_output.log'
-test_regex: '.*smoke'
+test_regex: smoke
 
 public_net_name: public
 public_network_type: flat
@@ -22,8 +22,7 @@ tempest_config: true
 tempest_overcloud: true
 run_tempest: true
 post_tempest: true
-tempest_source: rdo # rdo or upstream
-tempest_format: venv # venv or packages
+tempest_format: packages # venv or packages
 skip_file_src: "{{ release }}_skip_file.j2"
 skip_file: skip_file
 tempest_isolated: false
