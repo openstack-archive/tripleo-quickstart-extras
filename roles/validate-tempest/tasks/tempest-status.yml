@@ -8,6 +8,7 @@
   shell: >
     echo '{ "tempest_status": "{{ tempest_status|default('passed') }}" }' >
     "{{ local_working_dir }}/tempest_status.json"
+  delegate_to: localhost
 
 - name: import tempest_status from file
   include_vars: "{{ local_working_dir }}/tempest_status.json"
