@@ -71,6 +71,16 @@
       debug: var=overcloud_deploy_result
       failed_when: overcloud_deploy_result == "failed"
 
+# Execute sanity checks agsinst the overcloud deployment
+- name: Sanity check the overcloud services
+  hosts: undercloud
+  tags:
+    - overcloud-validate
+  gather_facts: no
+  roles:
+    - { role: validate-sanity-checks,
+        when: run_sanity_checks|default(false)|bool }
+
 # Validate the deployment
 - name:  validate the overcloud
   hosts: undercloud
@@ -88,3 +98,4 @@
   gather_facts: no
   roles:
     - { role: validate-tempest, when: run_tempest|bool }
+
