@@ -7,9 +7,13 @@ overcloud_nodes:
     flavor: control
     virtualbmc_port: 6230
 
+  - name: compute_0
+    flavor: compute
+    virtualbmc_port: 6231
+
 composable_services: true
 deploy_composable_scenario: true
-composable_scenario: scenario001-multinode.yaml
+composable_scenario: scenario005-multinode.yaml
 
 # Tell tripleo how we want things done.
 extra_args: >-
@@ -29,6 +33,8 @@ ssl_overcloud: false
 test_ping: false
 run_tempest: false
 tempest_workers: 4
+
+# TODO (bkero): Add additional log collection for scenario services
 
 # options below direct automatic doc generation by tripleo-collect-logs
 artcl_gen_docs: true
