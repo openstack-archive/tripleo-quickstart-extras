@@ -3,6 +3,7 @@
 artcl_collect: true
 artcl_collect_list:
   - /var/log/
+  - /var/lib/pacemaker/cib
   - /var/lib/heat-config/heat-config-puppet/
   - /var/lib/heat-config/heat-config-script/
   - /var/tmp/sosreport*
