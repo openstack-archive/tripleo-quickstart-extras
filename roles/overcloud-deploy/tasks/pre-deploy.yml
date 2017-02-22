@@ -63,7 +63,7 @@
 
 - name: set novajoin/TLS everywhere fact
   set_fact:
-      tls_everywhere_novajoin_args: >-
+      tls_everywhere_args: >-
           -e {{ overcloud_templates_path }}/environments/services/haproxy-public-tls-certmonger.yaml
           -e {{ overcloud_templates_path }}/environments/enable-internal-tls.yaml
           -e {{ overcloud_templates_path }}/environments/tls-everywhere-endpoints-dns.yaml
