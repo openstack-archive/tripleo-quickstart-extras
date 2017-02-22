@@ -20,6 +20,7 @@ Role Variables
 - step_root_device_size: <false> -- add disk size hints if needed for the environment under test
 - disk_root_device_size: <1843> -- size hint for selecting the correct disk during introspection
 - whole_disk_images: false -- shows if we want to use partition or whole disk images (this will be available starting on Ocata)
+- step_introspect_with_retry: <false> -- a more robust version of the step_introspect option
 
 Dependencies
 ------------
