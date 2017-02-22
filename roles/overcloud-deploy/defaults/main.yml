@@ -72,6 +72,10 @@ ssl_args: ""
 tls_everywhere_args: ""
 validation_args: "--validation-warnings-fatal"
 
+enable_swap: false
+swap_type: "file"
+swap_args: ""
+
 deployed_server: false
 deployed_server_prepare_script: deployed_server_prepare.sh.j2
 deployed_server_prepare_log: "{{ working_dir }}/deployed_server_prepare.txt"
@@ -94,6 +98,7 @@ deploy_args: >-
   {{ tls_everywhere_args }}
   {{ extra_tht_config_args|default('') }}
   {{ validation_args }}
+  {{ swap_args }}
   {{ extra_args }}
 
 composable_services: false

@@ -129,3 +129,15 @@
     scenario_args: >-
       -e {{ overcloud_templates_path }}/ci/environments/{{ composable_scenario }}
   when: deploy_composable_scenario|bool
+
+- name: set swap_args to enable swap file
+  set_fact:
+    swap_args: >-
+      -e {{ overcloud_templates_path }}/environments/enable-swap.yaml
+  when: enable_swap|bool and swap_type == 'file'
+
+- name: set swap_args to enable swap partition
+  set_fact:
+    swap_args: >-
+      -e {{ overcloud_templates_path }}/environments/enable-swap-partition.yaml
+  when: enable_swap|bool and swap_type == 'partition'
