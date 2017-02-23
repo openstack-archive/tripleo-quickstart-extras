@@ -18,8 +18,9 @@ modify_image_install_packages: []
 # By default we use the global working directory for modifying images
 modify_image_working_dir: "{{ working_dir }}"
 
-# ram and cpu are not set by default to take libguestfs defaults by default
+# ram, cpu and root password are not set by default to take libguestfs defaults by default
 # modify_image_vc_ram:
 # modify_image_vc_cpu:
+# modify_image_vc_root_password:
 modify_image_vc_verbose: false
 modify_image_vc_trace: false

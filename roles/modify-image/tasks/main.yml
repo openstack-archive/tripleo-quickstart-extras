@@ -42,6 +42,10 @@
   set_fact: _vc_args="{{ _vc_args }} --run {{ modify_script }}"
   when: modify_script is defined
 
+- name: virt-customize args --> root password
+  set_fact: _vc_args="{{ _vc_args }} --root-password password:{{ modify_image_vc_root_password }}"
+  when: modify_image_vc_root_password is defined
+
 - name: Run virt-customize on the provided image
   shell: >
     virt-customize {{ _vc_args }}

@@ -31,6 +31,8 @@ Role Variables
 * `modify_image_vc_cpu` -- number of CPUs to give the virt-customize VM
 * `modify_image_vc_verbose` -- whether to run virt-customize with verbose flag
 * `modify_image_vc_trace` -- whether to run virt-customize with trace flag
+* `modify_image_vc_root_password` -- password for the root account of the image
+  (useful for baremetal envs)
 
 Example Usage
 -------------
