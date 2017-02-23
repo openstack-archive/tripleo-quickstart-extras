@@ -2,13 +2,7 @@ parameter_defaults:
   # NovaImage: atomic-image # FYI the team is using overcloud-full currently https://review.openstack.org/#/c/395880/
   # Defaults to 'tripleoupstream'.  Specify a local docker registry
   # Example: 192.0.2.1:8787/tripleoupstream
-  DockerNamespace: 192.168.24.1:8787/tripleoupstream
+  DockerNamespace: {{ ctl_plane_ip }}:8787/tripleoupstream
   # Enable local Docker registry
   DockerNamespaceIsRegistry: true
-  DockerAgentImage: heat-docker-agents:newton
-  # Docker containers
-  DockerNovaComputeImage: centos-binary-nova-compute:newton
-  DockerLibvirtImage: centos-binary-nova-libvirt:newton
-  DockerOpenvswitchImage: centos-binary-neutron-openvswitch-agent:newton
-  # DockerOvsVswitchdImage: centos-binary-openvswitch-vswitchd:newton
-  # DockerOpenvswitchDBImage: centos-binary-openvswitch-db-server:newton
+
