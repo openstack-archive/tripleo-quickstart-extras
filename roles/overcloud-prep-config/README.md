@@ -26,6 +26,11 @@ Role Variables
   'baremetal' or 'ovb'
 - `extra_tht_configs`: -- a list of files to copy to the overcloud and add as
   extra config to the overcloud-deployment command
+- `network_isolation_type`: single-nic-vlans, multiple-nics, bond-with-vlans, public-bond -
+  type of network isolation to use (default: single-nic-vlans) [1]
+  deprecated types - single_nic_vlans, bond_with_vlans, multi-nic
+
+[1] Names are derived from the `tripleo-heat-templates configuration <https://github.com/openstack/tripleo-heat-templates/tree/master/network/config>`_
 
 Role Network Variables
 ----------------------

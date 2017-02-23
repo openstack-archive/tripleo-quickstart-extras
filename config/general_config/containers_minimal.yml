@@ -15,6 +15,7 @@ extra_args: >-
   --ntp-server pool.ntp.org
 
 network_isolation: true
+network_isolation_type: 'single-nic-vlans'
 enable_pacemaker: false
 overcloud_ipv6: false
 

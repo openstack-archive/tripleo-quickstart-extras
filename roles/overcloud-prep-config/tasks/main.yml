@@ -1,4 +1,11 @@
 ---
+- name: Deprecation message for network isolation types
+  debug:
+    msg: >-
+      Network isolation type 'bond_with_vlans' is deprecated in R release,
+      please use 'bond-with-vlans'.
+  when: network_isolation_type is defined and network_isolation_type == "bond_with_vlans"
+
 - name: Add PublicVirtualFixedIPs Argument to network environment file
   set_fact:
     network_environment_args: >-
@@ -25,7 +32,8 @@
         src: "{{ baremetal_network_environment }}"
         dest: "{{ working_dir }}/network-environment.yaml"
 
-- when: network_isolation_type is defined and network_isolation_type == "bond_with_vlans"
+# NOTE: 'bond_with_vlans' is deprecated
+- when: network_isolation_type is defined and network_isolation_type in ["bond-with-vlans", "bond_with_vlans"]
   block:
 
     - name: Create bond-with-vlans nic-configs script

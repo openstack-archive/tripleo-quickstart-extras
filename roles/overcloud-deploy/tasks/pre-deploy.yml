@@ -1,25 +1,84 @@
 # Note.. the order of heat templates and args is very important.  The last environment that sets a variable takes precedent.
 
-- name: set network_args fact
+- name: Deprecation message for network isolation types
+  debug:
+    msg: >-
+      Network isolation types 'multi-nic', 'bond_with_vlans', 'single_nic_vlans'
+      are deprecated in R release, please use 'multiple-nics', 'bond-with-vlans',
+      'single-nic-vlans'.
+  when: network_isolation_type in ["single_nic_vlans", "bond_with_vlans", "multi-nic"]
+
+# NOTE: 'single_nic_vlans' is deprecated
+- name: set network isolation args for single-nic-vlans IPv4
   set_fact:
-    network_args: >-
+    network_isolation_args: >-
       -e {{ overcloud_templates_path }}/environments/network-isolation.yaml
       -e {{ overcloud_templates_path }}/environments/net-single-nic-with-vlans.yaml
       -e {{ working_dir }}/network-environment.yaml
   when:
-    - network_isolation|bool
-    - not overcloud_ipv6|bool
-    - not containerized_overcloud|bool
+    - network_isolation_type in ["single_nic_vlans", "single-nic-vlans"]
 
-- name: set network_args fact for IPv6
+- name: set network isolation args for bond-with-vlans IPv4
   set_fact:
-    network_args: >-
+    network_isolation_args: >-
+      -e {{ overcloud_templates_path }}/environments/network-isolation.yaml
+      -e {{ overcloud_templates_path }}/environments/net-bond-with-vlans.yaml
+      -e {{ working_dir }}/network-environment.yaml
+  when:
+    - network_isolation_type in ["bond_with_vlans", "bond-with-vlans"]
+
+# NOTE: 'multi-nic' is deprecated
+- name: set network isolation args for multi-nic IPv4
+  set_fact:
+    network_isolation_args: >-
+      -e {{ overcloud_templates_path }}/environments/network-isolation.yaml
+      -e {{ overcloud_templates_path }}/environments/net-multiple-nics.yaml
+      -e {{ working_dir }}/network-environment.yaml
+  when:
+    - network_isolation_type in ["multi-nic", "multiple-nics"]
+    - not overcloud_ipv6|bool
+
+# NOTE: 'multi-nic' is deprecated
+- name: set network isolation args for multi-nic IPv6
+  set_fact:
+    network_isolation_args: >-
       -e {{ overcloud_templates_path }}/environments/network-isolation-v6.yaml
       -e {{ overcloud_templates_path }}/environments/net-multiple-nics-v6.yaml
       -e {{ working_dir }}/network-environment.yaml
   when:
-    - network_isolation|bool
+    - network_isolation_type in ["multi-nic", "multiple-nics"]
     - overcloud_ipv6|bool
+
+# Since there are no nic-configs for public-bond in the default
+# tripleo-heat-templates directory, no public-bond specfic
+# /environments/ file is listed.
+# The network-environment.yaml file can point to path where the
+# public-bond nic-configs are stored.
+- name: set network isolation args for public-bond IPv4
+  set_fact:
+    network_isolation_args: >-
+      -e {{ overcloud_templates_path }}/environments/network-isolation.yaml
+      -e {{ working_dir }}/network-environment.yaml
+  when:
+    - network_isolation_type == "public-bond"
+    - not overcloud_ipv6|bool
+
+- name: set network_args fact
+  set_fact:
+    network_args: >-
+      {% if network_isolation|bool %}{{ network_isolation_args }}{% endif %}
+  when:
+    - not containerized_overcloud|bool
+
+- name: set network_args fact for containers
+  set_fact:
+    network_args: >-
+      -e {{ overcloud_templates_path }}/environments/docker.yaml
+      {{ network_isolation_args }}
+      -e {{ working_dir }}/containers-default-parameters.yaml
+  when:
+    - containerized_overcloud|bool
+    - network_isolation|bool
 
 - name: enable pacemaker
   set_fact:
@@ -104,18 +163,6 @@
   when:
     - containerized_overcloud|bool
     - not network_isolation|bool
-
-- name: set network_args fact for containers
-  set_fact:
-    network_args: >-
-      -e {{ overcloud_templates_path }}/environments/docker.yaml
-      -e {{ overcloud_templates_path }}/environments/network-isolation.yaml
-      -e {{ overcloud_templates_path }}/environments/net-single-nic-with-vlans.yaml
-      -e {{ working_dir }}/network-environment.yaml
-      -e {{ working_dir }}/containers-default-parameters.yaml
-  when:
-    - network_isolation|bool
-    - containerized_overcloud|bool
 
 - name: set composable service args fact
   set_fact:

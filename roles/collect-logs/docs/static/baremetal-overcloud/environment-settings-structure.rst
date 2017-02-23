@@ -70,7 +70,10 @@ Explanation of Directory Contents
  - network-isolation-type (required)
 
     Even if deploying without network isolation, the files should be included in a 'none' directory.
-    There are files examples of the following network isolation types: single_nic_vlans, bond_with_vlans, native_networking, none.
+    There are files examples of the following network isolation types: single-nic-vlans, multiple-nics, bond-with-vlans, public-bond, none [1].
+    Network isolation types 'single_nic_vlans', 'bond_with_vlans', 'multi-nic' will be deprecated.
+
+    [1] Names are derived from the `tripleo-heat-templates configuration <https://github.com/openstack/tripleo-heat-templates/tree/master/network/config>`_
 
  - network-environment.yaml (required, unless deploying with no network isolation)
 
@@ -90,5 +93,5 @@ Explanation of Directory Contents
 
  - requirements_files (required)
 
-   Multiple requirements files can be passed to quickstart.sh to include additional repos. For example, to include IPMI validation, the requirements files would need to include https://github.com/redhat-openstack/ansible-role-tripleo-validate-ipmi.
+   Multiple requirements files can be passed to quickstart.sh to include additional repos. For example, to include IPMI validation, the requirements files would need to include are `here <https://github.com/redhat-openstack/ansible-role-tripleo-validate-ipmi>`_
 

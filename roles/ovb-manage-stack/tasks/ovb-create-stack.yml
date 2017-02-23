@@ -1,4 +1,11 @@
 ---
+- name: Deprecation message for network isolation types
+  debug:
+    msg: >-
+      Network isolation type 'multi-nic' is deprecated in R release,
+      please use 'multiple-nics'.
+  when: network_isolation_type == 'multi-nic'
+
 - name: Ensure local working dir exists
   file:
     path: "{{ local_working_dir }}"
@@ -25,15 +32,16 @@
       dest: "{{ local_working_dir }}/{{ prefix }}env.yaml"
       mode: 0755
 
-- name: Add templates for multi-nic
+# NOTE: 'multi-nic' is deprecated
+- name: Add templates for multiple-nics
   blockinfile:
     dest: "{{ local_working_dir }}/{{ prefix }}env.yaml"
     insertafter: "## in baremetal-networks-all.yaml"
     content: |
-      ## multi-nic
+      ## multiple-nics
         OS::OVB::BaremetalNetworks: {{ templates_dir }}/baremetal-networks-all.yaml
         OS::OVB::BaremetalPorts: {{ templates_dir }}/baremetal-ports-all.yaml
-  when: network_isolation_type == 'multi-nic'
+  when: network_isolation_type in ['multi-nic', 'multiple-nics']
 
 - name: Add templates for public-bond
   blockinfile:

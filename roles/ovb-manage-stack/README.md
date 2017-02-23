@@ -51,7 +51,7 @@ Parameters used the env.yaml file to create the OVB heat stack (See defaults/mai
 - external_net
 - templates_dir
 - ovb_dir
-- network_isolation_type: <multi-nic> -- other options are 'none' and 'public-bond'
+- network_isolation_type: <multiple-nics> -- other options are 'none' and 'public-bond'
 
 - registered_releases -- releases for which images should be available for the undercloud
 

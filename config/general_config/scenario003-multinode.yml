@@ -15,7 +15,7 @@ composable_scenario: scenario003-multinode.yaml
 extra_args: >-
   --ntp-server pool.ntp.org
 
-network_isolation: true
+network_isolation: false
 
 # This enables TLS for the undercloud which will also make haproxy bind to the
 # configured public-vip and admin-vip.

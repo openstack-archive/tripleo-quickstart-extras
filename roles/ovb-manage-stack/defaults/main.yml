@@ -1,6 +1,5 @@
 ---
-
-release: mitaka
+release: newton
 
 node:
     prefix:
@@ -62,11 +61,12 @@ undercloud_image: '{{ prefix }}undercloud.qcow2'
 undercloud_flavor: m1.xlarge
 external_net:  '10.2.1.0/22'
 
-network_isolation_type: multi-nic
+network_isolation_type: multiple-nics
 
 registered_releases:
   - mitaka
   - newton
+  - ocata
   - master
   - rhos-8
   - rhos-9

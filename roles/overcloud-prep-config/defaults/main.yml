@@ -1,7 +1,7 @@
 ---
 
 network_isolation: true
-
+network_isolation_type: single-nic-vlans # multiple-nics, bond-with-vlans, public-bond
 network_environment_file: network-environment.yaml.j2
 
 external_network_cidr: 192.168.23.0/24

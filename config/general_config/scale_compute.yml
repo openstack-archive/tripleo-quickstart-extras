@@ -28,6 +28,7 @@ run_tempest: false
 tempest_config: false
 enable_pacemaker: true
 network_isolation: true
+network_isolation_type: 'single-nic-vlans'
 deploy_timeout: 75
 
 # General deployment info
