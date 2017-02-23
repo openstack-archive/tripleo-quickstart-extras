@@ -18,7 +18,7 @@
 
 - name: Check for success message in log
   command: >
-    /usr/bin/grep 'Stack overcloud CREATE_COMPLETE' {{ deploy_log }}
+    /usr/bin/grep -E 'Stack overcloud (CREATE|UPDATE)_COMPLETE' {{ deploy_log }}
   register: complete_result
   failed_when: complete_result.rc > 1
   changed_when: false
