@@ -47,34 +47,6 @@ sudo systemctl restart openstack-heat-engine
 # https://bugs.launchpad.net/tripleo/+bug/1651621
 sudo iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 8787 -j ACCEPT
 
-## * Create Overcloud Containers Uploads template
-## ::
-
-sudo bash -c 'cat <<EOF > {{ tripleo_common_dir }}/contrib/overcloud_containers.yaml
-uploads:
-    - imagename: tripleoupstream/centos-binary-nova-compute:newton
-      uploader: docker
-      pull_source: docker.io
-      push_destination: {{ ctl_plane_ip }}:8787
-    - imagename: tripleoupstream/centos-binary-nova-libvirt:newton
-      uploader: docker
-      pull_source: docker.io
-      push_destination: {{ ctl_plane_ip }}:8787
-    - imagename: tripleoupstream/centos-binary-neutron-openvswitch-agent:newton
-      uploader: docker
-      pull_source: docker.io
-      push_destination: {{ ctl_plane_ip }}:8787
-    - imagename: tripleoupstream/centos-binary-openvswitch-vswitchd:newton
-      uploader: docker
-      pull_source: docker.io
-      push_destination: {{ ctl_plane_ip }}:8787
-    - imagename: tripleoupstream/centos-binary-openvswitch-db-server:newton
-      uploader: docker
-      pull_source: docker.io
-      push_destination: {{ ctl_plane_ip }}:8787
-EOF'
-
-
 
 ## * Populate the docker registery
 ## ::
