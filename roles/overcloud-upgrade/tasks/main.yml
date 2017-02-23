@@ -1,4 +1,8 @@
 ---
+- include: create-scripts.yml
+  tags:
+    - overcloud-upgrade-scripts
+
 - include: pre-undercloud.yml
   when: step_pre_undercloud_upgrade
   tags:
@@ -10,7 +14,7 @@
     - upgrade-undercloud
 
 - include: pre-overcloud.yml
-  when: step_pre_overcloud_upgrade
+  when: step_pre_overcloud_upgrade and target_upgrade_version in ['mitaka', 'newton']
   tags:
     - pre-upgrade-overcloud
 

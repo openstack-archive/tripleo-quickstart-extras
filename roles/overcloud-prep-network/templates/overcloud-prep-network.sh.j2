@@ -64,6 +64,14 @@ sudo ifup ifcfg-eth6
 
 {% endfor %}
 
+{% else %}
+
+## * Set the DNS server in the control plane network
+## ::
+
+    # Set DNS server for the overcloud nodes
+    neutron subnet-update $(neutron net-list | awk '/ctlplane/{print $(NF-2) }') --dns-nameserver $(cat /etc/resolv.conf | grep nameserver | awk '{ print $2 }' | sed ':a;N;$!ba;s/\n/ --dns-nameserver /g')
+
 {%endif%}
 
 {% if enable_tls_everywhere|bool and overcloud_dns_servers and release not in ['mitaka', 'newton'] %}

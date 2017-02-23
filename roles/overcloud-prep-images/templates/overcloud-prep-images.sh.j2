@@ -14,6 +14,19 @@ set -eux
 
 source {{ working_dir }}/stackrc
 
+
+{% if download_overcloud_image|bool %}
+
+## * Download specific Overcloud images
+## ::
+
+if [ -f overcloud-full.qcow2 ]; then
+    sudo rm -rf overcloud-full*
+fi
+curl -L -O "{{ overcloud_image_url }}"
+tar xvfp {{ overcloud_full_tar_name }}
+{% endif %}
+
 {% if step_overcloud_image|bool %}
 
 ## * Upload images to glance.
