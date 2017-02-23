@@ -21,7 +21,7 @@ repos_url:
   - http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/{{ upgrade_delorean_hash | default('current-passed-ci')}}/delorean.repo
   - http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/delorean-deps.repo
 # upgrade settings:
-upgrade_working_dir: {{ working_dir }}
+upgrade_working_dir: "{{ working_dir }}"
 tht_dir: tripleo-heat-templates
 # scripts
 undercloud_upgrade_script: upgrade-undercloud.sh.j2

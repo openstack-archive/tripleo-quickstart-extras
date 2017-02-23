@@ -1,6 +1,9 @@
 ---
 - name: Cloning stackviz from openstack
-  git: repo=git://git.openstack.org/openstack/stackviz dest="{{ working_dir }}/stackviz"
+  git:
+    repo: git://git.openstack.org/openstack/stackviz
+    dest: "{{ working_dir }}/stackviz"
+    version: master
 
 - name: Copying stackviz static files
   synchronize:

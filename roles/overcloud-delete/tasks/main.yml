@@ -9,8 +9,8 @@
   tags:
     - overcloud-scripts
 
-- block:
-  when: step_delete_overcloud|bool
+- when: step_delete_overcloud|bool
+  block:
     - name: Delete the overcloud
       shell: |
         {{ working_dir }}/overcloud-delete.sh > {{ delete_log }} 2>&1
@@ -18,12 +18,11 @@
         - overcloud-delete
 
     - name: check for delete command to complete or fail
-      tasks:
-        - shell: |
-            heat stack-show $(cat {{ working_dir }}/overcloud_id)
-          register: heat_stack_show
-          delay: {{ delete_check_delay }}
-          retries: {{ delete_check_retries }}
-          until: {{ heat_show.stdout.find("DELETE_COMPLETE") }}
+      shell: |
+          heat stack-show $(cat {{ working_dir }}/overcloud_id)
+      delay: "{{ delete_check_delay }}"
+      retries: "{{ delete_check_retries }}"
+      until: "{{ heat_show.stdout.find('DELETE_COMPLETE') }}"
+      register: heat_stack_show
       tags:
         - overcloud-delete

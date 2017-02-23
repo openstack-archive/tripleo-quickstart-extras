@@ -1,14 +1,14 @@
 - name:  Execute pre-task for upgrade
   hosts: overcloud
   gather_facts: no
-  sudo: yes
+  become: yes
   roles:
     - { role: ansible-role-tripleo-overcloud-upgrade, tags: ['upgrade-pre-tasks'] }
 
 - name:  Set undercloud repo
   hosts: undercloud
   gather_facts: no
-  sudo: yes
+  become: yes
   roles:
     - { role: ansible-role-tripleo-overcloud-upgrade, tags: ['upgrade-repo'] }
 

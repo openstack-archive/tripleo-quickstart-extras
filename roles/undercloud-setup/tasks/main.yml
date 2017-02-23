@@ -2,21 +2,27 @@
 # tasks file for undercloud-setup
 
 # Add a non-root user
-- include: non_root_user_setup.yml
+- name: Including non_root_user_setup tasks list
+  include: non_root_user_setup.yml
   when: non_root_user_setup|bool
 
-- include: ovb_setup_connectivity.yml
+- name: Including ovb_setup_connectivity tasks list
+  include: ovb_setup_connectivity.yml
   when: ovb_setup_connectivity|bool
 
-- include_role:
+- name: Including repo-setup role
+  include_role:
     name: repo-setup
 
-- include: package_installs.yml
+- name: Including package_installs tasks
+  include: package_installs.yml
   when: package_installs|bool
 
-- include: toci_vxlan_networking.yml
+- name: Including toci_vxlan_networking tasks
+  include: toci_vxlan_networking.yml
   when: toci_vxlan_networking|bool
 
-- include: hostname.yml
+- name: Including hostname tasks
+  include: hostname.yml
   when: hostname_correction|bool or step_set_undercloud_hostname|bool
 
