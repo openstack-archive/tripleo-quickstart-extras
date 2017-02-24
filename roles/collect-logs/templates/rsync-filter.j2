@@ -1,0 +1,29 @@
+# Exclude these paths to speed up the filtering
+# These need to be removed/made more specific if we decide to collect
+# anything under these paths
+- /dev
+- /proc
+- /run
+- /sys
+
+# Exclude paths
+{% for exclude_path in artcl_exclude_list|default([]) %}
+- {{ exclude_path }}
+{% endfor %}
+
+# Include all subdirectories in the check
+# See "INCLUDE/EXCLUDE PATTERN RULES" section about --recursive
+# in the rsync man page
++ */
+
+# Include paths
+{% for include_path in collect_list|default([]) %}
+{% if include_path|list|last == "/" %}
++ {{ include_path }}**
+{% else %}
++ {{ include_path }}
+{% endif %}
+{% endfor %}
+
+# Exclude everything else
+- *
