@@ -22,6 +22,9 @@ A description of the settable variables for this role should go here, including 
 * `overcloud_cloud_name_storage_management`: Sets the FQDN for the overcloud's VIP for the storage management network.
 * `overcloud_cloud_name_ctlplane`: Sets the FQDN for the overcloud's VIP for the ctlplane network.
 * `overcloud_cloud_domain`: Sets the domain for the nodes' internal hostnames.
+* `enable_swap`: Enables swap in the overcloud nodes.
+* `swap_type`: Defines the approach to adding swap that will be used, the
+  available options are 'file' and 'partition'. Defaults to 'file'.
 
 Dependencies
 ------------
