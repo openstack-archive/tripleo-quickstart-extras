@@ -37,6 +37,9 @@ http://docs.openstack.org/developer/tripleo-quickstart/accessing-libvirt.html
   undercloud.conf.
 - `undercloud_undercloud_hostname`: Sets up the 'undercloud_hostname' value from
   undercloud.conf.
+- `undercloud_enable_novajoin`: Sets up the 'enable_novajoin' value from
+  undercloud.conf. Note that using 'enable_tls_everywhere' will have the same
+  effect. Defaults to false.
 - `prepare_novajoin`: If set to true, it will install novajoin in the undercloud,
   and run a script that will create the required privileges/permissions in
   FreeIPA, as well as the undercloud host entry. this requires

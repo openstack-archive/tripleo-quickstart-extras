@@ -23,4 +23,5 @@ undercloud_ironic_ipxe_port: 3816
 enable_vbmc: true
 undercloud_conf_extra: ""
 
+undercloud_enable_novajoin: false
 prepare_novajoin: true

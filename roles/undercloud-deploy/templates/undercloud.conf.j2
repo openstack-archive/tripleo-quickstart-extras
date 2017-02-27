@@ -202,8 +202,8 @@ enable_monitoring = {{undercloud_enable_monitoring}}
 {% endif %}
 
 # Whether to install novajoin metadata service in the Undercloud.
-{% if enable_tls_everywhere %}
-enable_novajoin = {{enable_tls_everywhere}}
+{% if undercloud_enable_novajoin or enable_tls_everywhere %}
+enable_novajoin = true
 {% else %}
 #enable_novajoin = false
 {% endif %}
