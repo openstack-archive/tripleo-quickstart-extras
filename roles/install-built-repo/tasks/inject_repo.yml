@@ -1,0 +1,9 @@
+- name: Inject into image and install packages
+  include_role:
+    name: modify-image
+  vars:
+    image_to_modify: "{{ ib_repo_image_path }}"
+    modify_script: "{{ ib_repo_workdir }}/install-built-repo.sh"
+    modify_image_upload_files:
+        - src: "/tmp/gating_repo.tar.gz"
+          dest: "/tmp/gating_repo.tar.gz"
