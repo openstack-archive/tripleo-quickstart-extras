@@ -27,6 +27,37 @@ Role Variables
 * `tempest_failing`: false/true - default is false, run only tests known to be failing
 * `tempest_exit_on_failure`: true/false - whether to exit from role with tempest exit code (default: true)
 
+Skip tests file
+---------------
+
+Tempest test can be skipped if they are in a skip file, using the whole test
+name or a regular expression.
+Since the intention is to use the list of skip tests in other parts of
+quickstart-extras, it's easier to have this list of skip tests in yaml format
+where you can set the skip test, reason and launchpad or bugzilla. This make
+easier later to check whether the test still valid or not to be skipped.
+Skip files are under roles/validate-tempest/vars/tempest_skip_VERSION.yaml.
+In these files you can add a regex, together with a reason and a bugzilla
+or launchpad bug related to that particular test.
+Launchpad and/or bugzilla re optional, however you must specify a reason why
+you are skipping the test.
+
+Example of skip file:
+
+    ---
+    known_failures:
+      - test: 'tempest.scenario.test_volume_boot_pattern'
+        reason: 'rdo-manager tempest smoke test failing on "floating ip pool not found"'
+        bz: 'https://bugzilla.redhat.com/show_bug.cgi?id=1272289'
+      - test: 'tempest.api.volume.test_volumes_get'
+        reason: 'rdo-manager tempest smoke test failing on "floating ip pool not found"'
+      - test: 'tempest.api.identity.*v3'
+        reason: 'Tempest Identify tests failed on V3 api on OSP-D puddle'
+        bz: 'https://bugzilla.redhat.com/show_bug.cgi?id=1266947'
+      - test: 'tempest.api.image.v2.test_images_metadefs_namespace_properties.MetadataNamespacePropertiesTest.test_basic_meta_def_namespace_property'
+        reason: 'glance is not calling glance-manage db_load_metadefs'
+        lp: 'https://bugs.launchpad.net/tripleo/+bug/1664995'
+
 Dependencies
 ------------
 
@@ -34,8 +65,6 @@ No dependencies
 
 Example Playbook
 ----------------
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
     ---
     - name:  Run tempest
