@@ -97,6 +97,32 @@ sudo mistral-db-manage populate
 
 {% endif %}
 
+{% if step_root_device_hints|bool %}
+## * Get nodes UUID
+## ::
+
+export ironic_nodes="$( ironic node-list | awk '/power/ {print $2}' )"
+
+for ironic_node in $ironic_nodes; do
+    # extract IP from ironic node details
+    ip_address=$(ironic node-show $ironic_node --fields driver_info | sed -n "s/.*ipmi_address': u'\([0-9\.]*\)'.*/\1/p")
+
+    # get information for the matching template
+    {% for node in root_device_hints %}
+        NODE_IP="{{ node['ip'] }}"
+        if [ "$NODE_IP" == "$ip_address" ]; then
+            # set property
+            ironic node-update $ironic_node add properties/root_device='{"{{ node['key'] }}": "{{ node['value'] }}"}'
+        fi
+    {% endfor %}
+done
+
+# Temporary step to avoid introspection failure
+# Workaround for: https://bugs.launchpad.net/tripleo/+bug/1649350
+sudo mistral-db-manage populate
+
+{% endif %}
+
 
 {% if step_introspect %}
 

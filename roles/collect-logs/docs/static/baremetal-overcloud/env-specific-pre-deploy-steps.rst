@@ -10,6 +10,7 @@ that can be set per environment.
 Some examples of additional steps are:
 
 - Adding disk size hints
+- Adding disk hints per node, supporting all Ironic hints
 - Adjusting MTU values
 - Rerunning introspection on failure
 

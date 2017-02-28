@@ -19,6 +19,19 @@ Role Variables
 - undercloud_type: <virtual> -- can be overwritten with values like 'baremetal' or 'ovb'
 - step_root_device_size: <false> -- add disk size hints if needed for the environment under test
 - disk_root_device_size: <1843> -- size hint for selecting the correct disk during introspection
+- step_root_device_hints: false -- add root device hints if needed for the environment under test
+- root_device_hints: [] -- list of the root device hints to be associated with nodes. Needs to have this format::
+
+    - root_device_hints:
+        - ip: <<pm_addr>>
+          key: <<string>>
+          value: <<string>>
+
+  Where key needs to be one of the valid Ironic root device hints, and value is the exact value that needs to be filtered.
+  For reference on all the possible root device hints see ``http://docs.openstack.org/project-install-guide/baremetal/draft/advanced.html#specifying-the-disk-for-deployment-root-device-hints``.
+  Please note that in order to match root device hints with the associated nodes on `instackenv.json`,
+  the node `pm_address` will be used as a key.
+  At the moment only equal operator is supported, is not possible to use other operators or logical combinations.
 - whole_disk_images: false -- shows if we want to use partition or whole disk images (this will be available starting on Ocata)
 - step_introspect_with_retry: <false> -- a more robust version of the step_introspect option
 
