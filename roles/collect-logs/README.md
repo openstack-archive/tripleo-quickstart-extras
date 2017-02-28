@@ -24,9 +24,8 @@ Role Variables
 ### Collection related
 
 * `artcl_collect_list` -- A list of files and directories to gather from
-  the target. Directories are collected recursively. Can include joker
-  characters that bash understands. Should be specified as a YaML list,
-  e.g.:
+  the target. Directories are collected recursively and need to end with a
+  "/" to get collected. Should be specified as a YaML list, e.g.:
 
 ```yaml
 artcl_collect_list:
@@ -34,10 +33,11 @@ artcl_collect_list:
     - /home/stack/*.log
     - /var/log
 ```
-* `artcl_exclude_list` -- A list of files and directories to remove from
-  the collected logs. First of all we collect everything and then remove all
-  we have in `artcl_exclude_list` (`/etc/puppet/modules` by default).
 
+* `artcl_exclude_list` -- A list of files and directories to exclude from
+  collecting. This list is passed to rsync as an exclude filter and it takes
+  precedence over the collection list. For details see the "FILTER RULES" topic
+  in the rsync man page.
 * `artcl_collect_dir` -- A local directory where the logs should be
   gathered, without a trailing slash.
 * `artcl_gzip_only`: false/true  -- When true, gathered files are gzipped one

@@ -6,6 +6,7 @@
       yum: name={{ item }} state=present
       with_items:
         - gzip
+        - rsync
         - tar
 
     - name: Prepare directory with extra logs
@@ -191,26 +192,30 @@
 
 - name: Set default collect list
   set_fact:
-    collect_list: "{{ artcl_collect_list | join(' ') }}"
+    collect_list: "{{ artcl_collect_list }}"
 
 - name: Override collect list
   set_fact:
-    collect_list: "{{ artcl_collect_override[inventory_hostname] | join(' ') }}"
+    collect_list: "{{ artcl_collect_override[inventory_hostname] }}"
   when:
     - artcl_collect_override is defined
     - artcl_collect_override[inventory_hostname] is defined
 
+- name: Create temp directory before gathering logs
+  file:
+    dest: "/tmp/{{ inventory_hostname }}"
+    state: directory
+
+- name: Create rsync filter file
+  template:
+    src: "rsync-filter.j2"
+    dest: "/tmp/{{ inventory_hostname }}-rsync-filter"
+
 - name: Gather the logs to /tmp
   become: yes
   shell: >
-    mkdir -p /tmp/{{ inventory_hostname }};
-    for F in $(ls -d1 /var/log/rpm.list /var/log/extra {{ collect_list }}); do
-      cp -rL --parents $F /tmp/{{ inventory_hostname }};
-    done;
-    find /tmp/{{ inventory_hostname }} -not -type f -not -type d -delete;
-    for D in {{ artcl_exclude_list | default([]) | join(' ') }}; do
-    rm -rf "/tmp/{{ inventory_hostname }}/$D";
-    done;
+    rsync --quiet --recursive --copy-links --prune-empty-dirs
+    --filter '. /tmp/{{ inventory_hostname }}-rsync-filter' / /tmp/{{ inventory_hostname }};
     find /tmp/{{ inventory_hostname }} -type d -print0 | xargs -0 chmod 755;
     find /tmp/{{ inventory_hostname }} -type f -print0 | xargs -0 chmod 644;
     chown -R {{ ansible_user }}: /tmp/{{ inventory_hostname }};
