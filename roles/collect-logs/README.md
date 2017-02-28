@@ -29,9 +29,9 @@ Role Variables
 
 ```yaml
 artcl_collect_list:
-    - /etc/nova
+    - /etc/nova/
     - /home/stack/*.log
-    - /var/log
+    - /var/log/
 ```
 
 * `artcl_exclude_list` -- A list of files and directories to exclude from
