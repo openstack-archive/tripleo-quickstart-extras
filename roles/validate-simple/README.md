@@ -1,31 +1,59 @@
-Role Name
-=========
+validate-simple
+===============
 
-ansible-role-tripleo-overcloud-validate
-
-Requirements
-------------
-
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+This role uses heat templates from
+[THT](http://git.openstack.org/cgit/openstack/tripleo-heat-templates/)
+to validate an OpenStack installation. By default it does a ping test between
+two OpenStack instances.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+For the defaults of these variables, see the defaults/main.yml file in this role.
+
+* `tenantrc` -- file containing the auth variables for the cloud
+* `validate_script` -- the jinja template used to create the validation script
+* `validate_template_path` -- path where the heat templates can be found
+* `validate_template` -- the filename of the heat template used for validation
+* `validate_log` -- file to log the output of the validation script
+* `validate_stack_name` -- the name of the heat stack used for validation
+* `validate_success_status` -- output that signifies successful stack creation
+* `validate_image_file` -- prefix for the downloaded disk image, initramfs and
+  kernel
+* `validate_image_url` -- URL to the image files (without the filenames)
+* `image_disk`, `image_initramfs`, `image_kernel` -- name of the disk image,
+  initramfs and kernel on the previous URL
+* `validate_image_name` -- the name used in glance for the assembled image from
+  the previous files
+* `validate_image_dir` -- directory to store the downloaded images
+* `release` -- release of the cloud to be validated (mitaka, newton, etc.);
+  older releases use different heat commands
+* `floating_ip_cidr` -- the network CIDR to be used for a public floating IP
+  network during testing
+* `public_net_name`, `public_net_type` -- the name and type of the public
+  neutron network, used for floating IPs during the validation
+* `public_net_pool_start`, `public_net_pool_end`, `public_net_gateway`,
+  `public_physical_network`, `public_segmentation_id` -- parameters used to
+  create the public floating IP network
+* `validate_template_environment`: used to override variables inside the
+  validation template, passed as an environment file to heat
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+The role uses heat templates from the tripleo-heat-templates package/repository
+and downloads Cirros images during the run.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+```yaml
+---
+- name: Validate the overcloud
+  hosts: undercloud
+  roles:
+    - validate-simple
+```
 
 License
 -------
@@ -35,4 +63,4 @@ Apache 2.0
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+OpenStack

@@ -1,30 +1,27 @@
----
-
 tenantrc: overcloudrc
 validate_script: overcloud-validate.sh.j2
-validate_template: tenantvm_floatingip.yaml.j2
+validate_template_path: /usr/share/openstack-tripleo-heat-templates/ci/pingtests
+validate_template: tenantvm_floatingip.yaml
 validate_log: "{{ working_dir }}/overcloud_validate.log"
 validate_stack_name: pingtest_stack
 validate_success_status: CREATE_COMPLETE
-validate_server_name: Server1
 validate_image_file: cirros.img
 validate_image_url: "http://download.cirros-cloud.net/0.3.4/"
 image_disk: cirros-0.3.4-x86_64-disk.img
 image_initramfs: cirros-0.3.4-x86_64-initramfs
 image_kernel: cirros-0.3.4-x86_64-kernel
 validate_image_name: pingtest_image
-validate_flavor_id: 2
 validate_image_dir: "{{ working_dir }}/cirros_images"
-overcloud_public_network_name: nova
-validate_key_name: pingtest_key
-step_validate_overcloud: true
-test_ping: true
 release: mitaka
 floating_ip_cidr: "{{ undercloud_network_cidr|default('192.168.24.0/24') }}"
+public_net_name: nova
+public_net_type: flat
 public_net_pool_start: "{{ floating_ip_cidr|nthhost(100) }}"
 public_net_pool_end: "{{ floating_ip_cidr|nthhost(120) }}"
 public_net_gateway: "{{ floating_ip_cidr|nthhost(1) }}"
-
-public_network_type: flat
 public_physical_network: datacentre
 public_segmentation_id: ''
+validate_template_environment:
+    parameters:
+        image: "{{ validate_image_name }}"
+        public_net_name: "{{ public_net_name }}"

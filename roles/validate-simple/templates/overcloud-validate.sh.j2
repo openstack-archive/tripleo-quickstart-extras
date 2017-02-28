@@ -31,9 +31,8 @@ function cleanup {
     fi
     # Remove images and network
     rm -f {{ validate_image_dir }}/cirros.*
-    openstack image list | grep pingtest | awk '{print $2}' | while read IMAGEID; do openstack image delete $IMAGEID; done
-    #neutron net-delete {{ overcloud_public_network_name }} > /dev/null 2>&1 || true
-    neutron net-delete {{ overcloud_public_network_name }}
+    openstack image list | awk '/pingtest/ {print $2}' | while read IMAGEID; do openstack image delete $IMAGEID; done
+    neutron net-delete {{ public_net_name }}
 }
 # trap on exit #nodocs
 trap cleanup EXIT #nodocs
@@ -46,7 +45,7 @@ source {{ working_dir }}/{{ tenantrc }}
 ## * Check if an environment is already deployed and, in case, cleanup it
 ## ::
 
-[ "x$(heat stack-list | grep pingtest_stack || true)" != "x" ] && cleanup
+[ "x$(heat stack-list | grep {{ validate_stack_name }} || true)" != "x" ] && cleanup
 # get validate image
 if [[ ! -d {{ validate_image_dir }} ]]; then
     mkdir {{ validate_image_dir }};
@@ -61,8 +60,8 @@ curl -L -s -S -o $KERNEL_PATH {{ validate_image_url }}{{ image_kernel }}
 ## * Upload cirros image into glance
 ## ::
 
-ramdisk_id=$(openstack image create pingtest_initramfs --public --container-format ari --disk-format ari --file $INITRAMFS_PATH | grep ' id ' | awk '{print $4}')
-kernel_id=$(openstack image create pingtest_kernel --public --container-format aki --disk-format aki --file $KERNEL_PATH | grep ' id ' | awk '{print $4}')
+ramdisk_id=$(openstack image create pingtest_initramfs --public --container-format ari --disk-format ari --file $INITRAMFS_PATH | awk '/ id / {print $4}')
+kernel_id=$(openstack image create pingtest_kernel --public --container-format aki --disk-format aki --file $KERNEL_PATH | awk '/ id / {print $4}')
 openstack image create {{ validate_image_name }} --public --container-format ami --disk-format ami \
     --property kernel_id=$kernel_id --property ramdisk_id=$ramdisk_id --file $IMAGE_PATH
 
@@ -72,10 +71,10 @@ openstack image create {{ validate_image_name }} --public --container-format ami
 ##    (heat can't create an external network in Liberty)
 ## ::
 
-if ! neutron net-list | grep 'nova'; then
+if ! neutron net-list | grep '{{ public_net_name }}'; then
 
-neutron net-create {{ overcloud_public_network_name }} --router:external=True \
-    --provider:network_type {{ public_network_type }} \
+neutron net-create {{ public_net_name }} --router:external=True \
+    --provider:network_type {{ public_net_type }} \
     --provider:physical_network {{ public_physical_network }} \
 {% if public_segmentation_id != '' %}
     --provider:segmentation_id {{ public_segmentation_id }}
@@ -87,17 +86,26 @@ neutron subnet-create --name ext-subnet \
     start={{ public_net_pool_start }},end={{ public_net_pool_end }} \
     --disable-dhcp \
     --gateway {{ public_net_gateway }} \
-    {{ overcloud_public_network_name }} {{ floating_ip_cidr }}
+    {{ public_net_name }} {{ floating_ip_cidr }}
 
 fi
-
-## .. note: The heat template, tenantvm_floatingip.yaml, below may be viewed here:
-##    https://github.com/redhat-openstack/ansible-role-tripleo-overcloud-validate/blob/master/templates/tenantvm_floatingip.yaml.j2
 
 ## * Create test ping stack
 ## ::
 
-heat stack-create {{ validate_stack_name }} --template-file  {{ working_dir }}/tenantvm_floatingip.yaml
+echo > {{ working_dir }}/validate-template-override.yaml << EOF
+{{ validate_template_environment|to_nice_yaml }}
+EOF
+
+{% if release in ['kilo', 'liberty', 'rhos-7'] %}
+heat stack-create {{ validate_stack_name }} \
+    --template-file {{ validate_template_path }}/{{ validate_template }} \
+    --environment-file {{ working_dir }}/validate-template-override.yaml
+{% else  %}
+openstack stack create {{ validate_stack_name }} \
+    --template {{ validate_template_path }}/{{ validate_template }} \
+    --environment {{ working_dir }}/validate-template-override.yaml
+{% endif %}
 
 ## * Wait for the stack creation to complete
 ## * Give time to the instance to boot
@@ -127,8 +135,8 @@ if [ "$?" == "0" ]; then
     echo "Overcloud pingtest, SUCCESS"
     exit 0
 else
-    nova console-log {{ validate_server_name }}
-    nova show {{ validate_server_name }}
+    nova console-log Server1
+    nova show Server1
     nova service-list
     neutron agent-list
     openstack stack show {{ validate_stack_name }}
