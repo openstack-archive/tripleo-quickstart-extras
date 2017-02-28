@@ -1,0 +1,9 @@
+---
+features:
+  - Added support for other network isolation physical topologies such as
+    'multiple-nics', 'bond-with-vlans', and 'public-bond'
+deprecations:
+  - The use of network isolation types 'multi-nic', 'bond_with_vlans', and
+    'single_nic_vlans' are deprecated and will be removed in the 'R' release.
+    Please change these values to 'multiple-nics', 'bond-with-vlans', and
+    'single-nic-vlans' accordingly.
