@@ -55,12 +55,6 @@ echo "Containers default parameters:"
 cat {{ working_dir }}/containers-default-parameters.yaml
 echo "============================="
 
-## * Rebuild heat-agents image and push to local registry
-## ::
-
-sudo docker build -t "{{ ctl_plane_ip }}:8787/tripleoupstream/heat-docker-agents:newton" {{ tripleo_common_dir }}/heat_docker_agent/
-sudo docker push {{ ctl_plane_ip }}:8787/tripleoupstream/heat-docker-agents:newton
-
 ## * Deploy Puppet Artifacts to the Overcloud
 ## ::
 
