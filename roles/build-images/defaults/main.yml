@@ -5,6 +5,7 @@ overcloud_image_build_script: overcloud-image-build.sh.j2
 overcloud_image_build_log: overcloud_image_build.log
 build_image_isolated: true
 build_isolation_image_url: https://images.rdoproject.org/CentOS-7-x86_64-GenericCloud.qcow2
+cleanup_images_working_dir: false
 build_isolation_image:
   name: isolation-image
   url: "{{ build_isolation_image_url }}"
