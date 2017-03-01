@@ -22,7 +22,6 @@
       {{ upgrade_working_dir }}/{{ tht_dir }};
 
 - name: Add the no ssh finger print checking into upgrade-non-controller.sh
-  when: step_upgrade_undercloud
   become: yes
   shell: >
       sed -i 's/ssh/ssh -o StrictHostKeyChecking=no/' \
@@ -59,16 +58,3 @@
     sed -i "/#num_engine_workers/a num_engine_workers = 6" /etc/heat/heat.conf;
     sed -i "s/num_engine_workers.*$/num_engine_workers = 6/" /etc/heat/heat.conf;
     systemctl restart openstack-heat-engine
-
-- name: upgrade workaround for Newton
-  when: major_upgrade|bool and target_upgrade_version == 'master'
-  shell: >
-    sed -i '$acrudini --set \/etc\/nova\/nova.conf DEFAULT scheduler_host_manager host_manager' /home/stack/tripleo-heat-templates/extraconfig/tasks/major_upgrade_controller_pacemaker_1.sh;
-    sed -i 's/nova-manage db sync/nova-manage db sync\n    nova-manage api_db sync\n/' /home/stack/tripleo-heat-templates/extraconfig/tasks/major_upgrade_controller_pacemaker_2.sh;
-
-- name: fix grep to upgrade-non-controller.sh
-  when: major_upgrade|bool and target_upgrade_version == 'master'
-  become: yes
-  shell: >
-    sudo sed -i 's/nova show \$name_or_id | grep status /nova show \$name_or_id | grep -w status /' /bin/upgrade-non-controller.sh;
-

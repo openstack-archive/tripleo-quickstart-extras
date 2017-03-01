@@ -3,17 +3,15 @@
 set -eux
 # Undercloud upgrade script.
 # Those steps is for the major mariadb upgrade in mitaka
-{% if target_upgrade_version == 'mitaka' and major_upgrade|bool %}
-sudo systemctl stop openstack-*
-sudo systemctl stop neutron-*
+sudo systemctl stop 'openstack-*'
+sudo systemctl stop 'neutron-*'
+sudo systemctl stop httpd
+
+#if you are going to do a backwards compatibility install save the old tht dir
+# cp -r /usr/share/openstack-tripleo-heat-templates ~/tht
+
+# update instack-undercloud and friends before running the upgrade
 sudo yum -y update instack-undercloud openstack-puppet-modules openstack-tripleo-common python-tripleoclient
-{% endif %}
-{% if target_upgrade_version in ['newton', 'master'] and major_upgrade|bool or mixed_upgrade|bool %}
-sudo yum -y update python-cachetools
-sudo yum clean all && sudo yum clean metadata && sudo yum clean dbcache && sudo yum makecache
-sudo systemctl stop openstack-*
-sudo systemctl stop neutron-*
-sudo yum -y update
-{% endif %}
+
 echo "Upgrade the undercloud"
 openstack undercloud upgrade
