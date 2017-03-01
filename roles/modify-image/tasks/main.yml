@@ -11,37 +11,40 @@
   yum: name=libguestfs-tools-c state=latest
   become: true
 
+- name: virt-customize args --> reset private var
+  set_fact: _vc_args=""
+
 - name: virt-customize args --> memory
-  set_fact: vc_args="{{ vc_args }} -m {{ modify_image_vc_ram }}"
+  set_fact: _vc_args="{{ _vc_args }} -m {{ modify_image_vc_ram }}"
   when: modify_image_vc_ram is defined
 
 - name: virt-customize args --> cpu
-  set_fact: vc_args="{{ vc_args }} --smp {{ modify_image_vc_cpu }}"
+  set_fact: _vc_args="{{ _vc_args }} --smp {{ modify_image_vc_cpu }}"
   when: modify_image_vc_cpu is defined
 
 - name: virt-customize args --> verbose output
-  set_fact: vc_args="{{ vc_args }} -v"
+  set_fact: _vc_args="{{ _vc_args }} -v"
   when: modify_image_vc_verbose|bool
 
 - name: virt-customize args --> trace/debug output
-  set_fact: vc_args="{{ vc_args }} -x"
+  set_fact: _vc_args="{{ _vc_args }} -x"
   when: modify_image_vc_trace|bool
 
 - name: virt-customize args --> upload files
-  set_fact: vc_args="{{ vc_args }} --upload {{ item.src }}:{{ item.dest }}"
+  set_fact: _vc_args="{{ _vc_args }} --upload {{ item.src }}:{{ item.dest }}"
   with_items: "{{ modify_image_upload_files }}"
 
 - name: virt-customize args --> install packages
-  set_fact: vc_args="{{ vc_args }} --install {{ modify_image_install_packages|join(",") }}"
+  set_fact: _vc_args="{{ _vc_args }} --install {{ modify_image_install_packages|join(",") }}"
   when: modify_image_install_packages
 
 - name: virt-customize args --> modify script
-  set_fact: vc_args="{{ vc_args }} --run {{ modify_script }}"
+  set_fact: _vc_args="{{ _vc_args }} --run {{ modify_script }}"
   when: modify_script is defined
 
 - name: Run virt-customize on the provided image
   shell: >
-    virt-customize {{ vc_args }}
+    virt-customize {{ _vc_args }}
     -a {{ image_to_modify }}
     > {{ modify_script|default('modify_image') }}.log 2>&1
   environment:
