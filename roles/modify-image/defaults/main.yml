@@ -18,13 +18,6 @@ modify_image_install_packages: []
 # By default we use the global working directory for modifying images
 modify_image_working_dir: "{{ working_dir }}"
 
-# virt-customize defaults
-# vc_args can be used to pass any arbitrary arguments to virt-customize
-vc_args: ""
-
-# the other "vc" vars below are converted to the correct virt-customize args,
-# and are provided for convenience.
-
 # ram and cpu are not set by default to take libguestfs defaults by default
 # modify_image_vc_ram:
 # modify_image_vc_cpu:
