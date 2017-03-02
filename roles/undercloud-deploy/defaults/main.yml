@@ -24,3 +24,6 @@ enable_vbmc: true
 undercloud_conf_extra: ""
 
 prepare_novajoin: true
+
+# location which the novajoin-ipa-setup will store the FreeIPA token
+freeipa_otp_key: /tmp/ipa-otp.txt

@@ -34,7 +34,7 @@
   shell: "{{ working_dir }}/novajoin_prep.sh > {{ working_dir }}/novajoin_prep.sh.log 2>&1"
 
 - name: Register OTP output
-  command: cat /tmp/ipa-otp.txt
+  command: cat {{ freeipa_otp_key }}
   register: ipa_otp_register
 
 - name: Set OTP Fact for undercloud enrollment
