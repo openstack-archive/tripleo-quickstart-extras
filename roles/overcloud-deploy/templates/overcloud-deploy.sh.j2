@@ -73,7 +73,7 @@ openstack overcloud deploy \
 if heat stack-list | grep -q 'CREATE_FAILED'; then
     {%if release not in ['mitaka', 'liberty'] %}
     # get the failures list
-    openstack stack failures list overcloud > failed_deployment_list.log || true
+    openstack stack failures list overcloud > {{ failed_deployment_list }} || true
     {% endif %}
 
     # get any puppet related errors
@@ -81,17 +81,17 @@ if heat stack-list | grep -q 'CREATE_FAILED'; then
         --nested-depth 5 overcloud | grep FAILED |
         grep 'StructuredDeployment ' | cut -d '|' -f3)
     do
-    echo "heat deployment-show out put for deployment: $failed" >> failed_deployments.log
-    echo "######################################################" >> failed_deployments.log
-    heat deployment-show $failed >> failed_deployments.log
-    echo "######################################################" >> failed_deployments.log
-    echo "puppet standard error for deployment: $failed" >> failed_deployments.log
-    echo "######################################################" >> failed_deployments.log
+    echo "heat deployment-show out put for deployment: $failed" >> {{ failed_deployments_log }}
+    echo "######################################################" >> {{ failed_deployments_log }}
+    heat deployment-show $failed >> {{ failed_deployments_log }}
+    echo "######################################################" >> {{ failed_deployments_log }}
+    echo "puppet standard error for deployment: $failed" >> {{ failed_deployments_log }}
+    echo "######################################################" >> {{ failed_deployments_log }}
     # the sed part removes color codes from the text
     heat deployment-show $failed |
         jq -r .output_values.deploy_stderr |
-        sed -r "s:\x1B\[[0-9;]*[mK]::g" >> failed_deployments.log
-    echo "######################################################" >> failed_deployments.log
+        sed -r "s:\x1B\[[0-9;]*[mK]::g" >> {{ failed_deployments_log }}
+    echo "######################################################" >> {{ failed_deployments_log }}
     # We need to exit with 1 because of the above || true
     done
 fi
