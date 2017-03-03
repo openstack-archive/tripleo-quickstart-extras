@@ -5,9 +5,20 @@
 
 ## ::
 
-{% if tempest_format == "venv" %}./tools/with_venv.sh {% endif %}
-./tools/run-tests.sh {{ test_regex }} {% if skip_file_src != '' %}--skip-file {{ working_dir }}/{{ skip_file }}{% endif %}
-{% if tempest_workers is defined %} --concurrency={{ tempest_workers }} {% endif %}
+# FIXME(chkumar246): Tempest run interface is unstable till that use ostestr for
+# running tests: https://bugs.launchpad.net/tempest/+bug/1669455
+
+{% if tempest_format == "venv" %}
+export OSTESTR='{{ working_dir }}/tempest_git/tools/with_venv.sh ostestr --regex'
+#List Tests
+{{ working_dir }}/tempest_git/tools/with_venv.sh ostestr -l
+{% elif tempest_format == "packages" %}
+export OSTESTR='ostestr --regex'
+ostestr -l
+{% endif %}
+
+$OSTESTR '\[.*\b{{ test_regex }}\b.*\]' {% if skip_file_src != '' %}--blacklist_file={{ working_dir }}/{{ skip_file }}{% endif %}
+{% if tempest_workers is defined %} --concurrency {{ tempest_workers }} {% endif %}
 {% if tempest_isolated|bool %} --isolated {% endif %}
 {% if tempest_tests_file is defined %} --load-list={{ tempest_tests_file }} {% endif %}
 {% if tempest_until_failure|bool %} --until-failure {% endif %}

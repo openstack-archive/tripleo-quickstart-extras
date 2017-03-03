@@ -1,19 +1,25 @@
 # rhbz1304933
--tempest.api.telemetry.test_telemetry_notification_api
+tempest.api.telemetry.test_telemetry_notification_api
 # old bug rhbz1272289
--tempest.scenario.test_volume_boot_pattern
--tempest.api.volume.test_volumes_get
+tempest.scenario.test_volume_boot_pattern
+tempest.api.volume.test_volumes_get
 # rhbz1266947
--tempest.api.identity.*v3
+tempest.api.identity.*v3
 # rhbz1357667
--tempest.api.data_processing
+tempest.api.data_processing
 # lpbug 1605654
--tempest.scenario.test_network_basic_ops.TestNetworkBasicOps
+tempest.scenario.test_network_basic_ops.TestNetworkBasicOps
 # rhbz1386421
--tempest.api.compute.servers.test_server_actions.ServerActionsTestJSON
+tempest.api.compute.servers.test_server_actions.ServerActionsTestJSON
 # TripleO does not deploy Barbican by default, which is needed for this test to pass
--tempest.scenario.test_encrypted_cinder_volumes.TestEncryptedCinderVolumes.test_encrypted_cinder_volumes_cryptsetup
--tempest.scenario.test_encrypted_cinder_volumes.TestEncryptedCinderVolumes.test_encrypted_cinder_volumes_luks
+tempest.scenario.test_encrypted_cinder_volumes.TestEncryptedCinderVolumes.test_encrypted_cinder_volumes_cryptsetup
+tempest.scenario.test_encrypted_cinder_volumes.TestEncryptedCinderVolumes.test_encrypted_cinder_volumes_luks
 # rhbz1411690
--tempest.scenario.test_security_groups_basic_ops.TestSecurityGroupsBasicOps.test_cross_tenant_traffic
--tempest.scenario.test_security_groups_basic_ops.TestSecurityGroupsBasicOps.test_multiple_security_groups
+tempest.scenario.test_security_groups_basic_ops.TestSecurityGroupsBasicOps.test_cross_tenant_traffic
+tempest.scenario.test_security_groups_basic_ops.TestSecurityGroupsBasicOps.test_multiple_security_groups
+# Skip Mistral tests as Mistral is not configured on Newton
+mistral_tempest_tests.tests
+# Skip Ceilometer tests as it required gnocchi to be configured
+# FIXME(chkumar246): It needs to be fixed in a new patch
+ceilometer.tests.tempest.api.test_telemetry_notification_api.TelemetryNotificationAPITest.test_check_glance_v1_notifications
+ceilometer.tests.tempest.api.test_telemetry_notification_api.TelemetryNotificationAPITest.test_check_glance_v2_notifications
