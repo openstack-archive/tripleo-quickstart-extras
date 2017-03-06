@@ -26,17 +26,14 @@
     src: "{{ overcloud_image_build_script }}"
     dest: "{{ images_working_dir }}/overcloud_image_build_script.sh"
     mode: 0755
-  become: true
 
-- when: not build_image_isolated|bool
-  block:
-    - name: run the repo script (direct)
-      shell: "{{ images_working_dir }}/repo_setup.sh"
-
-    - name: run the image build script (direct)
-      shell: >
-        {{ images_working_dir }}/overcloud_image_build_script.sh >
-        {{ overcloud_image_build_log }} 2>&1
+- name: run the image build script (direct)
+  shell: >
+    {{ images_working_dir }}/overcloud_image_build_script.sh >
+    {{ working_dir }}/{{ overcloud_image_build_log }} 2>&1
+  args:
+    chdir: "{{ images_working_dir }}"
+  when: not build_image_isolated|bool
 
 - when: build_image_isolated|bool
   block:
@@ -149,3 +146,8 @@
       args:
         chdir: "{{ images_working_dir }}"
 
+- name: Clean up the images working dir
+  shell:  >-
+    rm -rf {{ images_working_dir }}/overcloud-full.d {{ images_working_dir }}/ironic-python-agent.d/
+    sudo chown $USER: {{ images_working_dir }}/overcloud-full.* {{ images_working_dir }}/ironic-python-agent.*
+  when: cleanup_images_working_dir| bool
