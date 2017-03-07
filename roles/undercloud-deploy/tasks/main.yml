@@ -37,4 +37,3 @@
 - include: post-install.yml
   tags:
     - undercloud-post-install
-

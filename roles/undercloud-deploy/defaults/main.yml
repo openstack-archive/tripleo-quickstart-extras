@@ -6,8 +6,6 @@ undercloud_install_log: "{{ working_dir }}/undercloud_install.log"
 network_environment_file: network-environment.yaml.j2
 undercloud_hieradata_override_file: quickstart-hieradata-overrides.yaml.j2
 
-undercloud_network_cidr: 192.168.24.0/24
-
 step_introspect: false
 bash_deploy_ramdisk: false
 step_install_undercloud: true
