@@ -51,6 +51,8 @@ http://docs.openstack.org/developer/tripleo-quickstart/accessing-libvirt.html
   This will be used to run the script to prepare FreeIPA for novajoin.
 - `freeipa_server_hostname`: The hostname for the FreeIPA server.
   This will be used to run the script to prepare FreeIPA for novajoin.
+- `overcloud_cloud_domain`: The domain configured for use by the FreeIPA server. Note: This also
+  affects `CloudDomain` in the `cloud-names.yaml` template used by the `overcloud-deploy` role.
 
 Role Network Variables
 ----------------------

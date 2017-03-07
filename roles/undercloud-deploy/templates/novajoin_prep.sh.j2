@@ -12,12 +12,12 @@ set -eux
 
 sudo /usr/libexec/novajoin-ipa-setup \
     --principal admin \
-    --password {{freeipa_admin_password}} \
-    --server {{freeipa_server_hostname}} \
-    --realm $(echo {{overcloud_cloud_domain}} | awk '{print toupper($0)}') \
-    --domain {{overcloud_cloud_domain}} \
-    --hostname {{undercloud_undercloud_hostname}} \
-    --otp-file /tmp/ipa-otp.txt \
+    --password {{ freeipa_admin_password }} \
+    --server {{ freeipa_server_hostname }} \
+    --realm $(echo {{ overcloud_cloud_domain }} | awk '{print toupper($0)}') \
+    --domain {{ overcloud_cloud_domain }} \
+    --hostname {{ undercloud_undercloud_hostname }} \
+    --otp-file {{ freeipa_otp_key }} \
     --precreate
 
 ### --stop_docs

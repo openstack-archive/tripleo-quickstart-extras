@@ -25,3 +25,6 @@ undercloud_conf_extra: ""
 
 undercloud_enable_novajoin: false
 prepare_novajoin: true
+
+# location which the novajoin-ipa-setup will store the FreeIPA token
+freeipa_otp_key: /tmp/ipa-otp.txt
