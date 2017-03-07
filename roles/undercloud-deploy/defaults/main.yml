@@ -28,3 +28,7 @@ prepare_novajoin: true
 
 # location which the novajoin-ipa-setup will store the FreeIPA token
 freeipa_otp_key: /tmp/ipa-otp.txt
+
+# determines vendordata_dynamic_connect|read_timeout when novajoin is enabled
+novajoin_connect_timeout: 5
+novajoin_read_timeout: 5
