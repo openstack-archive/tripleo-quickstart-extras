@@ -10,19 +10,24 @@
 
 {% if tempest_format == "venv" %}
 export OSTESTR='{{ working_dir }}/tempest_git/tools/with_venv.sh ostestr --regex'
+export S2JXML='{{ working_dir }}/tempest_git/tools/with_venv.sh subunit2junitxml --output-to=tempest.xml'
+export SUBUNIT='{{ working_dir }}/tempest_git/tools/with_venv.sh subunit-trace --no-failure-debug -f'
 #List Tests
 {{ working_dir }}/tempest_git/tools/with_venv.sh ostestr -l
 {% elif tempest_format == "packages" %}
 export OSTESTR='ostestr --regex'
+export S2JXML='subunit2junitxml --output-to=tempest.xml'
+export SUBUNIT='subunit-trace --no-failure-debug -f'
 ostestr -l
 {% endif %}
 
-$OSTESTR '\[.*\b{{ test_regex }}\b.*\]' {% if skip_file_src != '' %}--blacklist_file={{ working_dir }}/{{ skip_file }}{% endif %}
+( $OSTESTR '\[.*\b{{ test_regex }}\b.*\]' --no-pretty --subunit {% if skip_file_src != '' %}--blacklist_file={{ working_dir }}/{{ skip_file }}{% endif %}
 {% if tempest_workers is defined %} --concurrency {{ tempest_workers }} {% endif %}
 {% if tempest_isolated|bool %} --isolated {% endif %}
 {% if tempest_tests_file is defined %} --load-list={{ tempest_tests_file }} {% endif %}
 {% if tempest_until_failure|bool %} --until-failure {% endif %}
 {% if tempest_failing|bool %} --failing {% endif %}
+) | tee >( $S2JXML ) | $SUBUNIT
 
 ### --stop_docs
 

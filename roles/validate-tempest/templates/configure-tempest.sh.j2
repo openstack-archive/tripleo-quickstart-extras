@@ -78,7 +78,7 @@ sudo yum install -y libffi-devel openssl-devel python-virtualenv gcc
 virtualenv --system-site-packages {{ working_dir }}/tempest_git/.venv
 {{ working_dir }}/tempest_git/tools/with_venv.sh pip install -U pip
 {{ working_dir }}/tempest_git/tools/with_venv.sh pip install -U setuptools
-{{ working_dir }}/tempest_git/tools/with_venv.sh pip install {{ working_dir }}/tempest_git
+{{ working_dir }}/tempest_git/tools/with_venv.sh pip install {{ working_dir }}/tempest_git junitxml
 # Create Tempest Workspace
 cd {{ working_dir }}/tempest
 {% if release in ['mitaka','newton'] %}
@@ -89,7 +89,7 @@ cd {{ working_dir }}/tempest
 # Create Tempest Workspace from tempest rdo package
 {% elif tempest_format == "packages" %}
 # Install Tempest Package
-sudo yum -y install openstack-tempest
+sudo yum -y install openstack-tempest python-junitxml
 {% if release in ['mitaka','newton'] %}
 cd {{ working_dir }}/tempest
 /usr/share/openstack-tempest-*/tools/configure-tempest-directory
