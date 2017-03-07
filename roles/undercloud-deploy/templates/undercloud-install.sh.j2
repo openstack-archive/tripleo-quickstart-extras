@@ -12,4 +12,10 @@ export {{ var }}
 {% endfor %}
 
 openstack undercloud install
+
+## * Workaround for bug https://bugs.launchpad.net/tripleo/+bug/1668939
+## ::
+
+sudo chown -R $USER: ~/.cache || true
+
 ### --stop_docs
