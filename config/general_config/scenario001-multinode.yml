@@ -11,10 +11,6 @@ composable_services: true
 deploy_composable_scenario: true
 composable_scenario: scenario001-multinode.yaml
 
-# Tell tripleo how we want things done.
-extra_args: >-
-  --ntp-server pool.ntp.org
-
 network_isolation: false
 
 # This enables TLS for the undercloud which will also make haproxy bind to the
