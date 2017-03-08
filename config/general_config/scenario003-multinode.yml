@@ -7,7 +7,7 @@ overcloud_nodes:
     flavor: control
     virtualbmc_port: 6230
 
-composable_services: true
+composable_services: false
 deploy_composable_scenario: true
 composable_scenario: scenario003-multinode.yaml
 
@@ -22,7 +22,8 @@ ssl_overcloud: false
 
 # If `test_tempest` is `true`, run tempests tests, otherwise do not
 # run them.
-test_ping: false
+test_ping: true
+validate_template: scenario003-multinode.yaml
 run_tempest: false
 tempest_workers: 4
 
