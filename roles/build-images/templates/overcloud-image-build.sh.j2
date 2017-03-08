@@ -27,7 +27,7 @@ tripleo-build-images \
     --image-config-file {{ yaml_path }} \
 {% endfor -%}
 {% else -%}
-openstack overcloud image build \
+openstack overcloud image build{% if not skip_build_images %} --no-skip{% endif %} \
 {% for yaml_path in image_build_yaml_paths -%}
     --config-file {{ yaml_path }} \
 {% endfor -%}
