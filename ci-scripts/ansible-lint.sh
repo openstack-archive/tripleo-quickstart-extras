@@ -12,18 +12,10 @@
 #   this requires refactoring roles, skipping for now
 SKIPLIST="ANSIBLE0006,ANSIBLE0007,ANSIBLE0010,ANSIBLE0012,ANSIBLE0013,ANSIBLE0016"
 
-function lint_error_check {
-    local rc=$?
-    lint_error=0
-    [ $rc -eq 2 ] && lint_error=1
-    return $lint_error
-}
-
 # lint the playbooks separately to avoid linting the roles multiple times
 pushd playbooks
 for playbook in `find . -type f -regex '.*\.y[a]?ml' -print0`; do
-    ansible-lint -x $SKIPLIST $playbook
-    lint_error_check
+    ansible-lint -vvv -x $SKIPLIST $playbook || lint_error=1
 done
 popd
 
@@ -31,11 +23,11 @@ popd
 # Due to https://github.com/willthames/ansible-lint/issues/210, the roles
 # directories need to contain a trailing slash at the end of the path.
 for rolesdir in `find ./roles -maxdepth 1 -type d`; do
-    ansible-lint -x $SKIPLIST $rolesdir/
-    lint_error_check
+    ansible-lint -vvv -x $SKIPLIST $rolesdir/ || lint_error=1
 done
 
-# exit with 1 if we had a least an error or warning.
-if [[ "$lint_error" != 0 ]]; then
+## exit with 1 if we had a least an error or warning.
+if [[ -n "$lint_error" ]]; then
     exit 1;
 fi
+
