@@ -1,0 +1,10 @@
+{% for skip_test in known_failures %}
+# {{ skip_test.reason }}
+{% if skip_test.bz is defined %}
+# {{ skip_test.bz }}
+{% endif %}
+{% if skip_test.lp is defined %}
+# {{ skip_test.lp }}
+{% endif %}
+{{ skip_test.test }}
+{% endfor %}

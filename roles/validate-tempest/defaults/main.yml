@@ -23,7 +23,7 @@ tempest_overcloud: true
 run_tempest: true
 post_tempest: true
 tempest_format: packages # venv or packages
-skip_file_src: "{{ release }}_skip_file.j2"
+skip_file_src: "skip_file.j2"
 skip_file: skip_file
 tempest_isolated: false
 tempest_until_failure: false

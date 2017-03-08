@@ -12,6 +12,10 @@
     dest: "{{ working_dir }}/tempest-setup.sh"
     mode: 0744
 
+- name: Load skip list variables
+  include_vars:
+    file: "tempest_skip_{{ release }}.yml"
+
 - name: Create tempest skipfile
   template:
     src: "{{ skip_file_src }}"
