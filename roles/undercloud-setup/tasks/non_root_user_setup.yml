@@ -20,8 +20,5 @@
 - name: Configure non-root user authorized_keys on undercloud
   authorized_key:
     user: "{{ undercloud_user }}"
-    key: "{{ item }}"
-  with_file:
-    - "{{ undercloud_key }}.pub"
+    key: "{{ lookup('file', '{{ undercloud_key }}.pub') }}"
   become: true
-
