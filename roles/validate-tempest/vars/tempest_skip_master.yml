@@ -62,3 +62,5 @@ known_failures:
     reason: 'TODO(arxcruz) New test, need investigation'
   - test: 'neutron.tests.tempest.scenario.test_trunk.TrunkTest'
     reason: 'TODO(arxcruz) New test, need investigation'
+  - test: 'inspector_tempest_plugin.tests.test_basic.InspectorSmokeTest'
+    reason: 'TODO(weshay) The service is not running on the overcloud, needs investigation'
