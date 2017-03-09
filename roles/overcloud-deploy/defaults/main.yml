@@ -33,6 +33,7 @@ enable_cinder_backup: false
 
 # Deployment variations
 extra_args: ""
+topology: ""
 ssl_overcloud: false
 libvirt_args: "--libvirt-type qemu"
 
@@ -105,6 +106,7 @@ deploy_args: >-
   {{ extra_tht_config_args|default('') }}
   {{ validation_args }}
   {{ swap_args }}
+  {{ topology }}
   {{ extra_args }}
 
 composable_services: false
