@@ -1,3 +1,33 @@
-- include: validate.yml
-  tags:
-    - overcloud-validate
+---
+- name: Old THT workaround, check for pingtest template
+  stat:
+    path: "{{ validate_template_path }}/{{ validate_template }}"
+  register: template_check
+  when: validate_template == "tenantvm_floatingip.yaml"
+
+- name: Old THT workaround, copy over the pingtest template
+  copy:
+    src: "tenantvm_floatingip.yaml"
+    dest: "{{ working_dir }}/tenantvm_floatingip.yaml"
+  when: template_check is defined and not template_check.stat.exists
+
+- name: Old THT workaround, override the template path
+  set_fact:
+    validate_template_path: "{{ working_dir }}"
+  when: template_check is defined and not template_check.stat.exists
+
+- name: Create overcloud validate script
+  template:
+    src: "{{ validate_script }}"
+    dest: "{{ working_dir }}/overcloud-validate.sh"
+    mode: 0744
+
+- name: Copy wait_for script
+  copy:
+    src: wait_for
+    dest: "{{ working_dir }}/wait_for"
+    mode: 0755
+
+- name: Validate the overcloud
+  shell: >
+    {{ working_dir }}/overcloud-validate.sh > {{ validate_log }} 2>&1

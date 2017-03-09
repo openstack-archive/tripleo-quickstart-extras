@@ -1,6 +1,8 @@
 heat_template_version: 2013-05-23
 
 description: >
+  This template resides in tripleo-ci for Mitaka CI jobs only.
+  For Newton and beyond, please look in THT.
   HOT template to create a new neutron network plus a router to the public
   network, and for deploying a server into the new network. The template also
   assigns a floating IP address and sets security group rules. ADAPTED FROM
@@ -9,14 +11,14 @@ parameters:
   key_name:
     type: string
     description: Name of keypair to assign to servers
-    default: '{{ validate_key_name }}'
+    default: 'pingtest_key'
   image:
     type: string
     description: Name of image to use for servers
-    default: '{{ validate_image_name }}'
+    default: 'pingtest_image'
   public_net_name:
     type: string
-    default: '{{ overcloud_public_network_name }}'
+    default: 'nova'
     description: >
       ID or name of public network for which floating IP addresses will be allocated
   private_net_name:
@@ -39,12 +41,6 @@ parameters:
     type: string
     default: '192.168.2.200'
     description: End of private network IP address allocation pool
-{% if release in ['kilo','rhos-7'] %}
-  test_flavor:
-    type: string
-    default: '{{ validate_flavor_id }}'
-    description: Flavor of the nova instance
-{% endif %}
 
 resources:
 
@@ -96,11 +92,7 @@ resources:
       block_device_mapping:
         - device_name: vda
           volume_id: { get_resource: volume1 }
-{% if release in ['kilo','rhos-7'] %}
-      flavor: { get_param: test_flavor }
-{% else  %}
       flavor: { get_resource: test_flavor }
-{% endif %}
       key_name: { get_resource: key_pair }
       networks:
         - port: { get_resource: server1_port }
@@ -135,13 +127,11 @@ resources:
         - remote_ip_prefix: 0.0.0.0/0
           protocol: icmp
 
-{% if release not in ['kilo','rhos-7'] %}
   test_flavor:
     type: OS::Nova::Flavor
     properties:
       ram: 512
       vcpus: 1
-{% endif %}
 
 outputs:
   server1_private_ip:
