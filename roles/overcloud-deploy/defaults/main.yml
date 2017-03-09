@@ -5,6 +5,8 @@ deploy_script: overcloud-deploy.sh.j2
 deploy_log: "{{ working_dir }}/overcloud_deploy.log"
 post_deploy_script: overcloud-deploy-post.sh.j2
 post_deploy_log: "{{ working_dir }}/overcloud_deploy_post.log"
+failed_deployments_log: "{{ working_dir }}/failed_deployments.log"
+failed_deployment_list: "{{ working_dir }}/failed_deployment_list.log"
 validate_script: overcloud-validate.sh.j2
 
 # Deploy a specific scenario THT to the Overcloud
