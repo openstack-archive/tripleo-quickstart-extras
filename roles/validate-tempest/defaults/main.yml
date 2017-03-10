@@ -29,3 +29,8 @@ tempest_isolated: false
 tempest_until_failure: false
 tempest_failing: false
 tempest_exit_on_failure: true
+# Set tempest_version for different release
+# For forked-tempest, we have branched name in synced with releases.
+tempest_version_dict: { 'mitaka': 'mitaka', 'newton': 'newton',
+                         'ocata': '15.0.0', 'master': 'master'}
+tempest_version: "{{ tempest_version_dict[release] }}"

@@ -72,6 +72,11 @@ git clone https://github.com/redhat-openstack/tempest {{ working_dir }}/tempest_
 {% else %}
 git clone https://github.com/openstack/tempest {{ working_dir }}/tempest_git
 {% endif %}
+# set tempest_version
+pushd {{ working_dir }}/tempest_git
+git fetch origin {{ tempest_version }}
+git checkout {{ tempest_version }}
+popd
 # Install required dependency for creating venv
 sudo yum install -y libffi-devel openssl-devel python-virtualenv gcc
 # Create .venv in tempest_git directory with --system-site-packages to access tempest plugins
