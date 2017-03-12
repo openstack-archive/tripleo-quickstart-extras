@@ -175,7 +175,9 @@
   set_fact:
     scenario_args: >-
       -e {{ overcloud_templates_path }}/environments/deployed-server-environment.yaml
+      {% if release not in ['mitaka', 'newton'] %}
       -e {{ overcloud_templates_path }}/environments/deployed-server-bootstrap-environment-centos.yaml
+      {% endif %}
       -e {{ overcloud_templates_path }}/ci/environments/{{ composable_scenario }}
   when: deploy_composable_scenario|bool
 
