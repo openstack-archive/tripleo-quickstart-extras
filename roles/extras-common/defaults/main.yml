@@ -4,3 +4,4 @@ overcloud_ipv6: false
 containerized_overcloud: false
 overcloud_templates_path: /usr/share/openstack-tripleo-heat-templates
 enable_tls_everywhere: false
+undercloud_network_cidr: 192.168.24.0/24

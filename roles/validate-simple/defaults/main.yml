@@ -13,7 +13,7 @@ image_kernel: cirros-0.3.4-x86_64-kernel
 validate_image_name: pingtest_image
 validate_image_dir: "{{ working_dir }}/cirros_images"
 release: mitaka
-floating_ip_cidr: "{{ undercloud_network_cidr|default('192.168.24.0/24') }}"
+floating_ip_cidr: "{{ undercloud_network_cidr }}"
 public_net_name: nova
 public_net_type: flat
 public_net_pool_start: "{{ floating_ip_cidr|nthhost(100) }}"

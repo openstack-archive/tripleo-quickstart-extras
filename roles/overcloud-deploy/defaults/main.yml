@@ -20,7 +20,7 @@ composable_scenario: ""
 # change any of the related variables.
 #
 # [ipaddr]: http://docs.ansible.com/ansible/playbooks_filters_ipaddr.html
-floating_ip_cidr: "{{ undercloud_network_cidr|default('192.0.2.0/24') }}"
+floating_ip_cidr: "{{ undercloud_network_cidr }}"
 floating_ip_start: "{{ floating_ip_cidr|nthhost(100) }}"
 floating_ip_end: "{{ floating_ip_cidr|nthhost(120) }}"
 external_network_gateway: "{{ floating_ip_cidr|nthhost(1) }}"
