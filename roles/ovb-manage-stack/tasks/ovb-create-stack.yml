@@ -10,6 +10,15 @@
   file:
     path: "{{ local_working_dir }}"
 
+- name: Clone Openstack Virtual Baremetal repo if it does not exist
+  git:
+      repo: https://github.com/cybertron/openstack-virtual-baremetal.git
+      dest: "{{ local_working_dir }}/openstack-virtual-baremetal"
+      version: master
+
+- include: ovb-cleanup-stacks-keypairs.yml
+  when: cleanup_stacks_keypairs|bool
+
 - name: generate prefix for all run-related entities
   set_fact:
     prefix="{{ tmp.node_prefix }}"
@@ -19,12 +28,12 @@
 
 - name: copy key inserted in image to undercloud_key location
   copy:
-      src: "{{ existing_key_location }}/{{ item }}"
-      dest: "{{ local_working_dir }}/{{ item }}"
+      src: "{{ existing_key_location }}{{ item }}"
+      dest: "{{ local_working_dir }}/id_rsa_undercloud{{ item }}"
       mode: 0600
   with_items:
-      - id_rsa_undercloud
-      - id_rsa_undercloud.pub
+      - ""
+      - .pub
 
 - name: Copy deploy stack parameters template
   template:
@@ -32,34 +41,13 @@
       dest: "{{ local_working_dir }}/{{ prefix }}env.yaml"
       mode: 0755
 
-# NOTE: 'multi-nic' is deprecated
-- name: Add templates for multiple-nics
-  blockinfile:
-    dest: "{{ local_working_dir }}/{{ prefix }}env.yaml"
-    insertafter: "## in baremetal-networks-all.yaml"
-    content: |
-      ## multiple-nics
-        OS::OVB::BaremetalNetworks: {{ templates_dir }}/baremetal-networks-all.yaml
-        OS::OVB::BaremetalPorts: {{ templates_dir }}/baremetal-ports-all.yaml
-  when: network_isolation_type in ['multi-nic', 'multiple-nics']
-
-- name: Add templates for public-bond
-  blockinfile:
-    dest: "{{ local_working_dir }}/{{ prefix }}env.yaml"
-    insertafter: "## in baremetal-networks-all.yaml"
-    content: |
-      ## public-bond
-        OS::OVB::BaremetalNetworks: {{ templates_dir }}/baremetal-networks-all.yaml
-        OS::OVB::BaremetalPorts: {{ templates_dir }}/baremetal-ports-public-bond.yaml
-  when: network_isolation_type == 'public-bond'
-
 - name: Add keypair
   shell: >
       export OS_USERNAME="{{ os_username }}";
       export OS_PASSWORD="{{ os_password }}";
       export OS_TENANT_NAME="{{ os_tenant_name }}";
       export OS_AUTH_URL="{{ os_auth_url }}";
-      nova keypair-add --pub-key ~/.ssh/id_rsa.pub {{ prefix }}key
+      nova keypair-add --pub-key {{ existing_key_location }}.pub {{ prefix }}key
   ignore_errors: true
   no_log: true
 
@@ -79,17 +67,6 @@
   register: stack_deployment
   environment:
     OS_CLIENT_CONFIG_FILE: "{{ local_working_dir }}/clouds.yaml"
-  ignore_errors: true
-
-- name: Show stack deployment information
-  shell: >
-      export OS_USERNAME="{{ os_username }}";
-      export OS_PASSWORD="{{ os_password }}";
-      export OS_TENANT_NAME="{{ os_tenant_name }}";
-      export OS_AUTH_URL="{{ os_auth_url }}";
-      heat stack-show {{ stack_name }}
-  when: stack_deployment.result is not defined
-  no_log: true
 
 - name: set fact for undercloud floating IP address
   set_fact:
@@ -122,17 +99,8 @@
       export OS_CLOUD="{{ cloud_name}}";
       {{ ovb_dir }}/bin/build-nodes-json --env {{ local_working_dir }}/{{ prefix }}env.yaml
   register: nodes_json
-  no_log: true
 
-- name: Ensure directories exist for network-environment copy
+- name: remove clouds.yaml file
   file:
-      path: "{{ network_env_file_dest }}"
-      state: directory
-      mode: 0755
-
-- name: Copy the network-environment.yaml
-  copy:
-      src: "{{ network_environment_file }}"
-      dest: "{{ network_env_file_dest }}"
-      mode: 0755
-
+      path: "{{ local_working_dir }}/clouds.yaml"
+      state: absent

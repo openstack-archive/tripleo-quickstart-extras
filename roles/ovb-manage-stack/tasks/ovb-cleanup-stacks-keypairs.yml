@@ -1,0 +1,12 @@
+---
+- name: Create OVB environment clean up script
+  template:
+      src: "{{ cleanup_stacks_keypairs_script }}"
+      dest: "{{ local_working_dir }}/cleanup-stacks-keypairs.sh"
+      mode: 0755
+
+- name: Remove existing stacks and key pairs
+  shell: >
+      set -o pipefail &&
+      {{ local_working_dir }}/cleanup-stacks-keypairs.sh 2>&1 {{ timestamper_cmd }} >
+      {{ cleanup_stacks_keypairs_log }}

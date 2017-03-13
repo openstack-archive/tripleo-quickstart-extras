@@ -10,6 +10,7 @@ set -eux
 ## * Configure external interface
 ## ::
 
+# TODO: move this to overcloud-prep-network role
 sudo ip addr add {{ external_interface_ip }} dev {{ external_interface }}
 
 ## * Get mac address of external interface
@@ -39,6 +40,7 @@ IPV6_PEERDNS=yes
 IPV6_PEERROUTES=yes
 EOF'
 
+sudo ifdown {{ external_interface }}
 sudo ifup {{ external_interface }}
 
 ## * Set MTU values
@@ -46,15 +48,19 @@ sudo ifup {{ external_interface }}
 
 {% for interface in (mtu_interface) %}
   sudo ip link set {{ interface }} mtu {{ mtu }}
-  echo "MTU={{ mtu }}" | sudo tee /etc/sysconfig/network-scripts/ifcfg-{{ interface }}
+  echo "MTU={{ mtu }}" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-{{ interface }}
 {% endfor %}
 
-## * Add nameserver to resolv.conf
+## * Add custom nameserver to resolv.conf if required
 ## ::
 
-sudo sed -i 's/^nameserver/#nameserver/g' /etc/resolv.conf
-cat <<EOF | sudo tee /etc/resolv.conf
-nameserver {{ custom_nameserver }}
+{% if custom_nameserver is defined %}
+sudo sed -i '/^nameserver/d' /etc/resolv.conf
+{% for name_server in custom_nameserver %}
+cat <<EOF | sudo tee -a /etc/resolv.conf
+nameserver {{ name_server }}
 EOF
+{% endfor %}
+{% endif %}
 
 ### --stop_docs

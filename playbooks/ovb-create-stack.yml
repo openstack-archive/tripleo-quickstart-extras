@@ -1,13 +1,19 @@
 ---
+# Add the virthost to the in-memory inventory.  The inventory is not
+# written out to disk unless you call the `tripleo-inventory` role.
+- name: Add the virthost to the inventory
+  hosts: localhost
+  tasks:
+    - name: Add virthost
+      add_host:
+        name: "virthost"
+        groups: "virthost"
+        ansible_host: "{{ virthost }}"
+
 - name: Create the OVB stack
   hosts: localhost
   roles:
     - { role: ovb-manage-stack, ovb_manage_stack_mode: 'create' }
-
-- name: Build test packages using DLRN
-  hosts: localhost
-  roles:
-    - {role: build-test-packages, when: build_test_packages|default(false)|bool }
 
 - name: Setup the undercloud
   hosts: undercloud
@@ -23,18 +29,20 @@
   roles:
     - tripleo-inventory
 
-- name: Install the built package on the undercloud
-  hosts: undercloud
-  gather_facts: no
-  vars:
-    ib_repo_host: localhost
-  roles:
-    - {role: install-built-repo, when: build_test_packages|default(false)|bool }
-
 - name: Fetch the overcloud images
   hosts: undercloud
   gather_facts: no
-  vars:
-      ansible_user: root
   roles:
    - fetch-images
+
+- name: Build test packages using DLRN
+  hosts: undercloud
+  roles:
+    - {role: build-test-packages, when: build_test_packages|default(false)|bool }
+
+- name: Install the built package on the undercloud
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - {role: install-built-repo, when: build_test_packages|default(false)|bool }
+

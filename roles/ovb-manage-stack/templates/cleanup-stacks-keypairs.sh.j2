@@ -1,0 +1,48 @@
+#!/bin/bash
+
+set -eux
+
+### --start_docs
+
+## --------------------------------------------------------------
+## Clean up the  OVB environment by removing stacks and key pairs
+## --------------------------------------------------------------
+
+## ##################################################
+## Find the existing stacks and keys pairs to delete
+## ##################################################
+
+## * Return all stacks in COMPLETE or CREATE_FAILED state
+## ::
+
+ALL_STACKS=$({{ local_working_dir }}/bin/openstack stack list | grep "COMPLETE\|CREATE_FAILED" | cut -d '|' -f 3)
+
+## * Delete stacks in COMPLETE or CREATE_FAILED state - one stack at a time
+## ::
+
+for STACK in $ALL_STACKS; do
+    echo "Deleting Heat stack $STACK"
+    {{ local_working_dir }}/bin/openstack stack delete --yes $STACK
+    COUNTER=0
+    while [[ $({{ local_working_dir }}/bin/openstack stack list) == *"$STACK"* ]]; do
+        if [[ $COUNTER -gt 6 ]]; then
+            echo "$STACK could not be deleted in time or is in FAILED state."
+            exit 1
+        else
+            echo "Polling for stack $STACK to be deleted"
+            sleep 30
+            COUNTER=$((COUNTER+1))
+        fi
+    done
+
+## * Delete the key pair associated with the stack
+## ::
+
+    KEYPAIR=$(echo ${STACK/stack/key} | sed 's/oooq-//')
+    if [[ $({{ local_working_dir }}/bin/nova keypair-list) == *"$KEYPAIR"* ]]; then
+        echo "Deleting key pair $KEYPAIR"
+        {{ local_working_dir }}/bin/nova keypair-delete $KEYPAIR
+    fi
+done
+
+### --stop_docs

@@ -1,0 +1,7 @@
+---
+features:
+  - |
+    Added public cloud settings.
+    All public cloud settings can be overridden to deploy on custom cloud
+    environments.
+    Added functionality to remove stacks and key pairs from the host cloud.

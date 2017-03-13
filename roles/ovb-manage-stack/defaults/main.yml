@@ -39,7 +39,19 @@ latest_guest_image:
     rhos-9: rhel-7.3-server-x86_64-latest
     rhos-10: rhel-7.3-server-x86_64-latest
 
-existing_key_location: '{{ local_working_dir }}'
+port_security: true
+
+baremetal_ports_template:
+    multiple-nics: baremetal-ports-all.yaml
+    multi-nic: baremetal-ports-all.yaml
+    public-bond: baremetal-ports-public-bond.yaml
+
+baremetal_port_security_template:
+    multiple-nics: baremetal-ports-all-port-security.yaml
+    multi-nic: baremetal-ports-all-port-security.yaml
+    public-bond: baremetal-ports-public-bond-port-security.yaml
+
+existing_key_location: '~/.ssh/id_rsa'
 remove_image_from_host_cloud: false
 
 bmc_flavor: m1.medium
@@ -55,6 +67,7 @@ private_net: '{{ prefix }}private'
 node_count: 2
 public_net: '{{ prefix }}public'
 provision_net: '{{ prefix }}provision'
+provision_net_cidr: 192.0.2.0/24
 
 # QuintupleO-specific params ignored by virtual-baremetal.yaml
 undercloud_name: '{{ prefix }}undercloud'
@@ -72,4 +85,9 @@ registered_releases:
   - rhos-8
   - rhos-9
   - rhos-10
+
+# OVB environment clean up
+cleanup_stacks_keypairs: false
+cleanup_stacks_keypairs_script: cleanup-stacks-keypairs.sh.j2
+cleanup_stacks_keypairs_log: "{{ local_working_dir }}/cleanup_stacks_keypairs.log"
 
