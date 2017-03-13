@@ -63,10 +63,12 @@
         modify_image_extract_list: "{{ image_build_extract_list }}"
 
   rescue:
-    - set_fact: image_build_failed=true
+    - name: Set image_build_failed fact
+      set_fact: image_build_failed=true
 
   always:
-    - shell: |
+    - name: Displaying log files from build isolation image
+      shell: |
         virt-cat -a {{ build_isolation_image.name }}.qcow2 \
             /tmp/builder.log > builder.log 2>&1 || true
         virt-cat -a {{ build_isolation_image.name }}.qcow2 \
@@ -84,7 +86,8 @@
 # because even though the fail was executed it did not actually cause ansible to
 # exit with nonzero. I suspect it is some interaction with block, so moving the
 # actual fail out of the block.
-- fail: msg='*** Image Build Error ***'
+- name: Throw error msg if image build is failing
+  fail: msg='*** Image Build Error ***'
   when: image_build_failed|default(false)|bool
 
 - when: build_undercloud|bool
