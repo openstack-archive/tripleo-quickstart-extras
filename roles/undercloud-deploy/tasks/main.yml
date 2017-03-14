@@ -1,6 +1,11 @@
 - include: novajoin_prep.yml
   when: enable_tls_everywhere|bool and prepare_novajoin|bool
 
+- include: docker_prep.yml
+  when: containerized_overcloud|bool
+  tags:
+    - containers
+
 - include: create-scripts.yml
   tags:
     - undercloud-scripts

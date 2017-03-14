@@ -1,0 +1,13 @@
+---
+- name: Adding docker group
+  group:
+    name: docker
+    state: present
+  become: true
+
+- name: Adding "undercloud_user" to docker group
+  user:
+    name: "{{undercloud_user}}"
+    groups: docker
+    append: true
+  become: true
