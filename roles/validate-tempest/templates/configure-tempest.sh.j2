@@ -99,6 +99,8 @@ sudo yum -y install openstack-tempest
 cd {{ working_dir }}/tempest
 /usr/share/openstack-tempest-*/tools/configure-tempest-directory
 {% else %}
+# Install python-tempestconf and get default-overrides.conf in /etc/tempest dir.
+sudo yum -y install python-tempestconf
 tempest init {{ working_dir }}/tempest
 {% endif %}
 {% endif %}
@@ -121,8 +123,6 @@ git clone https://github.com/redhat-openstack/python-tempestconf {{ working_dir 
 {{ working_dir }}/tempest_git/tools/with_venv.sh pip install {{ working_dir }}/python-tempestconf
 export TEMPESTCONF="{{ working_dir }}/tempest_git/tools/with_venv.sh discover-tempest-config"
 {% elif tempest_format == "packages" %}
-# Install python-tempestconf if not installed
-sudo yum -y install python-tempestconf
 export TEMPESTCONF="/usr/bin/discover-tempest-config"
 {% endif %}
 {% endif %}
