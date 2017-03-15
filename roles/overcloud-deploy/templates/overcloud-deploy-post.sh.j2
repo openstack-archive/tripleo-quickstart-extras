@@ -26,10 +26,11 @@ sudo sed -i '/^## BEGIN OVERCLOUD HOSTS/,/^## END OVERCLOUD HOSTS/ d' $HOSTFILE
 
 cat <<EOF | sudo tee -a $HOSTFILE
 ## BEGIN OVERCLOUD HOSTS  #nodocs
-$(heat output-show -F raw overcloud HostsEntry)
+$(openstack stack output show overcloud HostsEntry -f value -c output_value)
 
 {% if enable_pacemaker|bool and release == 'mitaka' %}
-$(heat output-show -F raw overcloud PublicVip) overcloud-public-vip
+$(openstack stack output show overcloud PublicVip \
+            -f value -c output_value) overcloud-public-vip
 {% endif %}
 ## END OVERCLOUD HOSTS    #nodocs
 EOF

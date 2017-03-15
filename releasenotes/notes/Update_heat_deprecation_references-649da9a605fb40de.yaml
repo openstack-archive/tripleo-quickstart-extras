@@ -1,0 +1,5 @@
+---
+fixes:
+  - |
+    The references to the Heat command are deprecated from Mitaka release and
+    we should now be using the OpenStack CLI instead.
