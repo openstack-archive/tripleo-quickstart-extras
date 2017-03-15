@@ -19,8 +19,9 @@
         mode: 0755
 
     - name: Generate SSL certificates
-      shell: |
-        {{ working_dir }}/overcloud-create-ssl-cert.sh > {{ overcloud_ssl_cert_log }} 2>&1
+      shell: >
+        {{ working_dir }}/overcloud-create-ssl-cert.sh 2>&1 {{ timestamper_cmd }} >
+        {{ overcloud_ssl_cert_log }}
 
     - name: fetch template from single remote host
       tls_tht:

@@ -12,8 +12,8 @@
 - when: step_delete_overcloud|bool
   block:
     - name: Delete the overcloud
-      shell: |
-        {{ working_dir }}/overcloud-delete.sh > {{ delete_log }} 2>&1
+      shell: >
+        {{ working_dir }}/overcloud-delete.sh 2>&1 {{ timestamper_cmd }} > {{ delete_log }}
       tags:
         - overcloud-delete
 

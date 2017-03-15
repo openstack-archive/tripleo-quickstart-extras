@@ -1,7 +1,7 @@
 - name: Reinstall the undercloud to check idempotency
-  shell: |
-    {{ working_dir }}/undercloud-install.sh > \
-    {{ undercloud_reinstall_log }} 2>&1
+  shell: >
+    {{ working_dir }}/undercloud-install.sh 2>&1 {{ timestamper_cmd }} >
+    {{ undercloud_reinstall_log }}
   when: undercloud_check_idempotency|bool
   tags:
     - undercloud-validate
@@ -15,9 +15,9 @@
     - undercloud-scripts
 
 - name: check undercloud sanity
-  shell: |
-    {{ working_dir }}/undercloud-sanity-check.sh > \
-    {{ undercloud_sanity_check_log }} 2>&1
+  shell: >
+    {{ working_dir }}/undercloud-sanity-check.sh 2>&1 {{ timestamper_cmd }} >
+    {{ undercloud_sanity_check_log }}
   when: undercloud_check_sanity|bool
   tags:
     - undercloud-validate

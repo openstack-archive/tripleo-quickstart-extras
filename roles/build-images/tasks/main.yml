@@ -29,8 +29,8 @@
 
 - name: run the image build script (direct)
   shell: >
-    {{ images_working_dir }}/overcloud_image_build_script.sh >
-    {{ working_dir }}/{{ overcloud_image_build_log }} 2>&1
+    {{ images_working_dir }}/overcloud_image_build_script.sh 2>&1 {{ timestamper_cmd }} >
+    {{ working_dir }}/{{ overcloud_image_build_log }}
   args:
     chdir: "{{ images_working_dir }}"
   when: not build_image_isolated|bool

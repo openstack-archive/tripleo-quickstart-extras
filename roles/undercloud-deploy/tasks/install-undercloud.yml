@@ -13,7 +13,7 @@
   when: step_install_undercloud
 
 - name: Install the undercloud
-  shell: |
-    {{ working_dir }}/undercloud-install.sh > \
-    {{ undercloud_install_log }} 2>&1
+  shell: >
+    {{ working_dir }}/undercloud-install.sh 2>&1 {{ timestamper_cmd }} >
+    {{ undercloud_install_log }}
   when: step_install_undercloud
