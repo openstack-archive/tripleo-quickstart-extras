@@ -143,11 +143,10 @@ ${TEMPESTCONF} --out etc/tempest.conf \
   compute.allow_tenant_isolation true \
   compute.build_timeout 500 \
   volume-feature-enabled.api_v1 False \
-  compute.image_ssh_user cirros \
-  compute.ssh_user cirros \
+  validation.image_ssh_user cirros \
+  validation.ssh_user cirros \
   network.build_timeout 500 \
   volume.build_timeout 500 \
-  scenario.ssh_user cirros \
   orchestration.stack_owner_role heat_stack_owner
 
 ### --stop_docs
