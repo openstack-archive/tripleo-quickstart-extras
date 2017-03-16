@@ -12,9 +12,3 @@
     dest: "{{ working_dir }}/containers-default-parameters.yaml"
     mode: 0755
 
-- name: Create the python script to upload images to the local registry
-  template:
-    src: upload_images_to_local_registry.py.j2
-    dest: "{{ working_dir }}/upload_images_to_local_registry.py"
-    mode: 0755
-
