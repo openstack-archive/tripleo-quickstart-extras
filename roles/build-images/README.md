@@ -45,6 +45,9 @@ Role Variables
 * `image_build_extract_list` -- List of artifacts to extract from the isolated
    build environment after building.
 * `inject_images` -- List of artifacts to inject into the undercloud image
+* `skip_build_images` -- skip building images if there present or cached
+   (default: true), setting it to false will add '--no-skip' option to openstack
+    image build command.
 
 Example Usage
 -------------
