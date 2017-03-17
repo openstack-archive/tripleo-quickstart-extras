@@ -16,9 +16,9 @@ DOCUMENTATION = '''
 ---
 module: jenkins_deps
 version_added: "2.0"
-short_description: Parses the Gerrit commit message and identifies cross repo depenency changes
+short_description: Parses the Gerrit commit message and identifies cross repo dependency changes
 description:
-    - Parses the Gerrit commit message and identifies cross repo depenency changes.
+    - Parses the Gerrit commit message and identifies cross repo dependency changes.
       The expected format in the commit message is:
       Depends-On: <change-id>[@<gerrit-instance-shorthand>]
       Where <change-id> is the gerrit Change-Id of the dependent change,
@@ -145,7 +145,7 @@ def resolve_dep(host, change_id, branch, revision):
 
     Resolve the dependencies in the target commits until there are no more
     dependent changes. If the branch or revision is None, it can still resolve
-    the dependencies. It only uses the branch when the change_id is ambigiuous
+    the dependencies. It only uses the branch when the change_id is ambiguous
     and by default uses the latest patchset's revision.
 
     The function avoids circular dependencies and only allows one change per
