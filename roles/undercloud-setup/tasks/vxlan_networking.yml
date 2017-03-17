@@ -1,0 +1,26 @@
+---
+
+- name: Install the TripleO-CI VXLAN networking script
+  template:
+    src: vxlan_networking.sh.j2
+    dest: "{{ working_dir }}/vxlan_networking.sh"
+    mode: 0755
+
+- name: Run the TripleO-CI VXLAN networking script
+  shell: "{{ working_dir }}/vxlan_networking.sh > {{ working_dir }}/vxlan_networking.sh.log 2>&1"
+
+- name: Bring up the bridge on overcloud nodes
+  shell: "sudo ip link set dev {{ undercloud_local_interface }} up >> {{ working_dir }}/vxlan_networking.sh.log 2>&1"
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['overcloud'] | default([]) }}"
+
+- name: Set the MTU on overcloud nodes
+  shell: "sudo ip link set dev {{ undercloud_local_interface }} mtu {{ vxlan_mtu }} >> {{ working_dir }}/vxlan_networking.sh.log 2>&1"
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['overcloud'] | default([]) }}"
+
+- name: Test ping across vxlan tunnel (and optionally restart ovs)
+  shell: "ping -c 6 -W 3 {{ vxlan_networking_addr_prefix }}.2 || (sudo systemctl restart openvswitch && ping -c 6 -W 3 {{ vxlan_networking_addr_prefix }}.2)"
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['overcloud'] | default([]) }}"
+

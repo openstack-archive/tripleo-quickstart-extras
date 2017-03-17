@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+set -eux
+
+### --start_docs
+
+## Setup devstack-gate's vxlan networking for multinode jobs
+## =========================================================
+
+## .. note::
+##   The following steps are needed:
+##   * Source in common environment (deploy.env)
+##   * Clone devstack and devstack-gate for necessary scripts
+##   * Create the vxlan bridge
+##   * SSH into subnodes, bring the bridge device up on them
+##   * Perform a ping check to see communication is possible over the bridge
+
+## Prepare Your Environment
+## ------------------------
+
+## * Set the environment variables for the script to function
+## ::
+
+# TODO: Figure out where to ln -sf $TRIPLEO_ROOT $BASE/new
+BASE=${BASE:-{{ tripleo_root }}}
+export BASE=${BASE/\/new}
+
+## * Source tripleo-ci's deploy.env environment variables (if available)
+## ::
+
+if [ -f "{{ tripleo_root }}/tripleo-ci/deploy.env" ]; then
+    source {{ tripleo_root }}/tripleo-ci/deploy.env
+fi
+
+## * Use the clone() function from tripleo-ci/scripts/tripleo.sh
+## ::
+
+function clone {
+
+    local repo=$1
+
+    echo "$0 requires $repo to be cloned at \$TRIPLEO_ROOT ({{ tripleo_root }})"
+
+    mkdir -p {{ tripleo_root }}
+    if [ ! -d {{ tripleo_root }}/$(basename $repo) ]; then
+        echo "$repo not found at {{ tripleo_root }}/$repo, git cloning."
+        pushd {{ tripleo_root }}
+        git clone https://git.openstack.org/$repo
+        popd
+    else
+        echo "$repo found at {{ tripleo_root }}/$repo, nothing to do."
+    fi
+
+}
+
+## Perform the Bridge Creation
+## ---------------------------
+
+## * Clone devstack and devstack-gate repositories for network setup scripts
+## ::
+
+clone openstack-dev/devstack
+clone openstack-infra/devstack-gate
+
+## * Source in devstack-gate's common utility functions
+## ::
+
+echo "Sourcing devstack-gate/functions.sh"
+set +u
+source {{ tripleo_root }}/devstack-gate/functions.sh
+set -u
+
+
+primary_node=$(cat /etc/nodepool/primary_node_private)
+sub_nodes=$(cat /etc/nodepool/sub_nodes_private)
+
+# Create OVS vxlan bridges
+# If br-ctlplane already exists on this node, we need to bring it down
+# first, then bring it back up after calling ovs_vxlan_bridge. This ensures
+# that the route added to br-ex by ovs_vxlan_bridge will be preferred over
+# the br-ctlplane route. If it's not preferred, multinode connectivity
+# across the vxlan bridge will not work.
+if [ -f /etc/sysconfig/network-scripts/ifcfg-br-ctlplane ]; then
+    sudo ifdown br-ctlplane
+fi
+
+## * Set up the vxlan bridge to the subnode(s)
+## ::
+
+set +u
+echo "Running ovs_vxlan_bridge"
+ovs_vxlan_bridge {{ undercloud_local_interface }} $primary_node "True" 2 {{ vxlan_networking_addr_prefix }} {{ vxlan_networking_addr_netmask }} $sub_nodes
+set -u
+
+echo "Setting {{ undercloud_local_interface }} up on $primary_node"
+sudo ip link set dev {{ undercloud_local_interface }} up
+sudo ip link set dev {{ undercloud_local_interface }} mtu {{ vxlan_mtu }}
+
+if [ -f /etc/sysconfig/network-scripts/ifcfg-br-ctlplane ]; then
+    sudo ifup br-ctlplane
+fi
+
+## * Restart neutron-openvswitch-agent if it's enabled, since it may have
+##   terminated when br-ctlplane was down
+## ::
+
+if [ "$(sudo systemctl is-enabled neutron-openvswitch-agent)" = 'enabled' ]; then
+    sudo systemctl reset-failed neutron-openvswitch-agent
+    sudo systemctl restart neutron-openvswitch-agent
+fi
+
+### --stop_docs
