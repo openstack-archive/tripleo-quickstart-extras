@@ -170,7 +170,6 @@
                 echo "+ docker inspect $cont" >> $INFO_FILE;
                 docker inspect $cont &>> $INFO_FILE;
                 docker logs $cont &> $INFO_DIR/stdout.log;
-                docker cp $cont:/etc $INFO_DIR/etc;
                 docker cp $cont:/var/lib/kolla/config_files/config.json $INFO_DIR/config.json;
                 # NOTE(flaper87): This should go away. Services should be
                 # using a `logs` volume
@@ -181,6 +180,9 @@
             # volume to exist in a containerized environment.
             cp -r /var/lib/docker/volumes/logs/_data $BASE_DOCKER_EXTRA/logs;
         fi
+
+    - name: Collect config-data
+      shell: cp -r /var/lib/config-data /var/log/config-data
 
     - name: Collect text version of the journal from last four hours
       shell: journalctl --since=-4h --lines=100000 > /var/log/journal.txt
