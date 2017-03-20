@@ -2,8 +2,15 @@
 - name: Set release name
   set_fact: artg_release={{ artg_change.branch | replace('stable/', '') }}
 
-- name: Set DLRN distro
-  set_fact: artg_distro=rpm-{{ artg_release }}
+- name: Set DLRN distro (legacy distgit branch naming)
+  set_fact:
+    artg_distro: "rpm-{{ artg_release }}"
+  when: artg_release in ['master', 'mitaka']
+
+- name: Set DLRN distro (new stable branch naming scheme)
+  set_fact:
+    artg_distro: "{{ artg_release }}-rdo"
+  when: artg_release not in ['master', 'mitaka']
 
 - name: Override projects.ini settings
   lineinfile:
