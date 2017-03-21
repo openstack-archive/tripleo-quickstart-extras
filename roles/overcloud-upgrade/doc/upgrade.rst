@@ -74,8 +74,8 @@ The delorean_hash is the pinned version of the delorean repo.
     yum_repo_path: /etc/yum.repos.d/
     # Url of the delorean repos:
     repos_url:
-      - http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/{{ upgrade_delorean_hash | default('current-passed-ci')}}/delorean.repo
-      - http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/delorean-deps.repo
+      - https://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/{{ upgrade_delorean_hash | default('current-passed-ci')}}/delorean.repo
+      - https://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/delorean-deps.repo
 
 .. Note:: If you don't use the delorean repo, you don't have to take care of
     this values. If you override the upgrade_undercloud_repo_script and upgrade_overcloud_repo_script

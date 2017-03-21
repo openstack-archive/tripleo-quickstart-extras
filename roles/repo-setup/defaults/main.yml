@@ -26,4 +26,4 @@ repos:
 
   - type: file
     filename: delorean-deps.repo
-    down_url: http://trunk.rdoproject.org/centos7-{{ release }}/delorean-deps.repo
+    down_url: https://trunk.rdoproject.org/centos7-{{ release }}/delorean-deps.repo

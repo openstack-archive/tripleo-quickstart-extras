@@ -88,8 +88,8 @@ Settings example for repositories:
           - type: generic
             reponame: delorean
             filename: delorean.repo
-            baseurl: http://buildlogs.centos.org/centos/7/cloud/x86_64/rdo-trunk-master-tripleo/
-            hash_url: http://buildlogs.centos.org/centos/7/cloud/x86_64/rdo-trunk-master-tripleo/delorean.repo
+            baseurl: https://buildlogs.centos.org/centos/7/cloud/x86_64/rdo-trunk-master-tripleo/
+            hash_url: https://buildlogs.centos.org/centos/7/cloud/x86_64/rdo-trunk-master-tripleo/delorean.repo
             priority: 20
             releases:
               - master
@@ -98,8 +98,8 @@ Settings example for repositories:
           - type: generic
             reponame: delorean-current
             filename: delorean-current.repo
-            baseurl: http://trunk.rdoproject.org/centos7/current
-            hash_url: http://trunk.rdoproject.org/centos7/current/delorean.repo
+            baseurl: https://trunk.rdoproject.org/centos7/current
+            hash_url: https://trunk.rdoproject.org/centos7/current/delorean.repo
             priority: 10
             includepkgs:
               - diskimage-builder
@@ -125,7 +125,7 @@ Settings example for repositories:
           # In case of all releases
           - type: file
             filename: delorean-deps.repo
-            down_url: http://trunk.rdoproject.org/centos7-{{ release }}/delorean-deps.repo
+            down_url: https://trunk.rdoproject.org/centos7-{{ release }}/delorean-deps.repo
             priority: 30
 
           - type: package
