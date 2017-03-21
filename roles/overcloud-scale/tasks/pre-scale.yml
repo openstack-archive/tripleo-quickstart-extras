@@ -8,7 +8,7 @@
   when: enable_pacemaker|bool
 
 - name: extract the number of controllers to be deployed
-  set_fact: number_of_controllers="{{ scale_args| regex_replace('^.*--control-scale +([0-9]+).*$', '\\1') | regex_replace('^[^ 0-9]*.*$', '1') }}"
+  set_fact: number_of_controllers="{{ scale_args| regex_replace('^.*--control-scale +([0-9]+).*$', '\\1') | regex_replace('^[^ 0-9]+$', '1') }}"
 
 - name: disable L3 HA
   set_fact:
