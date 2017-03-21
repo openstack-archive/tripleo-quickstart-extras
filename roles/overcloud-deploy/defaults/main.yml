@@ -89,6 +89,7 @@ deployed_server_prepare_log: "{{ working_dir }}/deployed_server_prepare.txt"
 
 container_args: ""
 scenario_args: ""
+multinode_args: ""
 
 deploy_args: >-
   {{ libvirt_args }}
@@ -96,6 +97,7 @@ deploy_args: >-
   {{ timeout_args }}
   {{ cloud_name_args }}
   {{ container_args }}
+  {{ multinode_args }}
   {{ scenario_args }}
   {{ network_args }}
   {{ pacemaker_args }}
@@ -110,6 +112,7 @@ deploy_args: >-
   {{ extra_args }}
 
 composable_services: false
+deploy_multinode: false
 
 step_deploy_overcloud: true
 step_validate_overcloud: true
