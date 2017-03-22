@@ -39,6 +39,12 @@ else
     sed -i "s/priority=.*/priority={{ repo.priority }}/g" /tmp/repo_role_tmp/{{ repo.filename }}
 fi
 {% endif %}
+{% if repo.reponame is defined %}
+sed -i "s/\[.*\]/[{{ repo.reponame }}]/" /tmp/repo_role_tmp/{{ repo.filename }}
+{% endif %}
+{% if repo.includepkgs is defined %}
+echo -e '\nincludepkgs={{ repo.includepkgs|join(",") }}' >> /tmp/repo_role_tmp/{{ repo.filename }}
+{% endif %}
 sudo cp -f /tmp/repo_role_tmp/{{ repo.filename }} /etc/yum.repos.d/
 {% endif %}
 
