@@ -1,0 +1,25 @@
+os_username: "{{ lookup('env','OS_USERNAME') }}"
+os_password: "{{ lookup('env','OS_PASSWORD') }}"
+os_tenant_name: "{{ lookup('env','OS_TENANT_NAME') }}"
+os_auth_url: "{{ lookup('env','OS_AUTH_URL') }}"
+
+cloud_name: rdocloud
+latest_guest_image:
+    newton: CentOS-7-x86_64-GenericCloud-1701
+    ocata: CentOS-7-x86_64-GenericCloud-1701
+    master: CentOS-7-x86_64-GenericCloud-1701
+
+bmc_flavor: m1.small
+baremetal_flavor: m1.large
+undercloud_flavor: m1.large
+provision_net_cidr: 192.168.24.0/24
+
+custom_nameserver:
+    - 8.8.8.8
+undercloud_undercloud_nameservers: 8.8.8.8
+external_net: '38.145.32.0/22'
+overcloud_dns_servers: ["8.8.8.8", "8.8.4.4"]
+ntp_server: 'pool.ntp.org'
+
+# temp disabling introspection on rdocloud
+step_introspect: false

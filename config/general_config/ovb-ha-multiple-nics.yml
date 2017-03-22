@@ -1,0 +1,73 @@
+environment_type: ovb_host_cloud
+
+# undercloud.conf
+undercloud_network_cidr: 192.168.24.0/24
+undercloud_local_ip: 192.168.24.1/24
+undercloud_network_gateway: 192.168.24.1
+undercloud_undercloud_public_vip: 192.168.24.2
+undercloud_undercloud_admin_vip: 192.168.24.3
+undercloud_local_interface: eth1
+undercloud_masquerade_network: 192.168.24.0/24
+undercloud_dhcp_start: 192.168.24.5
+undercloud_dhcp_end: 192.168.24.24
+undercloud_inspection_iprange: 192.168.24.25,192.168.24.39
+
+# template copies
+undercloud_instackenv_template: "{{ local_working_dir }}/instackenv.json"
+baremetal_nic_configs: "{{ local_working_dir }}/openstack-virtual-baremetal/network-templates/nic-configs"
+network_environment_file: "ovb-multiple-nics.yaml"
+image_cache_dir: "{{ working_dir }}/images-cache"
+
+# baremetal settings
+overcloud_nodes:
+node_count: 4
+undercloud_type: ovb
+step_introspect: true
+step_root_device_size: false
+hw_env: ovb_host_cloud
+network_isolation_type: multiple-nics
+network_isolation: true
+enable_vbmc: false
+ovb_setup_connectivity: true
+hostname_correction: true
+
+# adjust mtus
+step_adjust_mtu: true
+mtu: 1350
+mtu_interface:
+    - eth0
+    - eth1
+    - eth2
+
+# set up external interface
+external_interface: eth2
+external_interface_ip: 10.0.0.1
+external_interface_netmask: 255.255.255.0
+
+# images to copy to the undercloud
+images:
+    - name: overcloud-full
+      url: "{{ overcloud_image_url }}"
+      type: tar
+    - name: ipa_images
+      url: "{{ ipa_image_url }}"
+      type: tar
+
+# overcloud deployment settings
+validation_args: " "
+extra_args: " --control-flavor baremetal --compute-flavor baremetal --control-scale 3  \
+-e /usr/share/openstack-tripleo-heat-templates/environments/puppet-pacemaker.yaml \
+-e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml \
+-e ~/network-environment.yaml --ntp-server {{ ntp_server }} "
+
+run_tempest: false
+tempest_config: false
+test_ping: true
+enable_pacemaker: true
+
+# validate / tempest config
+floating_ip_cidr: 10.0.0.0/24
+public_net_pool_start: 10.0.0.50
+public_net_pool_end: 10.0.0.100
+public_net_gateway: 10.0.0.1
+
