@@ -5,3 +5,8 @@
   register: deploy_script_result
   ignore_errors: True
   when: step_deploy_overcloud|bool
+
+- name: Export actual used deploy args for persistence to other plays
+  set_fact:
+    # deploy_args end with a newline, remove to make deploy_args_used easier to use
+    deploy_args_used: "{{ deploy_args | replace('\n', ' ') }}"
