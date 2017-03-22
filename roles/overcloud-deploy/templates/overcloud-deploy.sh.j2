@@ -70,8 +70,8 @@ openstack overcloud deploy \
 
 ### --stop_docs
 # We don't always get a useful error code from the openstack deploy command,
-# so check `openstack stack list` for a CREATE_FAILED status.
-if openstack stack list | grep -q 'CREATE_FAILED'; then
+# so check `openstack stack list` for a CREATE_COMPLETE status.
+if ! openstack stack list | grep -q 'CREATE_COMPLETE'; then
     {%if release not in ['mitaka', 'liberty'] %}
     # get the failures list
     openstack stack failures list overcloud > {{ failed_deployment_list }} || true
@@ -95,5 +95,6 @@ if openstack stack list | grep -q 'CREATE_FAILED'; then
     echo "######################################################" >> {{ failed_deployments_log }}
     # We need to exit with 1 because of the above || true
     done
+    exit 1
 fi
 exit $status_code
