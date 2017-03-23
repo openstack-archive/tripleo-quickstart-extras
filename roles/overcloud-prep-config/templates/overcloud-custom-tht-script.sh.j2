@@ -30,4 +30,23 @@ popd
 {% endif %}
 {% endif %}
 
+{% if download_overcloud_templates_rpm is defined and overcloud_templates_path is defined %}
+## * Download the t-h-t package.
+## ::
+rm -rf downloaded-tht-rpm
+rm -rf {{ overcloud_templates_path }}
+mkdir {{ working_dir }}/downloaded-tht-rpm
+pushd {{ working_dir }}/downloaded-tht-rpm
+
+tht_rpm_name=$(curl {{ tht_rpm_url }} | grep "openstack-tripleo-heat-templates" | grep "noarch.rpm" | grep -v "tripleo-heat-templates-compat" | sed "s/^.*>openstack-tripleo-heat-templates/openstack-tripleo-heat-templates/" | cut -d "<" -f1)
+curl -o {{ working_dir }}/downloaded-tht-rpm/$tht_rpm_name {{ tht_rpm_url }}/$tht_rpm_name
+
+## * Unpack tht sources
+## ::
+
+rpm2cpio $(ls -1 *.rpm | grep $tht_rpm_name) | cpio -ivdm
+cp -R usr/share/openstack-tripleo-heat-templates {{ overcloud_templates_path }}
+popd
+{% endif %}
+
 ### --stop_docs

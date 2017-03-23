@@ -29,6 +29,9 @@ Role Variables
 - `network_isolation_type`: single-nic-vlans, multiple-nics, bond-with-vlans, public-bond -
   type of network isolation to use (default: single-nic-vlans) [1]
   deprecated types - single_nic_vlans, bond_with_vlans, multi-nic
+- `download_overcloud_templates_rpm`: if set to true, allow the user to
+  download a tripleo-heat-templates rpm package from a url defined by the
+  variable `tht_rpm_url`
 
 [1] Names are derived from the `tripleo-heat-templates configuration <https://github.com/openstack/tripleo-heat-templates/tree/master/network/config>`_
 
