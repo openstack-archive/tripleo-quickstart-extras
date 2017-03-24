@@ -109,8 +109,8 @@ repos:
 yum_repo_path: /etc/yum.repos.d/
 # Url of the delorean repos:
 repos_url:
-  - http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/{{ delorean_hash | default('current-passed-ci')}}/delorean.repo
-  - http://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/delorean-deps.repo
+  - https://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/{{ delorean_hash | default('current-passed-ci')}}/delorean.repo
+  - https://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/delorean-deps.repo
 ```
 
 Dependencies
