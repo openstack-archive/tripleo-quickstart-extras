@@ -28,6 +28,10 @@ options:
     description:
       - The content of the ZUUL_CHANGES variable
     required: True
+  branch:
+    description:
+      - Which branch to transform dependent changes on.
+    default: None
 '''
 
 EXAMPLES = '''
@@ -37,12 +41,14 @@ EXAMPLES = '''
 '''
 
 
-def process(host, changes):
+def process(host, changes, branch):
     """Process the changes from Zuul format"""
     output = []
 
-    for item in changes.split("^"):
+    for item in reversed(changes.split("^")):
         params = item.split(":")
+        if branch and branch != params[1]:
+            continue
         if params[0] in [i['project'] for i in output]:
             continue
         output.append({"host": host,
@@ -57,11 +63,13 @@ def main():
     module = AnsibleModule(
         argument_spec=dict(
             host=dict(required=True, type='str'),
-            changes=dict(required=True, type='str')
+            changes=dict(required=True, type='str'),
+            branch=dict(default=None, type='str')
         )
     )
     result = process(module.params['host'],
-                     module.params['changes'])
+                     module.params['changes'],
+                     module.params['branch'])
     module.exit_json(**result)
 
 
