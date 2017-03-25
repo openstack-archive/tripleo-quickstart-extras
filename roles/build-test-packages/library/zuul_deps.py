@@ -22,7 +22,7 @@ description:
 options:
   host:
     description:
-      - The content of the ZUUL_HOST variable
+      - The content of the ZUUL_URL variable
     required: True
   changes:
     description:
@@ -36,7 +36,7 @@ options:
 
 EXAMPLES = '''
 - zuul_deps:
-    host: review.openstack.org
+    host: https://review.openstack.org
     changes: "openstack/tripleo-heat-templates:master:refs/changes/88/296488/1^openstack/instack-undercloud:master:refs/changes/84/315184/5"
 '''
 
