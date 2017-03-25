@@ -1,4 +1,5 @@
 ---
 - name: Run sanity checks
   shell: >
-      {{ working_dir }}/validate-sanity-check.sh > {{ sanity_checks_log }} 2>&1
+    {{ working_dir }}/validate-sanity-check.sh 2>&1 {{ timestamper_cmd }} >
+    {{ sanity_checks_log }}

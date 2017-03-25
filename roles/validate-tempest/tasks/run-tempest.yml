@@ -1,6 +1,6 @@
 ---
 - name: Execute tempest
   shell: |
-    {{ working_dir }}/tempest-setup.sh > {{ tempest_log_file }} 2>&1
+    {{ working_dir }}/tempest-setup.sh 2>&1 {{ timestamper_cmd }} > {{ tempest_log_file }}
   register: tempest_result
   ignore_errors: True

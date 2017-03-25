@@ -1,4 +1,5 @@
 - name: Provision script execution
   shell: >
-    {{ baremetal_provisioning_script }} > {{ baremetal_provisioning_log }} 2>&1
+    {{ baremetal_provisioning_script }} 2>&1 {{ timestamper_cmd }} >
+    {{ baremetal_provisioning_log }}
   when: step_provide_undercloud

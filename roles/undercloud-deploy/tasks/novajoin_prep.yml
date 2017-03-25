@@ -22,7 +22,9 @@
     mode: 0755
 
 - name: Run the novajoin installation script
-  shell: "{{ working_dir }}/install_novajoin.sh > {{ working_dir }}/install_novajoin.sh.log 2>&1"
+  shell: >
+    {{ working_dir }}/install_novajoin.sh 2>&1 {{ timestamper_cmd }} >
+    {{ working_dir }}/install_novajoin.sh.log
 
 - name: Install novajoin preparation script
   template:
@@ -31,7 +33,9 @@
     mode: 0755
 
 - name: Run the novajoin preparation script
-  shell: "{{ working_dir }}/novajoin_prep.sh > {{ working_dir }}/novajoin_prep.sh.log 2>&1"
+  shell: >
+    {{ working_dir }}/novajoin_prep.sh 2>&1 {{ timestamper_cmd }} >
+    {{ working_dir }}/novajoin_prep.sh.log
 
 - name: Register OTP output
   command: cat {{ freeipa_otp_key }}

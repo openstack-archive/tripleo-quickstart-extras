@@ -38,6 +38,6 @@
 
 - name: Build docs with Sphinx
   shell: >
-    sphinx-build -b html "{{ artcl_docs_source_dir }}"
-    "{{ artcl_docs_build_dir }}" &> "{{ artcl_collect_dir }}/docs/sphinx_build.log"
+    sphinx-build -b html "{{ artcl_docs_source_dir }}" "{{ artcl_docs_build_dir }}"
+    2>&1 {{ timestamper_cmd }} > {{ artcl_collect_dir }}/docs/sphinx_build.log
   ignore_errors: yes

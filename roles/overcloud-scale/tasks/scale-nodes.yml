@@ -4,7 +4,8 @@
 - name: Call scale deployment script
   shell: >
     source {{ working_dir }}/stackrc;
-    {{ working_dir }}/scale-deployment.sh &> overcloud_deployment_scale_console.log;
+    {{ working_dir }}/scale-deployment.sh 2>&1 {{ timestamper_cmd }} >
+    overcloud_deployment_scale_console.log;
 
 - name: Poll heat stack-list to determine when node scale is complete
   shell: >

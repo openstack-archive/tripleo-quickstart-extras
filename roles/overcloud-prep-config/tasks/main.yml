@@ -43,9 +43,9 @@
         mode: 0755
 
     - name: Modify the nic-configs file to use Linux bonds
-      shell: |
-        {{ working_dir }}/bond-with-vlans-copy-nic-configs.sh > \
-        {{ bond_with_vlans_nic_configs_log }} 2>&1
+      shell: >
+        {{ working_dir }}/bond-with-vlans-copy-nic-configs.sh 2>&1 {{ timestamper_cmd }} >
+        {{ bond_with_vlans_nic_configs_log }}
 
 - name: "Push baremetal nic-configs directory (if defined)"
   copy:
@@ -60,9 +60,9 @@
     mode: 0755
 
 - name: Checkout custom tht heat templates from src
-  shell: |
-    {{ working_dir }}/overcloud-custom-tht-script.sh > \
-    {{ overcloud_custom_tht_log }} 2>&1
+  shell: >
+    {{ working_dir }}/overcloud-custom-tht-script.sh 2>&1 {{ timestamper_cmd }} >
+    {{ overcloud_custom_tht_log }}
 
 - name: Copy extra THT config files on the undercloud
   copy:

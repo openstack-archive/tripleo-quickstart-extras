@@ -7,5 +7,6 @@
     mode: 0755
 
 - name: Run the package installation script
-  shell: "{{ working_dir }}/install_packages.sh > {{ working_dir }}/install_packages.sh.log 2>&1"
-
+  shell: >
+    {{ working_dir }}/install_packages.sh 2>&1 {{ timestamper_cmd }} >
+    {{ working_dir }}/install_packages.sh.log

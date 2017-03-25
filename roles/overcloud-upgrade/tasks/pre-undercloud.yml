@@ -7,8 +7,9 @@
 
 - name: Execute upgrade repo script
   become: yes
-  shell: |
-    {{ upgrade_working_dir }}/upgrade-undercloud-repo.sh > upgrade-undercloud-repo.sh.log 2>&1
+  shell: >
+    {{ upgrade_working_dir }}/upgrade-undercloud-repo.sh 2>&1 {{ timestamper_cmd }} >
+    upgrade-undercloud-repo.sh.log
   when: step_pre_undercloud_upgrade
 
 - name: Clean yum cache
