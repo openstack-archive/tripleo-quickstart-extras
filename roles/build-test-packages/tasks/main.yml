@@ -90,6 +90,7 @@
   zuul_deps:
     host: "{{ lookup('env', 'ZUUL_HOST')|default('review.openstack.org', true) }}"
     changes: "{{ lookup('env', 'ZUUL_CHANGES') }}"
+    branch: "{{ lookup('env', 'ZUUL_BRANCH') }}"
   when: zuul_changes != ""
 
 - name: Add Zuul changes to the change list
