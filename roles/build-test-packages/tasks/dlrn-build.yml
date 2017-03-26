@@ -45,7 +45,7 @@
 
 - name: Clone the gated change
   git:
-    repo: 'https://{{ artg_change.host }}/{{ artg_change.project }}'
+    repo: '{{ artg_change.host }}/{{ artg_change.project }}'
     dest: '{{ ansible_user_dir }}/DLRN/data/{{ project_name_mapped.stdout }}'
     refspec: '{{ artg_change.refspec }}'
     version: 'FETCH_HEAD'
