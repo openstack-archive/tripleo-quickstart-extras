@@ -20,6 +20,7 @@
 
     - name: Generate SSL certificates
       shell: >
+        set -o pipefail &&
         {{ working_dir }}/overcloud-create-ssl-cert.sh 2>&1 {{ timestamper_cmd }} >
         {{ overcloud_ssl_cert_log }}
 

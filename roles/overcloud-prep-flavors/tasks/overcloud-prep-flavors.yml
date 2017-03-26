@@ -1,4 +1,5 @@
 - name: Prepare the scripts for overcloud flavors
   shell: >
+    set -o pipefail &&
     {{ working_dir }}/overcloud-prep-flavors.sh 2>&1 {{ timestamper_cmd }} >
     {{ overcloud_prep_flavors_log }}

@@ -1,6 +1,7 @@
 ---
 - name: Prepare for the containerized deployment
   shell: >
+    set -o pipefail &&
     {{ working_dir }}/overcloud-prep-containers.sh 2>&1 {{ timestamper_cmd }} >
     {{ overcloud_prep_containers_log }}
   when: containerized_overcloud|bool

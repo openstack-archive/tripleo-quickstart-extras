@@ -30,4 +30,5 @@
 
 - name: Validate the overcloud
   shell: >
+    set -o pipefail &&
     {{ working_dir }}/overcloud-validate.sh 2>&1 {{ timestamper_cmd }} > {{ validate_log }}

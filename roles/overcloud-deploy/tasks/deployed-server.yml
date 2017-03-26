@@ -8,6 +8,7 @@
 
 - name: Run the deployed-server_prepare script
   shell: >
+    set -o pipefail &&
     {{ working_dir }}/deployed_server_prepare.sh 2>&1 {{ timestamper_cmd }} >
     {{ deployed_server_prepare_log }}
   async: 10800

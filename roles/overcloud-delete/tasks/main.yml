@@ -13,6 +13,7 @@
   block:
     - name: Delete the overcloud
       shell: >
+        set -o pipefail &&
         {{ working_dir }}/overcloud-delete.sh 2>&1 {{ timestamper_cmd }} > {{ delete_log }}
       tags:
         - overcloud-delete

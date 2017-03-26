@@ -35,6 +35,7 @@
 - name: Delete node by id
   shell: >
     cat {{ working_dir }}/delete-node.sh;
+    set -o pipefail &&
     {{ working_dir }}/delete-node.sh 2>&1 {{ timestamper_cmd }} >
     delete_node_scale_console.log;
 

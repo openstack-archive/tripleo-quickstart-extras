@@ -1,5 +1,6 @@
 - name: Reinstall the undercloud to check idempotency
   shell: >
+    set -o pipefail &&
     {{ working_dir }}/undercloud-install.sh 2>&1 {{ timestamper_cmd }} >
     {{ undercloud_reinstall_log }}
   when: undercloud_check_idempotency|bool
@@ -16,6 +17,7 @@
 
 - name: check undercloud sanity
   shell: >
+    set -o pipefail &&
     {{ working_dir }}/undercloud-sanity-check.sh 2>&1 {{ timestamper_cmd }} >
     {{ undercloud_sanity_check_log }}
   when: undercloud_check_sanity|bool

@@ -8,6 +8,7 @@
 - name: Execute upgrade repo script
   become: yes
   shell: >
+    set -o pipefail &&
     {{ upgrade_working_dir }}/upgrade-undercloud-repo.sh 2>&1 {{ timestamper_cmd }} >
     upgrade-undercloud-repo.sh.log
   when: step_pre_undercloud_upgrade

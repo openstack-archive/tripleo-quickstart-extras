@@ -44,6 +44,7 @@
 
     - name: Modify the nic-configs file to use Linux bonds
       shell: >
+        set -o pipefail &&
         {{ working_dir }}/bond-with-vlans-copy-nic-configs.sh 2>&1 {{ timestamper_cmd }} >
         {{ bond_with_vlans_nic_configs_log }}
 
@@ -61,6 +62,7 @@
 
 - name: Checkout custom tht heat templates from src
   shell: >
+    set -o pipefail &&
     {{ working_dir }}/overcloud-custom-tht-script.sh 2>&1 {{ timestamper_cmd }} >
     {{ overcloud_custom_tht_log }}
 
