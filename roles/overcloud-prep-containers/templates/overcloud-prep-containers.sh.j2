@@ -27,11 +27,6 @@ neutron subnet-update $subnet_uuid --dns-nameserver {{ containers_compute_dns_se
 neutron subnet-show $subnet_uuid
 
 
-# **WORKAROUND** port 8787 is not open on the undercloud
-# https://bugs.launchpad.net/tripleo/+bug/1651621
-sudo iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 8787 -j ACCEPT
-
-
 ## * Populate the docker registery
 ## ::
 
