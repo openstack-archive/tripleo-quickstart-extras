@@ -1,5 +1,6 @@
 - name: Setup repos on live host
   shell: >
+    set -o pipefail &&
     {{ ib_repo_workdir }}/install-built-repo.sh 2>&1 {{ timestamper_cmd }} >
     {{ ib_repo_install_log }}
   become: true

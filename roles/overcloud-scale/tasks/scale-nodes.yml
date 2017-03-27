@@ -4,6 +4,7 @@
 - name: Call scale deployment script
   shell: >
     source {{ working_dir }}/stackrc;
+    set -o pipefail &&
     {{ working_dir }}/scale-deployment.sh 2>&1 {{ timestamper_cmd }} >
     overcloud_deployment_scale_console.log;
 

@@ -23,6 +23,7 @@
 
 - name: Run the novajoin installation script
   shell: >
+    set -o pipefail &&
     {{ working_dir }}/install_novajoin.sh 2>&1 {{ timestamper_cmd }} >
     {{ working_dir }}/install_novajoin.sh.log
 
@@ -34,6 +35,7 @@
 
 - name: Run the novajoin preparation script
   shell: >
+    set -o pipefail &&
     {{ working_dir }}/novajoin_prep.sh 2>&1 {{ timestamper_cmd }} >
     {{ working_dir }}/novajoin_prep.sh.log
 

@@ -9,6 +9,7 @@
 
 - name: Run the TripleO-CI VXLAN networking script on subnodes
   shell: >
+    set -o pipefail &&
     timeout --preserve-status 60s {{ working_dir }}/toci_vxlan_networking_multinode.sh
     2>&1 {{ timestamper_cmd }} > {{ working_dir }}/toci_vxlan_networking_multinode.sh.log
   when: toci_vxlan_networking_multinode|bool
@@ -21,6 +22,7 @@
 
 - name: Run the TripleO-CI VXLAN networking script
   shell: >
+    set -o pipefail &&
     {{ working_dir }}/toci_vxlan_networking.sh
     2>&1 {{ timestamper_cmd }} > {{ working_dir }}/toci_vxlan_networking.sh.log
 

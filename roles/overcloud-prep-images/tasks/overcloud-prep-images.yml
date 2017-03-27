@@ -1,4 +1,5 @@
 - name: Prepare the overcloud images for deploy
   shell: >
+    set -o pipefail &&
     {{ working_dir }}/overcloud-prep-images.sh 2>&1 {{ timestamper_cmd }} >
     {{ overcloud_prep_images_log }}

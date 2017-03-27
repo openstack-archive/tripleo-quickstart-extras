@@ -29,6 +29,7 @@
 
 - name: run the image build script (direct)
   shell: >
+    set -o pipefail &&
     {{ images_working_dir }}/overcloud_image_build_script.sh 2>&1 {{ timestamper_cmd }} >
     {{ working_dir }}/{{ overcloud_image_build_log }}
   args:
