@@ -21,7 +21,11 @@ glance::api::workers: "%{hiera('undercloud_workers')}"
 glance::registry::workers: "%{hiera('undercloud_workers')}"
 {% endif %}
 
-{% if undercloud_heat_workers is defined %}
+{% if undercloud_heat_workers is defined and release not in ['mitaka','newton', 'ocata'] %}
+heat::wsgi::apache_api::workers: {{undercloud_heat_workers}}
+heat::wsgi::apache_api_cfn::workers: {{undercloud_heat_workers}}
+heat::engine::num_engine_workers: {{undercloud_heat_workers}}
+{% elif undercloud_heat_workers is defined %}
 heat::api::workers: {{undercloud_heat_workers}}
 heat::api_cfn::workers: {{undercloud_heat_workers}}
 heat::engine::num_engine_workers: {{undercloud_heat_workers}}
