@@ -179,6 +179,13 @@ enable_tempest = {{undercloud_enable_tempest}}
 #enable_tempest = true
 {% endif %}
 
+# Whether to install the TripleO UI. (boolean value)
+{% if undercloud_enable_ui is defined %}
+enable_ui = {{undercloud_enable_ui}}
+{% else %}
+#enable_ui = true
+{% endif %}
+
 # Whether to install Mistral in the Undercloud. (boolean value)
 {% if undercloud_enable_mistral is defined %}
 enable_mistral = {{undercloud_enable_mistral}}
