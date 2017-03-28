@@ -1,0 +1,9 @@
+---
+custom_tht_log: custom-tht-script.log
+custom_tht_script: custom-tht-script.sh.j2
+tht_templates_repo: ""
+tht_templates_refspec: ""
+tht_templates_branch: ""
+tht_templates_path: ""
+download_templates_rpm: ""
+prep_post_hook_script: ""

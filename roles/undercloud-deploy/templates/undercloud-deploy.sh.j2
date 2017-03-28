@@ -36,38 +36,38 @@ undercloud_local_ip={{ hostvars['undercloud'].undercloud_ip }}
 
 sudo openstack undercloud deploy \
     --heat-native \
-    --templates={{overcloud_templates_path}} \
+    --templates={{ undercloud_templates_path }} \
     --local-ip=$undercloud_local_ip \
 {% if undercloud_cloud_domain is defined %}
     --local-domain={{ undercloud_cloud_domain }} \
 {% endif %}
 {% if containerized_undercloud|bool %}
 {% if undercloud_enable_mistral|bool %}
-    -e {{overcloud_templates_path}}/environments/{{env_files_path}}/mistral.yaml \
+    -e {{ undercloud_templates_path }}/environments/{{ env_files_path }}/mistral.yaml \
 {% endif %}
 {% if undercloud_enable_tempest|bool %}
-    -e {{overcloud_templates_path}}/environments/{{env_files_path}}/tempest.yaml \
+    -e {{ undercloud_templates_path }}/environments/{{ env_files_path }}/tempest.yaml \
 {% endif %}
 {% if undercloud_enable_ironic|bool %}
-    -e {{overcloud_templates_path}}/environments/{{env_files_path}}/ironic.yaml \
+    -e {{ undercloud_templates_path }}/environments/{{ env_files_path }}/ironic.yaml \
 {% endif %}
 {% if undercloud_enable_ironic_inspector|bool %}
-    -e /usr/share/openstack-tripleo-heat-templates/environments/{{env_files_path}}/ironic-inspector.yaml \
+    -e {{ undercloud_templates_path }}/environments/{{ env_files_path }}/ironic-inspector.yaml \
 {% endif %}
 {% if undercloud_enable_zaqar|bool %}
-    -e {{overcloud_templates_path}}/environments/{{env_files_path}}/zaqar.yaml \
+    -e {{ undercloud_templates_path }}/environments/{{ env_files_path }}/zaqar.yaml \
 {% endif %}
 {% if undercloud_generate_service_certificate is defined %}
-    -e /usr/share/openstack-tripleo-heat-templates/environments/{{env_files_path}}/undercloud-haproxy.yaml \
-    -e /usr/share/openstack-tripleo-heat-templates/environments/{{env_files_path}}/undercloud-keepalived.yaml \
+    -e {{ undercloud_templates_path }}/environments/{{ env_files_path }}/undercloud-haproxy.yaml \
+    -e {{ undercloud_templates_path }}/environments/{{ env_files_path }}/undercloud-keepalived.yaml \
 {% endif %}
 {% if undercloud_enable_telemetry|bool %}
-    -e {{overcloud_templates_path}}/environments/{{env_files_path}}/undercloud-gnocchi.yaml \
-    -e {{overcloud_templates_path}}/environments/{{env_files_path}}/undercloud-aodh.yaml \
-    -e {{overcloud_templates_path}}/environments/{{env_files_path}}/undercloud-panko.yaml \
-    -e {{overcloud_templates_path}}/environments/{{env_files_path}}/undercloud-ceilometer.yaml \
+    -e {{ undercloud_templates_path }}/environments/{{ env_files_path }}/undercloud-gnocchi.yaml \
+    -e {{ undercloud_templates_path }}/environments/{{ env_files_path }}/undercloud-aodh.yaml \
+    -e {{ undercloud_templates_path }}/environments/{{ env_files_path }}/undercloud-panko.yaml \
+    -e {{ undercloud_templates_path }}/environments/{{ env_files_path }}/undercloud-ceilometer.yaml \
 {% endif %}
-    -e {{overcloud_templates_path}}/environments/docker.yaml \
+    -e {{ undercloud_templates_path }}/environments/docker.yaml \
     -e {{ working_dir }}/undercloud-containers-default-parameters.yaml \
     -e {{ working_dir }}/undercloud-parameter-defaults.yaml \
 {% endif %}

@@ -72,14 +72,25 @@
     dest: "{{ working_dir }}/undercloud-install.sh"
     mode: 0755
 
-- name: Prepare custom t-h-t branch/refspec
+- name: Prepare undercloud custom t-h-t branch/refspec
   include_role:
-    name: overcloud-prep-config
-    tasks_from: custom_tht
+    name: tht-prep-config
+  vars:
+    custom_tht_log: "{{ undercloud_custom_tht_log }}"
+    custom_tht_script: "{{ undercloud_custom_tht_script }}"
+    tht_templates_repo: "{{ undercloud_templates_repo|default('') }}"
+    tht_templates_refspec: "{{ undercloud_templates_refspec|default('') }}"
+    tht_templates_branch: "{{ undercloud_templates_branch|default('') }}"
+    tht_templates_path: "{{ undercloud_templates_path }}"
+    composable_scenario: "{{ undercloud_composable_scenario }}"
+    upgrade_composable_scenario: "{{ undercloud_upgrade_composable_scenario }}"
+    prep_post_hook_script: "{{ undercloud_prep_post_hook_script }}"
+    download_templates_rpm: "{{ download_undercloud_templates_rpm }}"
+    tht_rpm_url: "{{ undercloud_tht_rpm_url }}"
   when:
-     - overcloud_templates_branch is defined or overcloud_templates_refspec is defined
-     - overcloud_templates_repo is defined
-     - overcloud_templates_path is defined
+     - undercloud_templates_branch is defined or undercloud_templates_refspec is defined
+     - undercloud_templates_repo is defined
+     - undercloud_templates_path is defined
   static: no
 
 - name: Noop resource_registry when using net_config_override

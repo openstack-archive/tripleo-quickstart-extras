@@ -32,7 +32,7 @@ undercloud_type: virtual
 baremetal_instackenv: "{{ working_dir }}/instackenv.json"
 baremetal_network_environment: "{{ working_dir }}/network-isolation.yml"
 
-overcloud_custom_tht_script: overcloud-custom-tht-script.sh.j2
+overcloud_custom_tht_script: custom-tht-script.sh.j2
 overcloud_custom_tht_log: overcloud_custom_tht_script.log
 
 bond_with_vlans_copy_nic_configs_script: bond-with-vlans-copy-nic-configs.sh.j2

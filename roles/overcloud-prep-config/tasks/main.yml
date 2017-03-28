@@ -57,7 +57,17 @@
   when: baremetal_nic_configs is defined
 
 - name: Prepare custom t-h-t for overcloud deployment
-  import_tasks: custom_tht.yml
+  include_role:
+    name: tht-prep-config
+  vars:
+    custom_tht_log: "{{ overcloud_custom_tht_log }}"
+    custom_tht_script: "{{ overcloud_custom_tht_script }}"
+    tht_templates_repo: "{{ overcloud_templates_repo|default('') }}"
+    tht_templates_refspec: "{{ overcloud_templates_refspec|default('') }}"
+    tht_templates_branch: "{{ overcloud_templates_branch|default('') }}"
+    tht_templates_path: "{{ overcloud_templates_path }}"
+    download_templates_rpm: "{{ download_overcloud_templates_rpm|default('') }}"
+    prep_post_hook_script: "{{ overcloud_prep_post_hook_script|default('') }}"
   when:
      - overcloud_templates_refspec is defined or overcloud_templates_branch is defined
      - overcloud_templates_repo is defined
