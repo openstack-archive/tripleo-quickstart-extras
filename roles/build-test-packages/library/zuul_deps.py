@@ -51,6 +51,9 @@ def process(host, changes, branch):
             continue
         if params[0] in [i['project'] for i in output]:
             continue
+        # https://bugs.launchpad.net/tripleo/+bug/1676853
+        if '.openstack.org' in host:
+            host = 'https://git.openstack.org'
         output.append({"host": host,
                        "project": params[0],
                        "branch": params[1],
