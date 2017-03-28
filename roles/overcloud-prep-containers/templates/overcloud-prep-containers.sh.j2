@@ -30,7 +30,7 @@ neutron subnet-show $subnet_uuid
 ## * Populate the docker registery
 ## ::
 
-sudo python {{ working_dir }}/upload_images_to_local_registry.py
+openstack overcloud container image upload --verbose --config-file {{ tripleo_common_dir }}/contrib/overcloud_containers.yaml
 
 ## * Configure the environments/docker.yaml, this is done automatically.
 ## ::
