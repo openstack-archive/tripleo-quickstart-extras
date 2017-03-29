@@ -38,7 +38,7 @@ echo "Please use 'single-nic-vlans' and 'bond-with-vlans'"
 {% endif %}
 {% for name, network in (undercloud_networks|default({})).items() if name == 'external' %}
 
-{% if not overcloud_ipv6|bool %}
+{% if not overcloud_ipv6|bool and network.device_type == 'ovs' %}
 sudo bash -c 'cat <<EOF > /etc/sysconfig/network-scripts/ifcfg-vlan{{ network.tag }}
 DEVICE=vlan{{ network.tag }}
 ONBOOT=yes
@@ -52,6 +52,19 @@ OVS_OPTIONS={{ network.ovs_options }}
 EOF'
 
 sudo ifup ifcfg-vlan{{ network.tag }}
+
+{% elif not overcloud_ipv6|bool and network.device_type == 'ethernet' %}
+
+sudo bash -c 'cat <<EOF > /etc/sysconfig/network-scripts/ifcfg-{{ network.device_name }}
+DEVICE={{ network.device_name }}
+ONBOOT=yes
+TYPE=Ethernet
+BOOTPROTO=static
+IPADDR={{ network.address }}
+NETMASK={{ network.netmask }}
+EOF'
+
+sudo ifup ifcfg-{{ network.device_name }}
 
 {% else %}
 
