@@ -18,9 +18,9 @@
   include: package_installs.yml
   when: package_installs|bool
 
-- name: Including toci_vxlan_networking tasks
-  include: toci_vxlan_networking.yml
-  when: toci_vxlan_networking|bool
+- name: Including vxlan_networking tasks
+  include: vxlan_networking.yml
+  when: vxlan_networking|bool or toci_vxlan_networking|bool
 
 - name: Including hostname tasks
   include: hostname.yml

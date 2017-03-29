@@ -31,8 +31,9 @@ Role Variables
 - undercloud_user: <stack> -- The non-root user operating on the undercloud
 - undercloud_key: <"{{ local_working_dir }}/id_rsa_undercloud"> -- Key to access the undercloud node/machine
 - non_root_user_setup: <true> -- Switch to setup a non-root user
-- toci_vxlan_networking: <false> -- Switch to setup the VXLAN networking from devstack-gate
-- toci_vxlan_networking_multinode: <false> -- Switch to setup the VXLAN networking from devstack-gate on a multinode setup provided from nodepool.
+- vxlan_networking: <false> -- Switch to setup the VXLAN networking from devstack-gate (for multinode)
+- vxlan_networking_addr_prefix: <derivative of undercloud_network_cidr> -- The IPv4 subnet that will be used for the overcloud bridge between multinode hosts.
+- vxlan_networking_addr_netmask: <derivative of undercloud_network_cidr> -- The CIDR notation of the subnet mask that will be used for the overcloud bridge.
 - undercloud_hostname: <false> -- Optionally, the hostname to set on the host.
 - hostname_correction: <false> -- Switch to set the transient hostname to the static hostname (TripleO requirement)
 - step_set_undercloud_hostname: <false> -- Switch to set the undercloud hostname explicitly
