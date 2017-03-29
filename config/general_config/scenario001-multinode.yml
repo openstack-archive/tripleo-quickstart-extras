@@ -8,6 +8,7 @@ overcloud_nodes:
     virtualbmc_port: 6230
 
 composable_services: false
+deploy_multinode: true
 deploy_composable_scenario: true
 composable_scenario: scenario001-multinode.yaml
 
