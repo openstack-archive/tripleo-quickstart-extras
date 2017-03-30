@@ -3,6 +3,7 @@
 undercloud_key: "{{ local_working_dir }}/id_rsa_undercloud"
 non_root_user_setup: true
 
+toci_vxlan_networking: false
 vxlan_networking: false
 vxlan_networking_addr_prefix: "{{ undercloud_network_cidr | ipaddr('network') | replace('.0', '') }}"
 vxlan_networking_addr_netmask: "{{ undercloud_network_cidr | ipv4('prefix') }}"
