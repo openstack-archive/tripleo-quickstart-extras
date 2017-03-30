@@ -59,8 +59,14 @@ sudo systemctl restart openstack-ironic-conductor && sleep 30
 ## * Register nodes with Ironic.
 ## ::
 
+{% if release in ['mitaka'] %}
 openstack baremetal import --json instackenv.json
 openstack baremetal configure boot
+{% elif step_introspect|bool %}
+openstack overcloud node import instackenv.json
+{% else %}
+openstack overcloud node import instackenv.json --provide
+{% endif %}
 
 {% endif %}
 
