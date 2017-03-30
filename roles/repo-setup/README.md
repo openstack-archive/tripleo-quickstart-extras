@@ -106,7 +106,6 @@ Settings example for repositories:
               - instack
               - instack-undercloud
               - os-apply-config
-              - os-cloud-config
               - os-collect-config
               - os-net-config
               - os-refresh-config
