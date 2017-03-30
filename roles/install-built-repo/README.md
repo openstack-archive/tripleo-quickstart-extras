@@ -21,6 +21,7 @@ Role Variables
 * `ib_repo_image_inject`: false/true - where to inject and run repo install script on specified image (default: false)
 * `ib_repo_image_path`: path to image, in case of injecting repositories into the image
 * `ib_repo_host`: host where built repo exists, if it's not the same host where this roles runs
+* `ib_create_web_repo`: false/true - Create web accessible repository in directory with built packages (default: false)
 
 Dependencies
 ------------
