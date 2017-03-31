@@ -4,11 +4,11 @@ parameter_defaults:
     pushd /etc/yum.repos.d/
     rm -rf delorean*
 {% if upgrade_delorean_hash == 'current-passed-ci' %}
-    curl -o -L https://buildlogs.centos.org/centos/7/cloud/x86_64/rdo-trunk-{{ target_upgrade_version }}-tested/delorean.repo
+    curl -O -L https://buildlogs.centos.org/centos/7/cloud/x86_64/rdo-trunk-{{ target_upgrade_version }}-tested/delorean.repo
 {% else %}
-    curl -o -L https://buildlogs.centos.org/centos/7/cloud/x86_64/rdo-trunk-{{ target_upgrade_version }}/delorean.repo
+    curl -O -L https://buildlogs.centos.org/centos/7/cloud/x86_64/rdo-trunk-{{ target_upgrade_version }}/delorean.repo
 {% endif %}
-    curl -o -L https://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/delorean-deps.repo
+    curl -O -L https://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/delorean-deps.repo
     popd
     yum clean all
 {% if target_upgrade_version in ['ocata', 'master'] %}
