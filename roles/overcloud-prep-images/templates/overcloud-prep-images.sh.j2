@@ -135,18 +135,12 @@ sudo mistral-db-manage populate
 ## * Introspect hardware attributes of nodes.
 ## ::
 
-    {% if release in ['liberty', 'mitaka', 'newton' ] %}
+    {% if release in ['mitaka'] %}
 
         openstack baremetal introspection bulk start
 
     {% else %}
 
-        # Note: Unlike the legacy bulk command, overcloud node
-        # introspect will only run on nodes in the 'manageable'
-        # provisioning state.
-        for node in $(openstack baremetal node list --fields uuid -f value) ; do
-            openstack baremetal node manage $node ;
-        done
         openstack overcloud node introspect --all-manageable
         openstack overcloud node provide --all-manageable
 
