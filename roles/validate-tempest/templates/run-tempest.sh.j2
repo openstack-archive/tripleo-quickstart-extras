@@ -5,21 +5,26 @@
 
 ## ::
 
-# FIXME(chkumar246): Tempest run interface is unstable till that use ostestr for
-# running tests: https://bugs.launchpad.net/tempest/+bug/1669455
+## FIXME(chkumar246): Tempest run interface is unstable till that use ostestr for
+## running tests: https://bugs.launchpad.net/tempest/+bug/1669455
 
 {% if tempest_format == "venv" %}
 export OSTESTR='{{ working_dir }}/tempest_git/tools/with_venv.sh ostestr --regex'
 export S2JXML='{{ working_dir }}/tempest_git/tools/with_venv.sh subunit2junitxml --output-to=tempest.xml'
 export SUBUNIT='{{ working_dir }}/tempest_git/tools/with_venv.sh subunit-trace --no-failure-debug -f'
-#List Tests
+export TEMPESTCLI='{{ working_dir }}/tempest_git/tools/with_venv.sh tempest'
+## List Tests
 {{ working_dir }}/tempest_git/tools/with_venv.sh ostestr -l
 {% elif tempest_format == "packages" %}
 export OSTESTR='ostestr --regex'
 export S2JXML='subunit2junitxml --output-to=tempest.xml'
 export SUBUNIT='subunit-trace --no-failure-debug -f'
+export TEMPESTCLI='/usr/bin/tempest'
 ostestr -l
 {% endif %}
+
+## List tempest plugins
+$TEMPESTCLI list-plugins
 
 ( $OSTESTR '\[.*\b{{ test_regex }}\b.*\]' --no-pretty --subunit {% if skip_file_src != '' %}--blacklist_file={{ working_dir }}/{{ skip_file }}{% endif %}
 {% if tempest_workers is defined %} --concurrency {{ tempest_workers }} {% endif %}
