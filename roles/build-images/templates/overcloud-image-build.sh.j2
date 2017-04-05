@@ -3,7 +3,7 @@
 
 set -eux
 
-{% if build_image_isolated %}
+{% if build_image_isolated|bool %}
 # NOTE(trown): DIB expects /dev/pts to exist and libguestfs is not mounting the guest with it
 # so we just manually mount it in the guest
 # This will be fixed when https://www.redhat.com/archives/libguestfs/2016-December/msg00024.html

@@ -10,6 +10,6 @@
   become: yes
   shell: >
     "{{ working_dir }}"/adjust-interface-mtus.sh
-  when: step_adjust_mtu
+  when: step_adjust_mtu|bool
 
 

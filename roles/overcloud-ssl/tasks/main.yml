@@ -1,6 +1,6 @@
 ---
 # tasks file for ansible-role-tripleo-ssl
-- when: ssl_overcloud
+- when: ssl_overcloud|bool
   block:
     - name: Ensure rpm requirements for ssl are installed
       yum: name={{ item }} state=latest

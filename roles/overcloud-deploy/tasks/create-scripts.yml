@@ -14,13 +14,13 @@
     mode: 0755
 
 - name: Copy neutron l3 ha heat template
-  when: enable_pacemaker and number_of_controllers|int < 3
+  when: enable_pacemaker|bool and number_of_controllers|int < 3
   template:
     src: "neutronl3ha.yaml.j2"
     dest: "{{ working_dir }}/neutronl3ha.yaml"
 
 - name: Copy composable services file
-  when: composable_services
+  when: composable_services|bool
   template:
     src: "overcloud_services.yaml.j2"
     dest: "{{ working_dir }}/overcloud_services.yaml"

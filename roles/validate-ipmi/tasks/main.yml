@@ -1,5 +1,5 @@
 ---
-- when: validate_ipmi_step
+- when: validate_ipmi_step|bool
   block:
 
       - name: Copy validate IPMI template to the undercloud

@@ -3,7 +3,7 @@
 ## Configure tempest
 ## -----------------
 
-{% if tempest_overcloud %}
+{% if tempest_overcloud|bool %}
 ## ::
 source {{ working_dir }}/overcloudrc
 
