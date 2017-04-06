@@ -39,7 +39,10 @@ http://docs.openstack.org/developer/tripleo-quickstart/accessing-libvirt.html
   undercloud.conf.
 - `undercloud_enable_ui`: Sets up the 'enable_ui' option in undercloud.conf.
   It's undefined by default, however, the default value for this option in the
-  udnercloud is true.
+  undercloud is true.
+- `undercloud_enable_telemetry`: Sets up the 'enable_telemetry' option in
+  undercloud.conf.  It's undefined by default, however, the default value for
+  this option in the undercloud is true.
 - `undercloud_enable_novajoin`: Sets up the 'enable_novajoin' value from
   undercloud.conf. Note that using 'enable_tls_everywhere' will have the same
   effect. Defaults to false.

@@ -179,6 +179,14 @@ enable_tempest = {{undercloud_enable_tempest}}
 #enable_tempest = true
 {% endif %}
 
+# Whether to install Telemetry services (ceilometer, aodh) in the
+# Undercloud. (boolean value)
+{% if undercloud_enable_telemetry is defined %}
+enable_telemetry = {{undercloud_enable_telemetry}}
+{% else %}
+#enable_telemetry = true
+{% endif %}
+
 # Whether to install the TripleO UI. (boolean value)
 {% if undercloud_enable_ui is defined %}
 enable_ui = {{undercloud_enable_ui}}
