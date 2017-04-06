@@ -187,6 +187,15 @@ enable_telemetry = {{undercloud_enable_telemetry}}
 #enable_telemetry = true
 {% endif %}
 
+
+# Whether to install requirements to run the TripleO validations.
+# (boolean value)
+{% if undercloud_enable_validations is defined %}
+enable_validations = {{undercloud_enable_validations}}
+{% else %}
+#enable_validations = true
+{% endif %}
+
 # Whether to install the TripleO UI. (boolean value)
 {% if undercloud_enable_ui is defined %}
 enable_ui = {{undercloud_enable_ui}}
