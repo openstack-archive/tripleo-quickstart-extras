@@ -7,6 +7,7 @@ ib_repo_file_path: "{{ ib_repo_workdir}}/gating_repo.tar.gz"
 ib_repo_image_inject: false
 ib_repo_image_path: "{{ ib_repo_workdir }}/overcloud-full.qcow2"
 ib_gating_repo_enabled: true
+ib_create_web_repo: false
 # Configure host where gate_repo files exists, if it's not the host
 # where this role is executed
 # ib_repo_host:
