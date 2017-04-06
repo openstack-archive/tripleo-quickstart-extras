@@ -12,6 +12,7 @@ build_isolation_image:
   url: "{{ build_isolation_image_url }}"
   type: qcow2
 build_undercloud: true
+overcloud_as_undercloud: true
 package_images: true
 overcloud_repo_paths:
   - "$(ls /etc/yum.repos.d/delorean*)"
