@@ -1,5 +1,5 @@
 ---
-- name: Fetch nostests results
+- name: Fetch nosetests results
   fetch:
     src: "{{ working_dir }}/tempest/tempest.xml"
     dest: "{{ lookup('env', 'PWD') }}/nosetests.xml"
@@ -19,6 +19,13 @@
 
 - ignore_errors: true
   block:
+
+    - name: Generate testrepository.subunit results file
+      shell: >
+        {% if tempest_format == 'venv' %}source {{ working_dir }}/tempest_git/.venv/bin/activate; {% endif %}
+        testr last --subunit | subunit-1to2 > {{ working_dir }}/tempest/testrepository.subunit
+      args:
+        chdir: "{{ working_dir }}/tempest"
 
     - name: Generate HTML results file
       shell: |
