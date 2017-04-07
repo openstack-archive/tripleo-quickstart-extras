@@ -12,21 +12,6 @@ set -eux
 ## Prepare Your Environment
 ## ------------------------
 
-## * Source in the undercloud credentials.
-## ::
-
-source {{ working_dir }}/stackrc
-cd {{ working_dir }}
-
-## * Set the DNS Server for neutron
-## ::
-
-subnet_uuid=`neutron subnet-list | grep 192.168.24 | awk '{ print $2 }'`
-echo $subnet_uuid
-neutron subnet-update $subnet_uuid --dns-nameserver {{ containers_compute_dns_server }}
-neutron subnet-show $subnet_uuid
-
-
 ## * Populate the docker registery
 ## ::
 
