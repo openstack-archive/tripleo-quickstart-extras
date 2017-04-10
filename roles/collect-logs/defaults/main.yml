@@ -26,6 +26,7 @@ artcl_collect_list:
   - /home/*/tempest/*.html
   - /home/*/tempest/*.log
   - /home/*/tempest/etc/*.conf
+  - /home/*/tempest/*.subunit
   - /home/*/local_tht/
   - /home/*/gating_repo.tar.gz
   - /home/*/browbeat/ansible/bug_report.log
