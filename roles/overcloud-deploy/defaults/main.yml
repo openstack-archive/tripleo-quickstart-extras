@@ -114,6 +114,7 @@ deploy_args: >-
   {{ topology }}
   {{ extra_args }}
 
+composable_roles: false
 composable_services: false
 deploy_multinode: false
 

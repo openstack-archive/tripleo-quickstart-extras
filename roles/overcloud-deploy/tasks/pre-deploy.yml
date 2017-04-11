@@ -176,9 +176,16 @@
     - containerized_overcloud|bool
     - not network_isolation|bool
 
+- name: set composable roles args fact
+  set_fact:
+    composable_args: >-
+      --roles-file {{ working_dir }}/overcloud_roles.yaml
+  when: composable_roles|bool
+
 - name: set composable service args fact
   set_fact:
     composable_args: >-
+      {{ composable_args }}
       -e {{ working_dir }}/overcloud_services.yaml
   when: composable_services|bool
 

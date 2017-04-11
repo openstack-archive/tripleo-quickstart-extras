@@ -19,6 +19,12 @@
     src: "neutronl3ha.yaml.j2"
     dest: "{{ working_dir }}/neutronl3ha.yaml"
 
+- name: Write composable roles file
+  when: composable_roles|bool
+  template:
+    src: "overcloud_roles.yaml.j2"
+    dest: "{{ working_dir }}/overcloud_roles.yaml"
+
 - name: Copy composable services file
   when: composable_services|bool
   template:
