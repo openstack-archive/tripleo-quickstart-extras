@@ -79,6 +79,18 @@
   when:
     - containerized_overcloud|bool
     - network_isolation|bool
+    - not enable_tls_everywhere|bool
+
+- name: set network_args fact for TLS containers
+  set_fact:
+    network_args: >-
+      -e {{ overcloud_templates_path }}/environments/docker-services-tls-everywhere.yaml
+      {{ network_isolation_args }}
+      -e {{ working_dir }}/containers-default-parameters.yaml
+  when:
+    - containerized_overcloud|bool
+    - network_isolation|bool
+    - enable_tls_everywhere|bool
 
 - name: enable pacemaker
   set_fact:
