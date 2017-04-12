@@ -240,6 +240,12 @@ ipa_otp = {{undercloud_ipa_otp}}
 # ipa_otp =
 {% endif %}
 
+{% if undercloud_docker_registry_mirror is defined %}
+docker_registry_mirror = {{undercloud_docker_registry_mirror}}
+{% else %}
+# docker_registry_mirror =
+{% endif %}
+
 [auth]
 
 #
