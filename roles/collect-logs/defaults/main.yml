@@ -48,6 +48,8 @@ artcl_tar_gz: false
 
 ## publishing related vars
 artcl_publish: false
+artcl_env: default
+artcl_readme_file: "{{ artcl_collect_dir }}/README-logs.html"
 artcl_txt_rename: false
 # give up log upload after 30 minutes
 artcl_publish_timeout: 1800
