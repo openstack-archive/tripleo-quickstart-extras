@@ -10,11 +10,11 @@
   async: 7200
   poll: 0
   become: true
-  when: step_install_undercloud
+  when: step_install_undercloud|bool
 
 - name: Install the undercloud
   shell: >
     set -o pipefail &&
     {{ working_dir }}/undercloud-install.sh 2>&1 {{ timestamper_cmd }} >
     {{ undercloud_install_log }}
-  when: step_install_undercloud
+  when: step_install_undercloud|bool

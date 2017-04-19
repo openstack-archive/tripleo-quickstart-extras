@@ -4,22 +4,22 @@
     - overcloud-upgrade-scripts
 
 - include: pre-undercloud.yml
-  when: step_pre_undercloud_upgrade
+  when: step_pre_undercloud_upgrade|bool
   tags:
     - pre-upgrade-undercloud
 
 - include: upgrade-undercloud.yml
-  when: step_upgrade_undercloud
+  when: step_upgrade_undercloud|bool
   tags:
     - upgrade-undercloud
 
 - include: pre-overcloud.yml
-  when: step_pre_overcloud_upgrade and target_upgrade_version in ['mitaka', 'newton']
+  when: step_pre_overcloud_upgrade|bool and target_upgrade_version in ['mitaka', 'newton']
   tags:
     - pre-upgrade-overcloud
 
 - include: upgrade-overcloud.yml
-  when: step_upgrade_overcloud
+  when: step_upgrade_overcloud|bool
   tags:
     - upgrade-overcloud
 

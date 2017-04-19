@@ -3,7 +3,7 @@
   become: yes
   file: path=/etc/yum.repos.d/{{ item }} state=absent
   with_items: "{{ repos }}"
-  when: step_pre_undercloud_upgrade
+  when: step_pre_undercloud_upgrade|bool
 
 - name: Execute upgrade repo script
   become: yes
@@ -11,7 +11,7 @@
     set -o pipefail &&
     {{ upgrade_working_dir }}/upgrade-undercloud-repo.sh 2>&1 {{ timestamper_cmd }} >
     upgrade-undercloud-repo.sh.log
-  when: step_pre_undercloud_upgrade
+  when: step_pre_undercloud_upgrade|bool
 
 - name: Clean yum cache
   become: yes

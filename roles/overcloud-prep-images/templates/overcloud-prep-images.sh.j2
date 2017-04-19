@@ -32,7 +32,7 @@ tar xvfp {{ overcloud_full_tar_name }}
 ## * Upload images to glance.
 ## ::
 
-openstack overcloud image upload {% if bash_deploy_ramdisk %}--old-deploy-image{% endif %} {% if whole_disk_images|bool %}--whole-disk{% endif %}
+openstack overcloud image upload {% if bash_deploy_ramdisk|bool %}--old-deploy-image{% endif %} {% if whole_disk_images|bool %}--whole-disk{% endif %}
 
 {% endif %}
 
@@ -130,7 +130,7 @@ sudo mistral-db-manage populate
 {% endif %}
 
 
-{% if step_introspect %}
+{% if step_introspect|bool %}
 
 ## * Introspect hardware attributes of nodes.
 ## ::

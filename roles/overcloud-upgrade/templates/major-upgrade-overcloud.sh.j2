@@ -36,7 +36,7 @@ if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COM
     echo "execute aodh upgrade"
     openstack overcloud deploy --templates {{ tht_dir }} \
         -e tripleo-heat-templates/overcloud-resource-registry-puppet.yaml \
-    {% if network_isolation == true %}
+    {% if network_isolation|bool %}
         -e {{ tht_dir }}/environments/network-isolation.yaml \
         -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
         -e ~/network-environment.yaml \
@@ -52,7 +52,7 @@ if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COM
     echo "execute keystone upgrade"
     openstack overcloud deploy --templates {{ tht_dir }} \
         -e tripleo-heat-templates/overcloud-resource-registry-puppet.yaml \
-    {% if network_isolation == true %}
+    {% if network_isolation|bool %}
         -e {{ tht_dir }}/environments/network-isolation.yaml \
         -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
         -e ~/network-environment.yaml \
@@ -70,7 +70,7 @@ if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COM
     echo "execute ceilometer migration"
     openstack overcloud deploy --templates {{ tht_dir }} \
         -e tripleo-heat-templates/overcloud-resource-registry-puppet.yaml \
-    {% if network_isolation == true %}
+    {% if network_isolation|bool %}
         -e {{ tht_dir }}/environments/network-isolation.yaml \
         -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
         -e ~/network-environment.yaml \
@@ -88,7 +88,7 @@ if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COM
     echo "execute script delivery"
     openstack overcloud deploy --templates {{ tht_dir }} \
         -e tripleo-heat-templates/overcloud-resource-registry-puppet.yaml \
-    {% if network_isolation == true %}
+    {% if network_isolation|bool %}
         -e {{ tht_dir }}/environments/network-isolation.yaml \
         -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
         -e ~/network-environment.yaml \
@@ -114,7 +114,7 @@ if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COM
     echo "execute major upgrade controller"
     openstack overcloud deploy --templates {{ tht_dir }} \
         -e tripleo-heat-templates/overcloud-resource-registry-puppet.yaml \
-    {% if network_isolation == true %}
+    {% if network_isolation|bool %}
         -e {{ tht_dir }}/environments/network-isolation.yaml \
         -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
         -e ~/network-environment.yaml \
@@ -156,7 +156,7 @@ if heat stack-show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COM
     {% for item in upgrade_custom_templates_converge %}
         -e {{ item }} \
     {% endfor %}
-    {% if network_isolation == true %}
+    {% if network_isolation|bool %}
         -e {{ tht_dir }}/environments/network-isolation.yaml \
         -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
         -e ~/network-environment.yaml
@@ -170,7 +170,7 @@ if openstack stack show -c stack_status  overcloud -f value | egrep "(CREATE|UPD
     echo "execute overcloud upgrade"
     openstack overcloud deploy --templates {{ tht_dir }} \
         -e {{ tht_dir }}/overcloud-resource-registry-puppet.yaml \
-    {% if network_isolation|bool == true %}
+    {% if network_isolation|bool %}
         -e {{ tht_dir }}/environments/network-isolation.yaml \
         -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
         -e ~/network-environment.yaml \

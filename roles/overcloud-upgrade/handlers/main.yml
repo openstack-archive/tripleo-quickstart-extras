@@ -17,19 +17,19 @@
     ovs-vsctl add-port br-ctlplane {{ network_isolation_vlan }} tag={{ network_isolation_vlan_tag }} \
     -- set interface {{ network_isolation_vlan }} type=internal;
     fi
-  when: network_isolation
+  when: network_isolation|bool
 
 - name: set vlan up
   ignore_errors: yes
   become: yes
   shell: >
     ip l set dev {{ network_isolation_vlan }} up; ip addr add {{ network_isolation_ipv4_cidr }} dev {{ network_isolation_vlan }};
-  when: network_isolation
+  when: network_isolation|bool
 
 - name: allow traffic for the controller
   become: yes
   shell: >
         sudo iptables -A BOOTSTACK_MASQ -s {{ network_isolation_ipv4_cidr }} ! \
         -d {{ network_isolation_ipv4_cidr }} -j MASQUERADE -t nat
-  when: network_isolation
+  when: network_isolation|bool
 
