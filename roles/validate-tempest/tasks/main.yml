@@ -5,7 +5,7 @@
     - tempest-undercloud-config
 
 - include: pre-tempest.yml
-  when: tempest_config|bool
+  when: tempest_config|bool or run_tempest|bool
   tags:
     - pre-tempest-config
 
