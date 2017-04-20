@@ -1,8 +1,5 @@
 parameter_defaults:
-  # NovaImage: atomic-image # FYI the team is using overcloud-full currently https://review.openstack.org/#/c/395880/
-  # Defaults to 'tripleoupstream'.  Specify a local docker registry
-  # Example: 192.0.2.1:8787/tripleoupstream
-  DockerNamespace: {{ ctl_plane_ip }}:8787/tripleoupstream
   # Enable local Docker registry
+  DockerNamespace: {{ ctl_plane_ip }}:8787/{{ docker_registry_namespace }}
   DockerNamespaceIsRegistry: true
 
