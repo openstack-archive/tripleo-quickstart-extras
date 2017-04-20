@@ -3,18 +3,15 @@ features:
   - |
     EXPERIMENTAL feature to install the undercloud with openstack heat
     add support for a containerized undercloud.
-    The feature is invoked by using the config file in 
-    config/general_config/containers_undercloud_minimal.yml 
+    The feature is invoked by using the config file in
+    config/general_config/containers_undercloud_minimal.yml
     e.g. ./quickstart.sh -c $working_dir/config/general_config/containers_undercloud_minimal.yml --tags all -R master-tripleo-ci -w $working_dir $VIRTHOST
 
 
 deprecations:
   - |
     The variable "undercloud_hieradata_override_file" which was the hieradata
-      override file for the overcloud, was deprecated in favor of the
-      variables "hieradata_override_file_overcloud" and
-      "hieradata_override_file_undercloud". As it now stands as of this patch
-      the hieradata override file for the overcloud is
-      "hieradata_override_file_overcloud", and hieradata override for the
-      undercloud is "hieradata_override_file_undercloud".
+      override file for the undercloud, was deprecated in favor of the
+      variables "hieradata_override_file_classic_undercloud" and
+      "hieradata_override_file_t_h_t_undercloud".
 

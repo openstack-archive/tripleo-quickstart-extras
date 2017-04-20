@@ -11,9 +11,10 @@ containerized_undercloud: false
 undercloud_install_script: undercloud-install.sh.j2
 
 # The undercloud can also be deployed with heat
-# thus requiring an undercloud *and* overcloud override file
-hieradata_override_file_overcloud: hieradata-overrides-overcloud.yaml.j2
-hieradata_override_file_undercloud: hieradata-overrides-undercloud.yaml.j2
+# thus requiring a t-h-t driven undercloud *and* the classic undercloud
+# override file
+hieradata_override_file_classic_undercloud: hieradata-overrides-classic-undercloud.yaml.j2
+hieradata_override_file_t_h_t_undercloud: hieradata-overrides-t-h-t-undercloud.yaml.j2
 
 step_introspect: false
 bash_deploy_ramdisk: false

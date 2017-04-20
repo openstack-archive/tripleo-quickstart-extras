@@ -19,7 +19,7 @@ used as the base for the undercloud-install bash script
 to the undercloud install log file.
 - `network_environment_file`: <'network-environment.yaml.j2'> -- the name of the jinja template
 used as the base for the network-environment for tripleo.
-- `undercloud_hieradata_override_file`: <'quickstart-hieradata-overrides.yaml.j2'> -- the name of
+- `undercloud_hieradata_override_file`: <'quickstart-hieradata-overrides-classic-undercloud.yaml.j2'> -- the name of
 jinja template used to override the undercloud's install hieradata
 - `undercloud_ironic_ipxe_port`: <'3816'> -- port to use for httpd ipxe server
 for ironic deploy

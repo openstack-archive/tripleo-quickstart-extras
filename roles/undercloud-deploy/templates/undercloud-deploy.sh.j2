@@ -83,7 +83,7 @@ sudo openstack undercloud deploy \
     -e {{overcloud_templates_path}}/environments/docker.yaml \
     -e {{overcloud_templates_path}}/environments/mongodb-nojournal.yaml \
 {% endif %}
-    -e {{ working_dir }}/hieradata-overrides-undercloud.yaml
+    -e {{ working_dir }}/hieradata-overrides-t-h-t-undercloud.yaml
 
 ## * Copy the Openstack credentials file to the non root user.
 ## ::
