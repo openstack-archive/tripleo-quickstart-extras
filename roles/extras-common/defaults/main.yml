@@ -5,8 +5,14 @@ containerized_overcloud: false
 containerized_overcloud_upgrade: false
 overcloud_templates_path: /usr/share/openstack-tripleo-heat-templates
 enable_tls_everywhere: false
+undercloud_generate_service_certificate: false
 undercloud_network_cidr: 192.168.24.0/24
 undercloud_undercloud_nameservers:
   - 8.8.8.8
 timestamper_cmd: >-
     | awk '{ print strftime("%Y-%m-%d %H:%M:%S |"), $0; fflush(); }'
+# if virtbmc is enabled we can assume a libvirt setup and the libvirt
+# tripleo ui steps will also execute.
+# enable_libvirt_tripleo_ui is a switch to force the steps to run with or
+# without virtbmc
+enable_libvirt_tripleo_ui: false

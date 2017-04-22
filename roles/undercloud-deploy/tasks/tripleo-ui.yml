@@ -1,0 +1,111 @@
+---
+- when:
+    - enable_port_forward_for_tripleo_ui|bool
+    - hostvars[groups['virthost'][0]].ansible_host is defined
+    - hostvars[groups['virthost'][0]].ansible_host not in [ "localhost", "127.0.0.2" ]
+    - tripleo_ui_secure_access|bool == false
+  block:
+    - name: get the heat public url
+      shell: |
+        source {{ working_dir }}/stackrc
+        openstack catalog show heat --format value | grep public | awk -F '/' '{print $5}'
+      register: heat_public_url
+
+    - name: get the swift public url
+      shell: |
+        source {{ working_dir }}/stackrc
+        openstack catalog show swift --format value | grep public | awk -F '/' '{print $5}'
+      register: swift_public_url
+
+    - name: update the keystone config in tripleo_ui_config.js, connect via virthost ip
+      lineinfile:
+        regexp: "'keystone':"
+        line: "  'keystone': 'http://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}:5000/v3/',"
+        dest: /var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
+        backup: yes
+      become: true
+      when: release in ['master', 'pike']
+
+    - name: update the keystone config in tripleo_ui_config.js, connect via virthost ip
+      lineinfile:
+        regexp: "'keystone':"
+        line: "  'keystone': 'http://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}:5000/v2/',"
+        dest: /var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
+        backup: yes
+      become: true
+      when: release not in ['master', 'pike']
+
+    - name: update the heat config in tripleo_ui_config.js, connect via virthost ip
+      lineinfile:
+        regexp: "'heat':"
+        line: "  'heat': 'http://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}:8004/v1/{{ heat_public_url.stdout }}',"
+        dest: /var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
+        backup: yes
+      become: true
+
+    - name: update the ironic config in tripleo_ui_config.js, connect via virthost ip
+      lineinfile:
+        regexp: "'ironic':"
+        line: "  'ironic': 'http://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}:6385',"
+        dest: /var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
+        backup: yes
+      become: true
+
+    - name: update the ironic config in tripleo_ui_config.js, connect via virthost ip
+      lineinfile:
+        regexp: "'mistral':"
+        line: "  'mistral': 'http://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}:8989/v2',"
+        dest: /var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
+        backup: yes
+      become: true
+
+    - name: update the swift config in tripleo_ui_config.js, connect via virthost ip
+      lineinfile:
+        regexp: "'swift':"
+        line: "  'swift': 'http://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}:8080/v1/{{ swift_public_url.stdout }}',"
+        dest: /var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
+        backup: yes
+      become: true
+
+    - name: update the zaqar-websocket config in tripleo_ui_config.js, connect via virthost ip
+      lineinfile:
+        regexp: "'zaqar-websocket':"
+        line: "  'zaqar-websocket': 'ws://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}:9000',"
+        dest: /var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
+        backup: yes
+      become: true
+
+    - name: restart the httpd service
+      service:
+        name: httpd
+        state: restarted
+      become: true
+
+- when:
+    - enable_port_forward_for_tripleo_ui|bool
+    - hostvars[groups['virthost'][0]].ansible_host is defined
+    - hostvars[groups['virthost'][0]].ansible_host not in [ "localhost", "127.0.0.2" ]
+    - tripleo_ui_secure_access|bool == true
+  block:
+    - name: update config in tripleo_ui_config.js, connect via virthost ip with ssl
+      replace:
+        regexp: \d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}
+        replace: "{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}"
+        dest: /var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
+        backup: yes
+      become: true
+
+    - name: update config in tripleo_ui_config.js, for keystone v3
+      replace:
+        regexp: keystone\/v2.0
+        replace: "keystone/v3"
+        dest: /var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
+        backup: yes
+      become: true
+      when: release in ['master', 'pike']
+
+    - name: restart the httpd service
+      service:
+        name: httpd
+        state: restarted
+      become: true

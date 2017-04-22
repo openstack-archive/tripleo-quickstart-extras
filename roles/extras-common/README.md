@@ -25,3 +25,6 @@ Role Variables
 - `timestamper_cmd`: beginning with the shell pipe character, this command
   prepends a timestamp to the deployment and test commands throughout the
   roles. Can be disabled by specifying this command as an empty string.
+- `enable_libvirt_tripleo_ui`: <false> -- update the triple-ui javascript config
+  for libvirt environments. If virtbmc is enabled a libvirt environment is assumed
+  and this step is enabled.
