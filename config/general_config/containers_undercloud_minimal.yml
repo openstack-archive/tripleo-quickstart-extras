@@ -25,9 +25,6 @@ overcloud_ipv6: false
 # containers config
 containerized_overcloud: false
 containerized_undercloud: true
-# 192.168.23.1 is the dns server on the virthost
-# 8.8.8.8 also works across virthost and ovb env
-containers_compute_dns_server: 8.8.8.8
 
 # deploy the undercloud with containers
 undercloud_install_script: undercloud-deploy.sh.j2
