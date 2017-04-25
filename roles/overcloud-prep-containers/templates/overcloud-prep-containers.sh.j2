@@ -15,7 +15,7 @@ set -eux
 ## * Populate the docker registery
 ## ::
 
-openstack overcloud container image upload --verbose --config-file {{ tripleo_common_dir }}/contrib/overcloud_containers.yaml
+openstack overcloud container image upload --verbose --config-file {{ tripleo_common_dir }}/container-images/overcloud_containers.yaml
 
 ## * Configure the environments/docker.yaml, this is done automatically.
 ## ::
