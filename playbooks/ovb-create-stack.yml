@@ -4,6 +4,11 @@
   roles:
     - { role: ovb-manage-stack, ovb_manage_stack_mode: 'create' }
 
+- name: Build test packages using DLRN
+  hosts: localhost
+  roles:
+    - {role: build-test-packages, when: build_test_packages|default(false)|bool }
+
 - name: Setup the undercloud
   hosts: undercloud
   gather_facts: no
@@ -17,6 +22,14 @@
   gather_facts: yes
   roles:
     - tripleo-inventory
+
+- name: Install the built package on the undercloud
+  hosts: undercloud
+  gather_facts: no
+  vars:
+    ib_repo_host: localhost
+  roles:
+    - {role: install-built-repo, when: build_test_packages|default(false)|bool }
 
 - name: Fetch the overcloud images
   hosts: undercloud
