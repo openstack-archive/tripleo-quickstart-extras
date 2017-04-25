@@ -25,6 +25,7 @@ from jinja2 import Environment
 from jinja2 import exceptions
 
 import os
+import sys
 
 # Jinja Environment
 env = Environment()
@@ -52,9 +53,9 @@ def validate_jinja_templates(file_path):
 
 
 if __name__ == "__main__":
-    os.chdir("..")
-    root_path = os.getcwd()
-    jinja_files = get_jinja_files(root_path)
+    base_dir = os.path.join(os.path.dirname(sys.argv[0]), "..")
+    os.chdir(base_dir)
+    jinja_files = get_jinja_files(base_dir)
     for file_path in jinja_files:
         validate_jinja_templates(file_path)
         print('Validating: %s' % file_path)
