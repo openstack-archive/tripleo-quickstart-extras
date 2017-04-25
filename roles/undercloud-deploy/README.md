@@ -50,7 +50,7 @@ http://docs.openstack.org/developer/tripleo-quickstart/accessing-libvirt.html
   undercloud.conf. Note that using 'enable_tls_everywhere' will have the same
   effect. Defaults to false.
 - `novajoin_connect_timeout`: <5> Sets vendordata_dynamic_connect_timeout when novajoin is enabled
-- `novajoin_read_timeout:` <5> Sets vendordata_dynamic_read_timeout when novajoin is enabled
+- `novajoin_read_timeout:` <20> Sets vendordata_dynamic_read_timeout when novajoin is enabled
 - `prepare_novajoin`: If set to true, it will install novajoin in the undercloud,
   and run a script that will create the required privileges/permissions in
   FreeIPA, as well as the undercloud host entry. this requires

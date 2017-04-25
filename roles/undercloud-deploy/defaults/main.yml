@@ -38,4 +38,4 @@ freeipa_otp_key: /tmp/ipa-otp.txt
 
 # determines vendordata_dynamic_connect|read_timeout when novajoin is enabled
 novajoin_connect_timeout: 5
-novajoin_read_timeout: 5
+novajoin_read_timeout: 20
