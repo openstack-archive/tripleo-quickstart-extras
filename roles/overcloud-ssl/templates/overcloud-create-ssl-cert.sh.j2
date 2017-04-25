@@ -34,7 +34,9 @@ sudo update-ca-trust extract
 openssl req -newkey rsa:2048 -days 365 \
     -nodes -keyout {{ working_dir }}/server-key.pem \
     -out {{ working_dir }}/server-req.pem \
-    -subj "/C=US/ST=NC/L=Raleigh/O=Red Hat/OU=OOOQ/CN={{_vip}}"
+    -subj "/C=US/ST=NC/L=Raleigh/O=Red Hat/OU=OOOQ/CN={{_vip}}" \
+    -reqexts subjectAltName \
+    -config <(printf "[subjectAltName]\nsubjectAltName=IP:{{_vip}}\n[req]req_extensions = v3_req\ndistinguished_name=req_distinguished_name\n[req_distinguished_name]")
 
 ## * Process the server RSA key
 ## ::
@@ -49,6 +51,8 @@ openssl rsa -in {{ working_dir }}/server-key.pem \
 openssl x509 -req -in server-req.pem -days 365 \
     -CA {{ working_dir }}/overcloud-cacert.pem \
     -CAkey {{ working_dir }}/overcloud-ca-privkey.pem \
-    -set_serial 01 -out {{ working_dir }}/server-cert.pem
+    -set_serial 01 -out {{ working_dir }}/server-cert.pem \
+    -extensions subjectAltName \
+    -extfile <(printf "[subjectAltName]\nsubjectAltName=IP:{{_vip}}\n[req]req_extensions = v3_req\ndistinguished_name=req_distinguished_name\n[req_distinguished_name]")
 
 ## --stop_docs
