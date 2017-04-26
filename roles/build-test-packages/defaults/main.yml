@@ -6,6 +6,9 @@ artg_compressed_gating_repo: "/home/stack/gating_repo.tar.gz"
 dlrn_cleanup: false
 
 artg_skipped_projects:
+  - openstack/puppet-openstack-integration
   - openstack/tripleo-quickstart
   - openstack/tripleo-quickstart-extras
+  - openstack-dev/grenade
+  - openstack-infra/project-config
   - openstack-infra/tripleo-ci
