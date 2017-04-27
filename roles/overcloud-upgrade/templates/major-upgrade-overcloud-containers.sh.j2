@@ -1,0 +1,39 @@
+#!/bin/bash
+set -ux
+
+onerror(){
+    echo "Command failed"
+    # get the failures list
+    openstack stack resource list overcloud >> failed_upgrade_list.log || true
+    openstack stack failures list --long overcloud >> failed_upgrade.log
+    exit 1
+}
+trap onerror ERR
+
+source {{ upgrade_working_dir }}/stackrc
+
+{% if containerized_overcloud_upgrade_pull_images|bool %}
+# pull latest containers to the registry
+openstack overcloud container image upload --verbose --config-file {{ tripleo_common_dir }}/container-images/overcloud_containers.yaml
+{% endif %}
+
+{% if target_upgrade_version in ['pike', 'master'] %}
+
+echo "execute overcloud upgrade"
+openstack overcloud deploy --templates {{ tht_dir }} \
+    {{ deploy_args_used }} \
+    -e {{ tht_dir }}/environments/docker.yaml \
+    -e {{ tht_dir }}/environments/major-upgrade-composable-steps-docker.yaml \
+    -e ~/containers-default-parameters.yaml \
+    -e ~/overcloud-repo.yaml \
+{% for item in upgrade_custom_templates %}
+    -e {{ item }} \
+{% endfor %}
+
+{% endif %}
+
+if openstack stack show overcloud | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
+    echo "Update successful"
+else
+    exit 1
+fi

@@ -23,6 +23,9 @@ repos_url:
 # upgrade settings:
 upgrade_working_dir: "{{ working_dir }}"
 tht_dir: tripleo-heat-templates
+tripleo_common_dir: /usr/share/openstack-tripleo-common
+# containerized upgrade settings
+containerized_overcloud_upgrade_pull_images: true
 # scripts
 undercloud_upgrade_script: upgrade-undercloud.sh.j2
 upgrade_undercloud_repo_script: upgrade-repo.sh.j2
