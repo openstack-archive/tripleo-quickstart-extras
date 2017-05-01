@@ -25,24 +25,24 @@
     groups: mock
 
 - name: Create virtualenv for DLRN
-  command: virtualenv {{ ansible_user_dir }}/dlrn-venv
+  command: virtualenv {{ build_repo_dir }}/dlrn-venv
   args:
-    creates: '{{ ansible_user_dir }}/dlrn-venv'
+    creates: '{{ build_repo_dir }}/dlrn-venv'
 
 - name: Check if DLRN was already cloned by other means
-  stat: path='{{ ansible_user_dir }}/DLRN'
+  stat: path='{{ build_repo_dir }}/DLRN'
   register: dlrn_cloned
 
 - name: Remove data files from previous runs
   file:
-    path: '{{ ansible_user_dir }}/DLRN/data'
+    path: '{{ build_repo_dir }}/DLRN/data'
     state: absent
   when: dlrn_cloned.stat.exists
 
 - name: Clone DLRN
   git:
     repo: '{{ artg_dlrn_repo_url }}'
-    dest: '{{ ansible_user_dir }}/DLRN'
+    dest: '{{ build_repo_dir }}/DLRN'
     version: master
   when: not dlrn_cloned.stat.exists
 
@@ -51,22 +51,22 @@
 - name: Remove DLRN RPM install test
   shell: >
     sed -i -e 's%--postinstall%%'
-    {{ ansible_user_dir }}/DLRN/scripts/build_rpm.sh
+    {{ build_repo_dir }}/DLRN/scripts/build_rpm.sh
 
 - name: Update pip before requirements install
-  shell: source {{ ansible_user_dir }}/dlrn-venv/bin/activate && pip install -U pip
+  shell: source {{ build_repo_dir }}/dlrn-venv/bin/activate && pip install -U pip
 
 - name: Install DLRN requirements
   pip:
-    requirements: '{{ ansible_user_dir }}/DLRN/requirements.txt'
-    virtualenv: '{{ ansible_user_dir }}/dlrn-venv'
+    requirements: '{{ build_repo_dir }}/DLRN/requirements.txt'
+    virtualenv: '{{ build_repo_dir }}/dlrn-venv'
 
 - name: Install DLRN
   shell: >
-    source {{ ansible_user_dir }}/dlrn-venv/bin/activate;
+    source {{ build_repo_dir }}/dlrn-venv/bin/activate;
     python setup.py install;
   args:
-      chdir: '{{ ansible_user_dir }}/DLRN'
+      chdir: '{{ build_repo_dir }}/DLRN'
 
 - name: get env variables for changes and default change list
   set_fact:
@@ -105,23 +105,23 @@
 - block:
     - name: Create a directory to hold the rpms
       file:
-        path: '{{ ansible_user_dir }}/gating_repo'
+        path: '{{ build_repo_dir }}/gating_repo'
         state: directory
 
     - name: Copy the generated rpms
       shell: >
-        rm -rf {{ ansible_user_dir }}/gating_repo/*;
-        find {{ ansible_user_dir }}/DLRN/data/repos -type f -name '*.rpm' -print0 | xargs -0 cp -t {{ ansible_user_dir }}/gating_repo;
+        rm -rf {{ build_repo_dir }}/gating_repo/*;
+        find {{ build_repo_dir }}/DLRN/data/repos -type f -name '*.rpm' -print0 | xargs -0 cp -t {{ build_repo_dir }}/gating_repo;
 
     - name: Run createrepo on generated rpms
       shell: 'createrepo gating_repo'
       args:
-        chdir: '{{ ansible_user_dir }}'
+        chdir: '{{ build_repo_dir }}'
 
     - name: Compress the repo
       shell: 'tar czf {{ artg_compressed_gating_repo }} gating_repo'
       args:
-        chdir: '{{ ansible_user_dir }}'
+        chdir: '{{ build_repo_dir }}'
   when: repo_built is defined
 
 - name: Clean up
@@ -129,13 +129,13 @@
     path: '{{ item }}'
     state: absent
   with_items:
-    - '{{ ansible_user_dir }}/dlrn-venv'
-    - '{{ ansible_user_dir }}/gating_repo'
+    - '{{ build_repo_dir }}/dlrn-venv'
+    - '{{ build_repo_dir }}/gating_repo'
   when: dlrn_cleanup|bool
 
 - name: Clean up DLRN if it was cloned by the playbook
   file:
-    path: '{{ ansible_user_dir }}/DLRN'
+    path: '{{ build_repo_dir }}/DLRN'
     state: absent
   when:
     - not dlrn_cloned.stat.exists
