@@ -70,6 +70,21 @@ Role Network Variables
 - `undercloud_network_cidr`: <'192.168.24.0/24'> -- the network cidr for the undercloud, note this
 also currently the default cidr used in other CI environments for tripleo.
 
+Undercloud deployment methods
+-----------------------------
+
+By default, the undercloud uses the file coming from the
+hieradata_override_file_classic_undercloud variable to set the hieradata
+overrides that will be used for the puppet deployment.
+
+However, there exists another method for setting up the undercloud based on
+containers. This method can be used by setting the "containerized_undercloud"
+variable to 'true' and it's currently experimental. Instead of using the
+"classic" way to set up hieradata, it uses the file coming from the
+"hieradata_override_file_t_h_t_undercloud" variable. As the name hints, this
+deployment method is based on tripleo-heat-templates, and thus, the way of
+overriding hieradata for it is similar as we do for the overcloud.
+
 Example Playbook
 ----------------
 
