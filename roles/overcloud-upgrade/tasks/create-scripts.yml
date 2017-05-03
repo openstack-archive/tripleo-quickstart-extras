@@ -14,7 +14,7 @@
 # Need to set fact here because tht_dir is used in the templated script
 # in "Create major overcloud upgrade script" task
 - name: set fact for tht_dir
-  when: target_upgrade_version in ['ocata', 'master']
+  when: target_upgrade_version in ['ocata']
   set_fact:
     tht_dir: "/usr/share/openstack-tripleo-heat-templates"
 
