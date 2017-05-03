@@ -25,19 +25,19 @@
     - name: Create the deprecated undercloud hieradata overrides
       template:
         src: "{{ undercloud_hieradata_override_file }}"
-        dest: "./hieradata-overrides-overcloud.yaml"
+        dest: "./hieradata-overrides-classic-undercloud.yaml"
         mode: 0600
 
-- name: Create undercloud hieradata overrides
+- name: Create t-h-t driven undercloud hieradata overrides
   template:
-    src: "{{ hieradata_override_file_undercloud }}"
-    dest: "./hieradata-overrides-undercloud.yaml"
+    src: "{{ hieradata_override_file_t_h_t_undercloud }}"
+    dest: "./hieradata-overrides-t-h-t-undercloud.yaml"
     mode: 0600
 
-- name: Create overcloud hieradata overrides
+- name: Create classic undercloud hieradata overrides
   template:
-    src: "{{ hieradata_override_file_overcloud }}"
-    dest: "./hieradata-overrides-overcloud.yaml"
+    src: "{{ hieradata_override_file_classic_undercloud }}"
+    dest: "./hieradata-overrides-classic-undercloud.yaml"
     mode: 0600
 
 - name: Create undercloud install script
