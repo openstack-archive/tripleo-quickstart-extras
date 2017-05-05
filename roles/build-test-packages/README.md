@@ -15,6 +15,8 @@ Role Variables
 --------------
 
 * `local_working_dir` -- the directory where tripleo-quickstart is located
+* `build_repo_dir` -- the directory where the DLRN repo is built.
+  The variable defaults to the home directory of the user.
 * `artg_dlrn_repo_url` -- the URL of the DLRN repository
 * `artg_rdoinfo_repo_url` -- the URL of the rdoinfo repository that contains
   the project definitions for DLRN
