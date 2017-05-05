@@ -1,5 +1,4 @@
 ---
-
 network_isolation: true
 # pre upgrade settings:
 upgrade_overcloud_dns_server: 8.8.8.8
@@ -21,7 +20,7 @@ repos_url:
   - https://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/{{ upgrade_delorean_hash | default('current-passed-ci')}}/delorean.repo
   - https://trunk.rdoproject.org/centos7-{{ target_upgrade_version }}/delorean-deps.repo
 # upgrade settings:
-upgrade_working_dir: "{{ working_dir }}"
+upgrade_working_dir: "{{ working_dir|default('/home/stack') }}"
 tht_dir: tripleo-heat-templates
 tripleo_common_dir: /usr/share/openstack-tripleo-common
 # containerized upgrade settings
@@ -81,7 +80,9 @@ mixed_upgrade: false
 enable_ceph: false
 enable_pacemaker: true
 # heat workers:
-set_heat_workers: true
+set_heat_workers: false
+# Set external route for the controller
+allow_external_traffic: false
 # Update:
 update_heat_stack_template: update-dnsserver.yaml
 # TBR:
