@@ -8,7 +8,7 @@ onerror(){
     for failed in $(heat resource-list \
         --nested-depth 5 overcloud | grep FAIL |
         grep 'StructuredDeployment ' | cut -d '|' -f3)
-    do echo -n "heat deployment-show out put for deployment: $failed" >> failed_upgrade.log
+    do echo -n "heat deployment-show output for deployment: $failed" >> failed_upgrade.log
         echo -n "######################################################" >> failed_upgrade.log
         heat deployment-show $failed >> failed_upgrade.log
         echo -n "######################################################" >> failed_upgrade.log

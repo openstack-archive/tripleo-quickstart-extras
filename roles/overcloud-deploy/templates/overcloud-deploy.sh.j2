@@ -83,7 +83,7 @@ if ! openstack stack list | grep -Eq '(CREATE|UPDATE)_COMPLETE'; then
         --nested-depth 5 overcloud | grep FAILED |
         grep 'StructuredDeployment ' | cut -d '|' -f3)
     do
-    echo "heat deployment-show out put for deployment: $failed" >> {{ failed_deployments_log }}
+    echo "heat deployment-show output for deployment: $failed" >> {{ failed_deployments_log }}
     echo "######################################################" >> {{ failed_deployments_log }}
     heat deployment-show $failed >> {{ failed_deployments_log }}
     echo "######################################################" >> {{ failed_deployments_log }}
