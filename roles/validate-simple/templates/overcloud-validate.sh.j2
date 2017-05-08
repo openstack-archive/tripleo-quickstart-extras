@@ -126,6 +126,7 @@ set +e
 vm1_ip=`openstack stack output show {{ validate_stack_name }} server1_public_ip --f json | \
         jq -r '.["output_value"]'`
 
+sleep 30
 ping -c 1 $vm1_ip
 
 ## * Print debug output if ping fails
