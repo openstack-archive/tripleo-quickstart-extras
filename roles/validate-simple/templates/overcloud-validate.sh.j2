@@ -34,8 +34,10 @@ function cleanup {
     openstack image list | awk '/pingtest/ {print $2}' | while read IMAGEID; do openstack image delete $IMAGEID; done
     neutron net-delete {{ public_net_name }}
 }
+{% if not skip_pingtest_cleanup %}
 # trap on exit #nodocs
 trap cleanup EXIT #nodocs
+{% endif %}
 
 ## * Source tenantrc file
 ## ::
