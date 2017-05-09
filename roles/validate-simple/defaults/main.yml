@@ -25,3 +25,4 @@ validate_template_environment:
     parameters:
         image: "{{ validate_image_name }}"
         public_net_name: "{{ public_net_name }}"
+skip_pingtest_cleanup: false

@@ -37,6 +37,8 @@ For the defaults of these variables, see the defaults/main.yml file in this role
   create the public floating IP network
 * `validate_template_environment`: used to override variables inside the
   validation template, passed as an environment file to heat
+* `skip_pingtest_cleanup`: false/true - whether to skip pingtest stack deletion
+  or not (default is false)
 
 Dependencies
 ------------
