@@ -8,6 +8,31 @@
     use: yum
   become: true
 
+- name: Create VirtualBMC directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0750
+    owner: root
+    group: root
+  with_items:
+    - "/etc/virtualbmc"
+    - "/var/log/virtualbmc"
+  become: true
+
+- name: Create VirtualBMC configuration file
+  when: release not in ['liberty', 'mitaka', 'newton']
+  copy:
+    mode: 0750
+    dest: "/etc/virtualbmc/virtualbmc.conf"
+    content: |
+      [default]
+      config_dir=/root/.vbmc
+      [log]
+      logfile=/var/log/virtualbmc/virtualbmc.log
+      debug=True
+  become: true
+
 # the non_root_user id is not in the facts of the virthost when
 # executed in devmode.  To be safe let's delegate to the virthost
 # and obtain the uuid of the non_root_user
