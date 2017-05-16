@@ -191,6 +191,12 @@ def resolve_dep(host, change_id, branch, revision):
             continue
         new_deps = parse_commit_msg(change['host'], details['commit_msg'])
         to_resolve.extend(new_deps)
+    for index in range(len(deps)):
+        if deps[index]['host'] == 'review.openstack.org':
+            # redirect change cloning to reduce load on review.openstack.org
+            deps[index]['host'] = 'git.openstack.org'
+        # add https:// prefix for cloning the change
+        deps[index]['host'] = ''.join(['https://', deps[index]['host']])
     if len(deps) == 0:
         output_msg.append('error: failed to resolve the target change')
         return {'failed': True,

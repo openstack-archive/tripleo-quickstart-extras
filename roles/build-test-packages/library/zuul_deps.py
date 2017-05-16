@@ -54,6 +54,9 @@ def process(host, changes, branch):
         # https://bugs.launchpad.net/tripleo/+bug/1676853
         if '.openstack.org' in host:
             host = 'https://git.openstack.org'
+        # add URL prefix if only the bare hostname is given
+        if host.find('://') == -1:
+            host = ''.join(['https://', host])
         output.append({"host": host,
                        "project": params[0],
                        "branch": params[1],
