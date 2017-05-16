@@ -54,17 +54,12 @@
     dest: "{{ working_dir }}"
   when: baremetal_nic_configs is defined
 
-- name: Create overcloud custom tht script
-  template:
-    src: "{{ overcloud_custom_tht_script }}"
-    dest: "{{ working_dir }}/overcloud-custom-tht-script.sh"
-    mode: 0755
-
-- name: Checkout custom tht heat templates from src
-  shell: >
-    set -o pipefail &&
-    {{ working_dir }}/overcloud-custom-tht-script.sh 2>&1 {{ timestamper_cmd }} >
-    {{ overcloud_custom_tht_log }}
+- name: Prepare custom t-h-t for overcloud deployment
+  include: custom_tht.yml
+  when:
+     - overcloud_templates_refspec is defined or overcloud_templates_branch is defined
+     - overcloud_templates_repo is defined
+  static: no
 
 - name: Copy extra THT config files on the undercloud
   copy:
