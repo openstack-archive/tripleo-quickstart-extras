@@ -35,7 +35,7 @@
   shell: >
     source {{ build_repo_dir }}/dlrn-venv/bin/activate;
     export PROJECT_NAME=$(echo {{ artg_change.project }} | sed "s|openstack/||");
-    rdopkg findpkg $PROJECT_NAME -l rdoinfo | grep ^name | awk '{print $2}'
+    rdopkg findpkg -s $PROJECT_NAME -l rdoinfo | grep ^name | awk '{print $2}'
   args:
       chdir: '{{ build_repo_dir }}/DLRN'
   failed_when: project_name_mapped.stdout == ''
