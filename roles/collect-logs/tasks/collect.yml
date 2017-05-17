@@ -182,6 +182,9 @@
             cp -r /var/lib/docker/volumes/logs/_data $BASE_DOCKER_EXTRA/logs;
         fi
 
+    - name: Collect text version of the journal from last four hours
+      shell: journalctl --since=-4h --lines=100000 > /var/log/journal.txt
+
     # Collect host info as done presently in TripleO-CI.
     # Will be deprecated.
     - name: Create get_host_info script
