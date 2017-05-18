@@ -37,4 +37,3 @@ bond_with_vlans_copy_nic_configs_script: bond-with-vlans-copy-nic-configs.sh.j2
 bond_with_vlans_nic_configs_log: bond_with_vlans_nic_configs_script_log
 
 tht_rpm_url: https://trunk.rdoproject.org/centos7-{{ release }}/current/
-overcloud_templates_path: "{{ working_dir }}/tripleo-heat-templates"
