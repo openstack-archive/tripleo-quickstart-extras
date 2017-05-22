@@ -101,7 +101,7 @@
           -e {{ working_dir }}/cloud-names.yaml
   when: release not in ['mitaka', 'liberty']
 
-- name: set ssl_args fact for master/newton
+- name: set ssl_args fact for releases after mitaka
   set_fact:
     ssl_args: >-
       -e {{ working_dir }}/enable-tls.yaml
@@ -109,7 +109,7 @@
       -e {{ working_dir }}/inject-trust-anchor.yaml
   when:
     - ssl_overcloud|bool
-    - release in ['newton', 'master']
+    - release not in ['mitaka', 'liberty']
 
 - name: set ssl_args fact for mitaka/liberty
   set_fact:
