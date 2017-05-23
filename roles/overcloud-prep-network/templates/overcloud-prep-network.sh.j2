@@ -66,7 +66,7 @@ EOF'
 
 {% if overcloud_ipv6|bool %}
 
-sudo bash -c 'cat <<EOF > /etc/sysconfig/network-scripts/ifcfg-{{ network.device_name }}
+sudo bash -c 'cat <<EOF >> /etc/sysconfig/network-scripts/ifcfg-{{ network.device_name }}
 IPV6ADDR={{ network.address6 }}
 IPV6INIT=yes
 EOF'
