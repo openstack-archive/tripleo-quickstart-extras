@@ -1,7 +1,10 @@
 ---
+
 - name: Validate FreeIPA Admin password was passed
   fail: msg="freeipa_admin_password is not passed and or blank"
-  when: freeipa_admin_password is not defined or ( freeipa_admin_password is defined and freeipa_admin_password == "" )
+  when:
+    - deploy_supplemental_node|bool and not hostvars['supplemental'].freeipa_admin_password|default('')
+    - not freeipa_admin_password|default('')
 
 - name: Validate FreeIPA Server hostname was passed
   fail: msg="freeipa_server_hostname is not passed and or blank"

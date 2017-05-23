@@ -1,0 +1,83 @@
+#! /bin/bash
+
+set -eux
+
+### ---start_docs
+
+## Setup FreeIPA
+## =============
+
+## * Set required environment variables::
+
+export TRIPLEO_DOMAIN=tripleodomain.example.com
+export CA_SERVER_HOSTNAME=ipa.$TRIPLEO_DOMAIN
+export CA_ADMIN_PASS={{ freeipa_admin_password }}
+export CA_DIR_MANAGER_PASS={{ directory_manager_password }}
+export UNDERCLOUD_FQDN=undercloud.$TRIPLEO_DOMAIN
+export IPA_SERVER_IP={{ supplemental_node_ip }}
+
+## * Set IPA hostname::
+
+hostnamectl set-hostname --static $CA_SERVER_HOSTNAME
+
+## * Prepare the hosts file
+## .. note:: This must be at the top of /etc/hosts
+## ::
+
+sed -i "1i$IPA_SERVER_IP $CA_SERVER_HOSTNAME" /etc/hosts
+
+## * Install required system packages::
+
+yum install -yq ipa-server ipa-server-dns wget epel-release
+
+## * Increase system entropy (to prevent slow down during IPA installation)::
+
+wget https://centos7.iuscommunity.org/ius-release.rpm
+rpm -Uvh ius-release*.rpm
+yum install -y haveged
+systemctl start haveged.service
+
+## * Install FreeIPA::
+
+ipa-server-install -U \
+    -r `hostname -d|tr "[a-z]" "[A-Z]"` \
+    -p $CA_DIR_MANAGER_PASS \
+    -a $CA_ADMIN_PASS \
+    --hostname `hostname -f ` \
+    --ip-address=$IPA_SERVER_IP \
+    --setup-dns --auto-forwarders --auto-reverse
+
+## * Set iptables rules::
+
+cat << EOF > freeipa-iptables-rules.txt
+# Firewall configuration written by system-config-firewall
+# Manual customization of this file is not recommended.
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -p icmp -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT
+#TCP ports for FreeIPA
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 80 -j ACCEPT
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 443  -j ACCEPT
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 389 -j ACCEPT
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 636 -j ACCEPT
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 88  -j ACCEPT
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 464  -j ACCEPT
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 53  -j ACCEPT
+#UDP ports for FreeIPA
+-A INPUT -m state --state NEW -m udp -p udp --dport 88 -j ACCEPT
+-A INPUT -m state --state NEW -m udp -p udp --dport 464 -j ACCEPT
+-A INPUT -m state --state NEW -m udp -p udp --dport 123 -j ACCEPT
+-A INPUT -m state --state NEW -m udp -p udp --dport 53 -j ACCEPT
+-A INPUT -j REJECT --reject-with icmp-host-prohibited
+-A FORWARD -j REJECT --reject-with icmp-host-prohibited
+COMMIT
+EOF
+
+iptables-restore < freeipa-iptables-rules.txt
+
+### ---stop_docs
