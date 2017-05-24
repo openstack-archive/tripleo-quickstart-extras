@@ -21,5 +21,3 @@ external_net: '38.145.32.0/22'
 overcloud_dns_servers: ["8.8.8.8", "8.8.4.4"]
 ntp_server: 'pool.ntp.org'
 
-# temp disabling introspection on rdocloud
-step_introspect: false
