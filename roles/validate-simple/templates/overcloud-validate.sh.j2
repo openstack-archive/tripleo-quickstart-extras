@@ -39,6 +39,16 @@ function cleanup {
 trap cleanup EXIT #nodocs
 {% endif %}
 
+{% if generate_pingtest_subunit|bool %}
+# Install dependencies for generate_subunit #nodocs
+sudo yum install -y python-os-testr
+
+## * Start measuring time of test
+## ::
+
+TEST_START=$(date +%s)
+{% endif %}
+
 ## * Source tenantrc file
 ## ::
 
@@ -136,6 +146,9 @@ ping -c 1 $vm1_ip
 
 if [ "$?" == "0" ]; then
     echo "Overcloud pingtest, SUCCESS"
+{% if generate_pingtest_subunit|bool %}
+    generate-subunit $TEST_START $(( $(date +%s) - TEST_START)) success pingtest > {{ working_dir }}/pingtest.subunit
+{% endif %}
     exit 0
 else
     nova console-log Server1
@@ -144,6 +157,9 @@ else
     neutron agent-list
     openstack stack show {{ validate_stack_name }}
     echo "Overcloud pingtest, FAIL"
+{% if generate_pingtest_subunit|bool %}
+    generate-subunit $TEST_START $(( $(date +%s) - TEST_START)) fail pingtest > {{ working_dir }}/pingtest.subunit
+{% endif %}
     exit 1
 fi
 
