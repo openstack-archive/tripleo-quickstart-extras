@@ -90,6 +90,7 @@ deployed_server_prepare_log: "{{ working_dir }}/deployed_server_prepare.txt"
 container_args: ""
 scenario_args: ""
 multinode_args: ""
+telemetry_args: ""
 
 deploy_args: >-
   {{ libvirt_args }}
@@ -105,6 +106,7 @@ deploy_args: >-
   {{ backup_args }}
   {{ ssl_args }}
   {{ tls_everywhere_args }}
+  {{ telemetry_args }}
   {{ extra_tht_config_args|default('') }}
   {{ validation_args }}
   {{ swap_args }}
