@@ -1,0 +1,61 @@
+- name: ensure libguestfs is installed
+  yum: name=libguestfs-tools-c state=latest
+  become: true
+
+- name: virt-customize args --> reset private var
+  set_fact: _vc_args=""
+
+- name: virt-customize args --> memory
+  set_fact: _vc_args="{{ _vc_args }} -m {{ modify_image_vc_ram }}"
+  when: modify_image_vc_ram is defined
+
+- name: virt-customize args --> cpu
+  set_fact: _vc_args="{{ _vc_args }} --smp {{ modify_image_vc_cpu }}"
+  when: modify_image_vc_cpu is defined
+
+- name: virt-customize args --> verbose output
+  set_fact: _vc_args="{{ _vc_args }} -v"
+  when: modify_image_vc_verbose|bool
+
+- name: virt-customize args --> trace/debug output
+  set_fact: _vc_args="{{ _vc_args }} -x"
+  when: modify_image_vc_trace|bool
+
+- name: virt-customize args --> upload files
+  set_fact: _vc_args="{{ _vc_args }} --upload {{ item.src }}:{{ item.dest }}"
+  with_items: "{{ modify_image_upload_files }}"
+
+- name: virt-customize args --> install packages
+  set_fact: _vc_args="{{ _vc_args }} --install {{ modify_image_install_packages|join(",") }}"
+  when: modify_image_install_packages
+
+- name: virt-customize args --> modify script
+  set_fact: _vc_args="{{ _vc_args }} --run {{ modify_script }}"
+  when: modify_script is defined
+
+- name: virt-customize args --> root password
+  set_fact: _vc_args="{{ _vc_args }} --root-password password:{{ modify_image_vc_root_password }}"
+  when: modify_image_vc_root_password is defined
+
+- name: Run virt-customize on the provided image
+  shell: >
+    virt-customize {{ _vc_args }}
+    -a {{ image_to_modify }}
+    > {{ modify_script|default('modify_image') }}.log 2>&1
+  environment:
+    LIBGUESTFS_BACKEND: direct
+  args:
+    chdir: "{{ modify_image_working_dir }}"
+
+- name: Extract artifacts from the image
+  shell: >
+    virt-copy-out
+    -a {{ image_to_modify }}
+    {{ item }}
+    {{ modify_image_working_dir }}
+  environment:
+      LIBGUESTFS_BACKEND: direct
+  args:
+      chdir: "{{ modify_image_working_dir }}"
+  with_items: "{{ modify_image_extract_list }}"
+

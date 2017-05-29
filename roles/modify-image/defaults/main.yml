@@ -24,3 +24,6 @@ modify_image_working_dir: "{{ working_dir }}"
 # modify_image_vc_root_password:
 modify_image_vc_verbose: false
 modify_image_vc_trace: false
+libguestfs_mode: true
+# TODO(sshnaidm): implement initramfs image modifying
+initramfs_image: false
