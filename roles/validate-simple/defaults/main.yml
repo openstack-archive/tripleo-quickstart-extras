@@ -26,3 +26,4 @@ validate_template_environment:
         image: "{{ validate_image_name }}"
         public_net_name: "{{ public_net_name }}"
 skip_pingtest_cleanup: false
+generate_pingtest_subunit: false
