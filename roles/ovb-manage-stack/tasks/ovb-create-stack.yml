@@ -67,8 +67,31 @@
   register: stack_deployment
   environment:
     OS_CLIENT_CONFIG_FILE: "{{ local_working_dir }}/clouds.yaml"
+  ignore_errors: true
 
-- name: set fact for undercloud floating IP address
+- name: Return stack state
+  shell: >
+      export OS_USERNAME="{{ os_username }}";
+      export OS_PASSWORD="{{ os_password }}";
+      export OS_TENANT_NAME="{{ os_tenant_name }}";
+      export OS_AUTH_URL="{{ os_auth_url }}";
+      openstack stack show "{{ stack_name }}" | grep "status"
+  register: stack_status
+  no_log: true
+
+# TODO(rlandy): Remove when stack status and fail tasks
+# when  https://github.com/ansible/ansible/issues/21770
+# is resolved.
+- name: Show stack status
+  debug:
+      var: stack_status.stdout_lines
+
+- name: Fail if stack did not deploy successfully
+  fail:
+     msg: "Stack {{ stack_name }} did not deploy successfully. See the stack status message above."
+  when: stack_status.stdout.find("CREATE_COMPLETE") == -1
+
+- name: Set fact for undercloud floating IP address
   set_fact:
     undercloud_ip="{{ stack_deployment.stack.outputs[0].output_value }}"
 
