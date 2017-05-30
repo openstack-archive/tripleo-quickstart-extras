@@ -32,6 +32,7 @@ deploy_timeout: 90
 enable_cinder_backup: false
 
 # Deployment variations
+composable_args: ""
 extra_args: ""
 topology: ""
 ssl_overcloud: false
@@ -110,6 +111,7 @@ deploy_args: >-
   {{ extra_tht_config_args|default('') }}
   {{ validation_args }}
   {{ swap_args }}
+  {{ composable_args }}
   {{ topology }}
   {{ extra_args }}
 
