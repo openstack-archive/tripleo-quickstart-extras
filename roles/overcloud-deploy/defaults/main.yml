@@ -97,9 +97,9 @@ deploy_args: >-
   {{ flavor_args }}
   {{ timeout_args }}
   {{ cloud_name_args }}
-  {{ container_args }}
   {{ multinode_args }}
   {{ scenario_args }}
+  {{ container_args }}
   {{ network_args }}
   {{ pacemaker_args }}
   {{ workers_args }}
