@@ -69,10 +69,16 @@ openstack overcloud deploy \
     ${DEPLOY_ENV_YAML:+-e $DEPLOY_ENV_YAML} "$@" && status_code=0 || status_code=$?
 
 ### --stop_docs
-# We don't always get a useful error code from the openstack deploy command,
-# so check `openstack stack list` for a CREATE_COMPLETE or an UPDATE_COMPLETE
-# status.
-if ! openstack stack list | grep -Eq '(CREATE|UPDATE)_COMPLETE'; then
+
+# Check if the deployment has started. If not, exit gracefully. If yes, check for errors.
+if ! openstack stack list | grep -q overcloud; then
+    echo "overcloud deployment not started. Check the deploy configurations"
+    exit 1
+
+    # We don't always get a useful error code from the openstack deploy command,
+    # so check `openstack stack list` for a CREATE_COMPLETE or an UPDATE_COMPLETE
+    # status.
+elif ! openstack stack list | grep -Eq '(CREATE|UPDATE)_COMPLETE'; then
     {%if release not in ['mitaka', 'liberty'] %}
     # get the failures list
     openstack stack failures list overcloud --long > {{ failed_deployment_list }} || true
