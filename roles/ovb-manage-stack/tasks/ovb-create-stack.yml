@@ -102,7 +102,6 @@
       groups: "{{ node_groups| join(',') }}"
       ansible_host: "{{ undercloud_ip }}"
       ansible_fqdn: undercloud
-      ansible_user: "{{ ansible_user }}"
       ansible_private_key_file: "{{ undercloud_key }}"
       ansible_ssh_extra_args: "{{ ssh_extra_args }}"
       undercloud_ip: "{{ undercloud_ip }}"
