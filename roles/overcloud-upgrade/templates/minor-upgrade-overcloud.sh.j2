@@ -3,7 +3,7 @@ set -eux
 source {{ upgrade_working_dir }}/stackrc
 
 openstack overcloud deploy --templates {{ tht_dir }} \
-    -e tripleo-heat-templates/overcloud-resource-registry-puppet.yaml \
+    -e {{ tht_dir }}/overcloud-resource-registry-puppet.yaml \
 {% if network_isolation == true %}
     -e {{ tht_dir }}/environments/network-isolation.yaml \
     -e {{ tht_dir }}/environments/net-single-nic-with-vlans.yaml \
