@@ -17,7 +17,7 @@
     src: "{{ network_environment_file }}"
     dest: "{{ working_dir }}/network-environment.yaml"
     mode: 0644
-  when: network_isolation|bool and undercloud_type != "baremetal"
+  when: network_isolation|bool and undercloud_type != "baremetal" or deployed_server|bool
 
 - when: undercloud_type == "baremetal"
   block:
