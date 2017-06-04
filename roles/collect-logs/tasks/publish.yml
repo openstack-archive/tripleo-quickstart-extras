@@ -13,6 +13,11 @@
     curl -k {{ lookup('env', 'BUILD_URL') }}/consoleText | gzip > {{ artcl_collect_dir }}/console.txt.gz
   when: lookup('env', 'BUILD_URL') != ""
 
+- name: Generate the README for the logs
+  template:
+    src: README-logs.html.j2
+    dest: "{{ artcl_readme_file }}"
+
 - name: Retrieve the ARA static playbook report
   command: cp -a {{ local_working_dir }}/ara {{ artcl_collect_dir }}/ara
   ignore_errors: "yes"
@@ -80,3 +85,4 @@
   template:
     src: full_logs.html.j2
     dest: "{{ artcl_collect_dir }}/full_logs.html"
+  when: artcl_env != 'tripleo-ci'
