@@ -58,11 +58,21 @@
     vbmc_address: "{{ libvirt_default_network_address }}"
   when: vbmc_address is not defined
 
+# The connection uri is slightly different when using qemu:///system
+# and requires the root user.
+- name: set qemu uri for qemu:///system usage
+  set_fact:
+    vbmc_libvirt_uri: "qemu+ssh://root@{{ vbmc_address }}/system?&keyfile=/root/.ssh/id_rsa_virt_power&no_verify=1&no_tty=1"
+  when: libvirt_uri == "qemu:///system"
+
+- name: set qemu uri for qemu:///session usage
+  set_fact:
+    vbmc_libvirt_uri: "qemu+ssh://{{ non_root_user }}@{{ vbmc_address }}/session?socket=/run/user/{{ non_root_user_uid }}/libvirt/libvirt-sock&keyfile=/root/.ssh/id_rsa_virt_power&no_verify=1&no_tty=1"
+  when: vbmc_libvirt_uri is not defined
+
 - name: Create the Virtual BMCs
   when: release not in ['liberty', 'mitaka', 'newton']
-  command: >
-    vbmc add {{item.name}} --port {{item.virtualbmc_port}} --libvirt-uri
-    "qemu+ssh://{{ non_root_user }}@{{ vbmc_address }}/session?socket=/run/user/{{ non_root_user_uid }}/libvirt/libvirt-sock&keyfile=/root/.ssh/id_rsa_virt_power&no_verify=1&no_tty=1"
+  command: "vbmc add {{ item.name }} --port {{ item.virtualbmc_port }} --libvirt-uri {{ vbmc_libvirt_uri }}"
   with_items: "{{ overcloud_nodes }}"
   become: true
   become_user: root
