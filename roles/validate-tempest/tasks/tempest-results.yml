@@ -19,7 +19,6 @@
 
 - ignore_errors: true
   block:
-
     - name: Generate testrepository.subunit results file
       shell: >
         {% if tempest_format == 'venv' %}source {{ working_dir }}/tempest_git/.venv/bin/activate; {% endif %}
@@ -38,6 +37,29 @@
         src: "{{ working_dir }}/tempest/tempest.html"
         dest: "{{ lookup('env', 'PWD') }}/tempest.html"
         flat: yes
+
+    - name: Copying tempestmail files
+      synchronize:
+        src: tempestmail/
+        dest: "{{ working_dir }}/tempestmail/"
+        use_ssh_args: true
+
+    - name: Copying skip file
+      synchronize:
+        src: "vars/tempest_skip_{{ release }}.yml"
+        dest: "{{ working_dir }}/tempestmail/"
+        use_ssh_args: true
+
+    - name: Send tempest results by mail
+      shell: >
+          {% if lookup('env', 'LOG_PATH') %}LOG_PATH='{{ lookup('env', 'LOG_PATH') }}' {% endif %}
+          ./tempestmail.py -c {{ tempestmail_config }} --job
+          "{{ lookup('env', 'JOB_NAME')|default('Periodic job', true) }}"
+          --file "{{ working_dir }}/{{ tempest_log_file }}"
+          --skip-file "{{ working_dir }}/tempestmail/tempest_skip_{{ release }}.yml"
+      args:
+        chdir: "{{ working_dir }}/tempestmail"
+      ignore_errors: yes
 
 - name: Exit with tempest result code if configured
   shell: tail -10 {{ tempest_log_file }}; exit {{ tempest_result.rc }}

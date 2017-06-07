@@ -26,6 +26,7 @@ Role Variables
 * `tempest_until_failure`: false/true - default is false, repeat the run again and again until failure occurs
 * `tempest_failing`: false/true - default is false, run only tests known to be failing
 * `tempest_exit_on_failure`: true/false - whether to exit from role with tempest exit code (default: true)
+* `tempestmail_config`: config.yaml - name of config file for tempestmail script
 
 Skip tests file
 ---------------
