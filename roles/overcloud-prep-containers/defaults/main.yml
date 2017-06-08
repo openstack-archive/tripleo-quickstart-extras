@@ -7,3 +7,7 @@ containers_default_parameters: container-default-parameters.yaml.j2
 overcloud_prep_containers_log: overcloud_prep_containers.log
 ctl_plane_ip: "{{undercloud_network_gateway|default(undercloud_network_cidr|nthhost(1))}}"
 docker_registry_namespace: tripleoupstream
+# Be careful with this setting as it entirely wipes the /var/lib/docker directory
+# Useful in CI to workaround disk space issue
+# https://bugs.launchpad.net/tripleo/+bug/1694709
+delete_docker_cache: false

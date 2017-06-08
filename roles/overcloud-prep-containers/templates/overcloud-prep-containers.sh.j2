@@ -17,6 +17,16 @@ set -eux
 
 openstack overcloud container image upload --verbose --config-file {{ tripleo_common_dir }}/container-images/overcloud_containers.yaml
 
+{% if delete_docker_cache|bool %}
+## * Delete Docker Cache
+## ::
+
+# This is the most efficient way to wipe all of docker data
+sudo systemctl stop docker
+sudo rm -rf /var/lib/docker
+sudo systemctl start docker
+{% endif %}
+
 ## * Configure the environments/docker.yaml, this is done automatically.
 ## ::
 
