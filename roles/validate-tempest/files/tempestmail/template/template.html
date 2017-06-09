@@ -5,6 +5,9 @@
         <p>Here's the result of the latest tempest run for job {{ data.get('job') }}.</p>
         <p>The job ran on {{ data.get('date') }}.</p>
         <p>For more details, you can check the URL: {{ data.get('link') }} (It might take a few minutes to upload the logs).</p>
+        {% if 'Not available yet' not in data.get('link') %}
+            <p>You can see the stackviz results <a href="{{ data.get('link') }}logs/oooq/stackviz/">here</a>
+        {% endif %}
     {% if 'new' in data and data.new %}
     <h2>New failures</h2>
     <ul>
@@ -32,7 +35,9 @@
     {% endif %}
     <p></p>
     <p>You are receiving this email because someone from TripleO team though you were interested in these results.</p>
-    <p>
+    <p></p>
+    <p>If you're interested in receive these emails, please submit a code review <a href="https://github.com/openstack/tripleo-quickstart-extras/blob/master/roles/validate-tempest/files/tempestmail/config.yaml">here</a>
+    including your email address</p>
     </body>
 </html>
 
