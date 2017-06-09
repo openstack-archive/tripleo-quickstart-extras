@@ -10,3 +10,5 @@
       set -o pipefail &&
       {{ local_working_dir }}/cleanup-stacks-keypairs.sh 2>&1 {{ timestamper_cmd }} >
       {{ cleanup_stacks_keypairs_log }}
+  args:
+    executable: /bin/bash
