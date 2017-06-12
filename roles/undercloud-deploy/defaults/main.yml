@@ -9,6 +9,31 @@ network_environment_file: network-environment.yaml.j2
 # containerized_undercloud is an EXPERIMENTAL FEATURE
 containerized_undercloud: false
 undercloud_install_script: undercloud-install.sh.j2
+# TODO(bogdando) move these to the client's 'openstack undercloud deploy'
+undercloud_required_packages: >-
+  openstack-heat-api
+  openstack-heat-engine
+  openstack-heat-monolith
+  python-heat-agent
+  python-heat-agent-apply-config
+  python-heat-agent-hiera
+  python-heat-agent-puppet
+  python-heat-agent-docker-cmd
+  python-heat-agent-json-file
+  python-ipaddr
+  python-tripleoclient
+  docker
+  openvswitch
+  openstack-puppet-modules
+  openstack-kolla
+  yum-plugin-priorities
+  openstack-tripleo-common
+  openstack-tripleo-heat-templates
+  deltarpm
+
+# defines extra args for the undercloud deploy command
+undercloud_extra_args: >-
+  --heat-native
 
 # The undercloud can also be deployed with heat
 # thus requiring a t-h-t driven undercloud *and* the classic undercloud

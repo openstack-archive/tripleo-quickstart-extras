@@ -2,7 +2,10 @@
 features:
   - |
     EXPERIMENTAL feature to install the undercloud with openstack heat
-    add support for a containerized undercloud.
+    add support for a containerized undercloud. It allows to update the
+    specified packages, install custom t-h-t templates and fetch work
+    in progress dependency changes. This can be done deployment runtime,
+    by an undercloud deploy script defined from a given template.
     The feature is invoked by using the config file in
     config/general_config/containers_undercloud_minimal.yml
     e.g. ./quickstart.sh -c $working_dir/config/general_config/containers_undercloud_minimal.yml --tags all -R master-tripleo-ci -w $working_dir $VIRTHOST

@@ -1,0 +1,12 @@
+---
+- name: Create overcloud custom tht script
+  template:
+    src: "{{ overcloud_custom_tht_script }}"
+    dest: "{{ working_dir }}/overcloud-custom-tht-script.sh"
+    mode: 0755
+
+- name: Checkout custom tht heat templates from src
+  shell: >
+    set -o pipefail &&
+    {{ working_dir }}/overcloud-custom-tht-script.sh 2>&1 {{ timestamper_cmd }} >
+    {{ overcloud_custom_tht_log }}
