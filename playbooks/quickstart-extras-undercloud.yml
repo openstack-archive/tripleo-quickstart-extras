@@ -2,6 +2,8 @@
 - name: Deploy the FreeIPA server
   hosts: supplemental
   gather_facts: no
+  tags:
+    - freeipa-setup
   roles:
     - { role: freeipa-setup, when: deploy_supplemental_node|bool and enable_tls_everywhere|bool }
 
@@ -11,6 +13,8 @@
   gather_facts: no
   vars:
     ansible_user: root
+  tags:
+    - undercloud-setup
   roles:
     - { role: undercloud-setup, when: undercloud_setup|bool }
 
@@ -18,6 +22,8 @@
 - name:  Deploy the undercloud
   hosts: undercloud
   gather_facts: no
+  tags:
+    - undercloud-deploy
   roles:
     - undercloud-deploy
 

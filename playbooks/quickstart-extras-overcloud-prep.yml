@@ -2,6 +2,8 @@
 - name:  Prepare configuration files for the overcloud deployment
   hosts: undercloud
   gather_facts: no
+  tags:
+    - overcloud-prep-config
   roles:
     - overcloud-prep-config
 
@@ -9,6 +11,8 @@
 - name:  Prepare overcloud containers
   hosts: undercloud
   gather_facts: no
+  tags:
+    - overcloud-prep-containers
   roles:
     - overcloud-prep-containers
 
@@ -16,6 +20,8 @@
 - name:  Prepare the overcloud images for deployment
   hosts: undercloud
   gather_facts: no
+  tags:
+    - overcloud-prep-images
   roles:
     - overcloud-prep-images
 
@@ -34,6 +40,8 @@
 - name:  Prepare overcloud flavors
   hosts: undercloud
   gather_facts: no
+  tags:
+    - overcloud-prep-flavors
   roles:
     - overcloud-prep-flavors
 
@@ -41,6 +49,8 @@
 - name:  Prepare the undercloud networks for the overcloud deployment
   hosts: undercloud
   gather_facts: no
+  tags:
+    - overcloud-prep-network
   roles:
     - overcloud-prep-network
 
@@ -58,5 +68,7 @@
 - name: Prepare the SSL Configuration for the overcloud deployment
   hosts: undercloud
   gather_facts: no
+  tags:
+    - overcloud-ssl
   roles:
     - { role: overcloud-ssl }

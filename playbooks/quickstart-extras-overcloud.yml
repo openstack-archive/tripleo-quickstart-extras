@@ -12,6 +12,7 @@
   gather_facts: yes
   tags:
     - overcloud-deploy
+    - overcloud-inventory
   vars:
       inventory: all
   roles:
@@ -33,6 +34,7 @@
   hosts: localhost
   tags:
     - overcloud-deploy
+    - overcloud-check
   tasks:
     - name: ensure the deployment result has been read into memory
       include_vars: "{{ local_working_dir }}/overcloud_deployment_result.json"
