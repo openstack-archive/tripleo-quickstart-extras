@@ -12,7 +12,7 @@ set -eux
 
 if [[ ! -f {{ working_dir }}/instackenv.json ]]; then
     echo 'File "instackenv.json" is not in the working directory, aborting.'
-    exit
+    exit 1
 fi
 
 ## * Install IPMI tools
@@ -33,6 +33,7 @@ export IPMI_VALIDATE="$(python {{ working_dir }}/clapper/instackenv-validator.py
 if [[ $IPMI_VALIDATE != *SUCCESS* ]] ; then
     echo "instackenv.json did not validate."
     echo $IPMI_VALIDATE
+    exit 1
 fi
 
 ### --stop_docs
