@@ -29,6 +29,7 @@ Role Variables
 * `tempest_exit_on_failure`: true/false - whether to exit from role with tempest exit code (default: true)
 * `tempestmail_config`: config.yaml - name of config file for tempestmail script
 * `tempest_track_resources`: true/false - whether to save the state of resources after tempest run (default: true)
+* `check_tempest_bugs`: true/false - Will check every bugzilla and launchpad bug in the yaml skip file
 
 Skip tests file
 ---------------
@@ -60,6 +61,15 @@ Example of skip file:
       - test: 'tempest.api.image.v2.test_images_metadefs_namespace_properties.MetadataNamespacePropertiesTest.test_basic_meta_def_namespace_property'
         reason: 'glance is not calling glance-manage db_load_metadefs'
         lp: 'https://bugs.launchpad.net/tripleo/+bug/1664995'
+
+
+Real time bug check
+-------------------
+
+If check_tempest_bugs is set to true, a script will be called and will check
+in real time, all tests who has a bugzilla or a launchpad bug. This will
+generate a new skip file, removing all the bugs that were already closed but
+wasn't updated in the yaml skip file yet.
 
 Dependencies
 ------------

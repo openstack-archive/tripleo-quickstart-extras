@@ -22,3 +22,36 @@
     dest: "{{ working_dir }}/{{ skip_file }}"
     mode: 0644
   when: skip_file_src != ''
+
+- ignore_errors: true
+  block:
+    - name: Copying bugcheck files
+      synchronize:
+        src: bugcheck/
+        dest: "{{ working_dir }}/bugcheck/"
+        use_ssh_args: true
+
+    - name: Copying skip file
+      synchronize:
+        src: "vars/tempest_skip_{{ release }}.yml"
+        dest: "{{ working_dir }}/bugcheck/"
+        use_ssh_args: true
+
+    - name: Setting virtualenv
+      shell: >
+        virtualenv "{{ working_dir }}/bugcheck/.venv"
+
+    - name: Installing requirements
+      pip:
+        requirements: "{{ working_dir }}/bugcheck/requirements.txt"
+        virtualenv: "{{ working_dir }}/bugcheck/.venv"
+
+    - name: Verifying bugs in bugzilla and launchpad and generating skip file
+      shell: >
+        source "{{ working_dir }}"/bugcheck/.venv/bin/activate;
+        python bugcheck.py --skip-file "{{ working_dir }}/bugcheck/tempest_skip_{{ release }}.yml"
+        --to-file "{{ working_dir }}/{{ skip_file }}" --format txt
+      args:
+        chdir: "{{ working_dir }}/bugcheck"
+      ignore_errors: yes
+  when: check_tempest_bugs|bool
