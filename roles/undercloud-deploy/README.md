@@ -36,8 +36,6 @@ http://docs.openstack.org/developer/tripleo-quickstart/accessing-libvirt.html
 - `undercloud_extra_args`: <''> -- extra options for undercloud deploy command.
 - `undercloud_update_packages`: <null> -- a string with a list of packages to update as dependencies for
 your hacking setup. By defaults it updates nothing, which is backwards compatible.
-- `undercloud_required_packages`: -- a string with a list of packages required for containerized
-undercloud install (as a temporary solution, unless it is done by tripleo CLI)
 - `undercloud_enable_ui`: Sets up the 'enable_ui' option in undercloud.conf.
   It's undefined by default, however, the default value for this option in the
   undercloud is true.

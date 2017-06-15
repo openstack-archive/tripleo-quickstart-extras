@@ -42,12 +42,6 @@ parameter_defaults:
   NeutronServicePlugins: ""
 EOF_CAT
 
-## * Install the prerequisite rpms.
-## ::
-
-# TODO(bogdando) move this step to the tripleo client
-sudo yum install -y {{ undercloud_required_packages }}
-
 ## * Update requested packages.
 ## ::
 
