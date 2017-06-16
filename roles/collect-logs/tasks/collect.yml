@@ -182,7 +182,7 @@
         fi
 
     - name: Collect config-data
-      shell: cp -r /var/lib/config-data /var/log/config-data
+      shell: cp -r /var/lib/config-data/puppet-generated /var/log/config-data
 
     - name: Collect text version of the journal from last four hours
       shell: journalctl --since=-4h --lines=100000 > /var/log/journal.txt
