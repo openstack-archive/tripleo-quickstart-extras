@@ -29,8 +29,6 @@ function cleanup {
         {% endif %}
         fi
     fi
-    # Remove images and network
-    rm -f {{ validate_image_dir }}/cirros.*
     openstack image list | awk '/pingtest/ {print $2}' | while read IMAGEID; do openstack image delete $IMAGEID; done
     neutron net-delete {{ public_net_name }}
 }
@@ -62,12 +60,24 @@ source {{ working_dir }}/{{ tenantrc }}
 if [[ ! -d {{ validate_image_dir }} ]]; then
     mkdir {{ validate_image_dir }};
 fi
-IMAGE_PATH={{ validate_image_dir }}/cirros.img
-INITRAMFS_PATH={{ validate_image_dir }}/cirros.initramfs
-KERNEL_PATH={{ validate_image_dir }}/cirros.kernel
-curl -L -s -S -o $IMAGE_PATH {{ validate_image_url }}{{ image_disk }}
-curl -L -s -S -o $INITRAMFS_PATH {{ validate_image_url }}{{ image_initramfs }}
-curl -L -s -S -o $KERNEL_PATH {{ validate_image_url }}{{ image_kernel }}
+
+IMAGE_PATH={{ validate_image_dir }}/{{ image_disk }}
+INITRAMFS_PATH={{ validate_image_dir }}/{{ image_initramfs }}
+KERNEL_PATH={{ validate_image_dir }}/{{ image_kernel }}
+
+if [[ -e $IMAGE_PATH && -e $INITRAMFS_PATH && -e $KERNEL_PATH ]]; then
+    echo "Using existing images in {{ validate_image_dir }}"
+else
+    pushd {{ validate_image_dir }}
+    if [[ -e {{ validate_image_path }} ]]; then
+        tar -zxvf {{ validate_image_path }}
+    else
+        curl -L -s -S -o {{ validate_image_dir }}/{{ validate_image_file }} {{ validate_image_url }}/{{ validate_image_file }}
+        tar -zxvf {{ validate_image_file }}
+        rm -f "{{ validate_image_file }}"
+    fi
+    popd
+fi
 
 ## * Upload cirros image into glance
 ## ::

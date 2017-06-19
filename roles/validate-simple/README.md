@@ -18,8 +18,8 @@ For the defaults of these variables, see the defaults/main.yml file in this role
 * `validate_log` -- file to log the output of the validation script
 * `validate_stack_name` -- the name of the heat stack used for validation
 * `validate_success_status` -- output that signifies successful stack creation
-* `validate_image_file` -- prefix for the downloaded disk image, initramfs and
-  kernel
+* `validate_image_file` -- name of downloaded image file
+* `validate_image_path` -- path to existing image file on disk
 * `validate_image_url` -- URL to the image files (without the filenames)
 * `image_disk`, `image_initramfs`, `image_kernel` -- name of the disk image,
   initramfs and kernel on the previous URL
