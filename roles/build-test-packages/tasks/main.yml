@@ -13,6 +13,8 @@
     - python-virtualenv
     - rpm-build
     - sqlite
+    - redhat-rpm-config
+    - rpmdevtools
 
 - name: Create mock group
   become: yes
