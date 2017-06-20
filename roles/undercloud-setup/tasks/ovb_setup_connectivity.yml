@@ -13,6 +13,6 @@
 - name: Setup interfaces, connectivity on the undercloud
   become: yes
   shell: >
-    {{ working_dir }}/ovb-undercloud-connectivity.sh >
-    {{ ovb_undercloud_connectivity_log }} 2>&1
-
+    set -o pipefail &&
+    {{ working_dir }}/ovb-undercloud-connectivity.sh 2>&1 {{ timestamper_cmd }} >
+    {{ ovb_undercloud_connectivity_log }}
