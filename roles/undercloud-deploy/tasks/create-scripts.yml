@@ -1,5 +1,17 @@
 # Creat the scripts that will be used to deploy the undercloud
 # environment.
+- name: Check the dns information provided by the virthost
+  shell: >
+    gawk '/^nameserver +/ { print $2 }' /etc/resolv.conf
+  delegate_to: virthost
+  register: virthost_nameservers_output
+  when: nameserver_from_virthost|bool
+
+- name: set name server facts
+  set_fact:
+    virthost_nameservers: "{{ virthost_nameservers_output.stdout_lines }}"
+  when: nameserver_from_virthost|bool
+
 - name: Create undercloud configuration
   template:
     src: "{{ undercloud_config_file }}"

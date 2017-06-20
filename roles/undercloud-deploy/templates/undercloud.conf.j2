@@ -74,7 +74,11 @@ undercloud_admin_host = {{undercloud_undercloud_admin_host|default(
 
 # Nameserver for the Undercloud node.
 # (string value)
-{% if undercloud_undercloud_nameservers is string %}
+{% if virthost_nameservers is string %}
+undercloud_nameservers = {{ virthost_nameservers }}
+{% elif virthost_nameservers is sequence and virthost_nameservers|length > 0 %}
+undercloud_nameservers = {{ virthost_nameservers|join(',') }}
+{% elif undercloud_undercloud_nameservers is string %}
 undercloud_nameservers = {{ undercloud_undercloud_nameservers }}
 {% elif undercloud_undercloud_nameservers is sequence %}
 undercloud_nameservers = {{ undercloud_undercloud_nameservers|join(',') }}
