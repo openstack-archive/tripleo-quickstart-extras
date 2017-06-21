@@ -1,6 +1,4 @@
 ---
-# tasks file for ansible-role-tripleo-tempest
-
 - name: Set the number of workers in tempest
   set_fact:
       tempest_workers: "{{ ansible_processor_count|int // 2 }}"
