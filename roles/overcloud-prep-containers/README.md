@@ -27,10 +27,11 @@ overcloud-prep-containers variables
 * working_dir: /home/stack
 * containerized_overcloud: false
 * overcloud_prep_containers_script: overcloud-prep-containers.sh.j2
-* containers_default_parameters: container-default-parameters.yaml.j2
 * overcloud_prep_containers_log: overcloud_prep_containers.log
 * undercloud_network_cidr: 192.168.24.0/24
 * ctl_plane_ip: "{{undercloud_network_gateway|default(undercloud_network_cidr|nthhost(1))}}"
+* docker_registry_host: docker.io
+* docker_image_tag: latest
 
 overcloud-prep-config variables
 -------------------------------

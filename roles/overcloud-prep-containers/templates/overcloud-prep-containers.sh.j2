@@ -15,7 +15,15 @@ set -eux
 ## * Populate the docker registry
 ## ::
 
-openstack overcloud container image upload --verbose --config-file {{ tripleo_common_dir }}/container-images/overcloud_containers.yaml
+openstack overcloud container image prepare \
+    --images-file {{ working_dir }}/overcloud_containers.yaml \
+    --namespace {{ docker_registry_namespace }} \
+    --tag {{ docker_image_tag }} \
+    --pull-source {{ docker_registry_host }} \
+    --exclude ceph \
+    --push-destination {{ ctl_plane_ip }}:8787
+
+openstack overcloud container image upload --verbose --config-file {{ working_dir }}/overcloud_containers.yaml
 
 {% if delete_docker_cache|bool %}
 ## * Delete Docker Cache
@@ -27,8 +35,15 @@ sudo rm -rf /var/lib/docker
 sudo systemctl start docker
 {% endif %}
 
-## * Configure the environments/docker.yaml, this is done automatically.
+## * Configure the {{ working_dir }}/containers-default-parameters.yaml, this is done automatically.
 ## ::
+
+openstack overcloud container image prepare \
+    --env-file {{ working_dir }}/containers-default-parameters.yaml \
+    --namespace {{ ctl_plane_ip }}:8787/{{ docker_registry_namespace }}
+
+echo "  DockerInsecureRegistryAddress: {{ ctl_plane_ip }}:8787" >> \
+    {{ working_dir }}/containers-default-parameters.yaml
 
 echo "============================="
 echo "Containers default parameters:"
