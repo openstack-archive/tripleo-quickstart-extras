@@ -24,6 +24,12 @@ step_introspect: false
 bash_deploy_ramdisk: false
 step_install_undercloud: true
 
+# The TripleO-UI is available on the undercloud
+# ssl or non-ssl access can be configured
+# Due to self signed certificates a user must grant permission to
+# https://<virthost>/keystone/v3/auth/tokens for ssl access to work.
+tripleo_ui_secure_access: false
+
 # Which libvirt session should we use?  Using `qemu://session` does
 # not require privileged access (but does require the setup performed by the
 # `environment/setup` role).

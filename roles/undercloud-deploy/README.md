@@ -25,6 +25,7 @@ used as the base for the network-environment for tripleo.
 jinja template used to override the undercloud's install hieradata
 - `undercloud_ironic_ipxe_port`: <'3816'> -- port to use for httpd ipxe server
 for ironic deploy
+- `enable_vbmc`: <'true'> use a virtual bmc instead of pxe ssh
 - `step_introspect`: <'false'> -- boolean value to enable/disable ironic introspection
 - `bash_deploy_ramdisk`: <'false'> -- the variable allows older versions of tripleo to upload images
 properly with the option --old-deploy-image
@@ -63,6 +64,8 @@ your hacking setup. By defaults it updates nothing, which is backwards compatibl
   This will be used to run the script to prepare FreeIPA for novajoin.
 - `overcloud_cloud_domain`: The domain configured for use by the FreeIPA server. Note: This also
   affects `CloudDomain` in the `cloud-names.yaml` template used by the `overcloud-deploy` role.
+- `tripleo_ui_secure_access`: Defaults to false due to the self signed certificate and
+  usability issues. See the tripleo-quickstart documentation `accessing the undercloud` for details.
 
 Role Network Variables
 ----------------------

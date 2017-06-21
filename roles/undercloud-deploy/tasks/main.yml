@@ -42,3 +42,9 @@
 - include: post-install.yml
   tags:
     - undercloud-post-install
+
+- include: tripleo-ui.yml
+  tags:
+    - undercloud-post-install
+  when: enable_vbmc|bool or enable_libvirt_tripleo_ui|bool
+
