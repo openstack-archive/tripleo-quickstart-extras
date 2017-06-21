@@ -7,5 +7,6 @@
     mode: 0755
 
 - name: Run the hostname correcting script
-  shell: "{{ working_dir }}/hostname.sh > {{ working_dir }}/hostname.sh.log 2>&1"
-
+  shell: >
+    set -o pipefail &&
+    {{ working_dir }}/hostname.sh 2>&1 {{ timestamper_cmd }} > {{ working_dir }}/hostname.sh.log
