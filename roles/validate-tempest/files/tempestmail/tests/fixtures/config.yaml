@@ -1,0 +1,20 @@
+require_auth: True
+mail_from: tripleoresults@gmail.com
+templates_path: template/
+log_url: 'http://logs.openstack.org/periodic/'
+api_server: 'http://tempest-tripleoci.rhcloud.com/api/v1.0/sendmail'
+use_api_server: True
+default_log_url: 'http://logs.openstack.org'
+emails:
+  - mail: 'arxcruz@redhat.com'
+    name: 'Arx Cruz'
+  - mail: 'whayutin@redhat.com'
+    name: 'Wes'
+  - mail: 'gcerami@redhat.com'
+    name: 'Gabriele'
+  - mail: 'sshnaidm@redhat.com'
+    name: 'Sagi Shnaidman'
+  - mail: 'myoung@redhat.com'
+    name: 'Matt Young'
+template: template.html
+

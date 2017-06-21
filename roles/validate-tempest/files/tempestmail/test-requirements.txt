@@ -1,0 +1,6 @@
+mock==2.0.0
+os-testr==0.8.2
+pbr==3.0.1
+testresources==2.0.1
+testtools==2.3.0
+unittest2==1.1.0
