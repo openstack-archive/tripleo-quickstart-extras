@@ -83,7 +83,6 @@ enable_swap: false
 swap_type: "file"
 swap_args: ""
 
-deployed_server: false
 deployed_server_prepare_script: deployed_server_prepare.sh.j2
 deployed_server_prepare_log: "{{ working_dir }}/deployed_server_prepare.txt"
 
