@@ -22,6 +22,9 @@
   command: cp -a {{ local_working_dir }}/ara {{ artcl_collect_dir }}/ara
   ignore_errors: "yes"
 
+- include: ara_graphite.yml
+  when: ara_graphite_server is defined
+
 - name: fetch stackviz results to the root of the collect_dir
   shell: >
     if [ -d {{ artcl_collect_dir }}/undercloud/var/log/extra/stackviz/data ]; then

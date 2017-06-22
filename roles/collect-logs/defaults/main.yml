@@ -115,3 +115,13 @@ artcl_logstash_files:
   - /home/*/yum_mirror.log
   - /home/*/tempest_output.log
   - /var/log/bootstrap-subnodes.log
+#ara_graphite_server: graphite.tripleo.org
+ara_graphite_prefix: "tripleo.{{ lookup('env', 'STABLE_RELEASE')|default('master', true) }}.{{ lookup('env', 'TOCI_JOBTYPE') }}."
+ara_only_successful_tasks: true
+ara_tasks_map:
+  "overcloud-deploy : Deploy the overcloud": overcloud.deploy.seconds
+  "undercloud-deploy : Install the undercloud": undercloud.install.seconds
+  "build-images : run the image build script (direct)": overcloud.images.seconds
+  "overcloud-prep-images : Prepare the overcloud images for deploy": prepare_images.seconds
+  "validate-simple : Validate the overcloud": overcloud.ping_test.seconds
+  "validate-tempest : Execute tempest": overcloud.tempest.seconds
