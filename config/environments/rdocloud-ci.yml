@@ -15,9 +15,10 @@ undercloud_flavor: ci.m1.large
 provision_net_cidr: 192.168.24.0/24
 
 custom_nameserver:
-    - 8.8.8.8
-undercloud_undercloud_nameservers: 8.8.8.8
+    - 38.145.32.66
+    - 38.145.32.79
+undercloud_undercloud_nameservers: "{{ custom_nameserver }}"
 external_net: '38.145.32.0/22'
-overcloud_dns_servers: ["8.8.8.8", "8.8.4.4"]
+overcloud_dns_servers: "{{ custom_nameserver }}"
 ntp_server: 'pool.ntp.org'
 
