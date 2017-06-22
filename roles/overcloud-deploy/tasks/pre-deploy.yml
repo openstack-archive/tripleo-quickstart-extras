@@ -178,8 +178,7 @@
 
 - name: set composable service args fact
   set_fact:
-    extra_args: >-
-      {{ extra_args }}
+    composable_args: >-
       -e {{ working_dir }}/overcloud_services.yaml
   when: composable_services|bool
 
