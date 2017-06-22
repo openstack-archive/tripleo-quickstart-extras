@@ -11,12 +11,34 @@ undercloud_masquerade_network: 192.168.24.0/24
 undercloud_dhcp_start: 192.168.24.5
 undercloud_dhcp_end: 192.168.24.24
 undercloud_inspection_iprange: 192.168.24.25,192.168.24.39
+undercloud_external_network_cidr: 10.0.0.0/24
 
 # template copies
 undercloud_instackenv_template: "{{ local_working_dir }}/instackenv.json"
 baremetal_nic_configs: "{{ local_working_dir }}/openstack-virtual-baremetal/network-templates/nic-configs"
-network_environment_file: "ovb-multiple-nics.yaml"
+use_resource_registry_nic_configs: true
 image_cache_dir: "{{ working_dir }}/images-cache"
+
+network_environment_args:
+  ExternalNetCidr: "{{ undercloud_external_network_cidr }}"
+  ExternalAllocationPools: >
+    [{'start': '{{ undercloud_external_network_cidr|nthhost(10) }}',
+    'end': '{{ undercloud_external_network_cidr|nthhost(50) }}'}]
+  NeutronExternalNetworkBridge: ""
+  ControlPlaneSubnetCidr: "{{ undercloud_network_cidr|ipaddr('prefix') }}"
+  ControlPlaneDefaultRoute: "{{ undercloud_network_cidr|nthhost(1) }}"
+  EC2MetadataIp: "{{ undercloud_network_cidr|nthhost(1) }}"
+  ExternalInterfaceDefaultRoute: "{{ undercloud_external_network_cidr|nthhost(1) }}"
+  InternalApiNetCidr: 172.20.0.0/24
+  InternalApiAllocationPools: [{"start": "172.20.0.10", "end": "172.20.0.250"}]
+  StorageNetCidr: 172.18.0.0/24
+  StorageAllocationPools: [{"start": "172.18.0.10", "end": "172.18.0.250"}]
+  StorageMgmtNetCidr: 172.19.0.0/24
+  StorageMgmtAllocationPools: [{"start": "172.19.0.10", "end": "172.19.0.250"}]
+  TenantNetCidr: 172.16.0.0/24
+  TenantAllocationPools: [{"start": "172.16.0.10", "end": "172.16.0.250"}]
+  DnsServers: "{{ overcloud_dns_servers }}"
+  PublicVirtualFixedIPs: [{ "ip_address": "{{ undercloud_external_network_cidr|nthhost(5) }}" }]
 
 # baremetal settings
 overcloud_nodes:
@@ -56,9 +78,7 @@ images:
 # overcloud deployment settings
 validation_args: " "
 extra_args: " --control-flavor baremetal --compute-flavor baremetal --control-scale 3  \
--e /usr/share/openstack-tripleo-heat-templates/environments/puppet-pacemaker.yaml \
--e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml \
--e ~/network-environment.yaml --ntp-server {{ ntp_server }} "
+--ntp-server {{ ntp_server }} "
 
 # This featureset is extremely resource intensive, so we disable telemetry
 # in order to reduce the overall memory footprint
