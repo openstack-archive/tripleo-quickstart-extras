@@ -1,8 +1,15 @@
 ---
+
+- name: ensure the tripleo_ui_config.js file exists
+  stat:
+    path: /var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
+  register: ooo_ui_config_file
+
 - when:
     - enable_port_forward_for_tripleo_ui|bool
     - hostvars[groups['virthost'][0]].ansible_host is defined
     - tripleo_ui_secure_access|bool == false
+    - ooo_ui_config_file.stat.exists
   block:
     - name: get the heat public url
       shell: |
@@ -84,6 +91,7 @@
     - enable_port_forward_for_tripleo_ui|bool
     - hostvars[groups['virthost'][0]].ansible_host is defined
     - tripleo_ui_secure_access|bool == true
+    - ooo_ui_config_file.stat.exists
   block:
     - name: update config in tripleo_ui_config.js, connect via virthost ip with ssl
       replace:
