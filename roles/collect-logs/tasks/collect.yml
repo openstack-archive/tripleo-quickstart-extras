@@ -187,6 +187,11 @@
     - name: Collect text version of the journal from last four hours
       shell: journalctl --since=-4h --lines=100000 > /var/log/journal.txt
 
+    - name: Create a index file for logstash
+      shell: >
+        for i in {{ artcl_logstash_files|default([])|join(" ") }}; do
+        cat $i; done | grep "^20.*|" | sort -sk1,2 > /var/log/extra/logstash.txt
+
     # Collect host info as done presently in TripleO-CI.
     # Will be deprecated.
     - name: Create get_host_info script
