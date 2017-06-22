@@ -3,7 +3,6 @@
   stat:
     path: "{{ validate_template_path }}/{{ validate_template }}"
   register: template_check
-  when: validate_template == "tenantvm_floatingip.yaml"
 
 - name: Old THT workaround, copy over the pingtest template
   copy:
