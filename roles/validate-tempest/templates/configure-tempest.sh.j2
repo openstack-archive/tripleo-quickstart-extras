@@ -131,6 +131,7 @@ export TEMPESTCONF="/usr/bin/discover-tempest-config"
 cd {{ working_dir }}/tempest
 
 # Generate Tempest Config file using python-tempestconf
+# Notice aodh_plugin will be set to False if telemetry service is disabled
 ${TEMPESTCONF} --out etc/tempest.conf \
   --network-id $public_net_id \
   --deployer-input ~/{{ tempest_deployer_input_file }} \
@@ -153,6 +154,9 @@ ${TEMPESTCONF} --out etc/tempest.conf \
   validation.ssh_user cirros \
   network.build_timeout 500 \
   volume.build_timeout 500 \
+  {% if 'disable-telemetry.yaml' in telemetry_args|default('') %}
+  service_available.aodh_plugin False \
+  {% endif %}
   orchestration.stack_owner_role heat_stack_owner
 
 ### --stop_docs
