@@ -34,6 +34,9 @@ Role Variables
                      installed
 * `tempest_extra_config`: dict - A dict of tempest configuration which needs to be overridden in tempest.conf,
                           It should be like section.key: value.
+* `tempest_conf_removal`: dict - A dict of tempest configuration which will be
+                          removed from tempest.conf file.
+                          Format: section.key: value
 
 Skip tests file
 ---------------

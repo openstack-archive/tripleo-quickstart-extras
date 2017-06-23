@@ -148,7 +148,13 @@ ${TEMPESTCONF} --out etc/tempest.conf \
   --network-id $public_net_id \
   --deployer-input ~/{{ tempest_deployer_input_file }} \
   --image {{ tempest_test_image_path }} \
-  --debug --create \
+  --debug \
+  {% if tempest_conf_removal %}
+  {% for key, value in tempest_conf_removal.iteritems() %}
+  --remove {{ key }}={{ value }} \
+  {% endfor %}
+  {% endif %}
+  --create \
   {% if release in ['newton','ocata', 'pike'] %}
   identity.uri $OS_AUTH_URL \
   identity.admin_password $OS_PASSWORD \
