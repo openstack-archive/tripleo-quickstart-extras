@@ -57,6 +57,14 @@
         backup: yes
       become: true
 
+    - name: update the ironic-inspector config in tripleo_ui_config.js, connect via virthost ip
+      lineinfile:
+        regexp: "'ironic-inspector':"
+        line: "  'ironic-inspector': 'http://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}:5050',"
+        dest: /var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
+        backup: yes
+      become: true
+
     - name: update the mistral config in tripleo_ui_config.js, connect via virthost ip
       lineinfile:
         regexp: "'mistral':"
