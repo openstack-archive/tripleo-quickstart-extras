@@ -173,7 +173,7 @@ class Mail(object):
 
 
 class TempestMailCmd(object):
-    def parse_arguments(self):
+    def parse_arguments(self, args):
         parser = argparse.ArgumentParser(description='tempest-mail')
         parser.add_argument('-c', dest='config',
                             default='/etc/tempest-mail/tempest-mail.yaml',
@@ -190,7 +190,7 @@ class TempestMailCmd(object):
                             help='List of skip files')
         parser.add_argument('--output', dest='output',
                             help='Save the email content in a file')
-        self.args = parser.parse_args()
+        self.args = parser.parse_args(args)
 
     def setup_logging(self):
         self.log = logging.getLogger('tempestmail.TempestMail')
@@ -206,7 +206,6 @@ class TempestMailCmd(object):
             return []
 
         body = res.content.decode() if res.content else ''
-
         hrefs = [HREF.search(l).group(1)
                  for l in body.splitlines() if HREF.search(l)]
         links = ["/".join((url, link))
@@ -370,7 +369,7 @@ class TempestMailCmd(object):
 
 def main():
     tmc = TempestMailCmd()
-    tmc.parse_arguments()
+    tmc.parse_arguments(sys.argv[1:])
     tmc.setup_logging()
     tmc.setupConfig()
     tmc.checkJobs()
