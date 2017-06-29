@@ -1,8 +1,8 @@
 ---
 
 - name: Install package installation script
-  copy:
-    src: install_packages.sh
+  template:
+    src: install_packages.sh.j2
     dest: "{{ working_dir }}/install_packages.sh"
     mode: 0755
 

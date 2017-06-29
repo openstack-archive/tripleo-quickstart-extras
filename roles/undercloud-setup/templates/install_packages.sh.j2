@@ -8,6 +8,7 @@
 ## * Install python-tripleoclient
 ## ::
 
-sudo yum install -y python-tripleoclient
+#sudo yum install -y python-tripleoclient ceph-ansible
+sudo yum install -y {{ undercloud_rpm_dependencies }}
 
 ### --stop_docs
