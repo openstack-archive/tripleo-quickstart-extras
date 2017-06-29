@@ -38,46 +38,52 @@
     rdopkg findpkg -s $PROJECT_NAME -l rdoinfo | grep ^name | awk '{print $2}'
   args:
       chdir: '{{ build_repo_dir }}/DLRN'
-  failed_when: project_name_mapped.stdout == ''
 
-- name: Create data directory if doesn't exist yet
-  file: path="{{ build_repo_dir }}/DLRN/data/" state=directory
+- debug:
+    msg: "WARNING: Unable to build {{ artg_change.project }}. No pkg found."
+  when: project_name_mapped.stdout == ''
 
-- name: Copy from ready directories if configured
-  command: >
-    cp -raf {{ artg_repos_dir }}/{{ artg_change.project|regex_replace('openstack[^/]*/', '') }}
-    {{ build_repo_dir }}/DLRN/data/{{ project_name_mapped.stdout }}
-  ignore_errors: true
-  register: copy_dir
-  when: artg_repos_dir is defined
+- when: project_name_mapped.stdout != ''
+  block:
+    - name: Create data directory if doesn't exist yet
+      file: path="{{ build_repo_dir }}/DLRN/data/" state=directory
 
-- name: Clone the gated change
-  git:
-    repo: '{{ artg_change.host }}/{{ artg_change.project }}'
-    dest: '{{ build_repo_dir }}/DLRN/data/{{ project_name_mapped.stdout }}'
-    refspec: '{{ artg_change.refspec }}'
-    version: 'FETCH_HEAD'
-  when: artg_repos_dir is not defined or copy_dir|failed
+    - name: Copy from ready directories if configured
+      command: >
+        cp -raf {{ artg_repos_dir }}/{{ artg_change.project|regex_replace('openstack[^/]*/', '') }}
+        {{ build_repo_dir }}/DLRN/data/{{ project_name_mapped.stdout }}
+      ignore_errors: true
+      register: copy_dir
+      when: artg_repos_dir is defined
 
-- name: Run DLRN
-  shell: >
-    set +e;
-    source {{ build_repo_dir }}/dlrn-venv/bin/activate;
-    while true; do
-        dlrn --config-file projects.ini --head-only --package-name {{ project_name_mapped.stdout }} --local --info-repo rdoinfo --dev;
-        if [ $? -eq 0 ]; then
-            # SUCCESS
-            break;
-        elif [ $? -eq 1 ]; then
-            # FAILED
-            exit 1;
-        elif [ $? -eq 2 ]; then
-            # RETRY
-            continue;
-        fi;
-        # Unexpected DLRN return code
-        exit $?;
-    done;
-  args:
-      chdir: '{{ build_repo_dir }}/DLRN'
-  register: repo_built
+    - name: Clone the gated change
+      git:
+        repo: '{{ artg_change.host }}/{{ artg_change.project }}'
+        dest: '{{ build_repo_dir }}/DLRN/data/{{ project_name_mapped.stdout }}'
+        refspec: '{{ artg_change.refspec }}'
+        version: 'FETCH_HEAD'
+      when: artg_repos_dir is not defined or copy_dir|failed
+
+    - name: Run DLRN
+      shell: >
+        set +e;
+        source {{ build_repo_dir }}/dlrn-venv/bin/activate;
+        while true; do
+            dlrn --config-file projects.ini --head-only --package-name {{ project_name_mapped.stdout }} --local --info-repo rdoinfo --dev;
+            if [ $? -eq 0 ]; then
+                # SUCCESS
+                break;
+            elif [ $? -eq 1 ]; then
+                # FAILED
+                exit 1;
+            elif [ $? -eq 2 ]; then
+                # RETRY
+                continue;
+            fi;
+            # Unexpected DLRN return code
+            exit $?;
+        done;
+      args:
+          chdir: '{{ build_repo_dir }}/DLRN'
+      register: repo_built
+
