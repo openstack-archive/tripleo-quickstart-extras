@@ -25,6 +25,14 @@ A description of the settable variables for this role should go here, including 
 * `enable_swap`: Enables swap in the overcloud nodes.
 * `swap_type`: Defines the approach to adding swap that will be used, the
   available options are 'file' and 'partition'. Defaults to 'file'.
+* `composable_services`: false/true - whether to use customized list of services
+* `overcloud_services`: structure specifying services for roles. See
+  the overcloud-deploy role's defaults.yaml file for an example.
+* `composable_roles`: false/true - whether to use custom `roles_data.yaml`
+* `overcloud_roles`: contents of custom `roles_data.yaml` (as a YAML
+  structure, not a string). See `roles_data.yaml` in the
+  tripleo-heat-templates repository for example contents.
+
 
 Dependencies
 ------------
