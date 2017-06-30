@@ -15,6 +15,7 @@ undercloud_flavor: ci.m1.large
 provision_net_cidr: 192.168.24.0/24
 
 custom_nameserver:
+    - 38.145.33.91
     - 38.145.32.66
     - 38.145.32.79
 undercloud_undercloud_nameservers: "{{ custom_nameserver }}"

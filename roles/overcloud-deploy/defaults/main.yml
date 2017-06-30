@@ -75,6 +75,8 @@ network_args: ""
 pacemaker_args: ""
 workers_args: ""
 backup_args: ""
+resource_registry_nic_configs_args: ""
+use_resource_registry_nic_configs: false
 
 ssl_args: ""
 tls_everywhere_args: ""
@@ -102,6 +104,7 @@ deploy_args: >-
   {{ container_args }}
   {{ network_args }}
   {{ pacemaker_args }}
+  {{ resource_registry_nic_configs_args }}
   {{ workers_args }}
   {{ backup_args }}
   {{ ssl_args }}
@@ -142,3 +145,11 @@ overcloud_services:
   - name: 'ControllerServices:'
     services:
     - OS::TripleO::Services::Kernel
+
+# Use to populate the resource registry for nic configs
+resource_registry_args:
+  OS::TripleO::BlockStorage::Net::SoftwareConfig: nic-configs/cinder-storage.yaml
+  OS::TripleO::Compute::Net::SoftwareConfig: nic-configs/compute.yaml
+  OS::TripleO::Controller::Net::SoftwareConfig: nic-configs/controller.yaml
+  OS::TripleO::ObjectStorage::Net::SoftwareConfig: nic-configs/swift-storage.yaml
+  OS::TripleO::CephStorage::Net::SoftwareConfig: nic-configs/ceph-storage.yaml

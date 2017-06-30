@@ -37,3 +37,8 @@
     src: "cloud-names.yaml.j2"
     dest: "{{ working_dir }}/cloud-names.yaml"
 
+- name: Copy nic-configs resource registry template
+  when: use_resource_registry_nic_configs|bool
+  template:
+    src: "resource-registry-nic-configs.yaml.j2"
+    dest: "{{ working_dir }}/resource-registry-nic-configs.yaml"

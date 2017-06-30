@@ -98,6 +98,12 @@
       -e {{ overcloud_templates_path }}/environments/puppet-pacemaker.yaml
   when: enable_pacemaker|bool
 
+- name: use resource registry
+  set_fact:
+    resource_registry_nic_configs_args: >-
+      -e {{ working_dir }}/resource-registry-nic-configs.yaml
+  when: use_resource_registry_nic_configs|bool
+
 - name: extract the number of controllers to be deployed
   set_fact: number_of_controllers="{{ deploy_args| regex_replace('^.*--control-scale +([0-9]+).*$', '\\1') | regex_replace('^[^ 0-9]+$', '1') }}"
 
