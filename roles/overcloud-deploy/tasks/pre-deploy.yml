@@ -171,6 +171,7 @@
     container_args: >-
       -e {{ overcloud_templates_path }}/environments/docker.yaml
       -e {{ overcloud_templates_path }}/environments/docker-network.yaml
+      -e {{ overcloud_templates_path }}/environments/docker-centos-tripleoupstream.yaml
       -e {{ working_dir }}/containers-default-parameters.yaml
   when:
     - containerized_overcloud|bool
