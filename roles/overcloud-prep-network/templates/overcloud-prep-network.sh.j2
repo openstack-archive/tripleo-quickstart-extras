@@ -75,20 +75,6 @@ EOF'
 
 sudo ifup ifcfg-{{ network.device_name }}
 
-{% else %}
-
-sudo bash -c 'cat <<EOF > /etc/sysconfig/network-scripts/ifcfg-eth6
-DEVICE=eth6
-ONBOOT=yes
-BOOTPROTO=static
-IPADDR={{ network.address }}
-NETMASK={{ network.netmask }}
-IPV6ADDR={{ network.address6 }}
-IPV6INIT=yes
-EOF'
-
-sudo ifup ifcfg-eth6
-
 {%endif%}
 
 
