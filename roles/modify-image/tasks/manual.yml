@@ -1,15 +1,19 @@
+---
+- name: Set abs path for image
+  shell: echo "{{ image_to_modify }}"
+  register: image_to_modify_abs_path
+
+- name: Set names for images and temp dir
+  set_fact:
+    mount_tempdir: "{{ lookup('pipe', 'mktemp -d') }}"
+
 - when: not initramfs_image|bool
   block:
-
-    - name: Set abs path for image
-      shell: echo "{{ image_to_modify }}"
-      register: image_to_modify_abs_path
 
     - name: Set names for images and temp dir
       set_fact:
         image_to_modify_qcow: "{{ image_to_modify_abs_path.stdout }}"
         image_to_modify_raw: "{{ image_to_modify_abs_path.stdout|replace('qcow2', 'raw') }}"
-        mount_tempdir: "{{ lookup('pipe', 'mktemp -d') }}"
 
     - name: Convert image
       shell: >
@@ -22,36 +26,52 @@
         mount /dev/mapper/loop0p1 {{ mount_tempdir }} || mount /dev/loop0 {{ mount_tempdir }};
       become: true
 
-    - name: Upload files to image
-      shell: >
-        cp {{ item.src }} {{ mount_tempdir }}/{{ item.dest }};
-      with_items: "{{ modify_image_upload_files }}"
-      become: true
+- name: Extract initramfs image
+  shell: gunzip -c {{ image_to_modify_abs_path.stdout }} | cpio -i
+  become: true
+  args:
+    chdir: "{{ mount_tempdir }}"
+  when: initramfs_image|bool
 
-    - name: Run script on image
-      shell: >
-        mv {{ mount_tempdir }}/etc/resolv.conf{,_};
-        echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" > {{ mount_tempdir }}/etc/resolv.conf;
-        cp {{ modify_script }} {{ mount_tempdir }}/tmp/{{ modify_script|basename }};
-        set -o pipefail && chroot {{ mount_tempdir }} /bin/bash /tmp/{{ modify_script|basename }} 2>&1
-        {{ timestamper_cmd }} > {{ working_dir }}/{{ modify_script|basename }}.$(date +%s).log;
-        mv -f {{ mount_tempdir }}/etc/resolv.conf{_,};
-      become: true
+- become: true
+  block:
 
-    - name: Extract files from image
-      shell: cp {{ mount_tempdir }}/{{ item }} {{ modify_image_working_dir }}/;
-      with_items: "{{ modify_image_extract_list }}"
-      ignore_errors: true
-      become: true
+  - name: Upload files to image
+    shell: >
+      cp {{ item.src }} {{ mount_tempdir }}/{{ item.dest }};
+    with_items: "{{ modify_image_upload_files }}"
 
-    - name: Close image
-      shell: >
-        chroot {{ mount_tempdir }} setfiles /etc/selinux/targeted/contexts/files/file_contexts / ;
-        umount {{ mount_tempdir }};
-        kpartx -dv {{ image_to_modify_raw }};
-        qemu-img convert -c -f raw -O qcow2 {{ image_to_modify_raw }} {{ image_to_modify_qcow }};
-        rm -rf "{{ image_to_modify_raw }}";
-        losetup -d /dev/loop0;
-        rm -rf "{{ mount_tempdir }}";
-        chown -R {{ undercloud_user }}: /home/{{ undercloud_user }}/;
-      become: true
+  - name: Run script on image
+    shell: >
+      mv {{ mount_tempdir }}/etc/resolv.conf{,_};
+      echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" > {{ mount_tempdir }}/etc/resolv.conf;
+      cp {{ modify_script }} {{ mount_tempdir }}/tmp/{{ modify_script|basename }};
+      {% if initramfs_image|bool %}sed -i "s/sudo //g" {{ mount_tempdir }}/tmp/{{ modify_script|basename }};{% endif %}
+      set -o pipefail && chroot {{ mount_tempdir }} /bin/bash /tmp/{{ modify_script|basename }} 2>&1
+      {{ timestamper_cmd }} > {{ working_dir }}/{{ modify_script|basename }}.$(date +%s).log;
+      mv -f {{ mount_tempdir }}/etc/resolv.conf{_,};
+
+  - name: Extract files from image
+    shell: cp {{ mount_tempdir }}/{{ item }} {{ modify_image_working_dir }}/;
+    with_items: "{{ modify_image_extract_list }}"
+    ignore_errors: true
+
+  - name: Close initramfs image
+    shell: >
+      pushd {{ mount_tempdir }};
+      find . -print | cpio -o -H newc | gzip > {{ image_to_modify_abs_path.stdout }};
+      popd;
+      rm -rf "{{ mount_tempdir }}";
+    when: initramfs_image|bool
+
+  - name: Close qcow2 image
+    shell: >
+      chroot {{ mount_tempdir }} setfiles /etc/selinux/targeted/contexts/files/file_contexts / ;
+      umount {{ mount_tempdir }};
+      kpartx -dv {{ image_to_modify_raw }};
+      qemu-img convert -c -f raw -O qcow2 {{ image_to_modify_raw }} {{ image_to_modify_qcow }};
+      rm -rf "{{ image_to_modify_raw }}";
+      losetup -d /dev/loop0;
+      rm -rf "{{ mount_tempdir }}";
+      chown -R {{ undercloud_user }}: /home/{{ undercloud_user }}/;
+    when: not initramfs_image|bool
