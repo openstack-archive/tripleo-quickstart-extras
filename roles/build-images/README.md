@@ -41,7 +41,9 @@ Role Variables
    package installs in the overcloud images. These repos will also be copied on
    to the undercloud image.
 * `image_build_yaml_paths` -- List of yaml files to be passed to the overcloud
-   image build. (Defaults to yamls packaged in tripleo-common)
+   image build. (Defaults to yamls packaged in tripleo-common. In order to
+   produce security hardened images, the alternate overcloud-hardened-images
+   need to be used instead of the overcloud-images ones).
 * `image_build_extract_list` -- List of artifacts to extract from the isolated
    build environment after building.
 * `inject_images` -- List of artifacts to inject into the undercloud image
