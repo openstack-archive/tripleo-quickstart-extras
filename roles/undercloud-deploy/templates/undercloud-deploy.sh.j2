@@ -111,7 +111,6 @@ sudo openstack undercloud deploy \
     -e {{overcloud_templates_path}}/environments/services-docker/zaqar.yaml \
     -e {{overcloud_templates_path}}/environments/docker.yaml \
     -e {{ working_dir }}/undercloud-containers-default-parameters.yaml \
-    -e {{overcloud_templates_path}}/environments/mongodb-nojournal.yaml \
 {% endif %}
     {{ undercloud_extra_args }} \
     -e {{ working_dir }}/hieradata-overrides-t-h-t-undercloud.yaml
