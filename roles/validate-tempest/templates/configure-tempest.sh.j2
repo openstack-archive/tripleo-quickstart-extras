@@ -106,7 +106,7 @@ tempest init {{ working_dir }}/tempest
 {% endif %}
 
 # Install OpenStack Services Tempest plugin
-{% if release != "mitaka" %}
+{% if release == "newton" %}
 # FIXME(chkumar246): Install tempest plugin from package currently then switch to install_test_packages script
 sudo yum -y install python-ceilometer-tests python-zaqar-tests python-ironic-inspector-tests python-gnocchi-tests \
     python-aodh-tests python-nova-tests python-mistral-tests python-heat-tests python-keystone-tests \
