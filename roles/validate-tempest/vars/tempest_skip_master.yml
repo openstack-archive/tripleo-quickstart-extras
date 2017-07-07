@@ -62,3 +62,6 @@ known_failures:
     reason: 'TODO(weshay) The service is not running on the overcloud, needs investigation'
   - test: 'neutron.tests.tempest.api.test_revisions.TestRevisions'
     reason: 'TODO(arxcruz) New test, need investigation'
+  - test: 'tempest.api.identity.admin.v3.test_roles.RolesV3TestJSON.test_implied_roles_create_check_show_delete'
+    reason: 'Difference in Implied Roles check API return code'
+    lp: 'https://bugs.launchpad.net/keystone/+bug/1660603'
