@@ -27,6 +27,7 @@ Role Variables
 * `tempest_failing`: false/true - default is false, run only tests known to be failing
 * `tempest_exit_on_failure`: true/false - whether to exit from role with tempest exit code (default: true)
 * `tempestmail_config`: config.yaml - name of config file for tempestmail script
+* `tempest_track_resources`: true/false - whether to save the state of resources after tempest run (default: true)
 
 Skip tests file
 ---------------

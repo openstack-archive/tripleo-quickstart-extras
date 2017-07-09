@@ -26,6 +26,12 @@ ostestr -l
 ## List tempest plugins
 $TEMPESTCLI list-plugins
 
+## Save the resources before running tempest tests
+## It will create saved_state.json in tempest workspace.
+{% if tempest_track_resources|bool %}
+$TEMPESTCLI cleanup --init-saved-state
+{% endif %}
+
 ( $OSTESTR '({{ test_regex }})' --no-pretty --subunit {% if skip_file_src != '' %}--blacklist_file={{ working_dir }}/{{ skip_file }}{% endif %}
 {% if tempest_workers is defined %} --concurrency {{ tempest_workers }} {% endif %}
 {% if tempest_isolated|bool %} --isolated {% endif %}
@@ -34,5 +40,10 @@ $TEMPESTCLI list-plugins
 {% if tempest_failing|bool %} --failing {% endif %}
 ) | tee >( $S2JXML ) | $SUBUNIT
 
-### --stop_docs
+## Check which all tenants would be modified in the tempest run
+## It will create dry_run.json in tempest workspace.
+{% if tempest_track_resources|bool %}
+$TEMPESTCLI cleanup --dry-run
+{% endif %}
 
+### --stop_docs
