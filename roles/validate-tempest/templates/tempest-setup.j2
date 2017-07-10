@@ -2,7 +2,6 @@
 
 set -eux
 
-{% if configure_tempest|bool %}
 ### --start_docs
 
 ## Validate the overcloud deployment with tempest
@@ -13,4 +12,3 @@ set -eux
 {% include 'run-tempest.sh.j2' %}
 
 ### --stop_docs
-{% endif %}

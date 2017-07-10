@@ -21,6 +21,6 @@
   ignore_errors: yes
 
 - include: post-tempest.yml
-  when: post_tempest|bool
+  when: post_tempest|bool and run_tempest|bool
   tags:
     - post-tempest
