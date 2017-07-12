@@ -2,7 +2,6 @@
 - when:
     - enable_port_forward_for_tripleo_ui|bool
     - hostvars[groups['virthost'][0]].ansible_host is defined
-    - hostvars[groups['virthost'][0]].ansible_host not in [ "localhost", "127.0.0.2" ]
     - tripleo_ui_secure_access|bool == false
   block:
     - name: get the heat public url
@@ -84,7 +83,6 @@
 - when:
     - enable_port_forward_for_tripleo_ui|bool
     - hostvars[groups['virthost'][0]].ansible_host is defined
-    - hostvars[groups['virthost'][0]].ansible_host not in [ "localhost", "127.0.0.2" ]
     - tripleo_ui_secure_access|bool == true
   block:
     - name: update config in tripleo_ui_config.js, connect via virthost ip with ssl
