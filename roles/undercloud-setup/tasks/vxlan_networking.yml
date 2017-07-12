@@ -23,7 +23,8 @@
   shell: >
     set -o pipefail &&
     sudo ip link set dev {{ undercloud_local_interface }} mtu {{ vxlan_mtu }} 2>&1 {{ timestamper_cmd }} >>
-    {{ working_dir }}/vxlan_networking.sh.log
+    {{ working_dir }}/vxlan_networking.sh.log;
+    echo "MTU={{ vxlan_mtu }}" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-{{ undercloud_local_interface }}
   delegate_to: "{{ item }}"
   with_items: "{{ groups['overcloud'] | default([]) }}"
 

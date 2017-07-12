@@ -94,9 +94,12 @@ set -u
 echo "Setting {{ undercloud_local_interface }} up on $primary_node"
 sudo ip link set dev {{ undercloud_local_interface }} up
 sudo ip link set dev {{ undercloud_local_interface }} mtu {{ vxlan_mtu }}
+echo "MTU={{ vxlan_mtu }}" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-{{ undercloud_local_interface }}
 
 if [ -f /etc/sysconfig/network-scripts/ifcfg-br-ctlplane ]; then
     sudo ifup br-ctlplane
+    sudo ip link set dev br-ctlplane mtu {{ vxlan_mtu }}
+    echo "MTU={{ vxlan_mtu }}" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-br-ctlplane
 fi
 
 ## * Restart neutron-openvswitch-agent if it's enabled, since it may have
