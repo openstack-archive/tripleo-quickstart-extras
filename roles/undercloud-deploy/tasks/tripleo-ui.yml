@@ -57,7 +57,7 @@
         backup: yes
       become: true
 
-    - name: update the ironic config in tripleo_ui_config.js, connect via virthost ip
+    - name: update the mistral config in tripleo_ui_config.js, connect via virthost ip
       lineinfile:
         regexp: "'mistral':"
         line: "  'mistral': 'http://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}:8989/v2',"
