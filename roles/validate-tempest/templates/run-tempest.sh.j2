@@ -26,7 +26,7 @@ ostestr -l
 ## List tempest plugins
 $TEMPESTCLI list-plugins
 
-( $OSTESTR '\[.*\b{{ test_regex }}\b.*\]' --no-pretty --subunit {% if skip_file_src != '' %}--blacklist_file={{ working_dir }}/{{ skip_file }}{% endif %}
+( $OSTESTR '({{ test_regex }})' --no-pretty --subunit {% if skip_file_src != '' %}--blacklist_file={{ working_dir }}/{{ skip_file }}{% endif %}
 {% if tempest_workers is defined %} --concurrency {{ tempest_workers }} {% endif %}
 {% if tempest_isolated|bool %} --isolated {% endif %}
 {% if tempest_tests_file is defined %} --load-list={{ tempest_tests_file }} {% endif %}
