@@ -24,6 +24,7 @@ openstack overcloud deploy --templates {{ tht_dir }} \
     {{ deploy_args_used }} \
     -e {{ tht_dir }}/environments/docker.yaml \
     -e {{ tht_dir }}/environments/major-upgrade-composable-steps-docker.yaml \
+    -e {{ tht_dir }}/environments/docker-centos-tripleoupstream.yaml \
     -e ~/containers-default-parameters.yaml \
     -e ~/overcloud-repo.yaml \
 {% for item in upgrade_custom_templates %}
