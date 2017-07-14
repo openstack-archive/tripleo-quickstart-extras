@@ -145,7 +145,7 @@ sleep 30
 set +e
 ### --start_docs
 
-vm1_ip=`openstack stack output show {{ validate_stack_name }} server1_public_ip --f json | \
+vm1_ip=`openstack stack output show {{ validate_stack_name }} server1_public_ip --format json | \
         jq -r '.["output_value"]'`
 
 sleep 30
