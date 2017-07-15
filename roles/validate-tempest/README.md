@@ -19,6 +19,7 @@ Role Variables
 * `tempest_log_file` - name of log file for tempest run
 * `test_regex` - tests regular expression for testr run, i.e. smoke or tempest.api.object_storage|keystone_tempest_plugin.
 * `run_tempest`: false/true - to run tempest or not
+* `tempest_config`: false/true - whether to prepare the script which configures and runs tempest or not
 * `skip_file_src`: path to skip tests file, set it empty if running without skip list: `skip_file_src=''`
 * `tempest_workers`: int - how many parallel workers to run (default is number of cores)
 * `tempest_isolated`: false/true - if to run every test id in separate test runner (default is false)

@@ -14,4 +14,4 @@
     - overcloud-validate
   gather_facts: no
   roles:
-    - { role: validate-tempest, when: run_tempest|bool }
+    - { role: validate-tempest, when: tempest_config|bool or run_tempest|bool }
