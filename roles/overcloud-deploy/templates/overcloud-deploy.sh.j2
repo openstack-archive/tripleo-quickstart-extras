@@ -65,7 +65,7 @@ EOENV
 ## ::
 openstack overcloud deploy \
     --templates {{overcloud_templates_path}} \
-    {{ deploy_args }} \
+    {{ deploy_args | regex_replace("\n", " ") }} \
     ${DEPLOY_ENV_YAML:+-e $DEPLOY_ENV_YAML} "$@" && status_code=0 || status_code=$?
 
 ### --stop_docs
