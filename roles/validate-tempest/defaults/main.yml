@@ -23,6 +23,9 @@ tempest_overcloud: true
 run_tempest: false
 post_tempest: true
 tempest_format: packages # venv or packages
+tempest_whitelist_file_src: "whitelist_file.j2"
+tempest_whitelist_file: "whitelist_file"
+tempest_whitelist: []
 skip_file_src: "skip_file.j2"
 skip_file: skip_file
 tempest_until_failure: false
