@@ -84,23 +84,24 @@ virtualenv --system-site-packages {{ working_dir }}/tempest_git/.venv
 {{ working_dir }}/tempest_git/tools/with_venv.sh pip install -U pip
 {{ working_dir }}/tempest_git/tools/with_venv.sh pip install -U setuptools
 {{ working_dir }}/tempest_git/tools/with_venv.sh pip install {{ working_dir }}/tempest_git junitxml
-# Create Tempest Workspace
+# Create Tempest Workspace using tempest git
 cd {{ working_dir }}/tempest
 {% if release in ['mitaka','newton'] %}
 {{ working_dir }}/tempest_git/tools/configure-tempest-directory
 {% else %}
 {{ working_dir }}/tempest_git/tools/with_venv.sh tempest init {{ working_dir }}/tempest
 {% endif %}
-# Create Tempest Workspace from tempest rdo package
 {% elif tempest_format == "packages" %}
-# Install Tempest Package
-sudo yum -y install openstack-tempest python-junitxml
+# Install OpenStack Tempest, python-junitxml for Newton
+# From Ocata, config_tempest is moved to python-tempestconf. So for
+# Ocata onwards, Install python-tempestconf
+sudo yum -y install openstack-tempest python-junitxml {% if release != 'newton' %}python-tempestconf{% endif %}
+
+# Create Tempest Workspace from tempest rdo package
 {% if release in ['mitaka','newton'] %}
 cd {{ working_dir }}/tempest
 /usr/share/openstack-tempest-*/tools/configure-tempest-directory
 {% else %}
-# Install python-tempestconf and get default-overrides.conf in /etc/tempest dir.
-sudo yum -y install python-tempestconf
 tempest init {{ working_dir }}/tempest
 {% endif %}
 {% endif %}
@@ -108,9 +109,9 @@ tempest init {{ working_dir }}/tempest
 # Install OpenStack Services Tempest plugin
 {% if release == "newton" %}
 # FIXME(chkumar246): Install tempest plugin from package currently then switch to install_test_packages script
-sudo yum -y install python-ceilometer-tests python-zaqar-tests python-ironic-inspector-tests python-gnocchi-tests \
-    python-aodh-tests python-nova-tests python-mistral-tests python-heat-tests python-keystone-tests \
-    python-ironic-tests python-glance-tests python-swift-tests python-neutron-tests python-cinder-tests \
+sudo yum -y install python-ceilometer-tests python-zaqar-tests python-ironic-inspector-tests \
+    python-gnocchi-tests python-aodh-tests python-mistral-tests python-heat-tests python-keystone-tests \
+    python-ironic-tests python-neutron-tests python-cinder-tests
 {% endif %}
 
 # Generate tempest configuration files
