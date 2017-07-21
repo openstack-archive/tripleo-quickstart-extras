@@ -73,10 +73,11 @@
 - name: Create the Virtual BMCs
   when: release not in ['liberty', 'mitaka', 'newton']
   command: "vbmc add {{ item.name }} --port {{ item.virtualbmc_port }} --libvirt-uri {{ vbmc_libvirt_uri }}"
+  args:
+    creates: /root/.vbmc/{{ item.name }}/config
   with_items: "{{ overcloud_nodes }}"
   become: true
   become_user: root
-  changed_when: false
 
 # TODO(lucasagomes): The service file should be included in the
 #                    virtualbmc RPM package.
