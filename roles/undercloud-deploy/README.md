@@ -35,7 +35,7 @@ user sessions to provide greater flexixiblity to our users. ** additional docume
 http://docs.openstack.org/developer/tripleo-quickstart/accessing-libvirt.html
 - `undercloud_conf_extra`: <''> -- extra options to be added to ~/undercloud.conf
 - `undercloud_extra_args`: <''> -- extra options for undercloud deploy command.
-- `undercloud_update_packages`: <null> -- a string with a list of packages to update as dependencies for
+- `undercloud_update_packages`: <'null'> -- a string with a list of packages to update as dependencies for
 your hacking setup. By defaults it updates nothing, which is backwards compatible.
 - `undercloud_enable_ui`: Sets up the 'enable_ui' option in undercloud.conf.
   It's undefined by default, however, the default value for this option in the
@@ -69,6 +69,16 @@ your hacking setup. By defaults it updates nothing, which is backwards compatibl
   `cloud-names.yaml` template used by the `overcloud-deploy` role.
 - `tripleo_ui_secure_access`: Defaults to false due to the self signed certificate and
   usability issues. See the tripleo-quickstart documentation `accessing the undercloud` for details.
+- `undercloud_docker_registry_host`: <'null'> -- configures the custom registry host for
+  containerized undercloud services.
+- `undercloud_docker_registry_port`: <'8787'> -- the container images registry port for the
+  custom `undercloud_docker_registry_host`, if defined.
+- `undercloud_docker_registry_insecure`: <'true'> -- defines either the custom
+  `undercloud_docker_registry_host` points to an unsecure or secure registry.
+- `undercloud_docker_registry_namespace`: <`docker_registry_namespace`> -- the
+  container images namespace to be used with the custom `undercloud_docker_registry_host`,
+  if defined. Defaults to the overcloud `docker_registry_namespace` variable, which in
+  turn defaults to 'tripleoupstream'.
 
 Role Network Variables
 ----------------------
@@ -97,7 +107,7 @@ from undercloud.conf. May be a string or a sequence. Only the last item goes for
 the undercloud deploy command.
 - `undercloud_undercloud_hostname`: Sets up the 'undercloud_hostname' value from undercloud.conf.
 Note, use the `undercloud_public_vip` instead for Mitaka/Newton releases.
-- `undercloud_heat_public_endpoints`: <False> -- when the ctlplane network is not routable
+- `undercloud_heat_public_endpoints`: <'false'> -- when the ctlplane network is not routable
 from overcloud nodes, for example pre-provisioned
 [deployed servers](https://docs.openstack.org/developer/tripleo-docs/advanced_deployment/deployed_server.html#undercloud),
 the ``undercloud deploy --local_ip`` (and `local_ip` in the undercloud.conf)
