@@ -19,7 +19,7 @@ tempest_deployer_input_file: tempest-deployer-input.conf
 tempest_undercloud: false
 tempest_config: true
 tempest_overcloud: true
-run_tempest: true
+run_tempest: false
 post_tempest: true
 tempest_format: packages # venv or packages
 skip_file_src: "skip_file.j2"
