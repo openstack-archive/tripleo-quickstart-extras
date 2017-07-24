@@ -35,7 +35,7 @@ parameter_defaults:
   UndercloudNetworkGateway: {{undercloud_network_gateway|default(
     undercloud_network_cidr|nthhost(1))}}
 {% if undercloud_undercloud_nameservers is string %}
-  UndercloudNameserver: {{split(undercloud_undercloud_nameservers, ',')[0]}}
+  UndercloudNameserver: {{undercloud_undercloud_nameservers.split(',')[0]}}
 {% elif undercloud_undercloud_nameservers is sequence %}
   UndercloudNameserver: {{undercloud_undercloud_nameservers[-1]}}
 {% endif %}
