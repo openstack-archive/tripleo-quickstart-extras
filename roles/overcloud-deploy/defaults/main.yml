@@ -101,9 +101,9 @@ deploy_args: >-
   {{ cloud_name_args }}
   {{ multinode_args }}
   {{ scenario_args }}
+  {{ pacemaker_args }}
   {{ container_args }}
   {{ network_args }}
-  {{ pacemaker_args }}
   {{ resource_registry_nic_configs_args }}
   {{ workers_args }}
   {{ backup_args }}
