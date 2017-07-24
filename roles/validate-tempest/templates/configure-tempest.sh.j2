@@ -132,6 +132,9 @@ cd {{ working_dir }}/tempest
 
 # Generate Tempest Config file using python-tempestconf
 # Notice aodh_plugin will be set to False if telemetry service is disabled
+# TODO(arxcruz) In the future the
+# compute_feature_enabled.attach_encrypted_volume should be handled by
+# python-tempestconf tool
 ${TEMPESTCONF} --out etc/tempest.conf \
   --network-id $public_net_id \
   --deployer-input ~/{{ tempest_deployer_input_file }} \
@@ -140,12 +143,13 @@ ${TEMPESTCONF} --out etc/tempest.conf \
   {% if release in ['newton','ocata'] %}
   identity.admin_password $OS_PASSWORD \
   identity.admin_username $OS_USERNAME \
-  compute.allow_tenant_isolation true\
+  compute.allow_tenant_isolation true \
   {% else %}
   auth.admin_password $OS_PASSWORD \
   auth.admin_username $OS_USERNAME \
-  auth.use_dynamic_credentials true\
+  auth.use_dynamic_credentials true \
   {% endif %}
+  compute_feature_enabled.attach_encrypted_volume False \
   network.tenant_network_cidr {{ tenant_network_cidr }} \
   object-storage.operator_role swiftoperator \
   compute.build_timeout 500 \
