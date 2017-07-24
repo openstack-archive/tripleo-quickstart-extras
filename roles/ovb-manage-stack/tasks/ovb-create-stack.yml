@@ -58,16 +58,12 @@
       mode: 0755
 
 - name: Deploy stack
-  os_stack:
-      name: "{{ stack_name }}"
-      cloud: "{{ cloud_name}}"
-      state: present
-      template: "{{ heat_template }}"
-      environment: "{{ environment_list }}"
-  register: stack_deployment
-  environment:
-    OS_CLIENT_CONFIG_FILE: "{{ local_working_dir }}/clouds.yaml"
-  ignore_errors: true
+  shell: >
+      export OS_CLIENT_CONFIG_FILE="{{ local_working_dir }}/clouds.yaml";
+      export OS_CLOUD="{{ cloud_name }}";
+      {{ ovb_dir }}/bin/deploy.py --env {{ local_working_dir }}/{{ prefix }}env.yaml --name {{ stack_name }} --quintupleo
+  args:
+    chdir: "{{ ovb_dir }}"
 
 - name: Return stack state
   shell: >
@@ -75,13 +71,24 @@
       export OS_PASSWORD="{{ os_password }}";
       export OS_TENANT_NAME="{{ os_tenant_name }}";
       export OS_AUTH_URL="{{ os_auth_url }}";
+      export STACK_LOG="{{ local_working_dir }}/ovb_create_stack.log";
+      export COUNTER=0;
+      while ! openstack stack show {{ stack_name }} | grep CREATE_COMPLETE; do
+        if [ $COUNTER -lt 10 ]; then
+          sleep 30;
+          if openstack stack show {{ stack_name }} | grep CREATE_FAILED ; then
+            echo "Failed creating OVB stack" > $STACK_LOG;
+            openstack stack show {{ stack_name }} >> $STACK_LOG 2>&1;
+            openstack stack failures list --long {{ stack_name }} >> $STACK_LOG 2>&1 || echo 'Failed to list stack failures' >> $STACK_LOG;
+            exit 0;
+          fi;
+          COUNTER=$((COUNTER+1));
+        fi;
+      done;
       openstack stack show "{{ stack_name }}" | grep "status"
   register: stack_status
   no_log: true
 
-# TODO(rlandy): Remove when stack status and fail tasks
-# when  https://github.com/ansible/ansible/issues/21770
-# is resolved.
 - name: Show stack status
   debug:
       var: stack_status.stdout_lines
@@ -91,9 +98,19 @@
      msg: "Stack {{ stack_name }} did not deploy successfully. See the stack status message above."
   when: stack_status.stdout.find("CREATE_COMPLETE") == -1
 
+- name: Return floating ip outputs
+  shell: >
+      export OS_USERNAME="{{ os_username }}";
+      export OS_PASSWORD="{{ os_password }}";
+      export OS_TENANT_NAME="{{ os_tenant_name }}";
+      export OS_AUTH_URL="{{ os_auth_url }}";
+      openstack stack show {{ stack_name }} -f json -c outputs
+  register: stack_outputs
+  no_log: true
+
 - name: Set fact for undercloud floating IP address
   set_fact:
-    undercloud_ip="{{ stack_deployment.stack.outputs[0].output_value }}"
+    undercloud_ip="{{ (stack_outputs.stdout|from_json).outputs[0].output_value }}"
 
 - name: Add provisioned undercloud host
   add_host:
