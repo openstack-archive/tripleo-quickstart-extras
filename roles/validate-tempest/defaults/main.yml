@@ -6,6 +6,7 @@ public_net_pool_end: "{{ floating_ip_cidr|nthhost(120) }}"
 public_net_gateway: "{{ floating_ip_cidr|nthhost(1) }}"
 tempest_log_file: 'tempest_output.log'
 test_regex: smoke
+check_tempest_bugs: false
 
 public_net_name: public
 public_network_type: flat
