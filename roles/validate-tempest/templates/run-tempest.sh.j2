@@ -34,10 +34,8 @@ $TEMPESTCLI cleanup --init-saved-state
 
 ( $OSTESTR '({{ test_regex }})' --no-pretty --subunit {% if skip_file_src != '' %}--blacklist_file={{ working_dir }}/{{ skip_file }}{% endif %}
 {% if tempest_workers is defined %} --concurrency {{ tempest_workers }} {% endif %}
-{% if tempest_isolated|bool %} --isolated {% endif %}
 {% if tempest_tests_file is defined %} --load-list={{ tempest_tests_file }} {% endif %}
 {% if tempest_until_failure|bool %} --until-failure {% endif %}
-{% if tempest_failing|bool %} --failing {% endif %}
 ) | tee >( $S2JXML ) | $SUBUNIT
 
 ## Check which all tenants would be modified in the tempest run
