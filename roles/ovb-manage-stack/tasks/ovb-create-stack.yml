@@ -14,7 +14,7 @@
   git:
       repo: https://github.com/cybertron/openstack-virtual-baremetal.git
       dest: "{{ local_working_dir }}/openstack-virtual-baremetal"
-      version: master
+      version: "{{ ovb_repo_version }}"
 
 - include: ovb-cleanup-stacks-keypairs.yml
   when: cleanup_stacks_keypairs|bool
