@@ -150,7 +150,7 @@ ${TEMPESTCONF} --out etc/tempest.conf \
   auth.admin_username $OS_USERNAME \
   auth.use_dynamic_credentials true \
   {% endif %}
-  compute_feature_enabled.attach_encrypted_volume False \
+  compute-feature-enabled.attach_encrypted_volume False \
   network.tenant_network_cidr {{ tenant_network_cidr }} \
   object-storage.operator_role swiftoperator \
   compute.build_timeout 500 \
