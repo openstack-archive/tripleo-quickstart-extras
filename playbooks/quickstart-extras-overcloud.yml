@@ -17,6 +17,17 @@
   roles:
     - tripleo-inventory
 
+- name: Run tripleo-validations post-deployment tests
+  hosts: undercloud
+  gather_facts: no
+  tags:
+    - tripleo-validations
+  vars:
+    validations_group: ['post-deployment']
+  roles:
+    - { role: tripleo-validations,
+        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
+
 # Check the results of the deployment, note after inventory has executed
 - name:  Check the result of the deployment
   hosts: localhost

@@ -11,6 +11,17 @@
   roles:
     - undercloud-deploy
 
+- name: Configure tripleo-validations
+  hosts: undercloud
+  gather_facts: no
+  tags:
+    - tripleo-validations
+  vars:
+    run_tripleo_validations_setup: True
+  roles:
+    - { role: tripleo-validations,
+        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
+
 - name:  copy over config files
   hosts: undercloud
   gather_facts: no
@@ -35,6 +46,18 @@
   roles:
     - overcloud-prep-images
 
+- name: Run tripleo-validations pre-introspection tests
+  hosts: undercloud
+  gather_facts: no
+  tags:
+    - tripleo-validations
+  vars:
+    validations_group: ['pre-introspection']
+  roles:
+    - { role: tripleo-validations,
+        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
+
+
 - name:  Prepare overcloud flavors
   hosts: undercloud
   gather_facts: no
@@ -53,11 +76,35 @@
   roles:
     - { role: overcloud-ssl, when: ssl_overcloud|bool }
 
+- name: Run tripleo-validations pre-deployment tests
+  hosts: undercloud
+  gather_facts: no
+  tags:
+    - tripleo-validations
+  vars:
+    validations_group: ['pre-deployment']
+  roles:
+    - { role: tripleo-validations,
+        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
+
+
 - name:  Deploy the overcloud
   hosts: undercloud
   gather_facts: no
   roles:
     - overcloud-deploy
+
+- name: Run tripleo-validations post-deployment tests
+  hosts: undercloud
+  gather_facts: no
+  tags:
+    - tripleo-validations
+  vars:
+    validations_group: ['post-deployment']
+  roles:
+    - { role: tripleo-validations,
+        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
+
 
 # Add the overcloud nodes to the generated inventory.
 - name:  Inventory the overcloud
