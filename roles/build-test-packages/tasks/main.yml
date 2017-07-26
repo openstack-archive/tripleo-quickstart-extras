@@ -124,7 +124,9 @@
       shell: 'tar czf {{ artg_compressed_gating_repo }} gating_repo'
       args:
         chdir: '{{ build_repo_dir }}'
-  when: repo_built is defined
+  when:
+    - repo_built is defined
+    - repo_built.skipped is not defined
 
 - name: Clean up
   file:
@@ -145,4 +147,6 @@
 
 - name: Trigger repo injection for quickstart
   set_fact: compressed_gating_repo={{ artg_compressed_gating_repo }}
-  when: repo_built is defined
+  when:
+    - repo_built is defined
+    - repo_built.skipped is not defined
