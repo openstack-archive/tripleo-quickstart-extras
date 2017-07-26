@@ -10,7 +10,8 @@
 
 - name: fetch and gzip the console log
   shell: >
-    curl -k {{ lookup('env', 'BUILD_URL') }}/consoleText | gzip > {{ artcl_collect_dir }}/console.txt.gz
+    curl -k "{{ lookup('env', 'BUILD_URL') }}/timestamps/?time=yyyy-MM-dd%20HH:mm:ss.SSS%20|&appendLog&locale=en_GB"
+    | gzip > {{ artcl_collect_dir }}/console.txt.gz
   when: lookup('env', 'BUILD_URL') != ""
 
 - name: Generate the README for the logs
