@@ -99,8 +99,12 @@ class Mail(object):
     def render_template(self, data):
         self.log.debug('Rendering template')
         env = Environment(loader=FileSystemLoader(self.templates_path))
+        env.filters['datetimeformat'] = self.datetimeformat
         template = env.get_template(self.template)
         return template.render(data=data)
+
+    def datetimeformat(self, value, format="%d-%m-%Y %H:%M"):
+        return value.strftime(format)
 
     def filter_emails(self, job, data):
         has_errors = False

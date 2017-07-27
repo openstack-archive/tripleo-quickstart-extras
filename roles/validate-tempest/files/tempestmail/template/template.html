@@ -2,23 +2,32 @@
     <head></head>
     <body>
         <p>Hello,</p>
-        <p>Here's the result of the latest tempest run for job {{ data.get('job') }}.</p>
-        <p>The job ran on {{ data.get('date') }}.</p>
-        <p>For more details, you can check the URL: {{ data.get('link') }} (It might take a few minutes to upload the logs).</p>
+        <p>This is an automated email with tempest results for job <b>{{ data.get('job') }}</b>.</p>
+        <p>The job ran on {{ data.get('date')|datetimeformat }}.</p>
         {% if 'Not available yet' not in data.get('link') %}
-            <p>You can see the stackviz results <a href="{{ data.get('link') }}logs/oooq/stackviz/">here</a>
+            <p>The logs are being uploaded, and it will be available soon. Usually, it take between 5 and 10 minutes to became available, depending of the amount of data it's being uploaded, so don't worry if you don't see the logs right now.</p>
+            <p>Once the logs are available, you can check clicking <a href="{{ data.get('link') }}">here</a></p>
+            <p>Mostly jobs upstream provides a tool to easily visualize and analyze the performance and execution of each tempest job.</p>
+            <p>This tool is called stackviz, and you can see the results <a href="{{ data.get('link') }}logs/stackviz/">here</a> if available</p>
+        {% else %}
+            <p>Unfortunate the script that send this email wasn't able to find the url where the logs are. Perhaps wasn't passed</p>
+            <p>to the script, or something wrong happened. If you think it's a mistake, please contact us on irc.freenode.org</p>
+            <p>on channel #tripleo if it's related to a upstream job, or if you're using this service in your own infrastructure,</p>
+            <p>be sure you are setting the environment variable LOG_PATH in your job.</p>
         {% endif %}
+        <p>Below you can see a resume of the tempest execution for this particular job:</p>
     {% if 'new' in data and data.new %}
-    <h2>New failures</h2>
+    <h2><font color="red">New failures ({{ data.new|length}}):</font></h2>
+    <p>These are new failures for this particular run, some action is needed in order to fix it</p>
     <ul>
     {% for fail in data.new %}
         <li>{{ fail }}</li>
     {% endfor %}
     </ul>
     {% endif %}
-
     {% if 'covered' in data and data.covered %}
-    <h2>Known failures</h2>
+    <h2>Known failures ({{ data.covered|length }}):</h2>
+    <p>These are known failures, and should have a launchpad or a bugzilla opened for it.</p>
     <ul>
     {% for fail in data.covered %}
     <li>{{ fail.failure }} - {{ fail.reason }}</li>
@@ -26,18 +35,20 @@
     </ul>
     {% endif %}
     {% if ('has_errors' in data and 'run' in data) and not data.has_errors and data.run %}
-    <h2>Job ran successfully!</h2>
+    <h2><font color="green">Job ran successfully!</font></h2>
     <p>We consider a successfull run even if it has Known failures, since these are covered.</p>
     {% endif %}
     {% if not data.run %}
-    <h2>There's no tempest results!</h2>
+    <h2><font color="red">There's no tempest results!</font></h2>
     <p>This means that the TripleO installation might have finished sucessfully, however, tempest either fail before tests started, or didn't ran at all.</p>
+    <p>One of the places to begin check is <a href="{{ data.get('link') }}logs/undercloud/home/jenkins/">here</a> (the link might don't exist depending of the type of error)
     {% endif %}
     <p></p>
-    <p>You are receiving this email because someone from TripleO team though you were interested in these results.</p>
+    <p>You are receiving this email because someone from TripleO team though you would be interested in these results.</p>
     <p></p>
     <p>If you're interested in receive these emails, please submit a code review <a href="https://github.com/openstack/tripleo-quickstart-extras/blob/master/roles/validate-tempest/files/tempestmail/config.yaml">here</a>
     including your email address</p>
+    <p>We also have a <a href="http://cistatus.tripleo.org/">website with status of our current jobs</a> if you are interested.</p>
     </body>
 </html>
 
