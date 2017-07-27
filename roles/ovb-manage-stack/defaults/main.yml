@@ -1,5 +1,6 @@
 ---
-release: newton
+release: master
+ovb_repo_version: master
 
 node:
     prefix:
