@@ -66,7 +66,7 @@ openstack role show heat_stack_owner > /dev/null || openstack role create heat_s
 
 mkdir {{ working_dir }}/tempest
 {% if tempest_format == "venv" %}
-{% if release in ['mitaka','newton'] %}
+{% if release == 'newton' %}
 # Clone all the git related stuff in a seperate directory
 git clone https://github.com/redhat-openstack/tempest {{ working_dir }}/tempest_git
 {% else %}
@@ -86,7 +86,7 @@ virtualenv --system-site-packages {{ working_dir }}/tempest_git/.venv
 {{ working_dir }}/tempest_git/tools/with_venv.sh pip install {{ working_dir }}/tempest_git junitxml
 # Create Tempest Workspace using tempest git
 cd {{ working_dir }}/tempest
-{% if release in ['mitaka','newton'] %}
+{% if release == 'newton' %}
 {{ working_dir }}/tempest_git/tools/configure-tempest-directory
 {% else %}
 {{ working_dir }}/tempest_git/tools/with_venv.sh tempest init {{ working_dir }}/tempest
@@ -98,7 +98,7 @@ cd {{ working_dir }}/tempest
 sudo yum -y install openstack-tempest python-junitxml {% if release != 'newton' %}python-tempestconf{% endif %}
 
 # Create Tempest Workspace from tempest rdo package
-{% if release in ['mitaka','newton'] %}
+{% if release == 'newton' %}
 cd {{ working_dir }}/tempest
 /usr/share/openstack-tempest-*/tools/configure-tempest-directory
 {% else %}
@@ -115,7 +115,7 @@ sudo yum -y install python-ceilometer-tests python-zaqar-tests python-ironic-ins
 {% endif %}
 
 # Generate tempest configuration files
-{% if release in ['mitaka','newton'] %}
+{% if release == 'newton' %}
 export TEMPESTCONF="{{ working_dir }}/tempest/tools/config_tempest.py"
 {% else %}
 {% if tempest_format == "venv" %}
