@@ -62,8 +62,11 @@ your hacking setup. By defaults it updates nothing, which is backwards compatibl
   This will be used to run the script to prepare FreeIPA for novajoin.
 - `freeipa_server_hostname`: The hostname for the FreeIPA server.
   This will be used to run the script to prepare FreeIPA for novajoin.
-- `overcloud_cloud_domain`: The domain configured for use by the FreeIPA server. Note: This also
-  affects `CloudDomain` in the `cloud-names.yaml` template used by the `overcloud-deploy` role.
+- `overcloud_cloud_domain`: The domain configured for use by the overcloud
+  nodes. If TLS everywhere is enabled, this will also be the domain used by
+  FreeIPA. This sets up the 'overcloud_domain_name' configuration option in
+  undercloud.conf . Note: This also affects `CloudDomain` in the
+  `cloud-names.yaml` template used by the `overcloud-deploy` role.
 - `tripleo_ui_secure_access`: Defaults to false due to the self signed certificate and
   usability issues. See the tripleo-quickstart documentation `accessing the undercloud` for details.
 

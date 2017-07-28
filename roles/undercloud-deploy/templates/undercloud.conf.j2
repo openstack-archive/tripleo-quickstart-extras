@@ -86,6 +86,14 @@ undercloud_nameservers = {{ undercloud_undercloud_nameservers|join(',') }}
 # undercloud_nameservers = <None>
 {% endif %}
 
+# DNS domain name to use when deploying the overcloud. The overcloud
+# parameter "CloudDomain" must be set to a matching value. (string
+# value)
+#overcloud_domain_name = localdomain
+{% if overcloud_cloud_domain is defined %}
+overcloud_domain_name = {{overcloud_cloud_domain}}
+{% endif %}
+
 # Certificate file to use for OpenStack service SSL connections.
 # Setting this enables SSL for the OpenStack API endpoints, leaving it
 # unset disables SSL. (string value)
