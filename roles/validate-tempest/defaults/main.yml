@@ -25,9 +25,7 @@ post_tempest: true
 tempest_format: packages # venv or packages
 skip_file_src: "skip_file.j2"
 skip_file: skip_file
-tempest_isolated: false
 tempest_until_failure: false
-tempest_failing: false
 tempest_exit_on_failure: true
 # Set tempest_version for different release
 # For forked-tempest, we have branched name in synced with releases.
