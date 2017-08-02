@@ -50,13 +50,13 @@ for validation_name in $LIST_VALIDATIONS; do
             STATE=$(mistral execution-get -f value -c State "$ID")
             TRIES=$((TRIES+1))
             if [ "$TRIES" -gt 40 ]; then
-                exit 1
+                break
             fi
         done
 
         STATUS=$(mistral execution-get-output "$ID" | jq .status -r)
-        if [ "$STATUS" == "FAILED" ]; then
-            echo "### ${validation_name} ###" | tee -a {{ failed_validations_log }}
+        if [ "$STATUS" != "SUCCESS" ]; then
+            echo "### ${validation_name} $STATUS ###" | tee -a {{ failed_validations_log }}
             mistral execution-get-output "$ID" | jq .stdout -r 2>&1 | tee -a {{ failed_validations_log }}
         else
             mistral execution-get-output "$ID" | jq .stdout -r
