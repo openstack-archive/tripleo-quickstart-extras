@@ -31,6 +31,12 @@
     mode: 0644
   when: tempest_whitelist|length > 0
 
+- name: Install openstack services tempest plugins
+  yum: state=latest name={{ item }}
+  with_items: "{{ tempest_plugins }}"
+  become: yes
+  when: tempest_plugins|length > 0
+
 - ignore_errors: true
   block:
     - name: Copying bugcheck files

@@ -30,6 +30,8 @@ Role Variables
 * `tempestmail_config`: config.yaml - name of config file for tempestmail script
 * `tempest_track_resources`: true/false - whether to save the state of resources after tempest run (default: true)
 * `check_tempest_bugs`: true/false - Will check every bugzilla and launchpad bug in the yaml skip file
+* `tempest_plugins`: list - List of openstack services tempest plugins to be
+                     installed
 
 Skip tests file
 ---------------
