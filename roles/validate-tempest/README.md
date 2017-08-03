@@ -20,9 +20,11 @@ Role Variables
 * `test_regex` - tests regular expression for testr run, i.e. smoke or tempest.api.object_storage|keystone_tempest_plugin.
 * `run_tempest`: false/true - to run tempest or not
 * `tempest_config`: false/true - whether to prepare the script which configures and runs tempest or not
+* `tempest_whitelist`: list - list of tests you want to be executed. set `skip_file_src`
+                       to empty if you don't want to run with blacklist_file option.
+                       Default value is an empty list
 * `skip_file_src`: path to skip tests file, set it empty if running without skip list: `skip_file_src=''`
 * `tempest_workers`: int - how many parallel workers to run (default is number of cores)
-* `tempest_tests_file`: path to file - path to file with tests to run
 * `tempest_until_failure`: false/true - default is false, repeat the run again and again until failure occurs
 * `tempest_exit_on_failure`: true/false - whether to exit from role with tempest exit code (default: true)
 * `tempestmail_config`: config.yaml - name of config file for tempestmail script
