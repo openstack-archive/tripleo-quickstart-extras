@@ -1,10 +1,4 @@
 ---
-- name: Fetch nosetests results
-  fetch:
-    src: "{{ working_dir }}/tempest/tempest.xml"
-    dest: "{{ lookup('env', 'PWD') }}/nosetests.xml"
-    flat: yes
-
 - name: Generate subunit results file
   shell: |
     find '{{ working_dir }}/tempest/.testrepository/' -regex '.*/[0-9]+' \
@@ -28,14 +22,28 @@
 
     - name: Generate HTML results file
       shell: |
+        {% if tempest_format == 'venv' %}source {{ working_dir }}/tempest_git/.venv/bin/activate; {% endif %}
         subunit2html $(find {{ working_dir }}/tempest/.testrepository -name [0-9] \
         | head -1) {{ working_dir }}/tempest/tempest.html \
+        2>&1 >> {{ tempest_log_file }}
+
+    - name: Generate XML results file
+      shell: |
+        {% if tempest_format == 'venv' %}source {{ working_dir }}/tempest_git/.venv/bin/activate; {% endif %}
+        subunit2junitxml $(find {{ working_dir }}/tempest/.testrepository -name [0-9] \
+        | head -1) {{ working_dir }}/tempest/tempest.xml \
         2>&1 >> {{ tempest_log_file }}
 
     - name: Fetch HTML results
       fetch:
         src: "{{ working_dir }}/tempest/tempest.html"
         dest: "{{ lookup('env', 'PWD') }}/tempest.html"
+        flat: yes
+
+    - name: Fetch nosetests results
+      fetch:
+        src: "{{ working_dir }}/tempest/tempest.xml"
+        dest: "{{ lookup('env', 'PWD') }}/nosetests.xml"
         flat: yes
 
     - name: Copying tempestmail files
