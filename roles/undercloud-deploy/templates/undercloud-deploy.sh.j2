@@ -73,6 +73,26 @@ sudo systemctl start docker #FIXME: do these in the installer?
 sudo mkdir -p /etc/puppet/modules/
 sudo ln -f -s /usr/share/openstack-puppet/modules/* /etc/puppet/modules/
 
+## * Configure the undercloud containers default parameters
+## ::
+{% if undercloud_docker_registry_host is defined %}
+openstack overcloud container image prepare \
+    --env-file {{ working_dir }}/undercloud-containers-default-parameters.yaml \
+    --namespace {{ undercloud_docker_registry_host }}:{{ undercloud_docker_registry_port }}/{{ undercloud_docker_registry_namespace }}
+{% if undercloud_docker_registry_insecure|bool %}
+echo "  DockerInsecureRegistryAddress: {{ undercloud_docker_registry_host }}:{{ undercloud_docker_registry_port }}" >> \
+    {{ working_dir }}/undercloud-containers-default-parameters.yaml
+{% endif %}
+{% else %}
+openstack overcloud container image prepare \
+    --env-file {{ working_dir }}/undercloud-containers-default-parameters.yaml
+{% endif %}
+
+echo "============================="
+echo "Undercloud containers default parameters:"
+cat {{ working_dir }}/undercloud-containers-default-parameters.yaml
+echo "============================="
+
 ## * Set the local ip used for the undercloud install
 ## ::
 
@@ -90,6 +110,7 @@ sudo openstack undercloud deploy \
     -e {{overcloud_templates_path}}/environments/services-docker/mistral.yaml \
     -e {{overcloud_templates_path}}/environments/services-docker/zaqar.yaml \
     -e {{overcloud_templates_path}}/environments/docker.yaml \
+    -e {{ working_dir }}/undercloud-containers-default-parameters.yaml \
     -e {{overcloud_templates_path}}/environments/mongodb-nojournal.yaml \
 {% endif %}
     {{ undercloud_extra_args }} \

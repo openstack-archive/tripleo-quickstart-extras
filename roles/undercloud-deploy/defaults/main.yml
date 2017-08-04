@@ -8,11 +8,13 @@ network_environment_file: network-environment.yaml.j2
 # default undercloud install method
 # containerized_undercloud is an EXPERIMENTAL FEATURE
 containerized_undercloud: false
+undercloud_docker_registry_namespace: "{{ docker_registry_namespace|default('tripleoupstream') }}"
+undercloud_docker_registry_port: 8787
+undercloud_docker_registry_insecure: true
 undercloud_install_script: undercloud-install.sh.j2
 
 # defines extra args for the undercloud deploy command
-undercloud_extra_args: >-
-  --heat-native
+undercloud_extra_args: ""
 
 # The undercloud can also be deployed with heat
 # thus requiring a t-h-t driven undercloud *and* the classic undercloud
