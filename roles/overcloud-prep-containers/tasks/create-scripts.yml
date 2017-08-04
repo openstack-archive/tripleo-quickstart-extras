@@ -5,10 +5,3 @@
     src: "{{ overcloud_prep_containers_script }}"
     dest: "{{ working_dir }}/overcloud-prep-containers.sh"
     mode: 0755
-
-- name: Create the default parameters for the container deployment
-  template:
-    src: "{{ containers_default_parameters }}"
-    dest: "{{ working_dir }}/containers-default-parameters.yaml"
-    mode: 0755
-
