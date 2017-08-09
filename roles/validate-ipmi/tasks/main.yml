@@ -13,4 +13,6 @@
 
       - name: Run the validate IPMI overclcoud connection script
         shell: >
-          "{{ working_dir }}"/validate-overcloud-ipmi-connection.sh
+          set -o pipefail &&
+          {{ working_dir }}/validate-overcloud-ipmi-connection.sh 2>&1
+          {{ timestamper_cmd }} | tee {{ working_dir }}/validate-overcloud-ipmi-connection.log
