@@ -27,3 +27,9 @@ Role Variables
   roles. Can be disabled by specifying this command as an empty string.
 - `enable_libvirt_tripleo_ui`: <false> -- update the triple-ui javascript config
   for libvirt environments.
+- `local_docker_registry_host`: <"{{undercloud_network_gateway|default(undercloud_network_cidr|nthhost(1))}}"> -- host of the local (undercloud) docker registry
+- `docker_registry_host`: <'docker.io'> -- host of the primary docker registry
+- `docker_registry_namespace`: <'tripleoupstream'> -- namespace of
+  docker images used for TripleO deployment
+- `docker_image_tag`: <'latest'> -- tag of docker images used for
+  TripleO deployment
