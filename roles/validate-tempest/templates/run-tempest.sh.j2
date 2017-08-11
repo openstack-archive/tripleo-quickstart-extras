@@ -28,8 +28,7 @@ $TEMPESTCLI list-plugins
 $TEMPESTCLI cleanup --init-saved-state
 {% endif %}
 
-$OSTESTR --no-pretty --subunit \
-{% if test_regex != '' %} --regex '({{ test_regex }})' {% endif %}
+$OSTESTR {% if test_regex != '' %} --regex '({{ test_regex }})' {% endif %}
 {% if tempest_whitelist|length > 0 %} --whitelist_file={{ working_dir }}/{{ tempest_whitelist_file }} {% endif %}
 {% if skip_file_src != '' %} --blacklist_file={{ working_dir }}/{{ skip_file }} {% endif %}
 {% if tempest_workers is defined %} --concurrency {{ tempest_workers }} {% endif %}
