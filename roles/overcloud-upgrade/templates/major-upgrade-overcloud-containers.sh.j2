@@ -17,11 +17,13 @@ source {{ upgrade_working_dir }}/stackrc
 openstack overcloud container image prepare \
     --images-file {{ upgrade_working_dir }}/overcloud_containers.yaml \
     --namespace {{ docker_registry_namespace }} \
+    --tag {{ docker_image_tag }} \
     --push-destination {{ local_docker_registry_host }}:8787
 
 openstack overcloud container image prepare \
     --env-file ~/containers-default-parameters.yaml \
-    --namespace {{ local_docker_registry_host }}:8787/{{ docker_registry_namespace }}
+    --namespace {{ local_docker_registry_host }}:8787/{{ docker_registry_namespace }} \
+    --tag {{ docker_image_tag }}
 
 echo "  DockerInsecureRegistryAddress: {{ local_docker_registry_host }}:8787" >> \
     ~/containers-default-parameters.yaml
