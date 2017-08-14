@@ -17,7 +17,7 @@ source {{ upgrade_working_dir }}/stackrc
 openstack overcloud container image prepare \
     --images-file {{ upgrade_working_dir }}/overcloud_upgrade_containers.yaml \
     -e {{ tht_dir }}/environments/docker.yaml \
-    --namespace {{ docker_registry_namespace }} \
+    --namespace {{ docker_registry_host }}/{{ docker_registry_namespace }} \
     --tag {{ docker_image_tag }} \
     --push-destination {{ local_docker_registry_host }}:8787
 
