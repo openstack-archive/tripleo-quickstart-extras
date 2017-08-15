@@ -18,6 +18,7 @@
     http_proxy: "{{ lookup('env', 'http_proxy') }}"
     no_proxy: "{{ lookup('env', 'no_proxy') }}"
     TRIPLEO_ROOT: "{{ lookup('env','TRIPLEO_ROOT') }}"
+    OVERCLOUD_HOSTS: "{{ lookup('env','OVERCLOUD_HOSTS') }}"
     CONTROLLER_HOSTS: "{{ lookup('env','CONTROLLER_HOSTS') }}"
     COMPUTE_HOSTS: "{{ lookup('env', 'COMPUTE_HOSTS') }}"
     BLOCKSTORAGE_HOSTS: "{{ lookup('env', 'BLOCKSTORAGE_HOSTS') }}"
