@@ -38,13 +38,16 @@ openstack overcloud image upload {% if bash_deploy_ramdisk|bool %}--old-deploy-i
 
 {% if step_glance_upload|bool %}
 
-## * Upload images to glance, this step is specific to nodepool based deployments.
+## * Create and upload image to glance, this step is specific to nodepool based deployments.
 ## ::
 
-    glance image-create --container-format bare \
-        --disk-format qcow2 \
-        --name overcloud-full \
-        --file overcloud-full.qcow2
+rpm -q qemu-img || sudo yum install -y qemu-img
+qemu-img create -f qcow2 overcloud-full.qcow2 1G
+
+glance image-create --container-format bare \
+    --disk-format qcow2 \
+    --name overcloud-full \
+    --file overcloud-full.qcow2
 
 {% endif %}
 
