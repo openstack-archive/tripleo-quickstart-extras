@@ -152,7 +152,6 @@ ${TEMPESTCONF} --out etc/tempest.conf \
   {% endif %}
   compute-feature-enabled.attach_encrypted_volume False \
   network.tenant_network_cidr {{ tenant_network_cidr }} \
-  object-storage.operator_role swiftoperator \
   compute.build_timeout 500 \
   volume-feature-enabled.api_v1 False \
   validation.image_ssh_user cirros \
@@ -161,6 +160,11 @@ ${TEMPESTCONF} --out etc/tempest.conf \
   volume.build_timeout 500 \
   {% if 'disable-telemetry.yaml' in telemetry_args|default('') %}
   service_available.aodh_plugin False \
+  {% endif %}
+  {% if tempest_extra_config %}
+  {% for key, value in tempest_extra_config.iteritems() %}
+  {{ key }} {{ value }} \
+  {% endfor %}
   {% endif %}
   orchestration.stack_owner_role heat_stack_owner
 

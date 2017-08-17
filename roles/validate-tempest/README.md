@@ -32,6 +32,8 @@ Role Variables
 * `check_tempest_bugs`: true/false - Will check every bugzilla and launchpad bug in the yaml skip file
 * `tempest_plugins`: list - List of openstack services tempest plugins to be
                      installed
+* `tempest_extra_config`: dict - A dict of tempest configuration which needs to be overridden in tempest.conf,
+                          It should be like section.key: value.
 
 Skip tests file
 ---------------
