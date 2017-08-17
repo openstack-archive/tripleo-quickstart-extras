@@ -134,7 +134,8 @@ openstack stack create {{ validate_stack_name }} \
 
 ### --stop_docs
 /bin/bash {{ working_dir }}/wait_for -w 600 --delay 30 \
-    --success-match {{ validate_success_status }} -- heat stack-show {{ validate_stack_name }}
+    --success-match {{ validate_success_status }} \
+    --fail-match {{ validate_failed_status }} -- heat stack-show {{ validate_stack_name }}
 sleep 30
 
 ### --start_docs

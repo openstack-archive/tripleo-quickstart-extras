@@ -5,6 +5,7 @@ validate_template: tenantvm_floatingip.yaml
 validate_log: "{{ working_dir }}/overcloud_validate.log"
 validate_stack_name: pingtest_stack
 validate_success_status: CREATE_COMPLETE
+validate_failed_status: CREATE_FAILED
 validate_image_file: cirros-0.3.5-x86_64-uec.tar.gz
 validate_image_url: "http://download.cirros-cloud.net/0.3.5/"
 validate_image_path: "/opt/stack/cache/files/{{ validate_image_file }}"
