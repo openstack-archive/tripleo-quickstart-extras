@@ -16,12 +16,14 @@ source {{ upgrade_working_dir }}/stackrc
 # pull latest containers to the registry
 openstack overcloud container image prepare \
     --images-file {{ upgrade_working_dir }}/overcloud_upgrade_containers.yaml \
+    -e {{ tht_dir }}/environments/docker.yaml \
     --namespace {{ docker_registry_namespace }} \
     --tag {{ docker_image_tag }} \
     --push-destination {{ local_docker_registry_host }}:8787
 
 openstack overcloud container image prepare \
     --env-file ~/containers-default-parameters.yaml \
+    -e {{ tht_dir }}/environments/docker.yaml \
     --namespace {{ local_docker_registry_host }}:8787/{{ docker_registry_namespace }} \
     --tag {{ docker_image_tag }}
 

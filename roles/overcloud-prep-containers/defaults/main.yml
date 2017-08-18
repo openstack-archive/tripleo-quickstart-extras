@@ -8,3 +8,4 @@ overcloud_prep_containers_log: overcloud_prep_containers.log
 # Useful in CI to workaround disk space issue
 # https://bugs.launchpad.net/tripleo/+bug/1694709
 delete_docker_cache: false
+prepare_service_env_args: -e {{ overcloud_templates_path }}/environments/docker.yaml

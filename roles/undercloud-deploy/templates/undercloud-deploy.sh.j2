@@ -78,6 +78,12 @@ sudo ln -f -s /usr/share/openstack-puppet/modules/* /etc/puppet/modules/
 {% if undercloud_docker_registry_host is defined %}
 openstack overcloud container image prepare \
     --env-file {{ working_dir }}/undercloud-containers-default-parameters.yaml \
+{% if containerized_undercloud|bool %}
+    -e {{overcloud_templates_path}}/environments/services-docker/ironic.yaml \
+    -e {{overcloud_templates_path}}/environments/services-docker/mistral.yaml \
+    -e {{overcloud_templates_path}}/environments/services-docker/zaqar.yaml \
+    -e {{overcloud_templates_path}}/environments/docker.yaml \
+{% endif %}
     --namespace {{ undercloud_docker_registry_host }}:{{ undercloud_docker_registry_port }}/{{ undercloud_docker_registry_namespace }}
 {% if undercloud_docker_registry_insecure|bool %}
 echo "  DockerInsecureRegistryAddress: {{ undercloud_docker_registry_host }}:{{ undercloud_docker_registry_port }}" >> \
