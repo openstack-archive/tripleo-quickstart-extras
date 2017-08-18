@@ -24,7 +24,7 @@ run_tempest: false
 post_tempest: true
 tempest_format: packages # venv or packages
 tempest_whitelist_file_src: "whitelist_file.j2"
-tempest_whitelist_file: "whitelist_file"
+tempest_whitelist_file: "whitelist_file.conf"
 tempest_whitelist: []
 tempest_plugins: []
 skip_file_src: "skip_file.j2"
