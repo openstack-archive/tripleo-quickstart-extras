@@ -166,7 +166,9 @@
   set_fact:
     workers_args: >-
       -e {{ overcloud_templates_path }}/environments/low-memory-usage.yaml
-  when: release not in ['mitaka', 'liberty']
+  when:
+    - release not in ['mitaka', 'liberty']
+    - set_overcloud_workers|bool
 
 - name: Use KVM for Red Hat distro
   set_fact: libvirt_args="--libvirt-type kvm"
