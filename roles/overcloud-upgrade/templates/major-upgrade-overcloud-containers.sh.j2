@@ -36,13 +36,26 @@ echo "  DockerInsecureRegistryAddress: {{ local_docker_registry_host }}:8787" >>
 echo "execute overcloud upgrade"
 openstack overcloud deploy --templates {{ tht_dir }} \
     {{ deploy_args_used }} \
-    -e {{ tht_dir }}/environments/docker.yaml \
     -e {{ tht_dir }}/environments/major-upgrade-composable-steps-docker.yaml \
     -e ~/containers-default-parameters.yaml \
     -e ~/overcloud-repo.yaml \
 {% for item in upgrade_custom_templates %}
     -e {{ item }} \
 {% endfor %}
+    -e {{ tht_dir }}/environments/docker.yaml
+
+
+if openstack stack show overcloud  | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
+    openstack overcloud deploy --templates {{ tht_dir }} \
+        {{ deploy_args_used }} \
+        -e {{ tht_dir }}/environments/major-upgrade-converge-docker.yaml \
+        -e ~/containers-default-parameters.yaml \
+{% for item in upgrade_custom_templates %}
+        -e {{ item }} \
+{% endfor %}
+        -e {{ tht_dir }}/environments/docker.yaml
+fi
+
 
 {% endif %}
 
