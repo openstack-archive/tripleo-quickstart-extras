@@ -48,6 +48,31 @@
     version: master
   when: not dlrn_cloned.stat.exists
 
+- name: Fetch local rdoinfo copy
+  git:
+    repo: '{{ artg_rdoinfo_repo_url }}'
+    dest: '{{ build_repo_dir }}/DLRN/rdoinfo'
+    version: 'master'
+
+- name: Use local CentOS mirror if available
+  shell: >
+    gawk '{ print $0 }; /^# repos$/ { exit }' {{ build_repo_dir }}/DLRN/scripts/centos.cfg
+    > {{ build_repo_dir }}/DLRN/scripts/centos-local.cfg;
+    cat /etc/yum.repos.d/quickstart-centos-*.repo >> {{ build_repo_dir }}/DLRN/scripts/centos-local.cfg;
+    cat /etc/yum.repos.d/delorean*.repo >> {{ build_repo_dir }}/DLRN/scripts/centos-local.cfg;
+    echo '"""' >> {{ build_repo_dir }}/DLRN/scripts/centos-local.cfg;
+    mkdir -p /tmp/fake-dlrn-repos/current;
+    touch /tmp/fake-dlrn-repos/delorean-deps.repo;
+    touch /tmp/fake-dlrn-repos/current/delorean.repo;
+  when: dlrn_use_local_mirrors|bool
+
+- name: Use custom target for DLRN
+  lineinfile:
+    dest: '{{ build_repo_dir }}/DLRN/projects.ini'
+    regexp: 'target=.*'
+    line: 'target=centos-local'
+  when: dlrn_use_local_mirrors|bool
+
 #Remove the rpm install test to speed up delorean
 #TODO: add an option for this in delorean
 - name: Remove DLRN RPM install test

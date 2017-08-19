@@ -32,6 +32,10 @@ Role Variables
   to skip projects that DLRN cannot build.
 * `artg_repos_dir` -- Root directory which contains project directories with
    sources for build.
+* `dlrn_baseurl` -- URL used by DLRN to get the repo definitions when building
+   packages
+* `dlrn_use_local_mirrors` -- use the local repo definitions from
+  /etc/yum.repos.d/ for CentOS and DLRN while building packages; used upstream
 
 ```yaml
 artg_change_list:

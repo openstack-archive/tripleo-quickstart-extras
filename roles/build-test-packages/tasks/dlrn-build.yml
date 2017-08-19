@@ -12,23 +12,22 @@
     artg_distro: "{{ artg_release }}-rdo"
   when: artg_release not in ['master', 'mitaka']
 
+- name: Use local baseurl when using local mirrors
+  set_fact:
+    dlrn_baseurl: 'file:///tmp/fake-dlrn-repos'
+  when: dlrn_use_local_mirrors|bool
+
 - name: Override projects.ini settings
   lineinfile:
     dest: '{{ build_repo_dir }}/DLRN/projects.ini'
     regexp: '{{ project_item.regexp }}'
     line: '{{ project_item.line }}'
   with_items:
-    - { regexp: 'baseurl=.*', line: 'baseurl=https://trunk.rdoproject.org/centos7-{{ artg_release }}' }
+    - { regexp: 'baseurl=.*', line: 'baseurl={{ dlrn_baseurl }}' }
     - { regexp: 'distro=.*', line: 'distro={{ artg_distro }}' }
     - { regexp: 'source=.*', line: 'source={{ artg_change.branch }}' }
   loop_control:
       loop_var: project_item
-
-- name: Fetch local rdoinfo copy
-  git:
-    repo: '{{ artg_rdoinfo_repo_url }}'
-    dest: '{{ build_repo_dir }}/DLRN/rdoinfo'
-    version: 'master'
 
 - name: Map project name to DLRN project name
   register: project_name_mapped
