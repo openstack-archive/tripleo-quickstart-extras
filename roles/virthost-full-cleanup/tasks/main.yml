@@ -42,6 +42,7 @@
         rm -rf /var/log/artib;
         rm -rf /home/oooq-images;
         rm -rf /var/lib/oooq-images;
+        rm -rf /root/.cache/image-create;
 
     - name: destroy brbm network
       command: virsh net-destroy brbm
