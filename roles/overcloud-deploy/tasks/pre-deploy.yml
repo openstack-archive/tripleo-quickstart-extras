@@ -73,7 +73,6 @@
 - name: set network_args fact for containers
   set_fact:
     network_args: >-
-      -e {{ overcloud_templates_path }}/environments/docker.yaml
       {{ network_isolation_args }}
       -e {{ working_dir }}/containers-default-parameters.yaml
   when:
@@ -178,11 +177,15 @@
   set_fact:
     container_args: >-
       -e {{ overcloud_templates_path }}/environments/docker.yaml
+      {% if enable_pacemaker|bool %}
+      -e {{ overcloud_templates_path }}/environments/docker-ha.yaml
+      {% endif %}
+      {% if not network_isolation|bool %}
       -e {{ overcloud_templates_path }}/environments/docker-network.yaml
+      {% endif %}
       -e {{ working_dir }}/containers-default-parameters.yaml
   when:
     - containerized_overcloud|bool
-    - not network_isolation|bool
 
 - name: set composable roles args fact
   set_fact:
