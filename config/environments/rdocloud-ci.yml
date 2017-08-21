@@ -2,6 +2,7 @@ os_username: "{{ lookup('env','OS_USERNAME') }}"
 os_password: "{{ lookup('env','OS_PASSWORD') }}"
 os_tenant_name: "{{ lookup('env','OS_TENANT_NAME') }}"
 os_auth_url: "{{ lookup('env','OS_AUTH_URL') }}"
+os_region_name: "{{ lookup('env','OS_REGION_NAME') }}"
 
 cloud_name: rdocloud
 latest_guest_image:

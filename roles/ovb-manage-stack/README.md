@@ -19,6 +19,7 @@ To interact with the Openstack Virtual Baremetal host cloud, credentials are nee
 - os_password: <user_password>
 - os_tenant_name: <tenant_name>
 - os_auth_url: <cloud_auth_url> # For example http://190.1.1.5:5000/v2.0
+- os_region_name: <os_region_name> # Most probably RegionOne
 
 Parameters required to access the stack:
 - prefix --used as in id for the image and the stack parameters
