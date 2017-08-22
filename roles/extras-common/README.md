@@ -33,5 +33,3 @@ Role Variables
   docker images used for TripleO deployment
 - `docker_image_tag`: <'latest'> -- tag of docker images used for
   TripleO deployment
-- `deploy_composable_scenario`: <false> -- whether to deploy one of the
-  composable scenarios

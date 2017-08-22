@@ -29,7 +29,6 @@ overcloud-prep-containers variables
 * overcloud_prep_containers_script: overcloud-prep-containers.sh.j2
 * overcloud_prep_containers_log: overcloud_prep_containers.log
 * undercloud_network_cidr: 192.168.24.0/24
-* prepare_service_env_args: -e {{ overcloud_templates_path }}/environments/docker.yaml
 
 overcloud-prep-config variables
 -------------------------------

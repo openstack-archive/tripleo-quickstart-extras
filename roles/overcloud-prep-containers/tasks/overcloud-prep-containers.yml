@@ -1,11 +1,4 @@
 ---
-- name: set the service environments for container image prepare
-  set_fact:
-    prepare_service_env_args: >-
-      -e {{ overcloud_templates_path }}/environments/docker.yaml
-      -e {{ overcloud_templates_path }}/ci/environments/{{ composable_scenario }}
-  when: deploy_composable_scenario|bool
-
 - name: Prepare for the containerized deployment
   shell: >
     set -o pipefail &&
