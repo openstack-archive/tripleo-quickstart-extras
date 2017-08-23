@@ -96,10 +96,17 @@ def create_anchor_file(cert_ca_pem, source_dir, dest_dir):
         "{}environments/inject-trust-anchor.yaml".format(source_dir)
     )
 
-    output_dict["parameter_defaults"]["SSLRootCertificate"] = cert_ca_pem
-
-    output_dict["resource_registry"]["OS::TripleO::NodeTLSCAData"] = \
-        "{}/puppet/extraconfig/tls/ca-inject.yaml".format(source_dir)
+    ca_map = {"overcloud-ca": {"content": cert_ca_pem}}
+    # Optionally include the undercloud's local CA certificate
+    try:
+        undercloud_ca = "/etc/pki/ca-trust/source/anchors/cm-local-ca.pem"
+        with open(undercloud_ca, 'ro') as undercloud_ca_file:
+            undercloud_ca_content = undercloud_ca_file.read()
+        ca_map.update({"undercloud-ca": {"content": undercloud_ca_content}})
+    except IOError:
+        pass
+    output_dict["parameter_defaults"]["CAMap"] = ca_map
+    del output_dict["resource_registry"]
 
     with open("{}inject-trust-anchor.yaml".format(dest_dir), "w") as stream:
         yaml.safe_dump(output_dict, stream, default_style='|')
