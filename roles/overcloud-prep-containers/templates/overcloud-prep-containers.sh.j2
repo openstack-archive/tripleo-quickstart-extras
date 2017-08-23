@@ -17,7 +17,6 @@ set -eux
 
 openstack overcloud container image prepare \
     --images-file {{ working_dir }}/overcloud_containers.yaml \
-    {{ prepare_service_env_args }} \
     --namespace {{ docker_registry_namespace }} \
     --tag {{ docker_image_tag }} \
     --pull-source {{ docker_registry_host }} \
@@ -41,7 +40,6 @@ sudo systemctl start docker
 
 openstack overcloud container image prepare \
     --env-file {{ working_dir }}/containers-default-parameters.yaml \
-    {{ prepare_service_env_args }} \
     --namespace {{ local_docker_registry_host }}:8787/{{ docker_registry_namespace }} \
     --tag {{ docker_image_tag }}
 
