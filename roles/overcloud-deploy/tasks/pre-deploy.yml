@@ -201,6 +201,7 @@
   set_fact:
     multinode_args: >-
       -e {{ overcloud_templates_path }}/environments/deployed-server-environment.yaml
+      --overcloud-ssh-user {{ undercloud_user }}
   when: deploy_multinode|bool
 
 - name: set the scenario args for composable roles
