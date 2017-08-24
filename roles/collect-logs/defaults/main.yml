@@ -7,6 +7,8 @@ artcl_collect_list:
   - /var/lib/heat-config/heat-config-puppet/
   - /var/lib/heat-config/heat-config-script/
   - /var/tmp/sosreport*
+  - /var/lib/oooq-images/*/*.sh
+  - /var/lib/oooq-images/*/*.log
   - /etc/
   - /home/*/.instack/install-undercloud.log
   - /home/*/stackrc
