@@ -180,9 +180,6 @@
       {% if enable_pacemaker|bool %}
       -e {{ overcloud_templates_path }}/environments/docker-ha.yaml
       {% endif %}
-      {% if not network_isolation|bool %}
-      -e {{ overcloud_templates_path }}/environments/docker-network.yaml
-      {% endif %}
       -e {{ working_dir }}/containers-default-parameters.yaml
   when:
     - containerized_overcloud|bool
