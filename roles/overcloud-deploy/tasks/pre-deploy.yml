@@ -95,7 +95,9 @@
   set_fact:
     pacemaker_args: >-
       -e {{ overcloud_templates_path }}/environments/puppet-pacemaker.yaml
-  when: enable_pacemaker|bool
+  when:
+    - enable_pacemaker|bool
+    - not containerized_overcloud|bool
 
 - name: use resource registry
   set_fact:
