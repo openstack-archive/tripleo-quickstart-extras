@@ -139,6 +139,7 @@ cd {{ working_dir }}/tempest
 ${TEMPESTCONF} --out etc/tempest.conf \
   --network-id $public_net_id \
   --deployer-input ~/{{ tempest_deployer_input_file }} \
+  --image {{ tempest_test_image_path }} \
   --debug --create \
   identity.uri $OS_AUTH_URL \
   {% if release in ['newton','ocata'] %}

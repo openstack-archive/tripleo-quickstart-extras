@@ -38,3 +38,4 @@ tempest_version_dict: { 'newton': 'newton', 'ocata': '16.0.0', 'pike': '16.1.0',
 tempest_version: "{{ tempest_version_dict[release] }}"
 tempestmail_config: config.yaml
 tempest_track_resources: true
+tempest_test_image_path: http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
