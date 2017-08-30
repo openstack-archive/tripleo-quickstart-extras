@@ -1,0 +1,29 @@
+[DEFAULT]
+datadir=./data
+scriptsdir=./scripts
+baseurl=http://trunk.rdoproject.org/centos7/
+distro=rpm-master
+source=master
+target=centos
+smtpserver=
+reponame=delorean
+#templatedir=$VIRTUAL_ENV/dlrn/templates
+maxretries=3
+pkginfo_driver=dlrn.drivers.rdoinfo.RdoInfoDriver
+tags=
+#tags=mitaka
+rsyncdest=
+rsyncport=22
+workers=1
+gerrit_topic=rdo-FTBFS
+database_connection=sqlite:///commits.sqlite
+fallback_to_master=1
+
+[gitrepo_driver]
+# Options to be specified if pkginfo_driver is set to
+# dlrn.drivers.gitrepo.GitRepoDriver
+#
+#repo=http://github.com/openstack/rpm-packaging
+#directory=/openstack
+#skip=openstack-macros,keystoneauth1
+#use_version_from_spec=1

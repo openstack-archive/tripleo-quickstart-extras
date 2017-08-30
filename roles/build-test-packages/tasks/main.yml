@@ -26,27 +26,36 @@
     name: '{{ ansible_user }}'
     groups: mock
 
-- name: Create virtualenv for DLRN
-  command: virtualenv {{ build_repo_dir }}/dlrn-venv
-  args:
-    creates: '{{ build_repo_dir }}/dlrn-venv'
-
-- name: Check if DLRN was already cloned by other means
-  stat: path='{{ build_repo_dir }}/DLRN'
-  register: dlrn_cloned
-
 - name: Remove data files from previous runs
   file:
-    path: '{{ build_repo_dir }}/DLRN/data'
+    path: '{{ build_repo_dir }}/DLRN'
     state: absent
-  when: dlrn_cloned.stat.exists
 
-- name: Clone DLRN
-  git:
-    repo: '{{ artg_dlrn_repo_url }}'
-    dest: '{{ build_repo_dir }}/DLRN'
-    version: master
-  when: not dlrn_cloned.stat.exists
+- name: Ensure DLRN dir is present
+  file:
+    path: '{{ build_repo_dir }}/DLRN/'
+    state: directory
+
+- name: drop in the templated version of projects.ini
+  template:
+    src: projects.ini.j2
+    dest: '{{ build_repo_dir }}/DLRN/projects.ini'
+
+- name: Install and update pip
+  pip:
+    name: pip
+    virtualenv: "{{ build_repo_dir }}/dlrn-venv"
+    state: latest
+    extra_args: --upgrade
+
+- name: Pip install DLRN
+  pip:
+    name: dlrn
+    virtualenv: "{{ build_repo_dir }}/dlrn-venv"
+    state: latest
+
+- name: copy the DLRN scripts in the virtualenv to the scripts dir
+  shell: "/usr/bin/cp -Rv {{ build_repo_dir }}/dlrn-venv/share/dlrn/scripts {{ build_repo_dir }}/DLRN/"
 
 - name: Fetch local rdoinfo copy
   git:
@@ -73,27 +82,10 @@
     line: 'target=centos-local'
   when: dlrn_use_local_mirrors|bool
 
-#Remove the rpm install test to speed up delorean
-#TODO: add an option for this in delorean
 - name: Remove DLRN RPM install test
   shell: >
     sed -i -e 's%--postinstall%%'
     {{ build_repo_dir }}/DLRN/scripts/build_rpm.sh
-
-- name: Update pip before requirements install
-  shell: source {{ build_repo_dir }}/dlrn-venv/bin/activate && pip install -U pip
-
-- name: Install DLRN requirements
-  pip:
-    requirements: '{{ build_repo_dir }}/DLRN/requirements.txt'
-    virtualenv: '{{ build_repo_dir }}/dlrn-venv'
-
-- name: Install DLRN
-  shell: >
-    source {{ build_repo_dir }}/dlrn-venv/bin/activate;
-    python setup.py install;
-  args:
-      chdir: '{{ build_repo_dir }}/DLRN'
 
 - name: get env variables for changes and default change list
   set_fact:
@@ -167,7 +159,6 @@
     path: '{{ build_repo_dir }}/DLRN'
     state: absent
   when:
-    - not dlrn_cloned.stat.exists
     - dlrn_cleanup|bool
 
 - name: Trigger repo injection for quickstart
