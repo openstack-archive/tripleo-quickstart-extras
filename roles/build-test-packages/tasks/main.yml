@@ -30,6 +30,7 @@
   file:
     path: '{{ build_repo_dir }}/DLRN'
     state: absent
+  when: not dlrn_pre_installed|bool
 
 - name: Ensure DLRN dir is present
   file:
@@ -53,6 +54,16 @@
     name: dlrn
     virtualenv: "{{ build_repo_dir }}/dlrn-venv"
     state: latest
+  when: not dlrn_pre_installed|bool
+
+- name: Pip install pre-installed DLRN
+  shell: >
+    source {{ build_repo_dir }}/dlrn-venv/bin/activate;
+    pip install -r requirements.txt;
+    python setup.py install;
+  args:
+      chdir: '{{ build_repo_dir }}/DLRN'
+  when: dlrn_pre_installed|bool
 
 - name: copy the DLRN scripts in the virtualenv to the scripts dir
   shell: "/usr/bin/cp -Rv {{ build_repo_dir }}/dlrn-venv/share/dlrn/scripts {{ build_repo_dir }}/DLRN/"
@@ -159,6 +170,7 @@
     path: '{{ build_repo_dir }}/DLRN'
     state: absent
   when:
+    - not dlrn_pre_installed|bool
     - dlrn_cleanup|bool
 
 - name: Trigger repo injection for quickstart
