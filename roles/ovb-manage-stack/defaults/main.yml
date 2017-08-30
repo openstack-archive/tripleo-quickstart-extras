@@ -36,9 +36,9 @@ latest_guest_image:
     newton: CentOS-7-x86_64-GenericCloud-released-latest
     ocata: CentOS-7-x86_64-GenericCloud-released-latest
     master: CentOS-7-x86_64-GenericCloud-released-latest
-    rhos-8: rhel-7.3-server-x86_64-latest
-    rhos-9: rhel-7.3-server-x86_64-latest
-    rhos-10: rhel-7.3-server-x86_64-latest
+    rhos-9: rhel-7.4-server-x86_64-latest
+    rhos-10: rhel-7.4-server-x86_64-latest
+    rhos-11: rhel-7.4-server-x86_64-latest
 
 port_security: true
 
@@ -48,6 +48,7 @@ baremetal_ports_template:
     public-bond: baremetal-ports-public-bond.yaml
 
 baremetal_port_security_template:
+    none: baremetal-ports-default-port-security.yaml
     multiple-nics: baremetal-ports-all-port-security.yaml
     multi-nic: baremetal-ports-all-port-security.yaml
     public-bond: baremetal-ports-public-bond-port-security.yaml
@@ -79,13 +80,12 @@ external_net:  '10.2.1.0/22'
 network_isolation_type: multiple-nics
 
 registered_releases:
-  - mitaka
   - newton
   - ocata
+  - pike
   - master
-  - rhos-8
   - rhos-9
-  - rhos-10
+  - rhos-11
 
 # OVB environment clean up
 cleanup_stacks_keypairs: false
