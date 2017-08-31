@@ -1,5 +1,12 @@
 # Create the scripts that will be used to setup the overcloud images
 
+- name: set the service environments for container image prepare
+  set_fact:
+    prepare_service_env_args: >-
+      -e {{ overcloud_templates_path }}/environments/docker.yaml
+      -e {{ overcloud_templates_path }}/ci/environments/{{ composable_scenario }}
+  when: deploy_composable_scenario|bool
+
 - name: Create overcloud prep-containers script
   template:
     src: "{{ overcloud_prep_containers_script }}"
