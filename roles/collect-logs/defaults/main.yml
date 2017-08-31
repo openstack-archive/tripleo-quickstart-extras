@@ -12,7 +12,7 @@ artcl_collect_list:
   - /etc/
   - /home/*/.instack/install-undercloud.log
   - /home/*/stackrc
-  - /home/*/overcloudrc
+  - /home/*/overcloudrc*
   - /home/*/*.log
   - /home/*/*.json
   - /home/*/*.conf
