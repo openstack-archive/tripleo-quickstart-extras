@@ -91,6 +91,12 @@ echo "  DockerInsecureRegistryAddress: {{ undercloud_docker_registry_host }}:{{ 
 {% endif %}
 {% else %}
 openstack overcloud container image prepare \
+{% if containerized_undercloud|bool %}
+    -e {{overcloud_templates_path}}/environments/services-docker/ironic.yaml \
+    -e {{overcloud_templates_path}}/environments/services-docker/mistral.yaml \
+    -e {{overcloud_templates_path}}/environments/services-docker/zaqar.yaml \
+    -e {{overcloud_templates_path}}/environments/docker.yaml \
+{% endif %}
     --env-file {{ working_dir }}/undercloud-containers-default-parameters.yaml
 {% endif %}
 
