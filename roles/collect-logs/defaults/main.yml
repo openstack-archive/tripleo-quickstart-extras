@@ -109,3 +109,4 @@ artcl_logstash_files:
   - /home/*/yum_mirror_error.log
   - /home/*/yum_mirror.log
   - /home/*/tempest_output.log
+  - /var/log/bootstrap-subnodes.log
