@@ -12,7 +12,6 @@ dlrn_use_local_mirrors: false
 artg_skipped_projects:
   - openstack/puppet-openstack-integration
   - openstack/puppet-watcher
-  - openstack/networking-bagpipe # LP#1709428
   - openstack/tripleo-quickstart
   - openstack/tripleo-quickstart-extras
   - openstack-dev/grenade
