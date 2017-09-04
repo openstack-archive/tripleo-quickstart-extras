@@ -29,7 +29,7 @@ git fetch {{ overcloud_templates_repo }} {{ overcloud_templates_refspec }} && gi
 popd
 {% endif %}
 
-{% if deploy_composable_scenario|bool %}
+{% if not composable_scenario|trim == '' %}
 ## * If desired composable scenario isn't present in the checked-out
 ##   code, but is present in RPM, copy the scenario from RPM location.
 ## ::
@@ -37,6 +37,13 @@ if [ ! -e "{{ overcloud_templates_path }}/ci/environments/{{ composable_scenario
     -a -e "/usr/share/openstack-tripleo-heat-templates/ci/environments/{{ composable_scenario }}" ]; then
     cp "/usr/share/openstack-tripleo-heat-templates/ci/environments/{{ composable_scenario }}" \
         "{{ overcloud_templates_path }}/ci/environments/{{ composable_scenario }}"
+fi
+{% endif %}
+{% if not upgrade_composable_scenario|trim == '' %}
+if [ ! -e "{{ overcloud_templates_path }}/ci/environments/{{ upgrade_composable_scenario }}" \
+    -a -e "/usr/share/openstack-tripleo-heat-templates/ci/environments/{{ upgrade_composable_scenario }}" ]; then
+    cp "/usr/share/openstack-tripleo-heat-templates/ci/environments/{{ upgrade_composable_scenario }}" \
+        "{{ overcloud_templates_path }}/ci/environments/{{ upgrade_composable_scenario }}"
 fi
 {% endif %}
 

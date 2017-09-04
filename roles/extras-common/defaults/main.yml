@@ -21,4 +21,5 @@ timestamper_cmd: >-
 # enable_libvirt_tripleo_ui is a switch to force the steps to run with or
 # without virtbmc
 enable_libvirt_tripleo_ui: false
-deploy_composable_scenario: false
+composable_scenario: ""
+upgrade_composable_scenario: ""

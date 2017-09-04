@@ -10,7 +10,6 @@ failed_deployment_list: "{{ working_dir }}/failed_deployment_list.log"
 validate_script: overcloud-validate.sh.j2
 
 # Deploy a specific scenario THT to the Overcloud
-deploy_composable_scenario: false
 composable_scenario: ""
 
 # `floating_ip_cidr` controls the address range used in the network
@@ -104,9 +103,9 @@ deploy_args: >-
   {{ timeout_args }}
   {{ cloud_name_args }}
   {{ multinode_args }}
-  {{ scenario_args }}
   {{ pacemaker_args }}
   {{ container_args }}
+  {{ scenario_args }}
   {{ network_args }}
   {{ resource_registry_nic_configs_args }}
   {{ workers_args }}

@@ -5,7 +5,7 @@
     prepare_service_env_args: >-
       -e {{ overcloud_templates_path }}/environments/docker.yaml
       -e {{ overcloud_templates_path }}/ci/environments/{{ composable_scenario }}
-  when: deploy_composable_scenario|bool
+  when: not composable_scenario|trim == ''
 
 - name: Create overcloud prep-containers script
   template:

@@ -151,6 +151,7 @@ if openstack stack show -c stack_status  overcloud -f value | egrep "(CREATE|UPD
     {% if enable_pacemaker|bool %}
         -e {{ tht_dir }}/environments/puppet-pacemaker.yaml \
     {% endif %}
+        {{ scenario_args }} \
         -e {{ tht_dir }}/environments/major-upgrade-composable-steps.yaml \
     {% for item in upgrade_custom_templates_script_delivery %}
         -e {{ item }} \

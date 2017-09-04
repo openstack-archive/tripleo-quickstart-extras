@@ -9,7 +9,6 @@ overcloud_nodes:
 
 composable_services: false
 deploy_multinode: true
-deploy_composable_scenario: true
 composable_scenario: scenario004-multinode.yaml
 
 network_isolation: false

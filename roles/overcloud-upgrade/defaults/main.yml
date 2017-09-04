@@ -45,6 +45,7 @@ undercloud_upgrade_user: stack
 #  - virtual
 #  - baremetal
 deployment_type: virtual
+scenario_args: ""
 # override those lists with your templates that your env needs for upgrade
 # example:
 # upgrade_custom_templates_script_delivery:

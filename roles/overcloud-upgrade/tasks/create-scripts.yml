@@ -18,6 +18,12 @@
   set_fact:
     tht_dir: "/usr/share/openstack-tripleo-heat-templates"
 
+- name: set the scenario args for composable roles
+  set_fact:
+    scenario_args: >-
+      -e {{ tht_dir }}/ci/environments/{{ upgrade_composable_scenario }}
+  when: not upgrade_composable_scenario|trim == ''
+
 - name: Create major overcloud upgrade script
   when: major_upgrade|bool
   template:

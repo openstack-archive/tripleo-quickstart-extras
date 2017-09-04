@@ -213,7 +213,7 @@
   set_fact:
     scenario_args: >-
       -e {{ overcloud_templates_path }}/ci/environments/{{ composable_scenario }}
-  when: deploy_composable_scenario|bool
+  when: not composable_scenario|trim == ''
 
 - name: set swap_args to enable swap file
   set_fact:
