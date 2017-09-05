@@ -1,30 +1,42 @@
 ansible-role-tripleo-baremetal-undercloud
 =========================================
 
-This role aims to build a baremetal undercloud machine from scratch. Using tripleo-quickstart, this means that you will be able to provide, prepare and install the undercloud on a physical machine.
+This role aims to build a baremetal undercloud machine from scratch. Using
+tripleo-quickstart, this means that you will be able to provide, prepare and
+install the undercloud on a physical machine.
 
-From the tripleo-quickstart perspective virthost and undercloud will be the same host.
+From the tripleo-quickstart perspective virthost and undercloud will be the
+same host.
 
 Requirements
 ------------
 
-For make all the things working you need to have an environment with all the things in place:
+To make all the things working you need to have an environment with all the
+things in place:
 
-Hardware requirements
+**Hardware requirements**
 
-* A physical machine for the undercloud that can be accessed as root from the jump host
-* At least two other physical machines that will become controller and compute, for HA three controllers and one compute are needed
-* A working network link between overcloud and undercloud, typically the second net device of the undercloud will talk to the first net device of all the overcloud machines
+* A physical machine for the undercloud that can be accessed as root from the
+  jump host
+* At least two other physical machines that will become controller and compute,
+  for HA three controllers and one compute are needed
+* A working network link between overcloud and undercloud, typically the second
+  net device of the undercloud will talk to the first net device of all the
+  overcloud machines
 
-Software requirements
+**Software requirements**
 
 * The tripleo-quickstart quickstart.sh script:
-    * A config file (i.e. ha.yml) containing all the customizations for the baremetal environment
+    * A config file (i.e. ha.yml) containing all the customizations for the
+      baremetal environment
 * This set of files, dependent from the hardware:
     * File undercloud-provisioning.sh - optional, name is not important
     * File network-environment.yaml - mandatory
-    * Directory nic-configs - mandatory if declared inside the resource_registry section in network-environment.yaml and must contain all the needed files
-    * File instackenv.json - mandatory, must contain the ipmi credentials for the nodes
+    * Directory nic-configs - mandatory if declared inside the
+      resource_registry section in network-environment.yaml and must contain
+      all the needed files
+    * File instackenv.json - mandatory, must contain the ipmi credentials for
+      the nodes
 
 Quickstart invocation
 ---------------------
@@ -34,7 +46,7 @@ You can invoke *quickstart.sh* like this:
 ```console
 ./quickstart.sh \
   --clean \
-  --playbook baremetal-undercloud-validate-ha.yml \
+  --playbook baremetal-undercloud.yml \
   --working-dir /path/to/workdir \
   --config /path/to/config.yml \
   --release <RELEASE> \
@@ -44,8 +56,9 @@ You can invoke *quickstart.sh* like this:
 
 Basically this command:
 
-* Uses the playbook **baremetal-undercloud-validate-ha.yml**
-* Uses a custom workdir that is rebuilt from scratch (so if it already exists, it is dropped, see *--clean*)
+* Uses the playbook **baremetal-undercloud.yml**
+* Uses a custom workdir that is rebuilt from scratch (so if it already exists,
+  it is dropped, see *--clean*)
 * Get all the extra requirements
 * Select the config file
 * Chooses release (liberty, mitaka, newton, or “master” for ocata)
@@ -61,15 +74,17 @@ A typical config file will contain something like this:
 # Virthost key for accessing newly provided machine
 virthost_key: ~/.ssh/customkey
 
-# Type of undercloud (we're deploying on baremetal otherwise this should be virtual)
+# Type of undercloud (we're deploying on baremetal otherwise this should be
+# virtual)
 undercloud_type: baremetal
 
 # Specify the secondary net interface for overcloud provisioning
 undercloud_local_interface: eth1
 
-# Specify the external network for undercloud that will be used to route overcloud traffic
+# Specify the external network for undercloud that will be used to route
+# overcloud traffic
 undercloud_external_network_cidr: 172.20.0.0/24
- 
+
 # Declare the additional interface on undercloud to route overcloud traffic
 undercloud_networks:
   external:
@@ -119,18 +134,32 @@ extra_args: "--ntp-server <NTP SERVER IP> --control-scale 3 --compute-scale 2 --
 
 A brief explanation of the variables:
 
-* The variable **undercloud_type** is checked in some of the dependent roles (see @Dependencies).
-* The variable **virthost_key** is optional, if defined it must be a path to a private ssh key file needed to access to virthost. If you access to the virthost with the default ssh key of the user launching quickstart.sh then you don't need to set it.
-* The **undercloud_local_interface** needs to be changed accordingly to the baremetal hardware.
-* The **undercloud_external_network_cidr** will be the overcloud external network that undercloud will route.
-* A specific **flavor_map** (in this case baremetal) needs to be applied to each node kind.
-* With **step_provide_undercloud** you can choose if you want to provide the virthost.
+* The variable **undercloud_type** is checked in some of the dependent roles
+  (see @Dependencies).
+* The variable **virthost_key** is optional, if defined it must be a path to a
+  private ssh key file needed to access to virthost. If you access to the
+  virthost with the default ssh key of the user launching quickstart.sh then
+  you don't need to set it.
+* The **undercloud_local_interface** needs to be changed accordingly to the
+  baremetal hardware.
+* The **undercloud_external_network_cidr** will be the overcloud external
+  network that undercloud will route.
+* A specific **flavor_map** (in this case baremetal) needs to be applied to
+  each node kind.
+* With **step_provide_undercloud** you can choose if you want to provide the
+  virthost.
 * With **step_introspect** you can choose if you want to introspect nodes.
-* With **step_install_upstream_ipxe** you can choose if you want to install upstream ipxe (useful with some hardware issues).
-* The **libvirt_type** and **libvirt_args** must be set to kvm, since we will work on baremetal with native virtual capabilities.
-* **baremetal_provisioning_script** is the script to provide the machine, if  **step_provide_undercloud is false** than this can be omitted.
-* **baremetal_network_environment**, **baremetal_instackenv** and *optionally* **baremetal_nic_configs** will contain all the environment files.
-* If instances needs to be accessible from the outside network then all the parameters (so **floating_ip_cidr** and **public_net_***) of this floating network must be explicited.
+* With **step_install_upstream_ipxe** you can choose if you want to install
+  upstream ipxe (useful with some hardware issues).
+* The **libvirt_type** and **libvirt_args** must be set to kvm, since we will
+  work on baremetal with native virtual capabilities.
+* **baremetal_provisioning_script** is the script to provide the machine, if
+  **step_provide_undercloud is false** than this can be omitted.
+* **baremetal_network_environment**, **baremetal_instackenv** and *optionally*
+  **baremetal_nic_configs** will contain all the environment files.
+* If instances needs to be accessible from the outside network then all the
+  parameters (so **floating_ip_cidr** and **public_net_**) of this floating
+  network must be explicited.
 * **extra_args** will contain all deploy specific (like HA settings)
 
 The main task of the role is this one:
@@ -164,36 +193,44 @@ The main task of the role is this one:
 
 This is basically what each specific tasks does:
 
-* **machine-provisioning.yml** provides the machine and make it become both virthost/undercloud 
-* **machine-setup.yml** prepares the undercloud with ssh connections, users, sudoers and inventory addition
+* **machine-provisioning.yml** provides the machine and make it become both
+  virthost/undercloud
+* **machine-setup.yml** prepares the undercloud with ssh connections, users,
+  sudoers and inventory addition
 * **undercloud-repos-conf.yml** repositories and packages configurations
 * **overcloud-images.yml** overcloud images retrieving
 
 Some notes:
 
-* Even if virthost and undercloud are the same machine, the name “undercloud” will be inventoried in any case
+* Even if virthost and undercloud are the same machine, the name “undercloud”
+  will be inventoried in any case
 * Each action is tagged so it is possible to exclude a specific section
-* Some variables can be controlled via config settings (look above in @Role usage)
+* Some variables can be controlled via config settings (look above in @Role
+  usage)
 
 Dependencies
 ------------
 
-If you don't need to change anything in how the environments gets deployed, then all the dependencies should be satisfied by the default **quickstart-extras-requirements.txt** file.
+If you don't need to change anything in how the environments gets deployed,
+then all the dependencies should be satisfied by the default
+**quickstart-extras-requirements.txt** file.
 
-In any case the roles you will need to deploy an entire environment from scratch (see @Example Playbook) are:
+In any case the roles you will need to deploy an entire environment from
+scratch (see @Example Playbook) are:
 
 * **baremetal-undercloud** (this role)
 * **tripleo-inventory** (part of *tripleo-quickstart*)
 * **tripleo/undercloud** (part of *tripleo-quickstart*)
-* **baremetal-prep-overcloud
+* **baremetal-prep-overcloud**
 * **overcloud-prep-{config,images,flavors,network}**
 * **overcloud-deploy**
-* **overcloud-validate** or **overcloud-validate-ha** (if you want to test HA capabilities)
+* **overcloud-validate**
 
 Example Playbook
 ----------------
 
-Here's is an example on host to use this role in combination to all the others coming from various related to tripleo-quickstart:
+Here's is an example playbook that uses this role in combination to all the
+others coming from various related to tripleo-quickstart:
 
 ```yaml
 ---
@@ -299,15 +336,6 @@ Here's is an example on host to use this role in combination to all the others c
       failed_when: overcloud_deploy_result == "failed"
   tags:
     - overcloud-deploy-check
-
-# HA Validation
-- name: Validate the overcloud using HA tests
-  hosts: undercloud
-  gather_facts: no
-  roles:
-    - validate-ha
-  tags:
-    - overcloud-validate-ha
 ```
 
 The steps of the sample playbook are these:
