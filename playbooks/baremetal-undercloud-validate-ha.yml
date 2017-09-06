@@ -64,6 +64,14 @@
   tags:
     - overcloud-prep-config
 
+- name:  Prepare overcloud containers
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - overcloud-prep-containers
+  tags:
+    - overcloud-prep-containers
+
 - name: Fetch the overcloud images
   hosts: undercloud
   gather_facts: no
