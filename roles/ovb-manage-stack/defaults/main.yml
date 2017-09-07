@@ -14,6 +14,7 @@ os_username: admin
 os_password: password
 os_tenant_name: admin
 os_auth_url: 'http://10.0.1.10:5000/v2.0'
+os_region_name: 'regionOne'
 cloud_name: qeos7
 
 stack_name: 'oooq-{{ prefix }}stack'
