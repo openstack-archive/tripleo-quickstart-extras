@@ -76,8 +76,8 @@
       while ! openstack stack show {{ stack_name }} | grep CREATE_COMPLETE; do
         if [ $COUNTER -lt 10 ]; then
           sleep 30;
-          if openstack stack show {{ stack_name }} | grep CREATE_FAILED ; then
-            echo "Failed creating OVB stack" > $STACK_LOG;
+          if openstack stack show {{ stack_name }} | grep FAILED ; then
+            echo "Failed OVB stack" > $STACK_LOG;
             openstack stack show {{ stack_name }} >> $STACK_LOG 2>&1;
             openstack stack failures list --long {{ stack_name }} >> $STACK_LOG 2>&1 || echo 'Failed to list stack failures' >> $STACK_LOG;
             exit 0;

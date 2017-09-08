@@ -1,6 +1,6 @@
 ---
 release: master
-ovb_repo_version: 9cd9267c42787c08a60cdf26e1371096ee7aceb1
+ovb_repo_version: d6b5e1ae7b9319b8e4673b5cdbaa319e48ec5831
 
 node:
     prefix:
@@ -31,6 +31,7 @@ heat_template: "{{ templates_dir }}/quintupleo.yaml"
 environment_list:
     - "{{ templates_dir }}/resource-registry.yaml"
     - "{{ local_working_dir }}/{{ prefix }}env.yaml"
+boot_from_volume: false
 
 latest_guest_image:
     mitaka: CentOS-7-x86_64-GenericCloud-released-latest
@@ -85,11 +86,10 @@ registered_releases:
   - ocata
   - pike
   - master
-  - rhos-9
   - rhos-11
+  - rhos-12
 
 # OVB environment clean up
 cleanup_stacks_keypairs: false
 cleanup_stacks_keypairs_script: cleanup-stacks-keypairs.sh.j2
 cleanup_stacks_keypairs_log: "{{ local_working_dir }}/cleanup_stacks_keypairs.log"
-
