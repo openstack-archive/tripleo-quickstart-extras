@@ -41,7 +41,7 @@
   shell: >
     virt-customize {{ _vc_args }}
     -a {{ image_to_modify }}
-    > {{ modify_script|default('modify_image') }}.log 2>&1
+    > {{ working_dir }}/{{ modify_script|default('modify_image')|replace('/','_') }}.log 2>&1
   environment:
     LIBGUESTFS_BACKEND: direct
   args:
