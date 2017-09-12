@@ -2,7 +2,7 @@ require_auth: True
 mail_from: tripleoresults@gmail.com
 templates_path: template/
 log_url: 'http://logs.openstack.org/periodic/'
-api_server: 'http://tempest-tripleoci.rhcloud.com/api/v1.0/sendmail'
+api_server: 'http://tempest-sendmail.tripleo.org:8080/api/v1.0/sendmail'
 use_api_server: True
 default_log_url: 'http://logs.openstack.org'
 emails:
