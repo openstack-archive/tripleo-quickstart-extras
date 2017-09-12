@@ -32,6 +32,8 @@ environment_list:
     - "{{ templates_dir }}/resource-registry.yaml"
     - "{{ local_working_dir }}/{{ prefix }}env.yaml"
 boot_from_volume: false
+baremetal_boot_from_volume_size: 41
+undercloud_boot_from_volume_size: 50
 
 latest_guest_image:
     mitaka: CentOS-7-x86_64-GenericCloud-released-latest
