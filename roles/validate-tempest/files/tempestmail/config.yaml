@@ -10,11 +10,24 @@ emails:
     name: 'Arx Cruz'
   - mail: 'whayutin@redhat.com'
     name: 'Wes'
+    fail_only: True
   - mail: 'gcerami@redhat.com'
     name: 'Gabriele'
+    fail_only: True
   - mail: 'sshnaidm@redhat.com'
     name: 'Sagi Shnaidman'
+    fail_only: True
   - mail: 'myoung@redhat.com'
     name: 'Matt Young'
+    fail_only: True
+  - mail: 'rhos-telemetry@redhat.com'
+    name: 'Rhos Telemetry'
+    fail_only: True
+    jobs:
+      - 'gate-tripleo-ci-centos-7-scenario001-multinode-oooq-puppet'
+      - 'gate-tripleo-ci-centos-7-scenario001-multinode-oooq-container'
+      - 'gate-tripleo-ci-centos-7-scenario001-multinode-oooq'
+    regex:
+      - 'ceilometer.tests.tempest.scenario.test_telemetry_integration.TestTelemetryIntegration'
 template: template.html
 
