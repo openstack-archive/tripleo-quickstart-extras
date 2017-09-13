@@ -8,8 +8,10 @@ set -eux
 # so we just manually mount it in the guest
 # This will be fixed when https://www.redhat.com/archives/libguestfs/2016-December/msg00024.html
 # is available in CentOS version of libguestfs
-mkdir /dev/pts
-mount devpts /dev/pts -t devpts
+# This fix is now available in 7.4 libguestfs-1.36.3-6.el7_4.3.x86_64
+# so workaround was modified to work with both.
+mkdir -p /dev/pts
+mount devpts /dev/pts -t devpts ||:
 {% endif %}
 
 
