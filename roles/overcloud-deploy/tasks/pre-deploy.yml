@@ -202,6 +202,12 @@
       --overcloud-ssh-user {{ undercloud_user }}
   when: deploy_multinode|bool
 
+- name: set the OVN args
+  set_fact:
+    ovn_args: >-
+      -e {{ overcloud_templates_path }}/environments/neutron-ml2-ovn-ha.yaml
+  when: deploy_ha_ovn|bool
+
 - name: set the scenario args for composable roles
   set_fact:
     scenario_args: >-
