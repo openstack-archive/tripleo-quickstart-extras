@@ -37,6 +37,73 @@ known_failures:
       reason: 'https://bugs.launchpad.net/tripleo/+bug/1577769'
 ```
 
+With this config file, the user will always get an email independent of the
+failed tempest test.
+You can also filter to receive the notification, only for a specific set of
+jobs. Doing so, the user will only receive an email when the job being
+executed matches with one in the jobs list:
+
+```yaml
+mail_username: username
+mail_password: password
+smtp_server: smtp.gmail.com:587
+mail_from: username@gmail.com
+template_path: template/
+log_url: 'http://logs.openstack.org/periodic'
+emails:
+  - mail: 'arxcruz@gmail.com'
+    name: 'Arx Cruz'
+    jobs:
+      - gate-tripleo-ci-centos-7-ovb-ha-oooq
+      - gate-tripleo-ci-centos-7-ovb-containers-oooq
+template: template.html
+known_failures:
+    - test: 'tempest.scenario.test_volume_boot_pattern.*'
+      reason: 'http://bugzilla.redhat.com/1272289'
+```
+
+In this case, the user will not receive the email if the job name is not
+gate-tripleo-ci-centos-7-ovb-ha-oooq or
+gate-tripleo-ci-centos-7-ovb-containers-oooq.
+You can also set a regular expression with the failure test you are interested.
+In this case, you will only receive the email, if the regex matches a test that
+fails for that particular job:
+
+```yaml
+mail_username: username
+mail_password: password
+smtp_server: smtp.gmail.com:587
+mail_from: username@gmail.com
+template_path: template/
+log_url: 'http://logs.openstack.org/periodic'
+emails:
+  - mail: 'arxcruz@gmail.com'
+    name: 'Arx Cruz'
+    jobs:
+      - gate-tripleo-ci-centos-7-ovb-ha-oooq
+      - gate-tripleo-ci-centos-7-ovb-containers-oooq
+    regex:
+      - 'tempest.api.object_storage.test_container_quotas.ContainerQuotasTest'
+      - 'tempest.scenario.test_network_basic_ops.TestNetworkBasicOps.test_mtu_sized_frames'
+template: template.html
+known_failures:
+    - test: 'tempest.scenario.test_volume_boot_pattern.*'
+      reason: 'http://bugzilla.redhat.com/1272289'
+```
+
+In this example, the user will only receive an email if the job
+gate-tripleo-ci-centos-7-ovb-ha-oooq or
+gate-tripleo-ci-centos-7-ovb-containers-oooq has a test failure that matches
+the regex.
+
+So, the order is:
+
+1. If there's no jobs list the user will receive all the emails.
+1. If there's a jobs list the user will receive emails only for that jobs.
+1. If there's a regex the user will only receive emails when a regex matches.
+1. If there's a job list and a regex list the user will only receive an email
+   when both matches.
+
 HTML template example
 ---------------------
 
