@@ -52,6 +52,14 @@ enabled=1
 priority=30
 EOF
 
+cat<<EOF >quickstart-centos-base.repo
+[quickstart-centos-base]
+name=quickstart-centos-base
+baseurl=${NODEPOOL_CENTOS_MIRROR}/7/os/x86_64/
+gpgcheck=0
+enabled=1
+EOF
+
 cat<<EOF >quickstart-centos-updates.repo
 [quickstart-centos-updates]
 name=quickstart-centos-updates
