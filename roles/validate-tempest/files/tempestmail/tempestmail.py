@@ -135,7 +135,8 @@ class Mail(object):
 
         else:
             self.log.debug('No failures send email to everybody')
-            addresses = [m.get('mail') for m in self.config.emails]
+            addresses = [m.get('mail') for m in self.config.emails
+                         if not m.get('fail_only')]
 
         data['has_errors'] = has_errors
 
@@ -353,10 +354,12 @@ class TempestMailCmd(object):
 
         for e in config.get('emails'):
             regex = [re.compile(r) for r in e.get('regex', [])]
+
             newconfig.emails.append({'name': e.get('name'),
                                      'mail': e.get('mail'),
                                      'jobs': e.get('jobs', []),
-                                     'regex': regex})
+                                     'regex': regex,
+                                     'fail_only': e.get('fail_only', False)})
         for t in config.get('known_failures', []):
             known_failures.append({'test': t.get('test'),
                                    'reason': t.get('reason')})
