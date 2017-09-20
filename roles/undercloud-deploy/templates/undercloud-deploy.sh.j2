@@ -84,6 +84,7 @@ openstack overcloud container image prepare \
     -e {{overcloud_templates_path}}/environments/services-docker/zaqar.yaml \
     -e {{overcloud_templates_path}}/environments/docker.yaml \
 {% endif %}
+    -r {{undercloud_roles_data}} \
     --namespace {{ undercloud_docker_registry_host }}:{{ undercloud_docker_registry_port }}/{{ undercloud_docker_registry_namespace }}
 {% if undercloud_docker_registry_insecure|bool %}
 echo "  DockerInsecureRegistryAddress: {{ undercloud_docker_registry_host }}:{{ undercloud_docker_registry_port }}" >> \
@@ -97,6 +98,7 @@ openstack overcloud container image prepare \
     -e {{overcloud_templates_path}}/environments/services-docker/zaqar.yaml \
     -e {{overcloud_templates_path}}/environments/docker.yaml \
 {% endif %}
+    -r {{undercloud_roles_data}} \
     --env-file {{ working_dir }}/undercloud-containers-default-parameters.yaml
 {% endif %}
 
@@ -112,6 +114,9 @@ undercloud_local_ip={{ hostvars['undercloud'].undercloud_ip }}
 
 ## * Deploy the undercloud
 ## ::
+
+# TODO(bogdando) add '-r {{undercloud_roles_data}}' once the client
+# starts supporting 'openstack undercloud deploy -r' option.
 
 sudo openstack undercloud deploy \
     --templates={{overcloud_templates_path}} \
