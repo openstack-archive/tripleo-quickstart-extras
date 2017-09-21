@@ -134,7 +134,7 @@
 
     - name: Collect sosreport
       command: >
-        sosreport --batch
+        sosreport {{ artcl_sosreport_options }}
       when: artcl_collect_sosreport|bool
 
     - name: Collect delorean logs

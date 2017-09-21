@@ -70,6 +70,7 @@ artcl_use_zuul_swift_upload: false
 artcl_zuul_swift_upload_path: /usr/local/bin
 
 artcl_collect_sosreport: false
+artcl_sosreport_options: "--batch"
 
 ## Doc generation specific vars
 artcl_gen_docs: false
