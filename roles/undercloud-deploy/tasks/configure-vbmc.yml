@@ -31,6 +31,8 @@
       [log]
       logfile=/var/log/virtualbmc/virtualbmc.log
       debug=True
+      [ipmi]
+      session_timout=20
   become: true
 
 # the non_root_user id is not in the facts of the virthost when
