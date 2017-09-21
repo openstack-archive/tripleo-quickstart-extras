@@ -39,6 +39,7 @@ network_environment_args:
   TenantAllocationPools: [{"start": "172.16.0.10", "end": "172.16.0.250"}]
   DnsServers: "{{ overcloud_dns_servers }}"
   PublicVirtualFixedIPs: [{ "ip_address": "{{ undercloud_external_network_cidr|nthhost(5) }}" }]
+  NeutronGlobalPhysnetMtu: 1350
 
 # baremetal settings
 overcloud_nodes:
