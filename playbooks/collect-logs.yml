@@ -1,7 +1,7 @@
 ---
 
 - name: Collect logs
-  hosts: all:!localhost
+  hosts: all:!localhost:!127.0.0.2
   roles:
     - collect-logs
 
