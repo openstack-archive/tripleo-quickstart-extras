@@ -1,6 +1,3 @@
-- include: update-cloud-init.yml
-  when: enable_tls_everywhere|bool
-
 - include: create-scripts.yml
   tags:
     - undercloud-scripts
