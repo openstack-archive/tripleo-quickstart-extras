@@ -148,14 +148,12 @@ ${TEMPESTCONF} --out etc/tempest.conf \
   --deployer-input ~/{{ tempest_deployer_input_file }} \
   --image {{ tempest_test_image_path }} \
   --debug --create \
+  {% if release in ['newton','ocata', 'pike'] %}
   identity.uri $OS_AUTH_URL \
-  {% if release in ['newton','ocata'] %}
   identity.admin_password $OS_PASSWORD \
   identity.admin_username $OS_USERNAME \
   compute.allow_tenant_isolation true \
   {% else %}
-  auth.admin_password $OS_PASSWORD \
-  auth.admin_username $OS_USERNAME \
   auth.use_dynamic_credentials true \
   {% endif %}
   compute-feature-enabled.attach_encrypted_volume False \
