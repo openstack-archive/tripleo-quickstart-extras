@@ -25,13 +25,13 @@
     - name: Fetch HTML results
       fetch:
         src: "{{ working_dir }}/tempest/tempest.html"
-        dest: "{{ lookup('env', 'PWD') }}/tempest.html"
+        dest: "{{ local_working_dir }}/tempest.html"
         flat: yes
 
     - name: Fetch nosetests results
       fetch:
         src: "{{ working_dir }}/tempest/tempest.xml"
-        dest: "{{ lookup('env', 'PWD') }}/nosetests.xml"
+        dest: "{{ local_working_dir }}/nosetests.xml"
         flat: yes
 
     - name: Copying tempestmail files
