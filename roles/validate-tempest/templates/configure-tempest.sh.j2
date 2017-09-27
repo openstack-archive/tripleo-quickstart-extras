@@ -5,10 +5,7 @@
 
 {% if tempest_overcloud|bool %}
 ## ::
-{% if release in ['newton', 'ocata'] or 'mistral' in tempest_plugins %}
-# Currently mistral does not works with Identity V3 api
-# FIXME(chkumar): https://bugs.launchpad.net/tripleo/+bug/1711083
-# Tracking bug for the same.
+{% if release in ['newton', 'ocata', 'pike'] %}
 source {{ working_dir }}/overcloudrc
 {% else %}
 source {{ working_dir }}/overcloudrc.v3
