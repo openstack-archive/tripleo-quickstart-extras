@@ -61,9 +61,13 @@ source {{ working_dir }}/stackrc
 public_net_id=$(neutron net-show {{ undercloud_public_net_name }} -f value -c id)
 {% endif %}
 
-## * Ensure heat_stack_owner role is present
+## * Ensure creator and Member role is present
+## * Member role is needed for Heat tests.
+## * creator role is needed for Barbican for running volume encryption tests.
 ## ::
-openstack role show heat_stack_owner > /dev/null || openstack role create heat_stack_owner
+openstack role show Member > /dev/null || openstack role create Member
+
+openstack role show creator > /dev/null || openstack role create creator
 
 ## * Generate a tempest configuration
 ## ::
@@ -170,7 +174,7 @@ ${TEMPESTCONF} --out etc/tempest.conf \
   {% endfor %}
   {% endif %}
   compute-feature-enabled.console_output true \
-  orchestration.stack_owner_role heat_stack_owner
+  orchestration.stack_owner_role Member
 
 ### --stop_docs
 
