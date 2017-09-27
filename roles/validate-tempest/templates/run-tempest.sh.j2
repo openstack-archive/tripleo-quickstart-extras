@@ -11,13 +11,13 @@
 {% if tempest_format == "venv" %}
 export OSTESTR='{{ working_dir }}/tempest_git/tools/with_venv.sh ostestr'
 export TEMPESTCLI='{{ working_dir }}/tempest_git/tools/with_venv.sh tempest'
-## List Tests
-{{ working_dir }}/tempest_git/tools/with_venv.sh ostestr -l
 {% elif tempest_format == "packages" %}
 export OSTESTR='ostestr'
 export TEMPESTCLI='/usr/bin/tempest'
-ostestr -l
 {% endif %}
+
+## List tests
+$TEMPESTCLI run -l
 
 ## List tempest plugins
 $TEMPESTCLI list-plugins
