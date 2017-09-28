@@ -169,6 +169,7 @@ ${TEMPESTCONF} --out etc/tempest.conf \
   {{ key }} {{ value }} \
   {% endfor %}
   {% endif %}
+  compute-feature-enabled.console_output true \
   orchestration.stack_owner_role heat_stack_owner
 
 ### --stop_docs
