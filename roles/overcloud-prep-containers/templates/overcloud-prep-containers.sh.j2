@@ -12,14 +12,49 @@ set -eux
 ## Prepare Your Environment
 ## ------------------------
 
+## * Add an additional insecure registry if needed
+{% if additional_insecure_registry|bool %}
+if egrep -q "^INSECURE_REGISTRY=.*{{docker_registry_host}}.*" /etc/sysconfig/docker; then
+    echo "/etc/sysconfig/docker contains the correct settings"
+else
+    echo "updating /etc/sysconfig/docker for internal registry"
+    sudo sed -i -e "s/^INSECURE_REGISTRY=\"\(.*\)\"/INSECURE_REGISTRY=\"\1 --insecure-registry {{ docker_registry_host }}\"/g" /etc/sysconfig/docker
+    sudo systemctl restart docker
+fi
+{% endif %}
+
+## * get build id
+## ::
+{% if get_build_command is defined: %}
+BUILD_ID={{ get_build_command }}
+{% else %}
+BUILD_ID={{ docker_image_tag }}
+{% endif %}
+
 ## * Populate the docker registry
 ## ::
 
 openstack overcloud container image prepare \
     --images-file {{ working_dir }}/overcloud_containers.yaml \
     {{ prepare_service_env_args }} \
-    --namespace {{ docker_registry_host }}/{{ docker_registry_namespace }} \
-    --tag {{ docker_image_tag }} \
+    --namespace {{ docker_registry_namespace }} \
+    --tag $BUILD_ID \
+{% if docker_prep_prefix is defined %}
+    --prefix {{ docker_prep_prefix}} \
+{% endif %}
+{% if docker_prep_suffix is defined %}
+    --suffix {{ docker_prep_suffix }} \
+{% endif %}
+{% if docker_ceph_namespace is defined %}
+    --set ceph_namespace={{ docker_ceph_namespace }} \
+{% endif %}
+{% if docker_ceph_image is defined %}
+    --set ceph_image={{ docker_ceph_image }} \
+{% endif %}
+{% if docker_ceph_tag is defined %}
+    --set ceph_tag={{ docker_ceph_tag }} \
+{% endif %}
+    --pull-source  {{ docker_registry_host }} \
     --push-destination {{ local_docker_registry_host }}:8787
 
 openstack overcloud container image upload --verbose --config-file {{ working_dir }}/overcloud_containers.yaml
@@ -41,7 +76,22 @@ openstack overcloud container image prepare \
     --env-file {{ working_dir }}/containers-default-parameters.yaml \
     {{ prepare_service_env_args }} \
     --namespace {{ local_docker_registry_host }}:8787/{{ docker_registry_namespace }} \
-    --tag {{ docker_image_tag }}
+{% if docker_prep_prefix is defined %}
+    --prefix={{ docker_prep_prefix}} \
+{% endif %}
+{% if docker_prep_suffix is defined %}
+    --suffix={{ docker_prep_suffix }} \
+{% endif %}
+{% if docker_ceph_namespace is defined %}
+    --set ceph_namespace={{ docker_ceph_namespace }} \
+{% endif %}
+{% if docker_ceph_image is defined %}
+    --set ceph_image={{ docker_ceph_image }} \
+{% endif %}
+{% if docker_ceph_tag is defined %}
+    --set ceph_tag={{ docker_ceph_tag }} \
+{% endif %}
+    --tag $BUILD_ID
 
 echo "  DockerInsecureRegistryAddress: {{ local_docker_registry_host }}:8787" >> \
     {{ working_dir }}/containers-default-parameters.yaml
