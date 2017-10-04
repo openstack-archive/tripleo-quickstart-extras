@@ -181,7 +181,7 @@
   set_fact:
     container_args: >-
       -e {{ overcloud_templates_path }}/environments/docker.yaml
-      {% if enable_pacemaker|bool %}
+      {% if enable_pacemaker|bool or osp_release is defined%}
       -e {{ overcloud_templates_path }}/environments/docker-ha.yaml
       {% endif %}
       -e {{ working_dir }}/containers-default-parameters.yaml
