@@ -56,11 +56,8 @@ hostname_correction: true
 
 # adjust mtus
 step_adjust_mtu: true
-mtu: 1350
-mtu_interface:
-    - eth0
-    - eth1
-    - eth2
+undercloud_local_mtu: "{{ mtu }}"
+overcloud_neutron_global_physnet_mtu: "{{ mtu }}"
 
 # set up external interface
 external_interface: eth2

@@ -227,3 +227,11 @@
     swap_args: >-
       -e {{ overcloud_templates_path }}/environments/enable-swap-partition.yaml
   when: enable_swap|bool and swap_type == 'partition'
+
+- name: set network_args for mtu settings
+  set_fact:
+    network_args: >-
+      {{ network_args }}
+      -e {{ working_dir }}/overcloud_network_params.yaml
+  when:
+    - overcloud_neutron_global_physnet_mtu is defined

@@ -44,6 +44,12 @@ local_ip = {{undercloud_local_ip|default(
 network_gateway = {{undercloud_network_gateway|default(
     undercloud_network_cidr|nthhost(1))}}
 
+# MTU, set neutron on the undercloud to match mtu of the nics
+# (string value)
+{% if undercloud_local_mtu is defined %}
+local_mtu = {{ undercloud_local_mtu }}
+{% endif %}
+
 {% if release in ['mitaka', 'newton'] %}
 # Virtual IP address to use for the public endpoints of Undercloud
 # services.  Only used if undercloud_service_certficate is set.

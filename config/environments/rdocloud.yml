@@ -29,3 +29,12 @@ overcloud_image_url: http://images.rdoproject.org/{{ release }}/rdo_trunk/{{ dlr
 ipa_image_url: http://images.rdoproject.org/{{ release }}/rdo_trunk/{{ dlrn_hash|default(dlrn_hash_tag) }}/ironic-python-agent.tar
 docker_registry_host: trunk.registry.rdoproject.org
 docker_registry_namespace: "{{ release }}"
+
+mtu: 1350
+mtu_interface:
+    - eth0
+    - eth1
+    - "{% if network_isolation|default(true)|bool %}eth2{% endif %}"
+
+undercloud_local_mtu: "{{ mtu }}"
+overcloud_neutron_global_physnet_mtu: "{{ mtu }}"

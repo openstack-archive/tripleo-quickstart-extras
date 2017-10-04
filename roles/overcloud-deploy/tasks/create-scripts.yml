@@ -48,3 +48,10 @@
   template:
     src: "resource-registry-nic-configs.yaml.j2"
     dest: "{{ working_dir }}/resource-registry-nic-configs.yaml"
+
+- name: Create the overcloud network parameters yaml
+  when:
+    - overcloud_neutron_global_physnet_mtu is defined
+  template:
+    src: "overcloud_network_params.yaml.j2"
+    dest: "{{ working_dir }}/overcloud_network_params.yaml"
