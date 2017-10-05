@@ -52,7 +52,7 @@
   pip:
     name: dlrn
     virtualenv: "{{ build_repo_dir }}/dlrn-venv"
-    state: latest
+    version: 0.4.0
 
 - name: copy the DLRN scripts in the virtualenv to the scripts dir
   shell: "/usr/bin/cp -Rv {{ build_repo_dir }}/dlrn-venv/share/dlrn/scripts {{ build_repo_dir }}/DLRN/"
