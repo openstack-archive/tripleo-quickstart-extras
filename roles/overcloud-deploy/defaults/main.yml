@@ -87,7 +87,7 @@ swap_args: ""
 
 deployed_server_overcloud_roles:
   - name: Controller
-    hosts: "$(sed -n 1,1p /etc/nodepool/sub_nodes)"
+    hosts: "$(sed -n 1,1p /etc/nodepool/sub_nodes_private)"
 
 deployed_server_prepare_script: deployed_server_prepare.sh.j2
 deployed_server_prepare_log: "{{ working_dir }}/deployed_server_prepare.txt"

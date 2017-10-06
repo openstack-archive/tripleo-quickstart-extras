@@ -17,3 +17,4 @@ artg_skipped_projects:
   - openstack-dev/grenade
   - openstack-infra/project-config
   - openstack-infra/tripleo-ci
+  - openstack-infra/zuul-jobs
