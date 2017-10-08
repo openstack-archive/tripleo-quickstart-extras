@@ -57,7 +57,7 @@ artcl_readme_file: "{{ artcl_collect_dir }}/README-logs.html"
 artcl_txt_rename: false
 # give up log upload after 30 minutes
 artcl_publish_timeout: 1800
-artcl_artifact_url: "file://{{ lookup('env', 'PWD') }}"
+artcl_artifact_url: "file://{{ local_working_dir }}"
 artcl_full_artifact_url: "{{ artcl_artifact_url }}/{{ lookup('env', 'BUILD_TAG') }}/"
 artcl_use_rsync: false
 artcl_rsync_use_daemon: false
