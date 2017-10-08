@@ -87,17 +87,18 @@
   when: release not in ['liberty', 'mitaka', 'newton']
   copy:
     mode: 0664
-    dest: "/usr/lib/systemd/system/virtualbmc.service"
+    dest: "/usr/lib/systemd/system/virtualbmc@.service"
     content: |
       [Unit]
-      Description=VirtualBMC service
+      Description=VirtualBMC %i service
       After=network.target
 
       [Service]
-      Type=oneshot
-      ExecStart=/bin/bash -c 'for bmc in $(ls /root/.vbmc/); do vbmc start $bmc; done'
-      ExecStop=/bin/bash -c 'for bmc in $(ls /root/.vbmc/); do vbmc stop $bmc; done'
-      RemainAfterExit=yes
+      Type=forking
+      PIDFile=/root/.vbmc/%i/pid
+      ExecStart=/bin/vbmc start %i
+      ExecStop=/bin/vbmc stop %i
+      Restart=always
 
       [Install]
       WantedBy=multi-user.target
@@ -106,8 +107,9 @@
 - name: Start the Virtual BMCs
   when: release not in ['liberty', 'mitaka', 'newton']
   service:
-    name: virtualbmc
+    name: "virtualbmc@{{ item.name }}"
     state: started
     enabled: true
+  with_items: "{{ overcloud_nodes }}"
   become: true
 
