@@ -40,6 +40,7 @@ network_environment_args:
   DnsServers: "{{ overcloud_dns_servers }}"
   PublicVirtualFixedIPs: [{ "ip_address": "{{ undercloud_external_network_cidr|nthhost(5) }}" }]
   BondInterfaceOvsOptions: bond_mode=balance-slb
+  NeutronGlobalPhysnetMtu: 1350
 
 # baremetal settings
 overcloud_nodes:
