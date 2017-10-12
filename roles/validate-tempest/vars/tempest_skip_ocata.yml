@@ -60,3 +60,6 @@ known_failures:
     reason: 'TODO(arxcruz) New test, need investigation'
   - test: 'neutron.tests.tempest.api.test_revisions.TestRevisions'
     reason: 'TODO(arxcruz) New test, need investigation'
+  - test: 'tempest.api.orchestration.stacks.test_neutron_resources.NeutronResourcesTestJSON'
+    reason: time out
+    lp: 'https://bugs.launchpad.net/tripleo/+bug/1723137'
