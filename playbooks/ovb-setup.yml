@@ -1,0 +1,34 @@
+---
+- include: ovb-create-stack.yml
+
+- name: Setup the undercloud
+  hosts: undercloud
+  gather_facts: no
+  vars:
+    ansible_user: root
+  roles:
+    - undercloud-setup
+
+- name:  Inventory the undercloud instance
+  hosts: localhost
+  gather_facts: yes
+  roles:
+    - tripleo-inventory
+
+- name: Fetch the overcloud images
+  hosts: undercloud
+  gather_facts: no
+  roles:
+   - fetch-images
+
+- name: Build test packages using DLRN
+  hosts: undercloud
+  roles:
+    - {role: build-test-packages, when: build_test_packages|default(false)|bool }
+
+- name: Install the built package on the undercloud
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - {role: install-built-repo, when: build_test_packages|default(false)|bool }
+

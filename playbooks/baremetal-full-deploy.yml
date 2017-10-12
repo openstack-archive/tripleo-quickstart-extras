@@ -2,7 +2,7 @@
 - include: baremetal-prep-virthost.yml
   when: undercloud_type == 'virtual' and environment_type is defined
 
-- include: ovb-create-stack.yml
+- include: ovb-setup.yml
   when: undercloud_type == 'ovb'
 
 - include: baremetal-quickstart-extras.yml
