@@ -1,0 +1,49 @@
+---
+- name: Decide whether we need to build images
+  hosts: undercloud
+  vars:
+    # We always want to build images when we have changes in this
+    # list becuase these repos can affect the image building itelf
+    # This list is overridable via the "always_build_list" var if
+    # needed.
+    default_projects_need_build_list:
+      - diskimage-builder
+      - tripleo-image-elements
+      - tripleo-puppet-elements
+      - instack-undercloud
+      - python-tripleoclient
+      - tripleo-common
+  tasks:
+    # The next two tasks make the list of ZUUL_CHANGES look like our build list
+    # after we cleanup the extra stuff there, we can just intersect the two
+    # lists in order to match.
+    - name: Cleanup front of ZUUL_CHANGES
+      set_fact:
+        zuul_changes: "{{ lookup('env', 'ZUUL_CHANGES')|regex_replace('openstack/', '') }}"
+
+    - name: Cleanup end of ZUUL_CHANGES
+      set_fact:
+        zuul_changes: "{{ zuul_changes|regex_replace(':[a-z]*:refs/changes/\\d{2}/\\d{6}/\\d{1}','') }}"
+
+    - name: Split zuul_changes to a list
+      set_fact:
+        zuul_changes: "{{ zuul_changes.split('^') }}"
+
+    - name: compare zuul_changes list to our always_build_list
+      set_fact:
+        projects_need_build: "{{ zuul_changes | intersect(projects_need_build_list|default(default_projects_need_build_list)) }}"
+
+    - name: Default to using cached images
+      set_fact:
+        to_build: false
+
+    - name: Build images when we have a change in the always build list
+      set_fact:
+        to_build: true
+      when: projects_need_build != []
+
+    - name: Always build images in the periodic jobs
+      set_fact:
+        to_build: true
+      when: "{{ lookup('env', 'PERIODIC')|default('0')|int == 1 }}"
+
