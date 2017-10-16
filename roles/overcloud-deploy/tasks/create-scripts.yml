@@ -19,6 +19,12 @@
     src: "neutronl3ha.yaml.j2"
     dest: "{{ working_dir }}/neutronl3ha.yaml"
 
+- name: Create config-downlad environment
+  when: step_tripleo_config_download|bool
+  template:
+    src: "config-download.yaml.j2"
+    dest: "{{ working_dir }}/config-download.yaml"
+
 - name: Write composable roles file
   when: composable_roles|bool
   template:

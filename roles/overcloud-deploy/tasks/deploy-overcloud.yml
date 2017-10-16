@@ -10,3 +10,31 @@
   set_fact:
     # deploy_args end with a newline, remove to make deploy_args_used easier to use
     deploy_args_used: "{{ deploy_args | replace('\n', ' ') }}"
+
+- when: step_tripleo_config_download|bool
+  block:
+    # The config-download workflow is temporary until we have a Mistral workflow,
+    # then we won't need these steps.
+    - name: Cleanup TripleO configuration
+      file:
+        path: "{{ working_dir }}/tripleo-config-download"
+        state: absent
+    - name: Download TripleO configuration
+      shell: >
+        set -o pipefail &&
+        source {{ working_dir }}/stackrc &&
+        tripleo-config-download 2>&1 {{ timestamper_cmd }} > {{ tripleo_config_download_log }}
+
+- when: deploy_steps_ansible|bool
+  block:
+    - name: Add subnodes to known hosts
+      shell: |
+        ssh-keyscan 192.168.24.3 >> ~/.ssh/known_hosts
+    - name: Deploy steps with Ansible
+      shell: >
+        set -o pipefail &&
+        source {{ working_dir }}/stackrc &&
+        tripleo-ansible-inventory --ansible_ssh_user $(whoami) --static-inventory {{ working_dir }}/inventory &&
+        ansible-playbook -i {{ working_dir }}/inventory {{ working_dir }}/tripleo-config-download/tripleo-*-config/deploy_steps_playbook.yaml 2>&1 {{ timestamper_cmd }} > {{ ansible_steps_log }}
+  environment:
+    ANSIBLE_SSH_ARGS: ""

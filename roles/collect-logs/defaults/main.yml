@@ -37,6 +37,10 @@ artcl_collect_list:
   - /home/*/browbeat/results/
   - /usr/share/openstack-tripleo-heat-templates/
   - /tmp/tripleoclient*
+  # The next 2 items are temporary until config-download is executed
+  # from a Mistral workflow (WIP in Queens)
+  - /home/*/inventory
+  - /home/*/tripleo-config-download/
 artcl_exclude_list:
   - /etc/udev/hwdb.bin
   - /etc/puppet/modules

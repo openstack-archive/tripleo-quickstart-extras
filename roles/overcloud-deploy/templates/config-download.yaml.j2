@@ -1,0 +1,14 @@
+resource_registry:
+  OS::TripleO::DeployedServer::ControlPlanePort: /usr/share/openstack-tripleo-heat-templates/deployed-server/deployed-neutron-port.yaml
+
+parameter_defaults:
+  HostnameMap:
+{% for subnode in groups['overcloud'] %}
+    overcloud-controller-0: {{ hostvars[subnode]['ansible_hostname'] }}
+  DeployedServerPortMap:
+    {{ hostvars[subnode]['ansible_hostname'] }}-ctlplane:
+      fixed_ips:
+        - ip_address: 192.168.24.3
+      subnet:
+        - cidr: 24
+{% endfor %}
