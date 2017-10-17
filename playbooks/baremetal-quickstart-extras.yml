@@ -3,7 +3,8 @@
   hosts: undercloud
   gather_facts: yes
   roles:
-    - validate-ipmi
+    - { role: validate-ipmi,
+        when: not use_testenv_broker|default(false)|bool }
 
 - name:  Deploy the undercloud
   hosts: undercloud
