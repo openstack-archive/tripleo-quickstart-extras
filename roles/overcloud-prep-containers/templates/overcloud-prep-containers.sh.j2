@@ -62,6 +62,7 @@ openstack overcloud container image upload --verbose --config-file {{ working_di
 ## ::
 
 openstack overcloud container image prepare \
+    --images-file {{ working_dir }}/overcloud_containers.yaml \
     --env-file {{ working_dir }}/containers-default-parameters.yaml \
     {{ prepare_service_env_args }} \
     --namespace {{ local_docker_registry_host }}:8787/{{ docker_registry_namespace }} \
@@ -81,6 +82,35 @@ openstack overcloud container image prepare \
     --set ceph_tag={{ docker_ceph_tag }} \
 {% endif %}
     --tag $BUILD_ID
+
+{% if update_containers|bool %}
+# See https://github.com/imain/container-check for script and documentation
+
+## * rename the base-os yum repos to disable them. This will speed up the update
+## ::
+CENTOS_REPOS=$(find /etc/yum.repos.d -type f -name "CentOS-*.repo" -o -name "quickstart-centos-*.repo")
+for f in $CENTOS_REPOS ; do
+    sudo mv "$f" "$f"_disabled
+done
+yum clean all
+yum repolist
+
+## * update the containers with yum updates from OpenStack repos.  ( delorean-current, dependent patches built by DLRN )
+## ::
+
+# do not update ceph
+cat overcloud_containers.yaml | grep -v ceph > containers_update.yaml
+container-check -c {{ working_dir }}/containers_update.yaml -u -p {{ container_process_count }}
+
+## * re-enable the base-os yum repos.
+## ::
+DISABLED_REPOS=$(find /etc/yum.repos.d -type f -name "*.repo_disabled")
+for f in $DISABLED_REPOS ; do
+    sudo mv -- "$f" "${f%.repo_disabled}.repo"
+done
+yum clean all
+yum repolist
+{% endif %}
 
 echo "============================="
 echo "Containers default parameters:"

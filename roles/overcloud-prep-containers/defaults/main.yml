@@ -5,3 +5,5 @@ containerized_overcloud: false
 overcloud_prep_containers_script: overcloud-prep-containers.sh.j2
 overcloud_prep_containers_log: overcloud_prep_containers.log
 prepare_service_env_args: -e {{ overcloud_templates_path }}/environments/docker.yaml
+update_containers: false
+container_process_count: 8

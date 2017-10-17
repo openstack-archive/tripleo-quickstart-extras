@@ -1,4 +1,30 @@
 ---
+- when: update_containers|bool
+  block:
+    - name: Install python-setuptools
+      yum:
+        name: python-setuptools
+        state: latest
+      become: true
+
+    - name: easy-install pip
+      command: easy_install pip
+      become: true
+
+    - name: Update pip
+      pip:
+        name: pip
+        state: latest
+        extra_args: --upgrade
+      become: true
+
+    - name: Pip install container-check
+      pip:
+        name: container-check
+        state: latest
+        extra_args: --upgrade
+      become: true
+
 - name: Prepare for the containerized deployment
   shell: >
     set -o pipefail &&

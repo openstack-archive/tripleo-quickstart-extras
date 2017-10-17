@@ -30,6 +30,10 @@ overcloud-prep-containers variables
 * overcloud_prep_containers_log: overcloud_prep_containers.log
 * undercloud_network_cidr: 192.168.24.0/24
 * prepare_service_env_args: -e {{ overcloud_templates_path }}/environments/docker.yaml
+* delete_docker_cache: <false> -- whether to stop Docker, wipe all the Docker data, and restart
+* update_containers: <false> -- whether to run container-check to update containers
+* container_process_count: <8> -- number of concurrent processes to run when updating containers
+
 
 overcloud-prep-config variables
 -------------------------------
