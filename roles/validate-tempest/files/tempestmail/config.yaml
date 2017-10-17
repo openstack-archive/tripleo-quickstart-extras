@@ -29,5 +29,17 @@ emails:
       - 'gate-tripleo-ci-centos-7-scenario001-multinode-oooq'
     regex:
       - 'ceilometer.tests.tempest.scenario.test_telemetry_integration.TestTelemetryIntegration'
+  - mail: 'abregman@redhat.com'
+    name: 'RHOS Networking'
+    fail_only: True
+    jobs:
+      - 'periodic-tripleo-ci-centos-7-ovb-1ctlr_1comp-featureset020-master'
+      - 'periodic-tripleo-ci-centos-7-ovb-1ctlr_1comp-featureset020-pike'
+      - 'periodic-tripleo-ci-centos-7-ovb-1ctlr_1comp-featureset020-ocata'
+    regex:
+      - 'tempest.api.network.*'
+      - 'tempest.scenario.test_network_advanced_server_ops'
+      - 'tempest.scenario.test_network_basic_ops'
+      - 'tempest.scenario.test_network_v6'
+      - 'tempest.scenario.test_security_groups_basic_ops'
 template: template.html
-
