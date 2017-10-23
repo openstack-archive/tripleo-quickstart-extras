@@ -86,10 +86,6 @@ openstack overcloud container image prepare \
 {% endif %}
     -r {{undercloud_roles_data}} \
     --namespace {{ undercloud_docker_registry_host }}:{{ undercloud_docker_registry_port }}/{{ undercloud_docker_registry_namespace }}
-{% if undercloud_docker_registry_insecure|bool %}
-echo "  DockerInsecureRegistryAddress: {{ undercloud_docker_registry_host }}:{{ undercloud_docker_registry_port }}" >> \
-    {{ working_dir }}/undercloud-containers-default-parameters.yaml
-{% endif %}
 {% else %}
 openstack overcloud container image prepare \
 {% if containerized_undercloud|bool %}

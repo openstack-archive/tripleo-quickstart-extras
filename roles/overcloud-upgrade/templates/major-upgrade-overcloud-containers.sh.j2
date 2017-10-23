@@ -37,8 +37,6 @@ openstack overcloud container image prepare \
 
 openstack overcloud container image upload --verbose --config-file {{ working_dir }}/overcloud_upgrade_containers.yaml
 
-echo "  DockerInsecureRegistryAddress: {{ local_docker_registry_host }}:8787" >> \
-    ~/containers-default-parameters.yaml
 {% endif %}
 
 {% if target_upgrade_version in ['pike', 'master'] %}
