@@ -5,6 +5,12 @@
 - include: prepare-slave.yml
   when: use_testenv_broker|default(false)|bool
 
+- name:  Inventory the undercloud instance
+  hosts: localhost
+  gather_facts: yes
+  roles:
+    - tripleo-inventory
+
 - name: Setup the undercloud
   hosts: undercloud
   gather_facts: no
