@@ -42,11 +42,14 @@ for i in $(neutron port-list -c id -f value); do neutron port-delete $i; done
 for i in $(neutron net-list -c id -f value); do neutron net-delete $i; done
 
 neutron net-create {{ public_net_name }} --router:external=True \
+{% if public_physical_network != '' %}
     --provider:network_type {{ public_network_type }} \
     {% if public_segmentation_id != '' %}
     --provider:segmentation_id {{ public_segmentation_id }} \
 {% endif %}
     --provider:physical_network {{ public_physical_network }}
+{% endif %}
+
 
 public_net_id=$(neutron net-show {{ public_net_name }} -f value -c id)
 
