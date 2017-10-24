@@ -3,7 +3,6 @@ parameter_defaults:
     set -e
     pushd /etc/yum.repos.d/
     rm -rf delorean*
-{% if target_upgrade_version == 'master' %}
     sudo yum clean all;
     sudo yum-config-manager --disable "*"
     sudo rm -rf /etc/yum.repos.d/delorean*;
@@ -16,8 +15,8 @@ parameter_defaults:
     export NODEPOOL_BUILDLOGS_CENTOS_PROXY=https://buildlogs.centos.org
     export NODEPOOL_RDO_PROXY=https://trunk.rdoproject.org
     fi
-    rdo_dlrn=`curl --silent ${NODEPOOL_RDO_PROXY}/centos7/current/delorean.repo | grep baseurl | cut -d= -f2`
-    tripleo_dlrn=`curl --silent ${NODEPOOL_RDO_PROXY}/centos7/current-tripleo/delorean.repo | grep baseurl | cut -d= -f2`
+    rdo_dlrn=`curl --silent ${NODEPOOL_RDO_PROXY}/centos7-{{ target_upgrade_version }}/current/delorean.repo | grep baseurl | cut -d= -f2`
+    tripleo_dlrn=`curl --silent ${NODEPOOL_RDO_PROXY}/centos7-{{ target_upgrade_version }}/current-tripleo/delorean.repo | grep baseurl | cut -d= -f2`
     if [[ -z "$rdo_dlrn" || -z "$tripleo_dlrn" ]]; then
     echo "Failed to parse dlrn hash"
     exit 1
@@ -44,15 +43,22 @@ parameter_defaults:
     includepkgs=diskimage-builder,instack,instack-undercloud,os-apply-config,os-collect-config,os-net-config,os-refresh-config,python-tripleoclient,openstack-puppet-modules,openstack-tripleo-*,puppet-*
     EOF
 
-    cat<<EOF >delorean-pike-testing.repo
-    [delorean-pike-testing]
-    name=delorean-pike-testing
-    baseurl=${NODEPOOL_BUILDLOGS_CENTOS_PROXY}/centos/7/cloud/x86_64/openstack-pike/
+    cat<<EOF >delorean-{{ target_upgrade_version }}-testing.repo
+    [delorean-{{ target_upgrade_version }}-testing]
+    name=delorean-{{ target_upgrade_version }}-testing
+    baseurl=${NODEPOOL_BUILDLOGS_CENTOS_PROXY}/centos/7/cloud/x86_64/openstack-{{ target_upgrade_version }}/
     gpgcheck=0
     enabled=1
     priority=30
     EOF
 
+    cat<<EOF >quickstart-centos-base.repo
+    [quickstart-centos-base]
+    name=quickstart-centos-base
+    baseurl=${NODEPOOL_CENTOS_MIRROR}/7/os/x86_64/
+    gpgcheck=0
+    enabled=1
+    EOF
 
     cat<<EOF >quickstart-centos-updates.repo
     [quickstart-centos-updates]
@@ -102,6 +108,5 @@ parameter_defaults:
     sudo rm -rf /etc/yum.repos.d/CentOS-OpenStack-*.repo /etc/yum.repos.d/CentOS-QEMU-EV.repo;
     sudo rm -rf /etc/yum.repos.d/*.rpmsave;
     sudo yum repolist;
-{% endif %}
     popd
     yum clean all
