@@ -73,6 +73,7 @@ set_overcloud_workers: true
 
 cloud_name_args: ""
 network_args: ""
+network_isolation_args: ""
 pacemaker_args: ""
 workers_args: ""
 backup_args: ""
