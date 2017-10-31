@@ -1,0 +1,202 @@
+- name: Fail if no auth is provided
+  fail:
+    msg: 'Please source credential rc file from your tenant on cloud'
+  when: not os_username or not os_password or not os_tenant_name
+  tags:
+    - delete
+
+- name: Check if openstack client is installed
+  shell: command -v openstack 2>/dev/null
+  register: openstack_client_installed
+  tags:
+    - delete
+
+- name: Fail if no openstack client is installed
+  fail:
+    msg: 'Please install openstack client as it is required for running this role'
+  when: openstack_client_installed.rc != 0
+  tags:
+    - delete
+
+- name: Ensure local working dir exists
+  file:
+    dest: "{{ local_working_dir }}"
+    state: directory
+  tags:
+    - delete
+
+- name: Clean log for this role
+  copy:
+    dest: "{{ stack_log }}"
+    content: ''
+  tags:
+    - delete
+
+- include: delete_stack.yml
+  when: remove_previous_stack|bool
+  tags:
+    - delete
+
+- name: Image to use
+  block:
+
+    - name: find image
+      shell: openstack image list --long -f value -c ID  --property latest=centos-7-latest
+      register: image_id_latest
+
+    - name: Set fact for image
+      set_fact:
+        image_id: "{{ image_id_latest.stdout }}"
+
+  when: image_id is not defined
+
+- name: Add keypair
+  shell: >
+    set -o pipefail &&
+    openstack keypair show {{ key_name }} && echo "{{ key_name }} already exists" ||
+    openstack keypair create --public-key {{ key_location }} {{ key_name }} 2>&1 | tee -a {{ stack_log }}
+  environment:
+    OS_USERNAME: "{{ os_username }}"
+    OS_PASSWORD: "{{ os_password }}"
+    OS_TENANT_NAME: "{{ os_tenant_name }}"
+    OS_AUTH_URL: "{{ os_auth_url }}"
+  args:
+    executable: /bin/bash
+
+- name: Create parent template
+  template:
+    src: stack.yaml
+    dest: "{{ local_working_dir }}/multinode_stack.yaml"
+
+- name: Create resources group template
+  template:
+    src: subnode.yaml
+    dest: "{{ local_working_dir }}/subnode.yaml"
+
+- name: Create parameters in environment file for templates
+  template:
+    src: params.yaml.j2
+    dest: "{{ local_working_dir }}/params_multinode.yaml"
+
+- name: Create stack
+  shell: >
+    echo "Executing 'openstack stack create {{ stack_name }} --template {{ local_working_dir }}/multinode_stack.yaml
+    -e {{ local_working_dir }}/params_multinode.yaml &>> {{ stack_log }}'" | tee -a {{ stack_log }};
+    openstack stack create {{ stack_name }} --template {{ local_working_dir }}/multinode_stack.yaml
+    -e {{ local_working_dir }}/params_multinode.yaml &>> {{ stack_log }} || exit 1;
+    export COUNTER=0;
+      while ! openstack stack show {{ stack_name }} | grep CREATE_COMPLETE; do
+        if [ $COUNTER -lt 30 ]; then
+          sleep 10;
+          if openstack stack show {{ stack_name }} | grep FAILED ; then
+            echo "Failed to create OVB stack {{ stack_name }}" | tee -a {{ stack_log }};
+            openstack stack show {{ stack_name }} >> {{ stack_log }} 2>&1;
+            openstack stack failures list --long {{ stack_name }} >> {{ stack_log }} 2>&1 || echo 'Failed to list stack failures' >> {{ stack_log }};
+            exit 0;
+          fi;
+          COUNTER=$((COUNTER+1));
+        fi;
+      done;
+      openstack stack show "{{ stack_name }}" >>  {{ stack_log }};
+  environment:
+    OS_USERNAME: "{{ os_username }}"
+    OS_PASSWORD: "{{ os_password }}"
+    OS_TENANT_NAME: "{{ os_tenant_name }}"
+    OS_AUTH_URL: "{{ os_auth_url }}"
+  args:
+    executable: /bin/bash
+  register: create_stack
+
+- name: Fail if stack failed to create
+  fail:
+    msg: "Failed to create OVB stack {{ stack_name }}, check log: {{ stack_log }}"
+  when: '"Failed to create OVB stack" in create_stack.stdout'
+
+- name: Log
+  debug:
+    msg: "Log from stacks management is in {{ stack_log }}"
+  tags:
+    - delete
+
+- name: Get output from nodes
+  shell: openstack stack output show {{ stack_name }} subnode_ip_pairs -c output_value -f value
+  register: subnode_ips
+
+- name: Add hosts
+  add_host:
+    name: "subnode-{{ item.0 }}"
+    hostname: "{{ item.1.1 }}"
+    groups: "{{ subnode_groups| join(',') }}"
+    ansible_user: centos
+    ansible_host: "{{ item.1.1 }}"
+    ansible_fqdn: "subnode-{{ item.0 }}"
+    ansible_private_key_file: "{{ private_key_location }}"
+    subnode_public_ip: "{{ item.1.1 }}"
+    subnode_private_ip: "{{ item.1.0 }}"
+  with_indexed_items:
+    - "{{ subnode_ips.stdout }}"
+
+- name: Wait for provisioned hosts to become reachable
+  command:
+    ssh -o BatchMode=yes -o "StrictHostKeyChecking=no" centos@{{ hostvars[item].ansible_host }} -i "{{ private_key_location }}"
+  register: result
+  until: result|success
+  retries: 100
+  delay: 5
+  with_items:
+    - "{{ hostvars.keys() }}"
+
+# In case of blank centos image we need to create CI user and update inventory
+- block:
+
+  - name: Setup user
+    user:
+      name: "{{ nodepool_user }}"
+      groups: wheel
+      append: yes
+    become: true
+    delegate_to: "{{ item}}"
+    with_items:
+      - "{{ hostvars.keys() }}"
+
+  - name: Setup keys
+    authorized_key:
+      user: "{{ nodepool_user }}"
+      state: present
+      key: "{{ lookup('file', '{{ key_location }}') }}"
+    become: true
+    become_user: "{{ nodepool_user }}"
+    delegate_to: "{{ item}}"
+    with_items:
+      - "{{ hostvars.keys() }}"
+
+  - name: Allow user to have passwordless sudo
+    lineinfile:
+      dest: /etc/sudoers
+      state: present
+      line: '{{ nodepool_user }} ALL=(ALL) NOPASSWD:ALL'
+      validate: 'visudo -cf %s'
+    become: true
+    delegate_to: "{{ item}}"
+    with_items:
+      - "{{ hostvars.keys() }}"
+
+  - name: Add hosts
+    add_host:
+      name: "subnode-{{ item.0 }}"
+      hostname: "{{ item.1.1 }}"
+      groups: "{{ subnode_groups| join(',') }}"
+      ansible_user: "{{ nodepool_user }}"
+      ansible_host: "{{ item.1.1 }}"
+      ansible_fqdn: "subnode-{{ item.0 }}"
+      ansible_private_key_file: "{{ private_key_location }}"
+      subnode_public_ip: "{{ item.1.1 }}"
+      subnode_private_ip: "{{ item.1.0 }}"
+    with_indexed_items:
+      - "{{ subnode_ips.stdout }}"
+  when: hostvars['subnode-0'].ansible_user != "{{ nodepool_user }}"
+
+- name: Dump hosts to file
+  template:
+    src: multinode_hosts.j2
+    dest: '{{ local_working_dir }}/multinode_hosts'

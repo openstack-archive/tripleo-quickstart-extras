@@ -1,0 +1,62 @@
+heat_template_version: newton
+
+description: >
+  Subnode config
+parameters:
+
+  subnode_flavor:
+    type: string
+    description: Flavor for subnode
+  public_net_name:
+    type: string
+    description: >
+      ID or name of public network for which floating IP addresses will be allocated
+  key_name:
+    type: string
+    description: Name of keypair to assign to servers
+  image:
+    type: string
+    description: Name of image to use for servers
+  name:
+    type: string
+    description: Index for subnodes counting
+  private_net:
+    type: string
+  private_subnet:
+    type: string
+  server_security_group:
+    type: string
+
+resources:
+
+  subnode_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: private_net }
+      fixed_ips:
+        - subnet_id: { get_param: private_subnet }
+      security_groups:
+        - "default"
+        - { get_param: server_security_group }
+
+  subnode_floating_ip:
+    type: OS::Neutron::FloatingIP
+    # depends_on: router_interface, subnode_port
+    properties:
+      floating_network: { get_param: public_net_name }
+      port_id: { get_resource: subnode_port }
+
+  subnode:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: name}
+      image: {get_param: image}
+      flavor: { get_param: subnode_flavor }
+      key_name: { get_param: key_name }
+      networks:
+        - port: { get_resource: subnode_port }
+
+outputs:
+  subnode_ip_pair:
+    description: IP addresses of subnode in network
+    value: { get_attr: [ subnode, networks, {{ private_net_name }} ] }

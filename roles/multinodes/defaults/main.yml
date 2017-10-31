@@ -1,0 +1,32 @@
+os_region: "{{ lookup('env', 'OS_REGION_NAME')|default('regionOne') }}"
+os_tenant: "{{ lookup('env', 'OS_TENANT_ID') }}"
+os_identity_api_version: "{{ lookup('env', 'OS_IDENTITY_API_VERSION')|default(2) }}"
+os_password: "{{ lookup('env', 'OS_PASSWORD') }}"
+os_auth_url: "{{ lookup('env', 'OS_AUTH_URL')|default('https://phx2.cloud.rdoproject.org:13000/v2.0') }}"
+os_username: "{{ lookup('env', 'OS_USERNAME') }}"
+os_tenant_name: "{{ lookup('env', 'OS_TENANT_NAME') }}"
+os_endpoint_type: "{{ lookup('env', 'OS_ENDPOINT_TYPE')|default('publicURL') }}"
+
+prefix: ''
+remove_previous_stack: true
+local_working_dir: "{{ lookup('env', 'HOME') }}/.quickstart"
+stack_log: "{{ local_working_dir }}/{{ prefix }}provision_multinode_stack.log"
+key_name: multinode_admins
+private_key_location: "{{ lookup('env', 'HOME') }}/.ssh/id_rsa"
+key_location: "{{ private_key_location }}.pub"
+# image_id:
+
+stack_name: "{{ prefix }}multinode_stack"
+public_net_name: 38.145.32.0/22
+private_net_name: private_net
+private_net_base: 192.168.54
+private_net_cidr: "{{ private_net_base }}.0/24"
+private_net_gateway: "{{ private_net_base }}.1"
+private_net_pool_start: "{{ private_net_base }}.5"
+private_net_pool_end: "{{ private_net_base }}.150"
+
+subnode_count: 2
+subnode_flavor: m1.large
+subnode_groups:
+  - subnodes
+nodepool_user: zuul
