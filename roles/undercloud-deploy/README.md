@@ -73,8 +73,6 @@ your hacking setup. By defaults it updates nothing, which is backwards compatibl
   containerized undercloud services.
 - `undercloud_docker_registry_port`: <'8787'> -- the container images registry port for the
   custom `undercloud_docker_registry_host`, if defined.
-- `undercloud_docker_registry_insecure`: <'true'> -- defines either the custom
-  `undercloud_docker_registry_host` points to an unsecure or secure registry.
 - `undercloud_docker_registry_namespace`: <`docker_registry_namespace`> -- the
   container images namespace to be used with the custom `undercloud_docker_registry_host`,
   if defined. Defaults to the overcloud `docker_registry_namespace` variable, which in

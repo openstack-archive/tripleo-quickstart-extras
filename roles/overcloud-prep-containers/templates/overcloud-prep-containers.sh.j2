@@ -92,9 +92,6 @@ openstack overcloud container image prepare \
 {% endif %}
     --tag $BUILD_ID
 
-echo "  DockerInsecureRegistryAddress: {{ local_docker_registry_host }}:8787" >> \
-    {{ working_dir }}/containers-default-parameters.yaml
-
 echo "============================="
 echo "Containers default parameters:"
 cat {{ working_dir }}/containers-default-parameters.yaml

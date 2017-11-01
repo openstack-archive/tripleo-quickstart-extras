@@ -10,7 +10,6 @@ network_environment_file: network-environment.yaml.j2
 containerized_undercloud: false
 undercloud_docker_registry_namespace: "{{ docker_registry_namespace|default('tripleoupstream') }}"
 undercloud_docker_registry_port: 8787
-undercloud_docker_registry_insecure: true
 undercloud_install_script: undercloud-install.sh.j2
 
 # defines a custom undercloud roles file should be used with
