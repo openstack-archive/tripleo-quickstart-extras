@@ -91,6 +91,13 @@
     - network_isolation|bool
     - enable_tls_everywhere|bool
 
+- name: set ntp_args
+  set_fact:
+    ntp_args: >-
+      --ntp-server {{ ntp_server }}
+  when:
+    - ntp_server|default('')
+
 - name: enable pacemaker
   set_fact:
     pacemaker_args: >-
