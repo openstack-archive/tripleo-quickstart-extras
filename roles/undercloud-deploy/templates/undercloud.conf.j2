@@ -203,6 +203,18 @@ enable_ui = {{undercloud_enable_ui}}
 # Whether to install Mistral in the Undercloud. (boolean value)
 enable_mistral = {{undercloud_enable_mistral}}
 
+# Whether to install Ironic in the Undercloud. (boolean value)
+enable_ironic = {{undercloud_enable_ironic}}
+
+# Whether to install Ironic-inspector in the Undercloud. (boolean value)
+enable_ironic_inspector = {{undercloud_enable_ironic_inspector}}
+
+# Whether to install Zaqar in the Undercloud. (boolean value)
+enable_zaqar = {{undercloud_enable_zaqar}}
+
+# FIXME(mandre) turn this into ansible variable
+heat_native=true
+
 # Whether to use iPXE for deploy by default. (boolean value)
 ipxe_deploy = {{undercloud_ipxe_deploy}}
 
@@ -229,6 +241,25 @@ ipa_otp = {{undercloud_ipa_otp}}
 docker_registry_mirror = {{undercloud_docker_registry_mirror}}
 {% else %}
 # docker_registry_mirror =
+{% endif %}
+
+# additional env files for undercloud, used with containers
+
+{% if undercloud_container_images_file is defined %}
+container_images_file = {{ undercloud_container_images_file }}
+{% else %}
+#container_images_file = <None>
+{% endif %}
+
+{% if undercloud_custom_env_files is defined %}
+custom_env_files = {{ undercloud_custom_env_files }}
+{% else %}
+#custom_env_files = <None>
+{% endif %}
+
+# Extra config elements.
+{% if undercloud_conf_extra != "" %}
+{{ undercloud_conf_extra }}
 {% endif %}
 
 [auth]
@@ -411,8 +442,4 @@ undercloud_heat_stack_domain_admin_password = {{undercloud_undercloud_heat_stack
 undercloud_swift_hash_suffix = {{undercloud_undercloud_swift_hash_suffix}}
 {% else %}
 #undercloud_swift_hash_suffix = <None>
-{% endif %}
-
-{% if undercloud_conf_extra != "" %}
-{{ undercloud_conf_extra }}
 {% endif %}

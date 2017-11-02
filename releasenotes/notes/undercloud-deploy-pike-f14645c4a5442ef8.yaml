@@ -1,0 +1,5 @@
+---
+deprecations:
+  - |
+    The experimental containerized undercloud deployments driven via
+    `undercloud deploy` CLI is not supported anymore for Pike.

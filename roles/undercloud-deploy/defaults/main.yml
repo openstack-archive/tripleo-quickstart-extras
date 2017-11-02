@@ -1,8 +1,11 @@
 ---
 
 undercloud_config_file: undercloud.conf.j2
+undercloud_install_cli_options: ""
 undercloud_post_install_script: undercloud-install-post.sh.j2
 undercloud_install_log: "{{ working_dir }}/undercloud_install.log"
+undercloud_container_images_file: "{{ working_dir }}/undercloud-containers-default-parameters.yaml"
+undercloud_custom_env_files: "{{ working_dir }}/undercloud-parameter-defaults.yaml"
 
 # default undercloud install method
 # containerized_undercloud is an EXPERIMENTAL FEATURE
@@ -20,10 +23,6 @@ undercloud_roles_data: "{{overcloud_templates_path}}/roles_data_undercloud.yaml"
 # defines extra args and service templates for the undercloud deploy command
 undercloud_extra_args: ""
 undercloud_extra_services_args: >-
-  -e {{overcloud_templates_path}}/environments/services-docker/ironic.yaml
-  -e {{overcloud_templates_path}}/environments/services-docker/ironic-inspector.yaml
-  -e {{overcloud_templates_path}}/environments/services-docker/mistral.yaml
-  -e {{overcloud_templates_path}}/environments/services-docker/zaqar.yaml
   -e {{overcloud_templates_path}}/environments/docker.yaml
 
 # The undercloud can also be deployed with heat
@@ -69,12 +68,15 @@ libvirt_default_network_address: 192.168.122.1
 nameserver_from_virthost: false
 virthost_nameservers: []
 
+undercloud_enable_ironic: true
+undercloud_enable_ironic_inspector: true
 undercloud_enable_mistral: true
 undercloud_enable_monitoring: false
-undercloud_enable_telemetry: true
+undercloud_enable_telemetry: false
 undercloud_enable_tempest: true
 undercloud_enable_ui: true
 undercloud_enable_validations: true
+undercloud_enable_zaqar: true
 undercloud_ipxe_deploy: true
 
 undercloud_undercloud_debug: true

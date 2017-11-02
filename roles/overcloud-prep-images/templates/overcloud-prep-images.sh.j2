@@ -32,8 +32,7 @@ tar xvfp {{ overcloud_full_tar_name }}
 ## * Upload images to glance.
 ## ::
 
-openstack overcloud image upload {% if bash_deploy_ramdisk|bool %}--old-deploy-image{% endif %} {% if whole_disk_images|bool %}--whole-disk{% endif %}
-
+openstack overcloud image upload --http-boot=/var/lib/ironic/httpboot {% if bash_deploy_ramdisk|bool %}--old-deploy-image{% endif %} {% if whole_disk_images|bool %}--whole-disk{% endif %}
 {% endif %}
 
 {% if step_glance_upload|bool %}

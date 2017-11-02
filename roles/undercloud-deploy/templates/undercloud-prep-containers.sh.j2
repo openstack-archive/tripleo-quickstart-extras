@@ -3,18 +3,11 @@
 set -eux
 
 ### --start_docs
-## Deploying the undercloud
-## ========================
+## Prepare the undercloud for deploying the containerized compute node
+## ===================================================================
 
 ## .. note:: In progress documentation is available at https://github.com/dprince/undercloud_containers/blob/master/doit.sh
 ## ::
-
-## * Export the required environment variables.
-## ::
-
-{% for var in (undercloud_env_vars|default([])) %}
-export {{ var }}
-{% endfor %}
 
 ## * get build id
 ## ::
@@ -24,26 +17,12 @@ BUILD_ID={{ get_build_command }}
 BUILD_ID={{ undercloud_docker_image_tag }}
 {% endif %}
 
-## * Set the local ip used for the undercloud install
+## * Generate {{ working_dir }}/undercloud-containers-default-parameters.yaml
 ## ::
 
-undercloud_local_ip={{ hostvars['undercloud'].undercloud_ip }}
-
-## * Deploy the undercloud
-## ::
-
-# TODO(bogdando) add '-r {{undercloud_roles_data}}' once the client
-# starts supporting 'openstack undercloud deploy -r' option.
-
-sudo openstack undercloud deploy \
-    --heat-native \
-    --templates={{overcloud_templates_path}} \
-    --local-ip=$undercloud_local_ip \
-{% if undercloud_cloud_domain is defined %}
-    --local-domain={{ undercloud_cloud_domain }} \
-{% endif %}
-    -e {{ working_dir }}/undercloud-parameter-defaults.yaml \
-{% if containerized_undercloud|bool %}
+openstack overcloud container image prepare \
+    --output-env-file {{ working_dir }}/undercloud-containers-default-parameters.yaml \
+    --template-file /usr/share/openstack-tripleo-common/container-images/overcloud_containers.yaml.j2 \
 {% if undercloud_enable_mistral|bool %}
     -e {{overcloud_templates_path}}/environments/services-docker/mistral.yaml \
 {% endif %}
@@ -62,14 +41,17 @@ sudo openstack undercloud deploy \
     -e {{overcloud_templates_path}}/environments/services-docker/undercloud-panko.yaml \
     -e {{overcloud_templates_path}}/environments/services-docker/undercloud-ceilometer.yaml \
 {% endif %}
-    -e {{ working_dir }}/undercloud-containers-default-parameters.yaml \
-{% endif %}
 {% if undercloud_extra_services_args %}
     {{ undercloud_extra_services_args }} \
 {% endif %}
-{% if undercloud_extra_args %}
-    {{ undercloud_extra_args }} \
-{% endif %}
-    -e {{ working_dir }}/hieradata-overrides-t-h-t-undercloud.yaml
+    -r {{undercloud_roles_data}} \
+    --namespace {{ undercloud_docker_registry_host }}{% if undercloud_docker_registry_port is defined %}:{{ undercloud_docker_registry_port }}{% endif%}/{{ undercloud_docker_registry_namespace }} \
+    --tag $BUILD_ID
+
+echo "============================="
+echo "Containers default parameters:"
+cat {{ working_dir }}/undercloud-containers-default-parameters.yaml
+echo "============================="
+
 
 ### --stop_docs

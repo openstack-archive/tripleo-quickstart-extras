@@ -73,3 +73,9 @@
     src: undercloud-parameter-defaults.yaml.j2
     dest: "{{ working_dir }}/undercloud-parameter-defaults.yaml"
     mode: 0600
+
+- name: Create the undercloud prep containers script
+  template:
+    src: undercloud-prep-containers.sh.j2
+    dest: "{{ working_dir }}/undercloud-prep-containers.sh"
+    mode: 0755

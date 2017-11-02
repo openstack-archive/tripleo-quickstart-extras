@@ -25,7 +25,7 @@ fi
 
 ## * get build id
 ## ::
-{% if get_build_command is defined: %}
+{% if get_build_command is defined %}
 BUILD_ID={{ get_build_command }}
 {% else %}
 BUILD_ID={{ docker_image_tag }}

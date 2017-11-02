@@ -33,8 +33,7 @@ user sessions to provide greater flexixiblity to our users. ** additional docume
 http://docs.openstack.org/developer/tripleo-quickstart/accessing-libvirt.html
 - `undercloud_conf_extra`: <''> -- extra options to be added to ~/undercloud.conf
 - `undercloud_extra_args`: <''> -- extra options for undercloud deploy command.
-- `undercloud_update_packages`: <'null'> -- a string with a list of packages to update as dependencies for
-your hacking setup. By defaults it updates nothing, which is backwards compatible.
+- `undercloud_install_cli_options`: <''> -- extra options for undercloud install command.
 - `undercloud_enable_mistral`: <'true'> -- sets up the 'enable_mistral' option
   in undercloud.conf.
 - `undercloud_enable_monitoring`: <'false'> -- sets up the 'enable_monitoring'
@@ -83,9 +82,17 @@ your hacking setup. By defaults it updates nothing, which is backwards compatibl
 - `undercloud_docker_image_tag`: <`docker_image_tag`> -- tag of docker images used for
   undercloud deployment. Defaults to the value provided for overcloud. Defaults to the
   value provided for overcloud.
+- `undercloud_container_images_file`: <"{{ working_dir }}/undercloud-containers-default-parameters.yaml"> --
+  the environment file with default parameters for containers to use with undercloud install CLI.
 - `undercloud_extra_services_args`: -- additional t-h-t (TripleO heat templates)
   environment files for extra services deployed on containerized underclouds. By default,
-  includes environments for docker, ironic, mistral and zaqar containerized services.
+  includes environments for docker. Those are only applied for the `undercloud deploy` CLI and not
+  for the `undercloud install`'s `undercloud.conf`. Use `undercloud_custom_env_files` for the latter.
+- `undercloud_custom_env_files`: <"{{ working_dir }}/undercloud-parameter-defaults.yaml"> --
+  custom t-h-t env files for the `undercloud install`'s `undercloud.conf` interface. By default,
+  it provides the default parameters generated from `undercloud_resource_registry_args` and
+  `undercloud_network_environment_args`. For the `undercloud deploy`, use
+  `undercloud_extra_services_args` instead.
 
 Role Network Variables
 ----------------------
@@ -201,21 +208,6 @@ Also note that you should normaly rely on the openstack-tripleo-heat-templates
 package. The custom t-h-t repo vars may break that package and should be used with
 caution.
 
-You can as well specify a list of the packages to be updated to the most
-recent versions. For example:
-
-```yaml
-undercloud_update_packages: >-
-  openstack-tripleo-common
-  openstack-tripleo-heat-templates
-  puppet-tripleo
-  python-tripleoclient
-  openstack-heat-agents
-```
-
-Or use the ``undercloud_update_packages: "'*'"`` to update all packages
-(may take a long).
-
 Note, checkout/install steps for the remaining yet unpackaged custom changes
 like dev branches for puppet modules, tripleo client, heat agent hooks, need
 to be covered in the custom ``undercloud-install.sh`` script body (rendered
@@ -228,18 +220,19 @@ example you may want to deploy:
  * containerized Keystone,
  * optional containerized Etcd,
 
-with disabled telemetry, docker images from `docker.io/tripleomaster`,
+with disabled telemetry, default docker images from `docker.io` namespace,
 debug logs for services and puppet, given a decent timeout, and keeping
 the ephemeral undercloud heat agent running for debug purposes:
 
 ```yaml
-undercloud_extra_args: >-
+undercloud_extra_services_args: >-
   -e {{overcloud_templates_path}}/environments/disable-telemetry.yaml
   -e {{overcloud_templates_path}}/environments/docker-minimal.yaml
   -e {{overcloud_templates_path}}/environments/services-docker/etcd.yaml
   -e {{overcloud_templates_path}}/environments/services/octavia.yaml
   -e {{overcloud_templates_path}}/environments/debug.yaml
   -e {{overcloud_templates_path}}/environments/config-debug.yaml
+undercloud_extra_args: >-
   --timeout 60
   --keep-running
 ```
@@ -256,7 +249,6 @@ resource_registry:
 
 parameter_defaults:
   DockerNamespace: tripleomaster
-  DockerNamespaceIsRegistry: false
   ComputeServices: {}
   SwiftCeilometerPipelineEnabled: false
 ```
@@ -303,19 +295,14 @@ And an example playbook to call the role is:
     undercloud_install_script: undercloud-deploy.sh.j2
     overcloud_templates_repo: https://github.com/johndoe/tripleo-heat-templates
     overcloud_templates_branch: dev
-    undercloud_update_packages: >-
-      openstack-tripleo-common
-      openstack-tripleo-heat-templates
-      puppet-tripleo
-      python-tripleoclient
-      openstack-heat-agents
-    undercloud_extra_args: >-
+    undercloud_extra_services_args: >-
       -e {{overcloud_templates_path}}/environments/disable-telemetry.yaml
       -e {{overcloud_templates_path}}/environments/docker-minimal.yaml
       -e {{overcloud_templates_path}}/environments/services-docker/etcd.yaml
       -e {{overcloud_templates_path}}/environments/services/octavia.yaml
       -e {{overcloud_templates_path}}/environments/debug.yaml
       -e {{overcloud_templates_path}}/environments/config-debug.yaml
+    undercloud_extra_args: >-
       --timeout 60
       --keep-running
   roles:

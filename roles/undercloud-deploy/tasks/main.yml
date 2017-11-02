@@ -3,12 +3,22 @@
   tags:
     - undercloud-install
 
-- include: docker_prep.yml
-  when: containerized_overcloud|bool
+# FIXME(bogdando) remove this when those become installed automagically
+# by python-tripleoclient (in Rocky)
+- name: Install dependencies for a containerized undercloud
+  become: true
+  package:
+    name: python-tripleoclient-heat-installer
   tags:
-    - containers
+    - undercloud-install
+    - undercloud-tripleo-pkg
+  when: containerized_undercloud|bool
 
 - include: create-scripts.yml
+  tags:
+    - undercloud-scripts
+
+- include: undercloud-prep-containers.yml
   tags:
     - undercloud-scripts
 

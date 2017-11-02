@@ -35,3 +35,4 @@ Role Variables
   TripleO deployment
 - `composable_scenario`: <''> -- path to the composable scenarios used at deployment time
 - `upgrade_composable_scenario`: <''> -- path to the composable scenarios used at upgrade time
+- `undercloud_rpm_dependencies`: <'python-tripleoclient'> -- Dependency packages for undercloud deployments.

@@ -1,6 +1,3 @@
-# Base tripleo package
-undercloud_tripleo_pkg: python-tripleoclient
-
 # Additional packages
 undercloud_additional_pkgs:
   - vim

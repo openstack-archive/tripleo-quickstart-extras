@@ -24,6 +24,3 @@ external_interface: eth2
 external_interface_ip: 10.0.0.1
 external_interface_netmask: 255.255.255.0
 custom_nameserver: 8.8.8.8
-
-undercloud_rpm_dependencies: >-
-  python-tripleoclient
