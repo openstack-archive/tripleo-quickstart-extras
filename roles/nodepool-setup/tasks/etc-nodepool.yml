@@ -1,0 +1,69 @@
+---
+- name: Create /etc/nodepool directory
+  file:
+    path: /etc/nodepool
+    state: directory
+    owner: zuul
+    group: zuul
+    mode: 0755
+
+- name: Create /etc/nodepool/node_private
+  lineinfile:
+    create: yes
+    state: present
+    name: /etc/nodepool/node_private
+    owner: zuul
+    group: zuul
+    line: "{{ subnode_private_ip }}"
+
+- name: Create /etc/nodepool/primary_node_private
+  lineinfile:
+    create: yes
+    state: present
+    name: /etc/nodepool/primary_node_private
+    owner: zuul
+    group: zuul
+    line: "{{ hostvars['subnode-0'].subnode_private_ip }}"
+
+- name: Create /etc/nodepool/provider
+  copy:
+    content: |
+      NODEPOOL_PROVIDER=rdo-cloud-tripleo
+      NODEPOOL_CLOUD=fake-cloud
+      NODEPOOL_REGION=FAKE
+      NODEPOOL_AZ=
+    dest: /etc/nodepool/provider
+
+- name: Create /etc/nodepool/sub_nodes
+  lineinfile:
+    create: yes
+    state: present
+    name: /etc/nodepool/sub_nodes
+    line: "{{ hostvars[item].ansible_host }}"
+  with_inventory_hostnames:
+    - subnodes:!subnode-0
+
+- name: Create /etc/nodepool/sub_nodes_private
+  lineinfile:
+    create: yes
+    state: present
+    name: /etc/nodepool/sub_nodes_private
+    line: "{{ hostvars[item].subnode_private_ip }}"
+  with_inventory_hostnames:
+    - subnodes:!subnode-0
+
+- name: Create /etc/nodepool/id_rsa
+  command: >
+    ssh-keygen -N "" -f /etc/nodepool/id_rsa
+  args:
+    creates: /etc/nodepool/id_rsa
+
+- name: Make sure /etc/nodepool/id_rsa is owned by zuul
+  file:
+    path: '/etc/nodepool/id_rsa{{ item }}'
+    owner: zuul
+    group: zuul
+  with_items:
+    - ''
+    - '.pub'
+

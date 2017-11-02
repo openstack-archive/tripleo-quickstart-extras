@@ -1,0 +1,69 @@
+#!/bin/bash -xe
+
+# Ansible managed
+
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+export NODEPOOL_MIRROR_HOST=mirror.ord.rax.openstack.org
+
+# This script generates a descriptor slug to use with AFS, composed of the
+# operating system, its version, and the processor architecture.
+
+# Pull in the os release.
+#   ID is 'fedora', 'centos', 'ubuntu'
+#   VERSION_ID is '23', '7', '14.04'
+#   Nothing else is useful and/or reliable across distros
+. /etc/os-release
+
+################################################################################
+# Generate an OS Release Name
+OS_TYPE=$ID
+
+################################################################################
+# Generate a version string.
+OS_VERSION=$VERSION_ID
+if [ "$OS_TYPE" != "ubuntu" ]; then
+  OS_VERSION=$(echo $OS_VERSION | cut -d'.' -f1)
+fi
+
+################################################################################
+# Get the processor architecture.
+#  x86_64, i386, armv7l, armv6l
+OS_ARCH=$(uname -m)
+
+################################################################################
+# Build the name
+AFS_SLUG="$OS_TYPE-$OS_VERSION-$OS_ARCH"
+AFS_SLUG=$(echo "$AFS_SLUG" | tr '[:upper:]' '[:lower:]')
+
+export AFS_SLUG
+export NODEPOOL_DEBIAN_MIRROR=${NODEPOOL_DEBIAN_MIRROR:-http://$NODEPOOL_MIRROR_HOST/debian}
+export NODEPOOL_PYPI_MIRROR=${NODEPOOL_PYPI_MIRROR:-http://$NODEPOOL_MIRROR_HOST/pypi/simple}
+export NODEPOOL_WHEEL_MIRROR=${NODEPOOL_WHEEL_MIRROR:-http://$NODEPOOL_MIRROR_HOST/wheel/$AFS_SLUG}
+export NODEPOOL_UBUNTU_MIRROR=${NODEPOOL_UBUNTU_MIRROR:-http://$NODEPOOL_MIRROR_HOST/ubuntu}
+export NODEPOOL_CENTOS_MIRROR=${NODEPOOL_CENTOS_MIRROR:-http://$NODEPOOL_MIRROR_HOST/centos}
+export NODEPOOL_DEBIAN_OPENSTACK_MIRROR=${NODEPOOL_DEBIAN_OPENSTACK_MIRROR:-http://$NODEPOOL_MIRROR_HOST/debian-openstack}
+export NODEPOOL_EPEL_MIRROR=${NODEPOOL_EPEL_MIRROR:-http://$NODEPOOL_MIRROR_HOST/epel}
+export NODEPOOL_FEDORA_MIRROR=${NODEPOOL_FEDORA_MIRROR:-http://$NODEPOOL_MIRROR_HOST/fedora}
+export NODEPOOL_OPENSUSE_MIRROR=${NODEPOOL_OPENSUSE_MIRROR:-http://$NODEPOOL_MIRROR_HOST/opensuse}
+export NODEPOOL_CEPH_MIRROR=${NODEPOOL_CEPH_MIRROR:-http://$NODEPOOL_MIRROR_HOST/ceph-deb-hammer}
+export NODEPOOL_UCA_MIRROR=${NODEPOOL_UCA_MIRROR:-http://$NODEPOOL_MIRROR_HOST/ubuntu-cloud-archive}
+export NODEPOOL_MARIADB_MIRROR=${NODEPOOL_MARIADB_MIRROR:-http://$NODEPOOL_MIRROR_HOST/ubuntu-mariadb}
+# Reverse proxy servers
+export NODEPOOL_BUILDLOGS_CENTOS_PROXY=${NODEPOOL_BUILDLOGS_CENTOS_PROXY:-http://$NODEPOOL_MIRROR_HOST:8080/buildlogs.centos}
+export NODEPOOL_DOCKER_REGISTRY_PROXY=${NODEPOOL_DOCKER_REGISTRY_PROXY:-http://$NODEPOOL_MIRROR_HOST:8081/registry-1.docker/}
+export NODEPOOL_RDO_PROXY=${NODEPOOL_RDO_PROXY:-http://$NODEPOOL_MIRROR_HOST:8080/rdo}
+export NODEPOOL_RUGYGEMS_PROXY=${NODEPOOL_RUBYGEMS_PROXY:-http://$NODEPOOL_MIRROR_HOST:8080/rubygems/}
+export NODEPOOL_NPM_REGISTRY_PROXY=${NODEPOOL_NPM_REGISTRY_PROXY:-http://$NODEPOOL_MIRROR_HOST:8080/registry.npmjs}
+export NODEPOOL_TARBALLS_PROXY=${NODEPOOL_TARBALLS_PROXY:-http://$NODEPOOL_MIRROR_HOST:8080/tarballs}
+export NODEPOOL_LXC_IMAGE_PROXY=${NODEPOOL_LXC_IMAGE_PROXY:-$NODEPOOL_MIRROR_HOST:8080/images.linuxcontainers}
