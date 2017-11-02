@@ -14,12 +14,14 @@ set -eux
 
 source {{ working_dir }}/stackrc
 
+{% if overcloud_nodes is defined and overcloud_nodes %}
 FENCING_RULE="-m udp -p udp -m multiport --dports {% for node in overcloud_nodes %}{{ node.virtualbmc_port }}{% if not loop.last %},{% endif %}{% endfor %} -m state --state NEW"
 COMMENT="fencing_access_from_overcloud"
 if ! sudo iptables -nvL INPUT | grep "$COMMENT"; then
     sudo iptables -I INPUT 1 $FENCING_RULE -m comment --comment "$COMMENT" -j ACCEPT
     sudo sh -c 'iptables-save > /etc/sysconfig/iptables'
 fi
+{% endif %}
 
 {% if network_isolation|bool %}
 
