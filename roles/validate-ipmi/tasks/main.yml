@@ -11,6 +11,6 @@
       - name: wait for  script file to exist
         wait_for: path="{{ working_dir }}/validate-overcloud-ipmi-connection.sh"
 
-      - name: Run the validate IPMI overclcoud connection script
+      - name: Run the validate IPMI overcloud connection script
         shell: >
           "{{ working_dir }}"/validate-overcloud-ipmi-connection.sh
