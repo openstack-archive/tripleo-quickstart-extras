@@ -116,6 +116,14 @@
   tags:
     - overcloud-prep-network
 
+- name: Prepare SSL for the overcloud
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - overcloud-ssl
+  tags:
+    - overcloud-ssl
+
 - name: Run tripleo-validations pre-deployment tests
   hosts: undercloud
   gather_facts: no
