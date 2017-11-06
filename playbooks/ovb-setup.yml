@@ -9,6 +9,11 @@
   roles:
     - undercloud-setup
 
+# Small playbook with logic for when to build images or not.
+# The logic there can be completely overridden by setting the
+# to_build variable.
+- include: to-build-or-not-to-build.yml
+
 - name:  Inventory the undercloud instance
   hosts: localhost
   gather_facts: yes
