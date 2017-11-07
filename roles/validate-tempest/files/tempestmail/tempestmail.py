@@ -195,6 +195,8 @@ class TempestMailCmd(object):
                             help='List of skip files')
         parser.add_argument('--output', dest='output',
                             help='Save the email content in a file')
+        parser.add_argument('--log-url', dest='log_url',
+                            help='Set log url')
         self.args = parser.parse_args(args)
 
     def setup_logging(self):
@@ -230,11 +232,13 @@ class TempestMailCmd(object):
                     console = f.read()
                     log_path = os.environ.get('LOG_PATH', None)
                     if log_path:
-                        log_path = urljoin(self.config.default_log_url,
-                                           log_path)
+                        if self.args.log_url:
+                            log_path = urljoin(self.args.log_url, log_path)
+                        else:
+                            log_path = urljoin(self.config.default_log_url,
+                                               log_path)
                     else:
-                        log_path = ('Not available yet. Check '
-                                    'https://logs.openstack.org')
+                        log_path = ('Not available yet.')
                     return (console, datetime.datetime.now(), log_path)
             except IOError:
                 return (None, None, None)

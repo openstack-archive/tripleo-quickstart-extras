@@ -28,6 +28,7 @@ Role Variables
 * `tempest_until_failure`: false/true - default is false, repeat the run again and again until failure occurs
 * `tempest_exit_on_failure`: true/false - whether to exit from role with tempest exit code (default: true)
 * `tempestmail_config`: config.yaml - name of config file for tempestmail script
+* `tempestmail_log_server`: string - Server where the logs are saved
 * `tempest_track_resources`: true/false - whether to save the state of resources after tempest run (default: true)
 * `check_tempest_bugs`: true/false - Will check every bugzilla and launchpad bug in the yaml skip file
 * `tempest_plugins`: list - List of openstack services tempest plugins to be

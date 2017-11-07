@@ -37,6 +37,7 @@ tempest_exit_on_failure: true
 tempest_version_dict: { 'newton': 'newton', 'ocata': '16.0.0', 'pike': '16.1.0', 'master': 'master'}
 tempest_version: "{{ tempest_version_dict[release] }}"
 tempestmail_config: config.yaml
+tempestmail_log_server: http://logs.openstack.org
 tempest_track_resources: true
 tempest_test_image_path: http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
 # A dict containing values to be removed from tempest.conf

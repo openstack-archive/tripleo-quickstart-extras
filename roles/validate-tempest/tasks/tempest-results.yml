@@ -52,6 +52,7 @@
           ./tempestmail.py -c {{ tempestmail_config }} --job
           "{{ lookup('env', 'JOB_NAME')|default('Periodic job', true) }}"
           --file "{{ working_dir }}/{{ tempest_log_file }}"
+          {% if tempestmail_log_url %} --log-url "{{ tempestmail_log_url }}" {% endif %}
           --skip-file "{{ working_dir }}/tempestmail/tempest_skip_{{ release }}.yml"
       args:
         chdir: "{{ working_dir }}/tempestmail"
