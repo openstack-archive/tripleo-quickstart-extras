@@ -2,6 +2,10 @@
 
 ## Validate the undercloud installation
 ## ====================================
+script_return_value=0
+
+## * Install deps for subunit results
+sudo yum install -y python-os-testr
 
 ## * Set the uri of TripleO UI based on SSL usage
 ## ::
@@ -13,27 +17,52 @@ function ui_sanity_check {
     if [ -f "/etc/httpd/conf.d/25-tripleo-ui.conf" ]; then
         if ! curl {{ ui_uri }} 2>/dev/null | grep -q 'TripleO'; then
             echo "ERROR: TripleO UI front page is not loading."
-            exit 1
+            generate-subunit $(date +%s) 10 fail tripleo_ui_test >> {{ working_dir }}/undercloud_sanity.subunit
+            script_return_value=1
         fi
+        generate-subunit $(date +%s) 10 success tripleo_ui_test >> {{ working_dir }}/undercloud_sanity.subunit
     fi
 }
+
+# * Specify the function to test CLI
+## ::
+function citest {
+    test_name=`sed 's/ /_/g' <<< "$@"`
+    "$@"
+    local status=$?
+    if [ $status -ne 0 ]; then
+        echo "error with $1" >&2
+        generate-subunit $(date +%s) 10 fail $test_name >> {{ working_dir }}/undercloud_sanity.subunit
+        script_return_value=1
+    else
+        generate-subunit $(date +%s) 10 success $test_name >> {{ working_dir }}/undercloud_sanity.subunit
+    fi
+    return $status
+}
+
 
 
 ## * Check the answers from each undercloud service
 ## ::
 
 set -x
+rm -f {{ working_dir }}/undercloud_sanity.subunit.gz
+rm -f {{ working_dir }}/undercloud_sanity.subunit
+
 source {{ working_dir}}/stackrc
-openstack user list
-openstack catalog list
-nova service-list
-glance image-list
-neutron subnet-list
-neutron net-list
-neutron agent-list
-ironic node-list
-openstack stack list
+citest openstack user list
+citest openstack catalog list
+citest nova service-list
+citest glance image-list
+citest neutron subnet-list
+citest neutron net-list
+citest neutron agent-list
+citest ironic node-list
+citest openstack stack list
 ui_sanity_check
+
+exit $script_return_value
+
 set +x
 
 ### --stop_docs
