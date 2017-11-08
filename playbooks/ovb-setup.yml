@@ -1,5 +1,9 @@
 ---
 - include: ovb-create-stack.yml
+  when: not use_testenv_broker|default(false)|bool
+
+- include: prepare-slave.yml
+  when: use_testenv_broker|default(false)|bool
 
 - name: Setup the undercloud
   hosts: undercloud
@@ -8,11 +12,18 @@
     ansible_user: root
   roles:
     - undercloud-setup
+  tasks:
+    - name: Add eth2 interface from eth2.conf
+      command: os-net-config -c {{ working_dir }}/eth2.conf -v
+      when:
+        - network_isolation|bool
+        - use_testenv_broker|default(false)|bool
 
 # Small playbook with logic for when to build images or not.
 # The logic there can be completely overridden by setting the
 # to_build variable.
 - include: to-build-or-not-to-build.yml
+
 
 - name:  Inventory the undercloud instance
   hosts: localhost
@@ -20,20 +31,31 @@
   roles:
     - tripleo-inventory
 
-- name: Fetch the overcloud images
+- name: Run DLRN gate role and install repo
+  hosts: undercloud
+  vars:
+    artg_compressed_gating_repo: "${HOME}/gating_repo.tar.gz"
+    artg_repos_dir: "{{ repo_clone_dir|default('/opt/stack/new') }}"
+    ib_create_web_repo: "{{ to_build|bool }}"
+  roles:
+    - { role: build-test-packages, when: build_test_packages|default(false)|bool }
+    - { role: install-built-repo, when: compressed_gating_repo is defined }
+  tags:
+    - build
+
+- name: Get images for quickstart
   hosts: undercloud
   gather_facts: no
+  vars:
+    ib_repo_image_inject: "{{ not to_build|bool }}"
+    ib_repo_run_live: false
+    modify_image_vc_ram: 4096
+    modify_image_vc_cpu: 4
+    modify_image_vc_verbose: true
   roles:
-   - fetch-images
-
-- name: Build test packages using DLRN
-  hosts: undercloud
-  roles:
-    - {role: build-test-packages, when: build_test_packages|default(false)|bool }
-
-- name: Install the built package on the undercloud
-  hosts: undercloud
-  gather_facts: no
-  roles:
-    - {role: install-built-repo, when: build_test_packages|default(false)|bool }
+    - { role: fetch-images, when: not to_build|bool }
+    - { role: repo-setup, repo_inject_image_path: "$HOME/overcloud-full.qcow2", repo_run_live: false, when: not to_build|bool }
+    - { role: repo-setup, repo_inject_image_path: "$HOME/ironic-python-agent.initramfs", repo_run_live: false, initramfs_image: true, when: not to_build|bool }
+    - { role: install-built-repo, ib_repo_image_path: "$HOME/overcloud-full.qcow2", when: compressed_gating_repo is defined and not to_build|bool }
+    - { role: install-built-repo, ib_repo_image_path: "$HOME/ironic-python-agent.initramfs", initramfs_image: true, when: compressed_gating_repo is defined and not to_build|bool }
 
