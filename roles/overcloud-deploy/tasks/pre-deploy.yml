@@ -63,33 +63,24 @@
     - network_isolation_type == "public-bond"
     - not overcloud_ipv6|bool
 
-- name: set network_args fact
+- name: set network_args fact for non-containerized
   set_fact:
     network_args: >-
-      {% if network_isolation|bool %}{{ network_isolation_args }}{% endif %}
+      {{ network_isolation_args }}
   when:
+    - network_isolation|bool
     - not containerized_overcloud|bool
 
 - name: set network_args fact for containers
   set_fact:
     network_args: >-
-      {{ network_isolation_args }}
-      -e {{ working_dir }}/containers-default-parameters.yaml
-  when:
-    - containerized_overcloud|bool
-    - network_isolation|bool
-    - not enable_tls_everywhere|bool
-
-- name: set network_args fact for TLS containers
-  set_fact:
-    network_args: >-
+      {% if enable_tls_everywhere|bool %}
       -e {{ overcloud_templates_path }}/environments/docker-services-tls-everywhere.yaml
+      {% endif %}
       {{ network_isolation_args }}
-      -e {{ working_dir }}/containers-default-parameters.yaml
   when:
-    - containerized_overcloud|bool
     - network_isolation|bool
-    - enable_tls_everywhere|bool
+    - containerized_overcloud|bool
 
 - name: enable pacemaker
   set_fact:
