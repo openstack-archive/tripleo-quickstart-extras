@@ -37,6 +37,7 @@ Role Variables
 * `tempest_conf_removal`: dict - A dict of tempest configuration which will be
                           removed from tempest.conf file.
                           Format: section.key: value
+* `public_physical_network`: <string> The name of the border physical network (default: datacentre).
 
 Skip tests file
 ---------------
