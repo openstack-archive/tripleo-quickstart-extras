@@ -118,6 +118,7 @@
       hostname: "{{ undercloud_ip }}"
       groups: "{{ node_groups| join(',') }}"
       ansible_host: "{{ undercloud_ip }}"
+      ansible_user: root
       ansible_fqdn: undercloud
       ansible_private_key_file: "{{ undercloud_key }}"
       ansible_ssh_extra_args: "{{ ssh_extra_args }}"
@@ -131,6 +132,47 @@
   retries: 300
   delay: 5
 
+- block:
+
+  - name: Setup user
+    user:
+      name: "{{ nodepool_user }}"
+      groups: wheel
+      append: yes
+    become: true
+    delegate_to: undercloud
+
+  - name: Setup keys
+    authorized_key:
+      user: "{{ nodepool_user }}"
+      state: present
+      key: "{{ lookup('file', '{{ undercloud_key }}.pub') }}"
+    become: true
+    become_user: "{{ nodepool_user }}"
+    delegate_to: undercloud
+
+  - name: Allow user to have passwordless sudo
+    lineinfile:
+      dest: /etc/sudoers
+      state: present
+      line: '{{ nodepool_user }} ALL=(ALL) NOPASSWD:ALL'
+      validate: 'visudo -cf %s'
+    become: true
+    delegate_to: undercloud
+
+  - name: Add undercloud with non-root user
+    add_host:
+      name: subnode-0
+      hostname: "{{ undercloud_ip }}"
+      groups: subnodes
+      ansible_user: "{{ nodepool_user }}"
+      ansible_host: "{{ undercloud_ip }}"
+      ansible_private_key_file: "{{ undercloud_key }}"
+      subnode_public_ip: "{{ undercloud_ip }}"
+      subnode_private_ip: 192.168.23.23
+
+  when: ovb_setup_user|default('false')|bool
+
 - name: Build nodes.json file to be used as instackenv.json
   shell: >
       chdir={{ local_working_dir }}
@@ -143,3 +185,10 @@
   file:
       path: "{{ local_working_dir }}/clouds.yaml"
       state: absent
+
+- name: Dump hosts to file
+  template:
+    src: ovb_hosts.j2
+    dest: '{{ local_working_dir }}/ovb_hosts'
+  when: ovb_dump_hosts|default('false')|bool
+
