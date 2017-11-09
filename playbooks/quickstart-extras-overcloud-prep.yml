@@ -59,4 +59,4 @@
   hosts: undercloud
   gather_facts: no
   roles:
-    - { role: overcloud-ssl, when: ssl_overcloud|bool }
+    - { role: overcloud-ssl }

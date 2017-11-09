@@ -91,12 +91,15 @@ def create_enable_file(certpem, keypem, source_dir, dest_dir, tht_release):
         yaml.safe_dump(output_dict, stream, default_style='|')
 
 
-def create_anchor_file(cert_ca_pem, source_dir, dest_dir):
+def create_anchor_file(cert_ca_pem, source_dir, dest_dir, enable_tls_overcloud):
     output_dict = _open_yaml(
         "{}environments/inject-trust-anchor.yaml".format(source_dir)
     )
 
-    ca_map = {"overcloud-ca": {"content": cert_ca_pem}}
+    if enable_tls_overcloud:
+        ca_map = {"overcloud-ca": {"content": cert_ca_pem}}
+    else:
+        ca_map = {}
     # Optionally include the undercloud's local CA certificate
     try:
         undercloud_ca = "/etc/pki/ca-trust/source/anchors/cm-local-ca.pem"
@@ -115,6 +118,7 @@ def create_anchor_file(cert_ca_pem, source_dir, dest_dir):
 def main():
     module = AnsibleModule(
         argument_spec=dict(
+            enable_tls_overcloud=dict(type="bool", default=False, required=False),
             source_dir=dict(default="/usr/share/openstack-tripleo-heat-templates/",
                             required=False),
             dest_dir=dict(default="", required=False),
@@ -125,22 +129,26 @@ def main():
         )
     )
 
-    with open(module.params["cert_filename"], "r") as stream:
-        certpem = stream.read()
+    if module.params["enable_tls_overcloud"]:
+        with open(module.params["cert_filename"], "r") as stream:
+            certpem = stream.read()
 
-    with open(module.params["cert_ca_filename"], "r") as stream:
-        cert_ca_pem = stream.read()
+        with open(module.params["key_filename"], "r") as stream:
+            keypem = stream.read()
+        with open(module.params["cert_ca_filename"], "r") as stream:
+            cert_ca_pem = stream.read()
 
-    with open(module.params["key_filename"], "r") as stream:
-        keypem = stream.read()
+        create_enable_file(certpem, keypem,
+                           module.params["source_dir"],
+                           module.params["dest_dir"],
+                           module.params["tht_release"])
+    else:
+        cert_ca_pem = None
 
-    create_enable_file(certpem, keypem,
-                       module.params["source_dir"],
-                       module.params["dest_dir"],
-                       module.params["tht_release"])
     create_anchor_file(cert_ca_pem,
                        module.params["source_dir"],
-                       module.params["dest_dir"])
+                       module.params["dest_dir"],
+                       module.params["enable_tls_overcloud"])
     module.exit_json(changed=True)
 
 

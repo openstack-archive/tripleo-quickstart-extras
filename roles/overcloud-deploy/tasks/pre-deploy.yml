@@ -111,24 +111,35 @@
           -e {{ working_dir }}/cloud-names.yaml
   when: release not in ['mitaka', 'liberty']
 
-- name: set ssl_args fact for releases after mitaka
+- name: set set overcloud SSL args for releases after mitaka
   set_fact:
-    ssl_args: >-
+    ssl_overcloud_args: >-
       -e {{ working_dir }}/enable-tls.yaml
       -e {{ overcloud_templates_path }}/environments/tls-endpoints-public-ip.yaml
-      -e {{ working_dir }}/inject-trust-anchor.yaml
   when:
     - ssl_overcloud|bool
     - release not in ['mitaka', 'liberty']
 
-- name: set ssl_args fact for mitaka/liberty
+- name: set overcloud SSL args fact for mitaka/liberty
   set_fact:
-    ssl_args: >-
+    ssl_overcloud_args: >-
       -e {{ working_dir }}/enable-tls.yaml
-      -e {{ working_dir }}/inject-trust-anchor.yaml
   when:
     - ssl_overcloud|bool
     - release in ['mitaka', 'liberty']
+
+- name: set CA injection arg
+  set_fact:
+    ssl_ca_args: >-
+      -e {{ working_dir }}/inject-trust-anchor.yaml
+  when: ssl_overcloud|bool or undercloud_generate_service_certificate|bool
+
+- name: set ssl_args
+  set_fact:
+    ssl_args: >-
+      {{ ssl_overcloud_args|default('') }}
+      {{ ssl_ca_args }}
+  when: ssl_overcloud|bool or undercloud_generate_service_certificate|bool
 
 - name: set novajoin/TLS everywhere fact
   set_fact:
