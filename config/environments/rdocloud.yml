@@ -12,7 +12,7 @@ latest_guest_image:
 
 bmc_flavor: m1.small
 baremetal_flavor: m1.large
-undercloud_flavor: m1.large
+undercloud_flavor: m1.large2
 provision_net_cidr: 192.168.24.0/24
 
 custom_nameserver:
