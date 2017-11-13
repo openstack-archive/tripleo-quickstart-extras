@@ -187,6 +187,11 @@
     - name: Collect text version of the journal from last four hours
       shell: journalctl --since=-4h --lines=100000 > /var/log/journal.txt
 
+    - name: Collect errors
+      shell: >
+        grep -rE '^[-0-9]+ [0-9:\.]+ [0-9 ]*ERROR ' /var/log/ > /tmp/errors.txt;
+        mv /tmp/errors.txt /var/log/extra/errors.txt
+
     - name: Create a index file for logstash
       shell: >
         for i in {{ artcl_logstash_files|default([])|join(" ") }}; do
