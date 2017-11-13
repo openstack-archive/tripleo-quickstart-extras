@@ -3,9 +3,13 @@
   shell: echo "{{ image_to_modify }}"
   register: image_to_modify_abs_path
 
+- name: Create a temp dir for extracting images
+  command: mktemp -d
+  register: mktemp_command
+
 - name: Set names for images and temp dir
   set_fact:
-    mount_tempdir: "{{ lookup('pipe', 'mktemp -d') }}"
+    mount_tempdir: "{{ mktemp_command.stdout }}"
 
 - when: not initramfs_image|bool
   block:
