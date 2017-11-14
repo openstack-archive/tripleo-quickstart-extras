@@ -2,7 +2,12 @@
   file: dest=/var/log/extra state=directory
   become: true
 
-# No need to install dstat package here because it is part of the images
+- name: Install dstat if it is not present
+  yum:
+    name: dstat
+    state: present
+  become: true
+
 - name: Run dstat for collecting metrics during 2 hours
   command: >
     dstat -tcmndrylpg --nocolor --output /var/log/extra/dstat-csv.log 1 7200 \
