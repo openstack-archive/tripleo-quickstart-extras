@@ -51,7 +51,7 @@
 - name: set vbmc address if there is a (nat) network defined with an address
   set_fact:
     vbmc_address: "{{ networks|selectattr('address', 'defined')|map(attribute='address')|list|first }}"
-  when: "{{ networks|selectattr('address', 'defined')|map(attribute='name')|list|length is greaterthan 0}}"
+  when: networks|selectattr('address', 'defined')|map(attribute='name')|list|length > 0
 
 # If there is no nat network with an address, the undercloud will be
 # connected to the default libvirt network to fill this role.
