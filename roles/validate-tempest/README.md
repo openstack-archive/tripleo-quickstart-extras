@@ -1,4 +1,4 @@
-ansible-role-tripleo-tempest
+validate-tempest
 =========
 
 Run tempest tests on undercloud or overcloud.
@@ -92,7 +92,7 @@ Example Playbook
       hosts: undercloud
       gather_facts: no
       roles:
-        - tripleo-tempest
+        - validate-tempest
 
 License
 -------
