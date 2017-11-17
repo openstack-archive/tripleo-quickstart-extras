@@ -15,3 +15,12 @@
   gather_facts: no
   roles:
     - { role: validate-tempest, when: tempest_config|bool or run_tempest|bool }
+
+# Execute simple TripleO-UI validations
+- name:  Execute simple TripleO-UI validations
+  hosts: localhost
+  tags:
+    - tripleoui-validate
+  gather_facts: yes
+  roles:
+    - { role: validate-ui, when: validate_ui_simple|bool }
