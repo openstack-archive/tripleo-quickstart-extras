@@ -30,13 +30,22 @@ sudo systemctl list-units --full --all
 if [ -e /home/{{ undercloud_user }}/stackrc ] ; then
 bash <<-EOF &>/var/log/postci.txt
     source /home/{{ undercloud_user }}/stackrc
-    nova list
-    openstack workflow list
-    openstack workflow execution list
+    openstack <<-EOC
+    server list -f yaml
+    workflow list -f yaml
+    workflow execution list -f yaml
+EOC
     # If there's no overcloud then there's no point in continuing
-    heat stack-show overcloud || (echo 'No active overcloud found' && exit 0)
-    heat resource-list -n5 overcloud
-    heat event-list overcloud
+    openstack stack list | grep -q overcloud
+    if [ $? -eq 1 ]; then
+        echo 'No active overcloud found'
+        exit 0
+    fi
+    openstack <<-EOC
+    stack show overcloud -f yaml
+    stack resource list -n5 overcloud -f yaml
+    stack event list overcloud -f yaml
+EOC
     # --nested-depth 2 seems to get us a reasonable list of resources without
     # taking an excessive amount of time
     openstack stack event list --nested-depth 2 -f json overcloud | /tmp/heat-deploy-times.py | tee /var/log/heat-deploy-times.log || echo 'Failed to process resource deployment times. This is expected for stable/liberty.'
