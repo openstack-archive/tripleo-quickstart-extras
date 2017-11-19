@@ -32,9 +32,6 @@ ANSIBLE_INVENTORY_BIN=$(which tripleo-ansible-inventory)
 {% else %}
     ${ANSIBLE_INVENTORY_BIN} --static-inventory {{ validations_static_inventory }}
     export ANSIBLE_INVENTORY="{{ validations_static_inventory }}"
-    # TODO(gchamoul) remove this workaround for bug
-    # https://bugs.launchpad.net/tripleo/+bug/1701239
-    sed -i -r 's/cacert.*//' {{ validations_static_inventory }}
 {% endif %}
 
 # TODO(gchamoul) add negative tests for post-deployment validations
