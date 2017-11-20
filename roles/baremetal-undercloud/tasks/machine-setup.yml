@@ -53,9 +53,7 @@
   delegate_to: "{{ virthost }}"
   authorized_key:
     user: "{{ non_root_user }}"
-    key: "{{ item }}"
-  with_file:
-    - "{{ undercloud_key }}.pub"
+    key: "{{ lookup('file', undercloud_key|quote + '.pub')|default('') }}"
   become: true
 
 - name: Grant sudo privileges to non-root user on virthost/undercloud
