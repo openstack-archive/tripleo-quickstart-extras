@@ -1,5 +1,5 @@
-ansible-role-tripleo-baremetal-undercloud
-=========================================
+baremetal-undercloud
+====================
 
 This role aims to build a baremetal undercloud machine from scratch. Using
 tripleo-quickstart, this means that you will be able to provide, prepare and
@@ -38,37 +38,10 @@ things in place:
     * File instackenv.json - mandatory, must contain the ipmi credentials for
       the nodes
 
-Quickstart invocation
----------------------
+Role Variables
+--------------
 
-You can invoke *quickstart.sh* like this:
-
-```console
-./quickstart.sh \
-  --clean \
-  --playbook baremetal-undercloud.yml \
-  --working-dir /path/to/workdir \
-  --config /path/to/config.yml \
-  --release <RELEASE> \
-  --tags all \
-  <HOSTNAME or IP>
-```
-
-Basically this command:
-
-* Uses the playbook **baremetal-undercloud.yml**
-* Uses a custom workdir that is rebuilt from scratch (so if it already exists,
-  it is dropped, see *--clean*)
-* Get all the extra requirements
-* Select the config file
-* Chooses release (liberty, mitaka, newton, or “master” for ocata)
-* Performs all the tasks in the playbook
-* Starts the installation on virthost
-
-Role usage
-----------
-
-A typical config file will contain something like this:
+A typical configuration file will contain something like this:
 
 ```yaml
 # Virthost key for accessing newly provided machine
@@ -157,9 +130,9 @@ A brief explanation of the variables:
   **step_provide_undercloud is false** than this can be omitted.
 * **baremetal_network_environment**, **baremetal_instackenv** and *optionally*
   **baremetal_nic_configs** will contain all the environment files.
-* If instances needs to be accessible from the outside network then all the
-  parameters (so **floating_ip_cidr** and **public_net_**) of this floating
-  network must be explicited.
+* Depending on the network in which spawned instances will be exposed all the
+  related parameters (**floating_ip_cidr** and **public_net**\*) must be
+  declared explicitly.
 * **extra_args** will contain all deploy specific (like HA settings)
 
 The main task of the role is this one:
@@ -205,8 +178,8 @@ Some notes:
 * Even if virthost and undercloud are the same machine, the name “undercloud”
   will be inventoried in any case
 * Each action is tagged so it is possible to exclude a specific section
-* Some variables can be controlled via config settings (look above in @Role
-  usage)
+* Some variables can be controlled via configuration settings (look above in
+  @Role usage)
 
 Dependencies
 ------------
@@ -224,7 +197,8 @@ scratch (see @Example Playbook) are:
 * **baremetal-prep-overcloud**
 * **overcloud-prep-{config,images,flavors,network}**
 * **overcloud-deploy**
-* **overcloud-validate**
+* **overcloud-validate** or **overcloud-validate-ha** (if you want to test HA
+  capabilities)
 
 Example Playbook
 ----------------
@@ -344,6 +318,33 @@ The steps of the sample playbook are these:
 * Then undercloud is inventoried
 * Undercloud is prepared for deploying
 * Overcloud is then deployed, inventoried and validated
+
+Quickstart invocation
+---------------------
+
+You can invoke *quickstart.sh* like this:
+
+```console
+./quickstart.sh \
+  --clean \
+  --playbook baremetal-undercloud.yml \
+  --working-dir /path/to/workdir \
+  --config /path/to/config.yml \
+  --release <RELEASE> \
+  --tags all \
+  <HOSTNAME or IP>
+```
+
+Basically this command:
+
+* Uses the playbook **baremetal-undercloud.yml**
+* Uses a custom workdir that is rebuilt from scratch (so if it already exists,
+  it is dropped, see *--clean*)
+* Get all the extra requirements
+* Select the config file
+* Chooses release (liberty, mitaka, newton, or “master” for ocata)
+* Performs all the tasks in the playbook
+* Starts the installation on virthost
 
 License
 -------
