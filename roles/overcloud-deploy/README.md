@@ -36,9 +36,6 @@ A description of the settable variables for this role should go here, including 
 * `ansible_steps_log`: Sets the TripleO Ansible steps log file path.
 * `config_download_args`: Sets the arguments to load config-download
   environment in THT.
-* `step_tripleo_config_download`: false/true - whether to enable config-download.
-* `deploy_steps_ansible`: false/true - whether to deploy the overcloud with
-  config-download Ansible steps. This parameter will be removed soon.
 * `deploy_steps_ansible_workflow`: false/true - whether to deploy the overcloud with
   config-download Ansible steps from a Mistral workflow.
 
