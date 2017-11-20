@@ -14,7 +14,7 @@ SKIPLIST="ANSIBLE0006,ANSIBLE0007,ANSIBLE0010,ANSIBLE0012,ANSIBLE0013,ANSIBLE001
 
 # lint the playbooks separately to avoid linting the roles multiple times
 pushd playbooks
-for playbook in `find . -type f -regex '.*\.y[a]?ml' -print0`; do
+for playbook in `find . -type f -regex '.*\.y[a]?ml'`; do
     ansible-lint -vvv -x $SKIPLIST $playbook || lint_error=1
 done
 popd
