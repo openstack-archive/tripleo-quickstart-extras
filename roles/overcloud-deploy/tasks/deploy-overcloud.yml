@@ -1,3 +1,9 @@
+- when: (deploy_steps_ansible_workflow|bool) or (deploy_steps_ansible|bool)
+  block:
+    - name: Add subnodes to known hosts
+      shell: |
+        ssh-keyscan 192.168.24.3 >> ~/.ssh/known_hosts
+
 - name: Deploy the overcloud
   shell: >
     set -o pipefail &&
@@ -11,6 +17,7 @@
     # deploy_args end with a newline, remove to make deploy_args_used easier to use
     deploy_args_used: "{{ deploy_args | replace('\n', ' ') }}"
 
+# TODO(emilien) remove the next 2 blocks once https://review.openstack.org/#/c/514736/ is merged
 - when: step_tripleo_config_download|bool
   block:
     # The config-download workflow is temporary until we have a Mistral workflow,

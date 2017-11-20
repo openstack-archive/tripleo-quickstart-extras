@@ -38,7 +38,9 @@ A description of the settable variables for this role should go here, including 
   environment in THT.
 * `step_tripleo_config_download`: false/true - whether to enable config-download.
 * `deploy_steps_ansible`: false/true - whether to deploy the overcloud with
-  config-download Ansible steps.
+  config-download Ansible steps. This parameter will be removed soon.
+* `deploy_steps_ansible_workflow`: false/true - whether to deploy the overcloud with
+  config-download Ansible steps from a Mistral workflow.
 
 
 Dependencies

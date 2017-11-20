@@ -131,8 +131,10 @@ deploy_multinode: false
 
 step_deploy_overcloud: true
 
+# TODO(emilien) cleanup the parameters once https://review.openstack.org/#/c/514736/ is merged
 step_tripleo_config_download: false
 deploy_steps_ansible: false
+deploy_steps_ansible_workflow: false
 
 step_validate_overcloud: true
 prepare_tempest: false
