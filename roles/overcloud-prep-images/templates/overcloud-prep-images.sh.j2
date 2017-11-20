@@ -52,11 +52,6 @@ glance image-create --container-format bare \
 {% endif %}
 
 
-## .. note:: Workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1391602
-## ::
-
-sudo systemctl restart openstack-ironic-conductor && sleep 30
-
 {% if step_register|bool %}
 
 ## * Register nodes with Ironic.

@@ -2,6 +2,7 @@
 
 overcloud_ipv6: false
 containerized_overcloud: false
+containerized_undercloud: false
 containerized_overcloud_upgrade: false
 local_docker_registry_host: "{{undercloud_network_gateway|default(undercloud_network_cidr|nthhost(1))}}"
 docker_registry_namespace: tripleoupstream

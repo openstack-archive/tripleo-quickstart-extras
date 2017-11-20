@@ -3,22 +3,29 @@ set -eux
 
 ### --start_docs
 ## Adjust the hostname as necessary (usually on the undercloud)
+## Note.. run this script with sudo or root
 ## ============================================================
-
 
 {% if hostname_correction|bool %}
 ## * Correct the host's transient hostname to a static one
 ## ::
 
-sudo hostnamectl set-hostname --transient $(hostnamectl --static)
+hostnamectl set-hostname --transient $(hostnamectl --static)
 
 {% elif step_set_undercloud_hostname|bool %}
 ## * Set the host's transient and static hostnames
 ## ::
 
-sudo hostnamectl set-hostname --transient {{ undercloud_hostname }}
-sudo hostnamectl set-hostname --static {{ undercloud_hostname }}
+hostnamectl set-hostname --transient {{ undercloud_hostname }}
+hostnamectl set-hostname --static {{ undercloud_hostname }}
 
 {% endif %}
+
+## * Sanitize the /etc/hosts for duplicate entries
+## ::
+
+cp /etc/hosts /etc/hosts.bak
+awk '!seen[$0]++' /etc/hosts > /etc/hosts.new
+mv -f /etc/hosts.new /etc/hosts
 
 ### --stop_docs

@@ -49,11 +49,27 @@ EOF_CAT
 sudo yum update -y {{ undercloud_update_packages }}
 {% endif %}
 
+# TODO: remove this once we land patch to install them via RPM
+sudo yum install -y \
+    openstack-heat-api \
+    openstack-heat-engine \
+    openstack-heat-monolith \
+    python-heat-agent \
+    python-heat-agent-apply-config \
+    python-heat-agent-ansible \
+    python-heat-agent-hiera \
+    python-heat-agent-puppet \
+    python-heat-agent-docker-cmd \
+    python-heat-agent-json-file \
+    python-ipaddr \
+    python-tripleoclient \
+    openvswitch \
+    openstack-puppet-modules
+
 ## * Start the required services.
 ## ::
 
 sudo systemctl start openvswitch
-sudo systemctl start docker #FIXME: do these in the installer?
 
 ## * Update the puppet modules or install custom modules.
 ##   NOTE: breaks installed packages, is a pure hack in for dev envs only!
@@ -67,6 +83,14 @@ sudo systemctl start docker #FIXME: do these in the installer?
 #mkdir -p "${MODULE_PATH}"
 #cd "${MODULE_PATH}"
 #git clone -b dev https://github.com/foo/puppet-bar bar
+
+## * get build id
+## ::
+{% if get_build_command is defined: %}
+BUILD_ID={{ get_build_command }}
+{% else %}
+BUILD_ID={{ docker_image_tag }}
+{% endif %}
 
 # Copy installed/cloned modules and make a symlink
 #sudo rsync -avxH "${MODULE_PATH}" /usr/share/openstack-puppet/
@@ -85,7 +109,6 @@ openstack overcloud container image prepare \
     -e {{overcloud_templates_path}}/environments/docker.yaml \
 {% endif %}
     -r {{undercloud_roles_data}} \
-    --namespace {{ undercloud_docker_registry_host }}:{{ undercloud_docker_registry_port }}/{{ undercloud_docker_registry_namespace }}
 {% else %}
 openstack overcloud container image prepare \
 {% if containerized_undercloud|bool %}
@@ -95,6 +118,8 @@ openstack overcloud container image prepare \
     -e {{overcloud_templates_path}}/environments/docker.yaml \
 {% endif %}
     -r {{undercloud_roles_data}} \
+    --namespace {{ docker_registry_host }}/{{ docker_registry_namespace }} \
+    --tag $BUILD_ID \
     --env-file {{ working_dir }}/undercloud-containers-default-parameters.yaml
 {% endif %}
 
@@ -115,6 +140,7 @@ undercloud_local_ip={{ hostvars['undercloud'].undercloud_ip }}
 # starts supporting 'openstack undercloud deploy -r' option.
 
 sudo openstack undercloud deploy \
+    --heat-native \
     --templates={{overcloud_templates_path}} \
     --local-ip=$undercloud_local_ip \
     -e {{ working_dir }}/custom_undercloud_deploy.yaml \
