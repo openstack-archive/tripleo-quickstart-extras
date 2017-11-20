@@ -23,6 +23,15 @@
     - { role: tripleo-validations,
         when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
 
+- name: Build images for quickstart
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - { role: build-images, when: to_build|default(false)|bool }
+  tags:
+    - get-images
+    - images
+
 - name:  copy over config files
   hosts: undercloud
   gather_facts: no
