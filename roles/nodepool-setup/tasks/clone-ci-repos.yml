@@ -16,17 +16,20 @@
     state: link
   become: true
 
-- name: Clone repos
-  git:
-    repo: "{{ item }}"
-    dest: "/opt/stack/{{ item.split('/')[-1] }}"
-    version: master
-  with_items:
-    - https://git.openstack.org/openstack/tripleo-quickstart
-    - https://git.openstack.org/openstack/tripleo-quickstart-extras
-    - https://git.openstack.org/openstack-infra/tripleo-ci
-    - https://git.openstack.org/openstack-dev/devstack
-    - https://git.openstack.org/openstack-infra/devstack-gate
+- name: Set up git credentials
+  shell: >
+    git config --global user.email "user@example.com";
+    git config --global user.name "CI user"
+
+- include_tasks: patch_repos.yml
+  with_items: "{{ repos }}"
+  loop_control:
+    loop_var: repo_item
+
+- name: Set oooq extras to install from local copy
+  copy:
+    dest: /opt/stack/tripleo-quickstart/quickstart-extras-requirements.txt
+    content: git+file:///opt/stack/tripleo-quickstart-extras/#egg=tripleo-quickstart-extras
 
 - name: Create /opt/cache/files directory
   file:
