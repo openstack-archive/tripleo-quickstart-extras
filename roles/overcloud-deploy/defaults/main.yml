@@ -74,6 +74,7 @@ set_overcloud_workers: true
 cloud_name_args: ""
 network_args: ""
 network_isolation_args: ""
+ntp_args: ""
 pacemaker_args: ""
 workers_args: ""
 backup_args: ""
@@ -105,6 +106,7 @@ deploy_args: >-
   {{ libvirt_args }}
   {{ flavor_args }}
   {{ timeout_args }}
+  {{ ntp_args }}
   {{ cloud_name_args }}
   {{ multinode_args }}
   {{ pacemaker_args }}

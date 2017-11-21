@@ -78,8 +78,7 @@ images:
 
 # overcloud deployment settings
 validation_args: " "
-extra_args: " --control-flavor baremetal --compute-flavor baremetal --control-scale 3  \
---ntp-server {{ ntp_server }} "
+extra_args: " --control-flavor baremetal --compute-flavor baremetal --control-scale 3 "
 
 # This featureset is extremely resource intensive, so we disable telemetry
 # in order to reduce the overall memory footprint

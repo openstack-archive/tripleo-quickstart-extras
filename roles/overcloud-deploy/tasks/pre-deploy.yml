@@ -82,6 +82,13 @@
     - network_isolation|bool
     - containerized_overcloud|bool
 
+- name: set ntp_args
+  set_fact:
+    ntp_args: >-
+      --ntp-server {{ ntp_server }}
+  when:
+    - ntp_server|default('')
+
 - name: enable pacemaker
   set_fact:
     pacemaker_args: >-
