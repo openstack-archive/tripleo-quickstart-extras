@@ -15,7 +15,7 @@ run_preintro_val_script: run-preintro-validations-negative-tests.sh.j2
 run_predep_val_script: run-predep-validations-negative-tests.sh.j2
 run_postdep_val_script: run-postdep-validations-negative-tests.sh.j2
 
-failed_validations_log: "{{ val_working_dir }}/failed_validations_log"
+failed_validations_log: "{{ val_working_dir }}/failed_tripleo_validations.log"
 run_preintro_val_log: "{{ val_working_dir }}/run_preintro_validations_negative_tests.log"
 
 validations_dir: "/usr/share/openstack-tripleo-validations/validations"
