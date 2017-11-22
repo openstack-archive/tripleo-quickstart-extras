@@ -8,8 +8,9 @@ network_environment_file: network-environment.yaml.j2
 # default undercloud install method
 # containerized_undercloud is an EXPERIMENTAL FEATURE
 containerized_undercloud: false
-undercloud_docker_registry_namespace: "{{ docker_registry_namespace|default('tripleoupstream') }}"
-undercloud_docker_registry_port: 8787
+undercloud_docker_registry_host: "{{ docker_registry_host }}"
+undercloud_docker_registry_namespace: "{{ docker_registry_namespace }}"
+undercloud_docker_image_tag: "{{ docker_image_tag }}"
 undercloud_install_script: undercloud-install.sh.j2
 
 # defines a custom undercloud roles file should be used with

@@ -89,7 +89,7 @@ sudo systemctl start openvswitch
 {% if get_build_command is defined: %}
 BUILD_ID={{ get_build_command }}
 {% else %}
-BUILD_ID={{ docker_image_tag }}
+BUILD_ID={{ undercloud_docker_image_tag }}
 {% endif %}
 
 # Copy installed/cloned modules and make a symlink
@@ -99,28 +99,16 @@ sudo ln -f -s /usr/share/openstack-puppet/modules/* /etc/puppet/modules/
 
 ## * Configure the undercloud containers default parameters
 ## ::
-{% if undercloud_docker_registry_host is defined %}
+{% if containerized_undercloud|bool %}
 openstack overcloud container image prepare \
     --env-file {{ working_dir }}/undercloud-containers-default-parameters.yaml \
-{% if containerized_undercloud|bool %}
     -e {{overcloud_templates_path}}/environments/services-docker/ironic.yaml \
     -e {{overcloud_templates_path}}/environments/services-docker/mistral.yaml \
     -e {{overcloud_templates_path}}/environments/services-docker/zaqar.yaml \
     -e {{overcloud_templates_path}}/environments/docker.yaml \
-{% endif %}
     -r {{undercloud_roles_data}} \
-{% else %}
-openstack overcloud container image prepare \
-{% if containerized_undercloud|bool %}
-    -e {{overcloud_templates_path}}/environments/services-docker/ironic.yaml \
-    -e {{overcloud_templates_path}}/environments/services-docker/mistral.yaml \
-    -e {{overcloud_templates_path}}/environments/services-docker/zaqar.yaml \
-    -e {{overcloud_templates_path}}/environments/docker.yaml \
-{% endif %}
-    -r {{undercloud_roles_data}} \
-    --namespace {{ docker_registry_host }}/{{ docker_registry_namespace }} \
-    --tag $BUILD_ID \
-    --env-file {{ working_dir }}/undercloud-containers-default-parameters.yaml
+    --namespace {{ undercloud_docker_registry_host }}{% if undercloud_docker_registry_port is defined %}:{{ undercloud_docker_registry_port }}{% endif%}/{{ undercloud_docker_registry_namespace }} \
+    --tag $BUILD_ID
 {% endif %}
 
 echo "============================="
