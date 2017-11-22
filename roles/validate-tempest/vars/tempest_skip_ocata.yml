@@ -64,5 +64,5 @@ known_failures:
     reason: time out
     lp: 'https://bugs.launchpad.net/tripleo/+bug/1723137'
   - test: 'tempest.scenario.test_volume_boot_pattern.TestVolumeBootPattern.test_boot_server_from_encrypted_volume_luks'
-    reason: 'Legacy encryption is not properly configured by TripleO in Ocata and barbican is not deployed in overcloud"
+    reason: 'Legacy encryption is not properly configured by TripleO in Ocata and barbican is not deployed in overcloud'
     lp: 'https://bugs.launchpad.net/tripleo/+bug/1733574'
