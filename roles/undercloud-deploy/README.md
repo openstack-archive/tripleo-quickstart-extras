@@ -69,14 +69,17 @@ your hacking setup. By defaults it updates nothing, which is backwards compatibl
   `cloud-names.yaml` template used by the `overcloud-deploy` role.
 - `tripleo_ui_secure_access`: Defaults to false due to the self signed certificate and
   usability issues. See the tripleo-quickstart documentation `accessing the undercloud` for details.
-- `undercloud_docker_registry_host`: <'null'> -- configures the custom registry host for
-  containerized undercloud services.
-- `undercloud_docker_registry_port`: <'8787'> -- the container images registry port for the
-  custom `undercloud_docker_registry_host`, if defined.
-- `undercloud_docker_registry_namespace`: <`docker_registry_namespace`> -- the
-  container images namespace to be used with the custom `undercloud_docker_registry_host`,
-  if defined. Defaults to the overcloud `docker_registry_namespace` variable, which in
-  turn defaults to 'tripleoupstream'.
+- `undercloud_docker_registry_host`: <`docker_registry_host`> -- registry host/port
+  for containerized undercloud services. Defaults to the value provided for overcloud.
+  You may want to diverge it, if building locally, or fetching from remote registries
+  not fitting the overcloud deployment needs.
+- `undercloud_docker_registry_port`: <null> -- an optional port for
+  `undercloud_docker_registry_host`.
+- `undercloud_docker_registry_namespace`: <`docker_registry_namespace`> -- namespace of
+  docker images used for undercloud deployment. Defaults to the value provided for overcloud.
+- `undercloud_docker_image_tag`: <`docker_image_tag`> -- tag of docker images used for
+  undercloud deployment. Defaults to the value provided for overcloud. Defaults to the
+  value provided for overcloud.
 
 Role Network Variables
 ----------------------
