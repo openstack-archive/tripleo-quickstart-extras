@@ -7,6 +7,8 @@ step_overcloud_image: true
 step_glance_upload: false
 step_register: true
 step_introspect: false
+step_introspect_debug: false
+step_introspect_debug_tcpdump_log: "{{ working_dir }}/overcloud_prep_images_introspection_debug.pcap.log"
 step_introspect_with_retry: false
 bash_deploy_ramdisk: false
 step_install_undercloud: true

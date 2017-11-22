@@ -127,6 +127,15 @@ sudo mistral-db-manage populate
 
 {% endif %}
 
+{% if step_introspect_debug|bool %}
+
+sudo yum -y install tcpdump
+sudo tcpdump -i any port 67 or port 68 or port 69 -w {{ step_introspect_debug_tcpdump_log }} &
+sleep 1
+pidof_tcpdump=$(ps --ppid $! -o pid=)
+
+{% endif %}
+
 
 {% if step_introspect|bool %}
 
@@ -197,6 +206,12 @@ done
 introspect 15m
 introspect 30m
 introspect 60m
+
+{% endif %}
+
+{% if step_introspect_debug|bool %}
+
+sudo kill $pidof_tcpdump
 
 {% endif %}
 
