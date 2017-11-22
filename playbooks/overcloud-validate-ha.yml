@@ -1,7 +1,0 @@
----
-
-- name:  Validate overcloud HA status
-  hosts: undercloud
-  gather_facts: no
-  roles:
-    - validate-ha
