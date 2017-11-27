@@ -1,0 +1,65 @@
+---
+- name: Create /opt/stack directory
+  file:
+    path: /opt/stack
+    owner: zuul
+    group: zuul
+    state: directory
+
+- name: Link /opt/stack/new to /opt/stack for backwards compat
+  file:
+    src: /opt/stack
+    dest: /opt/stack/new
+    owner: zuul
+    group: zuul
+    state: link
+
+- name: Ensure git is installed
+  package:
+    name: git
+    state: latest
+
+- name: Clone tripleo-quickstart
+  git:
+    repo: https://git.openstack.org/openstack/tripleo-quickstart
+    dest: /opt/stack/tripleo-quickstart
+    version: master
+
+- name: Clone tripleo-quickstart-extras
+  git:
+    repo: https://git.openstack.org/openstack/tripleo-quickstart-extras
+    dest: /opt/stack/tripleo-quickstart-extras
+    version: master
+
+- name: Clone tripleo-ci
+  git:
+    repo: https://git.openstack.org/openstack-infra/tripleo-ci
+    dest: /opt/stack/tripleo-ci
+    version: master
+
+- name: Clone devstack
+  git:
+    repo: https://git.openstack.org/openstack-dev/devstack
+    dest: /opt/stack/devstack
+    version: master
+
+- name: Clone devstack-gate
+  git:
+    repo: https://git.openstack.org/openstack-infra/devstack-gate
+    dest: /opt/stack/devstack-gate
+    version: master
+
+- name: Create /opt/cache/files directory
+  file:
+    path: /opt/cache/files
+    state: directory
+
+- name: Make sure git repos are zuul owned
+  file:
+    path: /opt/stack
+    owner: zuul
+    group: zuul
+    recurse: yes
+    state: directory
+
+

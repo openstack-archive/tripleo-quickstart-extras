@@ -1,0 +1,49 @@
+---
+- include: etc-nodepool.yml
+  become: true
+
+- name: Create /etc/ci directory
+  file:
+    path: /etc/ci
+    state: directory
+  become: true
+
+# NOTE: (trown) this is just a place holder, but I am not so sure we
+# need to create this file.
+- name: Create /etc/ci/mirror_info.sh
+  template:
+    dest: /etc/ci/mirror_info.sh
+    src: mirror_info.sh.j2
+  become: true
+
+- include: clone-ci-repos.yml
+  become: true
+
+- name: Install epel (will be removed by toci_gatetest)
+  package:
+    name: epel-release
+  become: true
+
+- name: Install openstack repos
+  package:
+    name: centos-release-openstack-ocata
+  become: true
+
+- name: Set primary public key on all hosts
+  shell: cat /etc/nodepool/id_rsa.pub
+  register: primary_key
+  when: inventory_hostname == "subnode-0"
+
+- name: Add primary key
+  lineinfile:
+    dest: ~/.ssh/authorized_keys
+    state: present
+    line: "{{ hostvars['subnode-0'].primary_key.stdout }}"
+
+- name: Download Cirros image
+  get_url:
+    url: http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
+    dest: /opt/cache/files/cirros-0.3.5-x86_64-disk.img
+    checksum: md5:f8ab98ff5e73ebab884d80c9dc9c7290
+  become: true
+
