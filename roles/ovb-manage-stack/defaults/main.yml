@@ -22,6 +22,7 @@ rc_file: /home/{{ ansible_user }}/overcloudrc
 node_name: 'undercloud'
 ssh_extra_args: '-F "{{ local_working_dir }}/ssh.config.ansible"'
 undercloud_key: "{{ local_working_dir }}/id_rsa_undercloud"
+nodepool_user: 'zuul'
 node_groups:
     - 'undercloud'
     - 'tester'

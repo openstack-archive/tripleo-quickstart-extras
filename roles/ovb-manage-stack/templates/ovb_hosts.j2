@@ -1,0 +1,14 @@
+{% for h in groups['all'] %}
+{{ h }} ansible_host={{ hostvars[h].ansible_host }} {% if hostvars[h].get('ansible_user') %}ansible_user={{ hostvars[h].ansible_user }}{% endif %} {% if hostvars[h].get('ansible_private_key_file') %}ansible_private_key_file={{ hostvars[h].ansible_private_key_file }}{% endif %} {% if hostvars[h].get('subnode_public_ip') %} subnode_public_ip={{ hostvars[h].subnode_public_ip }}{% endif %}{% if hostvars[h].get('subnode_private_ip') %} subnode_private_ip={{ hostvars[h].subnode_private_ip }}{% endif %}
+
+{% endfor %}
+
+{% for group in groups %}
+{% if group not in ['ungrouped', 'all'] %}
+[{{ group }}]
+{% for host in groups[group] %}
+{{ host }}
+{% endfor %}
+
+{% endif %}
+{% endfor %}
