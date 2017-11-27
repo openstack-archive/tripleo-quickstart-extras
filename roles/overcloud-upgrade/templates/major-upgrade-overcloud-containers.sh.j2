@@ -39,7 +39,7 @@ openstack overcloud container image upload --verbose --config-file {{ working_di
 
 {% endif %}
 
-{% if target_upgrade_version in ['pike', 'master'] %}
+{% if target_upgrade_version in ['pike', 'queens', 'master'] %}
 
 echo "execute overcloud upgrade"
 openstack overcloud deploy --templates {{ tht_dir }} \
