@@ -2,64 +2,42 @@
 - name: Create /opt/stack directory
   file:
     path: /opt/stack
-    owner: zuul
-    group: zuul
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     state: directory
+  become: true
 
 - name: Link /opt/stack/new to /opt/stack for backwards compat
   file:
     src: /opt/stack
     dest: /opt/stack/new
-    owner: zuul
-    group: zuul
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     state: link
+  become: true
 
-- name: Ensure git is installed
-  package:
-    name: git
-    state: latest
-
-- name: Clone tripleo-quickstart
+- name: Clone repos
   git:
-    repo: https://git.openstack.org/openstack/tripleo-quickstart
-    dest: /opt/stack/tripleo-quickstart
+    repo: "{{ item }}"
+    dest: "/opt/stack/{{ item.split('/')[-1] }}"
     version: master
-
-- name: Clone tripleo-quickstart-extras
-  git:
-    repo: https://git.openstack.org/openstack/tripleo-quickstart-extras
-    dest: /opt/stack/tripleo-quickstart-extras
-    version: master
-
-- name: Clone tripleo-ci
-  git:
-    repo: https://git.openstack.org/openstack-infra/tripleo-ci
-    dest: /opt/stack/tripleo-ci
-    version: master
-
-- name: Clone devstack
-  git:
-    repo: https://git.openstack.org/openstack-dev/devstack
-    dest: /opt/stack/devstack
-    version: master
-
-- name: Clone devstack-gate
-  git:
-    repo: https://git.openstack.org/openstack-infra/devstack-gate
-    dest: /opt/stack/devstack-gate
-    version: master
+  with_items:
+    - https://git.openstack.org/openstack/tripleo-quickstart
+    - https://git.openstack.org/openstack/tripleo-quickstart-extras
+    - https://git.openstack.org/openstack-infra/tripleo-ci
+    - https://git.openstack.org/openstack-dev/devstack
+    - https://git.openstack.org/openstack-infra/devstack-gate
 
 - name: Create /opt/cache/files directory
   file:
     path: /opt/cache/files
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     state: directory
+  become: true
 
-- name: Make sure git repos are zuul owned
-  file:
-    path: /opt/stack
-    owner: zuul
-    group: zuul
-    recurse: yes
-    state: directory
-
-
+- name: Download Cirros image
+  get_url:
+    url: "{{ nodepool_cirros_url }}"
+    dest: "{{ nodepool_cirros_dest }}"
+    checksum: "{{ nodepool_cirros_checksum }}"

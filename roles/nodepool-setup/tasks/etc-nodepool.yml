@@ -3,8 +3,8 @@
   file:
     path: /etc/nodepool
     state: directory
-    owner: zuul
-    group: zuul
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: 0755
 
 - name: Create /etc/nodepool/node_private
@@ -12,8 +12,8 @@
     create: yes
     state: present
     name: /etc/nodepool/node_private
-    owner: zuul
-    group: zuul
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     line: "{{ subnode_private_ip }}"
 
 - name: Create /etc/nodepool/primary_node_private
@@ -21,8 +21,8 @@
     create: yes
     state: present
     name: /etc/nodepool/primary_node_private
-    owner: zuul
-    group: zuul
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     line: "{{ hostvars['subnode-0'].subnode_private_ip }}"
 
 - name: Create /etc/nodepool/provider
@@ -34,14 +34,26 @@
       NODEPOOL_AZ=
     dest: /etc/nodepool/provider
 
+# Required for single node jobs
+- name: Create empty /etc/nodepool/sub_nodes
+  copy:
+    dest: /etc/nodepool/sub_nodes
+    content: ''
+
 - name: Create /etc/nodepool/sub_nodes
   lineinfile:
     create: yes
     state: present
     name: /etc/nodepool/sub_nodes
-    line: "{{ hostvars[item].ansible_host }}"
+    line: "{{ hostvars[item].subnode_public_ip }}"
   with_inventory_hostnames:
     - subnodes:!subnode-0
+
+# Required for single node jobs
+- name: Create empty /etc/nodepool/sub_nodes_private
+  copy:
+    dest: /etc/nodepool/sub_nodes_private
+    content: ''
 
 - name: Create /etc/nodepool/sub_nodes_private
   lineinfile:
@@ -53,17 +65,17 @@
     - subnodes:!subnode-0
 
 - name: Create /etc/nodepool/id_rsa
-  command: >
-    ssh-keygen -N "" -f /etc/nodepool/id_rsa
+  shell: >
+    ssh-keygen -N "" -f /etc/nodepool/id_rsa;
+    chmod 600  /etc/nodepool/id_rsa;
   args:
     creates: /etc/nodepool/id_rsa
 
 - name: Make sure /etc/nodepool/id_rsa is owned by zuul
   file:
     path: '/etc/nodepool/id_rsa{{ item }}'
-    owner: zuul
-    group: zuul
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
   with_items:
     - ''
     - '.pub'
-

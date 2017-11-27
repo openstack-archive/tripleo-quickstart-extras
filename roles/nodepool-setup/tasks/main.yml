@@ -6,6 +6,7 @@
   file:
     path: /etc/ci
     state: directory
+    owner: "{{ ansible_user }}"
   become: true
 
 # NOTE: (trown) this is just a place holder, but I am not so sure we
@@ -14,20 +15,28 @@
   template:
     dest: /etc/ci/mirror_info.sh
     src: mirror_info.sh.j2
+
+- name: Install repos (will be removed by toci_gatetest)
+  package:
+    name: "{{ item }}"
+  with_items:
+    - centos-release-openstack-ocata
+    - epel-release
+  become: true
+
+- name: Install packages
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - git
+    - unbound
+    - screen
+    - vim
+    - wget
   become: true
 
 - include: clone-ci-repos.yml
-  become: true
-
-- name: Install epel (will be removed by toci_gatetest)
-  package:
-    name: epel-release
-  become: true
-
-- name: Install openstack repos
-  package:
-    name: centos-release-openstack-ocata
-  become: true
 
 - name: Set primary public key on all hosts
   shell: cat /etc/nodepool/id_rsa.pub
@@ -40,10 +49,52 @@
     state: present
     line: "{{ hostvars['subnode-0'].primary_key.stdout }}"
 
-- name: Download Cirros image
-  get_url:
-    url: http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
-    dest: /opt/cache/files/cirros-0.3.5-x86_64-disk.img
-    checksum: md5:f8ab98ff5e73ebab884d80c9dc9c7290
+- name: Scan SSH keys from subnodes
+  shell: |
+    for key in {{ hostvars[item].subnode_public_ip }} {{ hostvars[item].subnode_private_ip }}; do
+      if ! grep -q $key /etc/ssh/ssh_known_hosts ; then
+        ssh-keyscan $key >> /etc/ssh/ssh_known_hosts
+      fi
+    done
+  with_inventory_hostnames:
+    - subnodes
   become: true
 
+- name: start services
+  service:
+    name: unbound
+    state: started
+    enabled: yes
+  become: true
+
+- name: Set some env vars
+  lineinfile:
+    dest: /etc/environment
+    state: present
+    line: "{{ item }}"
+  with_items:
+    - "WORKSPACE=/tmp"
+    - "DEVSTACK_GATE_TIMEOUT=300"
+    - "REMAINING_TIME=180" # 3 hours for quickstart run
+    # In case of multinode
+    - "EXTRA_VARS=' --extra-vars vxlan_mtu=1400'"
+  become: true
+
+- name: Update packages
+  yum:
+    name: '*'
+    state: latest
+  become: true
+
+- name: Reboot hosts
+  shell: sleep 2 && shutdown -r now
+  async: 1
+  poll: 0
+  ignore_errors: true
+  become: true
+
+- name: Wait a little
+  pause: seconds=30
+
+- name: Wait for provisioned hosts to become reachable
+  local_action: wait_for host="{{ hostvars[inventory_hostname].subnode_public_ip }}" port=22 delay=5 state=started connect_timeout=10 timeout=180
