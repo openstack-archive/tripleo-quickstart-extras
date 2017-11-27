@@ -8,6 +8,7 @@ artg_compressed_gating_repo: "/home/stack/gating_repo.tar.gz"
 dlrn_cleanup: false
 dlrn_baseurl: "https://trunk.rdoproject.org/centos7-{{ artg_release }}"
 dlrn_use_local_mirrors: false
+dlrn_pre_installed: false
 
 artg_skipped_projects:
   - openstack/puppet-openstack-integration
