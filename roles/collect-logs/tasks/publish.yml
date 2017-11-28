@@ -35,6 +35,14 @@
     cp {{ artcl_collect_dir }}/undercloud/home/stack/tempest/tempest.{xml,html}{,.gz} {{ artcl_collect_dir }} || true;
     gunzip {{ artcl_collect_dir }}/tempest.{xml,html}.gz || true;
 
+- name: Fetch .sh and .log files from local working directory on localhost
+  shell: >
+    cp {{ item }} {{ artcl_collect_dir }}/
+  with_items:
+    - "{{ local_working_dir }}/*.sh"
+    - "{{ local_working_dir }}/*.log"
+  ignore_errors: "yes"
+
 - name: Rename compressed text based files to end with txt.gz extension
   shell: >
     find {{ artcl_collect_dir }}/ -type f |
