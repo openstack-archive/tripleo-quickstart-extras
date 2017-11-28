@@ -5,11 +5,7 @@
 
 {% if tempest_overcloud|bool %}
 ## ::
-{% if release in ['newton', 'ocata', 'pike'] %}
 source {{ working_dir }}/overcloudrc
-{% else %}
-source {{ working_dir }}/overcloudrc.v3
-{% endif %}
 
 ## * Clean up from any previous tempest run
 ## ::

@@ -1,9 +1,5 @@
 tenantrc: >-
-  {% if release in ['newton', 'ocata', 'pike'] -%}
   overcloudrc
-  {%- else -%}
-  overcloudrc.v3
-  {%- endif -%}
 validate_script: overcloud-validate.sh.j2
 validate_template_path: /usr/share/openstack-tripleo-heat-templates/ci/pingtests
 validate_template: tenantvm_floatingip.yaml

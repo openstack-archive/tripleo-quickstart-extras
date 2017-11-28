@@ -38,13 +38,7 @@ EOF
 ## * Source in the overcloud credentials.
 ## ::
 
-## clean that up once https://bugs.launchpad.net/tripleo/+bug/1727454 is fixed
-## in tripleo-common
-{% if release in ['newton','ocata', 'pike'] %}
 . {{ working_dir }}/overcloudrc
-{% else %}
-. {{ working_dir }}/overcloudrc.v3
-{% endif %}
 
 ## * Create the `heat_stack_owner` role if it doesn't already exist.
 ## ::
