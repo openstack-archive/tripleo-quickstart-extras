@@ -46,7 +46,7 @@ parameter_defaults:
     cat<<EOF >delorean-{{ target_upgrade_version }}-testing.repo
     [delorean-{{ target_upgrade_version }}-testing]
     name=delorean-{{ target_upgrade_version }}-testing
-{% if target_upgrade_version in [ 'newton', 'ocata' ] %}
+{% if target_upgrade_version in [ 'newton', 'ocata', 'pike' ] %}
     baseurl=${NODEPOOL_BUILDLOGS_CENTOS_PROXY}/centos/7/cloud/x86_64/openstack-{{ target_upgrade_version }}/
 {% else %}
     baseurl=${NODEPOOL_RDO_PROXY}/centos7-{{ target_upgrade_version }}/deps/latest/
