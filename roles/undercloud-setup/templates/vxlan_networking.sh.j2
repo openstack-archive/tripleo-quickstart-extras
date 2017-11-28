@@ -17,13 +17,6 @@ set -eux
 ## Prepare Your Environment
 ## ------------------------
 
-## * Set the environment variables for the script to function
-## ::
-
-# TODO: Figure out where to ln -sf $TRIPLEO_ROOT $BASE/new
-BASE=${BASE:-{{ tripleo_root }}}
-export BASE=${BASE/\/new}
-
 ## * Source tripleo-ci's deploy.env environment variables (if available)
 ## ::
 
@@ -88,7 +81,7 @@ function ovs_vxlan_bridge {
         echo "Unsupported platform, can't determine openvswitch service"
         exit 1
     fi
-    local install_ovs_deps="source $BASE/new/devstack/functions-common; \
+    local install_ovs_deps="source {{ tripleo_root }}/devstack/functions-common; \
                             install_package ${ovs_package}; \
                             restart_service ${ovs_service}"
     local mtu=1450
