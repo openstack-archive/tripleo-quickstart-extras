@@ -1,0 +1,35 @@
+- name: Check if repo should be changed
+  set_fact:
+    proj: "{{ repo_item.replace('.git', '').split('/')[-2:]|join('/') }}:"
+
+- name: Clone usually if project has no changes to apply
+  git:
+    repo: "{{ repo_item }}"
+    dest: "/opt/stack/{{ repo_item.replace('.git', '').split('/')[-1] }}"
+    version: master
+  when: proj not in zuul_changes
+
+- name: Clone project and apply changes to it
+  when: proj in zuul_changes
+  block:
+
+    - name: Get changes
+      set_fact:
+        zuul_changes_list: "{{ zuul_changes.split('^')|list }}"
+
+    - name: Clone repo and apply change
+      shell: |
+        export dir={{ item.split(':')[0].split('/')[1] }}
+        export refs={{ item.split(':')[2] }}
+        if [[ ! -e $dir ]]; then
+          git clone {{ repo_item }}
+          cd $dir
+          git fetch {{ repo_item }} $refs && git checkout FETCH_HEAD
+        else
+          cd $dir
+          git fetch {{ repo_item }} $refs && git cherry-pick --allow-empty FETCH_HEAD
+        fi
+      with_items: "{{ zuul_changes_list }}"
+      when: proj in item
+      args:
+        chdir: /opt/stack
