@@ -23,4 +23,4 @@
     - tripleoui-validate
   gather_facts: yes
   roles:
-    - { role: validate-ui, when: validate_ui_simple|bool }
+    - { role: validate-ui, when: validate_ui_simple|bool and undercloud_enable_ui|default(true)|bool }
