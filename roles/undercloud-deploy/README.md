@@ -218,7 +218,7 @@ example you may want to deploy:
  * containerized Keystone,
  * optional containerized Etcd,
 
-with disabled telemetry, docker images from `docker.io/tripleoupstream`,
+with disabled telemetry, docker images from `docker.io/tripleomaster`,
 debug logs for services and puppet, given a decent timeout, and keeping
 the ephemeral undercloud heat agent running for debug purposes:
 
@@ -245,7 +245,7 @@ resource_registry:
   OS::TripleO::Services: ../docker/services/services.yaml
 
 parameter_defaults:
-  DockerNamespace: tripleoupstream
+  DockerNamespace: tripleomaster
   DockerNamespaceIsRegistry: false
   ComputeServices: {}
   SwiftCeilometerPipelineEnabled: false
