@@ -1,36 +1,34 @@
-# Define a single controller node and a single compute node.
-overcloud_nodes:
-  - name: control_0
-    flavor: control
-    virtualbmc_port: 6230
-
-  - name: compute_0
-    flavor: compute
-    virtualbmc_port: 6231
+# We run tempest in this topology instead of ping test.
+# We set introspection to true and use only the minimal amount of nodes
+# for this job, but test all defaults otherwise.
+step_introspect: true
 
 # Tell tripleo how we want things done.
-# Note: The order of the templates and arguments passed to heat matters.
-
 extra_args: >-
   --ntp-server pool.ntp.org
 
+# This config is extremely resource intensive, so we disable telemetry
+# in order to reduce the overall memory footprint
+# This is not required in newton
+telemetry_args: >-
+   {% if release != 'newton' %}
+   -e {{ overcloud_templates_path }}/environments/disable-telemetry.yaml
+   {% endif %}
+
 network_isolation: true
 network_isolation_type: 'single-nic-vlans'
-enable_pacemaker: false
-overcloud_ipv6: false
 
 containerized_overcloud: true
 
 # This enables TLS for the undercloud which will also make haproxy bind to the
 # configured public-vip and admin-vip.
-undercloud_generate_service_certificate: false
+undercloud_generate_service_certificate: True
 
 # This enables the deployment of the overcloud with SSL.
 ssl_overcloud: false
 
 # If `run_tempest` is `true`, run tempests tests, otherwise do not
 # run them.
-tempest_config: false
 test_ping: true
 run_tempest: false
 tempest_workers: 4
