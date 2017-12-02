@@ -63,13 +63,12 @@
     - network_isolation_type == "public-bond"
     - not overcloud_ipv6|bool
 
-- name: set network_args fact for non-containerized
+- name: set network_args fact
   set_fact:
     network_args: >-
       {{ network_isolation_args }}
   when:
     - network_isolation|bool
-    - not containerized_overcloud|bool
 
 - name: set ntp_args
   set_fact:
