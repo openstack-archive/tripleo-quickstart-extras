@@ -14,7 +14,7 @@ set -eux
 
 source {{ working_dir }}/stackrc
 
-{% if overcloud_nodes is defined and overcloud_nodes %}
+{% if overcloud_nodes is defined and overcloud_nodes and not overcloud_ipv6|bool %}
 FENCING_RULE="-m udp -p udp -m multiport --dports {% for node in overcloud_nodes %}{{ node.virtualbmc_port }}{% if not loop.last %},{% endif %}{% endfor %} -m state --state NEW"
 COMMENT="fencing_access_from_overcloud"
 if ! sudo iptables -nvL INPUT | grep "$COMMENT"; then
@@ -23,7 +23,7 @@ if ! sudo iptables -nvL INPUT | grep "$COMMENT"; then
 fi
 {% endif %}
 
-{% if network_isolation|bool %}
+{% if network_isolation|bool and not overcloud_ipv6|bool %}
 
 ## Setup Networking
 ## ----------------
