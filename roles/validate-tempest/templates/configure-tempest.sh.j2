@@ -183,6 +183,7 @@ ${TEMPESTCONF} --out etc/tempest.conf \
   {% endfor %}
   {% endif %}
   compute-feature-enabled.console_output true \
+  scenario.img_file {{ tempest_test_image_name }} \
   orchestration.stack_owner_role Member
 
 ### --stop_docs
