@@ -63,3 +63,13 @@ libvirt_default_network_address: 192.168.122.1
 # only to be used in libvirt deployments, see environment config for details
 nameserver_from_virthost: false
 virthost_nameservers: []
+
+undercloud_enable_mistral: false
+undercloud_enable_monitoring: false
+undercloud_enable_telemetry: true
+undercloud_enable_tempest: true
+undercloud_enable_ui: true
+undercloud_enable_validations: true
+undercloud_ipxe_deploy: true
+
+undercloud_undercloud_debug: true

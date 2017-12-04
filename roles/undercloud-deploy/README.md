@@ -37,18 +37,21 @@ http://docs.openstack.org/developer/tripleo-quickstart/accessing-libvirt.html
 - `undercloud_extra_args`: <''> -- extra options for undercloud deploy command.
 - `undercloud_update_packages`: <'null'> -- a string with a list of packages to update as dependencies for
 your hacking setup. By defaults it updates nothing, which is backwards compatible.
-- `undercloud_enable_ui`: Sets up the 'enable_ui' option in undercloud.conf.
-  It's undefined by default, however, the default value for this option in the
-  undercloud is true.
-- `undercloud_enable_telemetry`: Sets up the 'enable_telemetry' option in
-  undercloud.conf.  It's undefined by default, however, the default value for
-  this option in the undercloud is true.
-- `undercloud_enable_validations`: Sets up the 'enable_validations' option in
-  undercloud.conf.  It's undefined by default, however, the default value for
-  this option in the undercloud is true.
-- `undercloud_enable_novajoin`: Sets up the 'enable_novajoin' value from
-  undercloud.conf. Note that using 'enable_tls_everywhere' will have the same
-  effect. Defaults to false.
+- `undercloud_enable_mistral`: <'false'> -- sets up the 'enable_mistral' option
+  in undercloud.conf.
+- `undercloud_enable_monitoring`: <'false'> -- sets up the 'enable_monitoring'
+  option in undercloud.conf.
+- `undercloud_enable_telemetry`: <'true'> -- sets up the 'enable_telemetry'
+  option in undercloud.conf.
+- `undercloud_enable_tempest`: <'true'> -- sets up the 'enable_tempest' option
+  in undercloud.conf.
+- `undercloud_enable_ui`: <'true'> -- sets up the 'enable_ui' option in
+  undercloud.conf.
+- `undercloud_enable_validations`: <'true'> -- sets up the 'enable_validations'
+  option in undercloud.conf.
+- `undercloud_enable_novajoin`: <'false'> -- sets up the 'enable_novajoin'
+  value from undercloud.conf. Note that using 'enable_tls_everywhere' will have
+  the same effect.
 - `novajoin_connect_timeout`: <5> Sets vendordata_dynamic_connect_timeout when novajoin is enabled
 - `novajoin_read_timeout:` <20> Sets vendordata_dynamic_read_timeout when novajoin is enabled
 - `prepare_novajoin`: If set to true, it will install novajoin in the undercloud,
