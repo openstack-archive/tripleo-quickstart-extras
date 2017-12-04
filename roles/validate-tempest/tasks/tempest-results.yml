@@ -19,7 +19,7 @@
       shell: |
         {% if tempest_format == 'venv' %}source {{ working_dir }}/tempest_git/.venv/bin/activate; {% endif %}
         subunit2junitxml $(find {{ working_dir }}/tempest/{{ testr_dir }} -name [0-9] \
-        | head -1) {{ working_dir }}/tempest/tempest.xml \
+        | head -1) --output-to {{ working_dir }}/tempest/tempest.xml \
         2>&1 >> {{ tempest_log_file }}
 
     - name: Fetch HTML results
