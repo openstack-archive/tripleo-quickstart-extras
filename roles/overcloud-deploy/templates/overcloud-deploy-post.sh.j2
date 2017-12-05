@@ -49,8 +49,11 @@ EOF
 ## * Create the `heat_stack_owner` role if it doesn't already exist.
 ## ::
 
-if ! openstack role show heat_stack_owner > /dev/null 2>&1; then
-    openstack role create heat_stack_owner
-    openstack role add --project admin --user admin heat_stack_owner
+if openstack stack output show overcloud EnabledServices \
+        -f value -c output_value | grep -q keystone; then
+    if ! openstack role show heat_stack_owner > /dev/null 2>&1; then
+        openstack role create heat_stack_owner
+        openstack role add --project admin --user admin heat_stack_owner
+    fi
 fi
 ### --stop_docs
