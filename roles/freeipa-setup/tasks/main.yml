@@ -4,11 +4,13 @@
   - name: Set FreeIPA admin password
     set_fact:
       freeipa_admin_password: "{{ lookup('pipe','uuidgen') }}"
+      cacheable: true
     when: freeipa_admin_password is not defined
 
   - name: Set directory manager password
     set_fact:
       directory_manager_password: "{{ lookup('pipe','uuidgen') }}"
+      cacheable: true
     when: directory_manager_password is not defined
 
   - name: Create FreeIPA deployment script

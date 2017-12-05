@@ -92,7 +92,8 @@
   when: use_resource_registry_nic_configs|bool
 
 - name: extract the number of controllers to be deployed
-  set_fact: number_of_controllers="{{ deploy_args| regex_replace('^.*--control-scale +([0-9]+).*$', '\\1') | regex_replace('^[^ 0-9]+$', '1') }}"
+  set_fact:
+    number_of_controllers: "{{ deploy_args| regex_replace('^.*--control-scale +([0-9]+).*$', '\\1') | regex_replace('^[^ 0-9]+$', '1') }}"
 
 - name: Set cinder-backup
   set_fact:
@@ -169,7 +170,8 @@
     - set_overcloud_workers|bool
 
 - name: Use KVM for Red Hat distro
-  set_fact: libvirt_args="--libvirt-type kvm"
+  set_fact:
+    libvirt_args: "--libvirt-type kvm"
   when:
     - ansible_distribution is defined
     - ansible_distribution == 'RedHat'
