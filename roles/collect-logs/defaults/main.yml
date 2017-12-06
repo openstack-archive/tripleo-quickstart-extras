@@ -110,6 +110,7 @@ artcl_logstash_files:
   - /home/*/undercloud_install.log
   - /home/*/undercloud_reinstall.log
   - /home/*/upgrade-undercloud-repo.sh.log
+  - /home/*/validate-overcloud-ipmi-connection.log
   - /home/*/vxlan_networking.sh.log
   - /home/*/yum_mirror_error.log
   - /home/*/yum_mirror.log
