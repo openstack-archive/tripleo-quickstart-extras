@@ -103,6 +103,7 @@ sudo ln -f -s /usr/share/openstack-puppet/modules/* /etc/puppet/modules/
 openstack overcloud container image prepare \
     --env-file {{ working_dir }}/undercloud-containers-default-parameters.yaml \
     -e {{overcloud_templates_path}}/environments/services-docker/ironic.yaml \
+    -e {{overcloud_templates_path}}/environments/services-docker/ironic-inspector.yaml \
     -e {{overcloud_templates_path}}/environments/services-docker/mistral.yaml \
     -e {{overcloud_templates_path}}/environments/services-docker/zaqar.yaml \
     -e {{overcloud_templates_path}}/environments/docker.yaml \
@@ -134,6 +135,7 @@ sudo openstack undercloud deploy \
     -e {{ working_dir }}/custom_undercloud_deploy.yaml \
 {% if containerized_undercloud|bool %}
     -e {{overcloud_templates_path}}/environments/services-docker/ironic.yaml \
+    -e {{overcloud_templates_path}}/environments/services-docker/ironic-inspector.yaml \
     -e {{overcloud_templates_path}}/environments/services-docker/mistral.yaml \
     -e {{overcloud_templates_path}}/environments/services-docker/zaqar.yaml \
     -e {{overcloud_templates_path}}/environments/docker.yaml \
