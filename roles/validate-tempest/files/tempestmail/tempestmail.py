@@ -238,7 +238,7 @@ class TempestMailCmd(object):
                             log_path = urljoin(self.config.default_log_url,
                                                log_path)
                     else:
-                        log_path = ('Not available yet.')
+                        log_path = None
                     return (console, datetime.datetime.now(), log_path)
             except IOError:
                 return (None, None, None)
@@ -322,6 +322,8 @@ class TempestMailCmd(object):
         if self.args.file:
             console, date, link = self.get_console()
             d = self.get_data(console, date, link)
+            if not link:
+                return
             data.append(d)
         else:
             index = self.get_index()
@@ -329,6 +331,8 @@ class TempestMailCmd(object):
                 console, date, link = self.get_console(run)
                 if not console or not date:
                     continue
+                if not link:
+                    return
                 d = self.get_data(console, date, link)
                 data.append(d)
 
