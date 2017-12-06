@@ -39,7 +39,7 @@ openstack overcloud container image upload --verbose --config-file {{ working_di
 
 {% endif %}
 
-{% if target_upgrade_version in ['pike', 'queens', 'master'] %}
+{% if target_upgrade_version in ['pike'] %}
 
 echo "execute overcloud upgrade"
 openstack overcloud deploy --templates {{ tht_dir }} \
@@ -52,7 +52,6 @@ openstack overcloud deploy --templates {{ tht_dir }} \
 {% for item in upgrade_custom_templates %}
     -e {{ item }} \
 {% endfor %}
-
 
 if openstack stack show overcloud  | grep "stack_status " | egrep "(CREATE|UPDATE)_COMPLETE"; then
     openstack overcloud deploy --templates {{ tht_dir }} \
@@ -67,6 +66,20 @@ if openstack stack show overcloud  | grep "stack_status " | egrep "(CREATE|UPDAT
 
 fi
 
+{% else %}
+
+echo "execute overcloud upgrade"
+openstack overcloud upgrade --init-update --templates \
+    --container-registry-file {{ working_dir }}/containers-default-parameters.yaml \
+    -e ~/overcloud-repo.yaml
+
+# TODO add per rolename
+openstack overcloud upgrade --nodes Controller --playbook upgrade_steps_playbook.yaml
+openstack overcloud upgrade --nodes Controller --playbook deploy_steps_playbook.yaml
+openstack overcloud upgrade --nodes Controller --playbook post_upgrade_steps_playbook.yaml
+
+# featureset has no compute yet... # openstack overcloud upgrade --nodes Compute
+openstack overcloud upgrade --converge
 
 {% endif %}
 
