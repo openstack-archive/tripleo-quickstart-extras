@@ -1,0 +1,12 @@
+---
+- name: Get ARA json data
+  shell: "{{ local_working_dir }}/bin/ara result list --all -f json"
+  register: ara_data
+
+- name: Send to graphite
+  ara_graphite:
+    graphite_host: "{{ ara_graphite_server }}"
+    ara_mapping: "{{ ara_tasks_map }}"
+    ara_data: "{{ ara_data.stdout }}"
+    graphite_prefix: "{{ ara_graphite_prefix }}"
+    only_successful_tasks: "{{ ara_only_successful_tasks }}"
