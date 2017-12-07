@@ -4,11 +4,13 @@ resource_registry:
 parameter_defaults:
   HostnameMap:
 {% for subnode in groups['overcloud'] %}
-    overcloud-controller-0: {{ hostvars[subnode]['ansible_hostname'] }}
+    overcloud-controller-{{ loop.index0 }}: {{ hostvars[subnode]['ansible_hostname'] }}
+{% endfor %}
   DeployedServerPortMap:
+{% for subnode in groups['overcloud'] %}
     {{ hostvars[subnode]['ansible_hostname'] }}-ctlplane:
       fixed_ips:
-        - ip_address: 192.168.24.3
+        - ip_address: 192.168.24.{{ 3 + loop.index0 }}
       subnet:
         - cidr: 24
 {% endfor %}
