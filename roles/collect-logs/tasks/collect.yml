@@ -190,13 +190,14 @@
     - name: Collect errors
       shell: >
         grep -rE '^[-0-9]+ [0-9:\.]+ [0-9 ]*ERROR ' /var/log/ |
-        sed "s/\(.*\)\(20[0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]\.[0-9]\+\)\(.*\)/\2 \1\3/g" > /tmp/errors.txt;
+        sed "s/\(.*\)\(20[0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]\.[0-9]\+\)\(.*\)/\2 ERROR \1\3/g" > /tmp/errors.txt;
         mv /tmp/errors.txt /var/log/extra/errors.txt
 
     - name: Create a index file for logstash
       shell: >
         for i in {{ artcl_logstash_files|default([])|join(" ") }}; do
-        cat $i; done | grep "^20.*|" | sort -sk1,2 > /var/log/extra/logstash.txt
+        cat $i; done | grep "^20.*|" | sort -sk1,2 |
+        sed "s/\(20[0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]\.*[0-9]*\)\(.*\)/\1 INFO \2/g" > /var/log/extra/logstash.txt
 
     # Collect host info as done presently in TripleO-CI.
     # Will be deprecated.
