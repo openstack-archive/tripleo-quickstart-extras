@@ -103,6 +103,7 @@
     gerrit_host: "{{ lookup('env', 'GERRIT_HOST') }}"
     zuul_changes: "{{ lookup('env', 'ZUUL_CHANGES') }}"
     artg_change_list: "{{ artg_change_list|default([]) }}"
+    cacheable: true
 
 - name: Parse Jenkins changes
   jenkins_deps:
@@ -115,6 +116,7 @@
 - name: Add Jenkins changes to the change list
   set_fact:
     artg_change_list: "{{ artg_change_list|union(jenkins_change_list|default([])) }}"
+    cacheable: true
 
 - name: Parse Zuul changes
   zuul_deps:
@@ -126,6 +128,7 @@
 - name: Add Zuul changes to the change list
   set_fact:
     artg_change_list: "{{ artg_change_list|union(zuul_change_list|default([])) }}"
+    cacheable: true
 
 - name: Clone and build the specific DLRN projects
   include: dlrn-build.yml artg_change={{ item }}
@@ -174,7 +177,9 @@
     - dlrn_cleanup|bool
 
 - name: Trigger repo injection for quickstart
-  set_fact: compressed_gating_repo={{ artg_compressed_gating_repo }}
+  set_fact:
+    compressed_gating_repo: "{{ artg_compressed_gating_repo }}"
+    cacheable: true
   when:
     - repo_built is defined
     - repo_built.skipped is not defined

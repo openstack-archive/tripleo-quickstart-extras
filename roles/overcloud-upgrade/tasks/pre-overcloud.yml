@@ -44,7 +44,7 @@
 - name: set the number of workers for heat engine before runnning OC upgrade
   when: set_heat_workers
   set_fact:
-    heat_workers="{{ core.stdout|int / 2 }}"
+    heat_workers: "{{ core.stdout|int / 2 }}"
 
 # Hardcode the number of heat workers, to try to avoid the badstatusline in
 # centos ci:

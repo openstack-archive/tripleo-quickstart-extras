@@ -21,10 +21,11 @@
 
 - name: generate prefix for all run-related entities
   set_fact:
-    prefix="{{ tmp.node_prefix }}"
+    prefix: "{{ tmp.node_prefix }}"
 
 - name: set fact for undercloud image
-  set_fact: latest_undercloud_image="{{ latest_guest_image[osp_release | default(release)] }}"
+  set_fact:
+    latest_undercloud_image: "{{ latest_guest_image[osp_release | default(release)] }}"
 
 - name: copy key inserted in image to undercloud_key location
   copy:
@@ -110,7 +111,8 @@
 
 - name: Set fact for undercloud floating IP address
   set_fact:
-    undercloud_ip="{{ (stack_outputs.stdout|from_json).outputs[0].output_value }}"
+    undercloud_ip: "{{ (stack_outputs.stdout|from_json).outputs[0].output_value }}"
+    cacheable: true
 
 - name: Add provisioned undercloud host
   add_host:

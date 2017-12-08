@@ -65,7 +65,8 @@
 
   rescue:
     - name: Set image_build_failed fact
-      set_fact: image_build_failed=true
+      set_fact:
+        image_build_failed: true
 
   always:
     - name: Displaying log files from build isolation image

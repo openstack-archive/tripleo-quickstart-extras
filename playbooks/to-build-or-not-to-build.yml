@@ -36,14 +36,16 @@
     - name: Default to using cached images
       set_fact:
         to_build: false
+        cacheable: true
 
     - name: Build images when we have a change in the always build list
       set_fact:
         to_build: true
+        cacheable: true
       when: projects_need_build != []
 
     - name: Always build images in the periodic jobs
       set_fact:
         to_build: true
+        cacheable: true
       when: "{{ lookup('env', 'PERIODIC')|default('0')|int == 1 }}"
-

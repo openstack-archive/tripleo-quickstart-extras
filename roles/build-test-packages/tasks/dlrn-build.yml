@@ -1,6 +1,7 @@
 ---
 - name: Set release name
-  set_fact: artg_release={{ artg_change.branch | replace('stable/', '') }}
+  set_fact:
+    artg_release: "{{ artg_change.branch | replace('stable/', '') }}"
 
 - name: Set DLRN distro (legacy distgit branch naming)
   set_fact:
