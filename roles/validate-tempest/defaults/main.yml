@@ -26,9 +26,12 @@ tempest_format: packages # venv or packages
 tempest_whitelist_file_src: "whitelist_file.j2"
 tempest_whitelist_file: "whitelist_file.conf"
 tempest_whitelist: []
-tempest_plugins:
-  - python-keystone-tests-tempest
-  - python-neutron-tests-tempest
+tempest_plugins: >-
+  {% if release not in ['newton', 'ocata', 'pike'] -%}
+  [ "python-keystone-tests-tempest", "python-neutron-tests-tempest" ]
+  {%- else -%}
+  [ "python-keystone-tests", "python-neutron-tests" ]
+  {%- endif -%}
 
 tempest_extra_config: {}# A dict containing values which needs to be overridden in tempest.conf
 skip_file_src: "skip_file.j2"
