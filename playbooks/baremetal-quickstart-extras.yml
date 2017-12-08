@@ -23,6 +23,13 @@
     - { role: tripleo-validations,
         when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
 
+
+- name: Validate the undercloud
+  hosts: undercloud
+  roles:
+    - { role: validate-undercloud,
+        when: run_validate_undercloud|default(false)|bool }
+
 - name: Build images for quickstart
   hosts: undercloud
   gather_facts: no
@@ -50,12 +57,6 @@
   roles:
     - { role: overcloud-prep-containers, when: containerized_overcloud|bool }
 
-- name:  Prepare the overcloud images for deployment
-  hosts: undercloud
-  gather_facts: no
-  roles:
-    - overcloud-prep-images
-
 - name: Run tripleo-validations pre-introspection tests
   hosts: undercloud
   gather_facts: no
@@ -65,14 +66,20 @@
     validations_group: ['pre-introspection']
   roles:
     - { role: tripleo-validations,
-        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
+        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool }
 
+- name:  Prepare the overcloud images for deployment
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - overcloud-prep-images
 
 - name:  Prepare overcloud flavors
   hosts: undercloud
   gather_facts: no
   roles:
-    - overcloud-prep-flavors
+   - { role: overcloud-prep-flavors,
+       when: step_overcloud_prep_flavors|default(true)|bool }
 
 - name:  Prepare the undercloud networks for the overcloud deployment
   hosts: undercloud
@@ -104,18 +111,6 @@
   roles:
     - overcloud-deploy
 
-- name: Run tripleo-validations post-deployment tests
-  hosts: undercloud
-  gather_facts: no
-  tags:
-    - tripleo-validations
-  vars:
-    validations_group: ['post-deployment']
-  roles:
-    - { role: tripleo-validations,
-        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
-
-
 # Add the overcloud nodes to the generated inventory.
 - name:  Inventory the overcloud
   hosts: undercloud
@@ -139,6 +134,17 @@
     - name: did the deployment pass or fail?
       debug: var=overcloud_deploy_result
       failed_when: overcloud_deploy_result == "failed"
+
+- name: Run tripleo-validations post-deployment tests
+  hosts: undercloud
+  gather_facts: no
+  tags:
+    - tripleo-validations
+  vars:
+    validations_group: ['post-deployment']
+  roles:
+    - { role: tripleo-validations,
+        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
 
 # Execute sanity checks agsinst the overcloud deployment
 - name: Sanity check the overcloud services
@@ -168,3 +174,11 @@
   roles:
     - { role: validate-tempest, when: run_tempest|bool }
 
+- name: Delete the overcloud
+  hosts: undercloud
+  tags:
+    - overcloud-delete
+  gather_facts: no
+  roles:
+    - { role: overcloud-delete,
+        when: step_delete_overcloud|default(false)|bool }
