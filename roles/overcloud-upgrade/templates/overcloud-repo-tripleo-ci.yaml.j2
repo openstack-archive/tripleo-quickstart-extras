@@ -33,6 +33,7 @@ parameter_defaults:
     enabled=1
     EOF
 
+{% if target_upgrade_version == 'master' %}
     cat<<EOF >delorean-current.repo
     [delorean-current]
     name=delorean-current
@@ -42,7 +43,7 @@ parameter_defaults:
     priority=10
     includepkgs=diskimage-builder,instack,instack-undercloud,os-apply-config,os-collect-config,os-net-config,os-refresh-config,python-tripleoclient,openstack-puppet-modules,openstack-tripleo-*,puppet-*
     EOF
-
+{% endif %}
     cat<<EOF >delorean-{{ target_upgrade_version }}-testing.repo
     [delorean-{{ target_upgrade_version }}-testing]
     name=delorean-{{ target_upgrade_version }}-testing
