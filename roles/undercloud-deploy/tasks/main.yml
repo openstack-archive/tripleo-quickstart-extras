@@ -43,11 +43,8 @@
   tags:
     - undercloud-post-install
 
-# undercloud_enable_ui is not set by default so that the undercloud.conf default
-# value can be used instead of one within quickstart. Currently its default
-# is true, so the behavior is mimicked here
 - include: tripleo-ui.yml
   tags:
     - undercloud-post-install
-  when: (enable_vbmc|bool and (undercloud_enable_ui is not defined or undercloud_enable_ui|bool)) or enable_libvirt_tripleo_ui|bool
+  when: (enable_vbmc|bool and undercloud_enable_ui|bool) or enable_libvirt_tripleo_ui|bool
 

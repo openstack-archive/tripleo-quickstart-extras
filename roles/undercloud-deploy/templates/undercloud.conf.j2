@@ -178,70 +178,37 @@ inspection_runbench = {{undercloud_inspection_runbench}}
 
 # Whether to enable the debug log level for Undercloud OpenStack
 # services. (boolean value)
-{% if undercloud_undercloud_debug is defined %}
 undercloud_debug = {{undercloud_undercloud_debug}}
-{% else %}
-#undercloud_debug = true
-{% endif %}
 
 # Whether to install Tempest in the Undercloud. (boolean value)
-{% if undercloud_enable_tempest is defined %}
 enable_tempest = {{undercloud_enable_tempest}}
-{% else %}
-#enable_tempest = true
-{% endif %}
 
 # Whether to install Telemetry services (ceilometer, aodh) in the
 # Undercloud. (boolean value)
-{% if undercloud_enable_telemetry is defined %}
 enable_telemetry = {{undercloud_enable_telemetry}}
-{% else %}
-#enable_telemetry = true
-{% endif %}
-
 
 # Whether to install requirements to run the TripleO validations.
 # (boolean value)
-{% if undercloud_enable_validations is defined %}
 enable_validations = {{undercloud_enable_validations}}
-{% else %}
-#enable_validations = true
-{% endif %}
 
 # Whether to install the TripleO UI. (boolean value)
-{% if undercloud_enable_ui is defined %}
 enable_ui = {{undercloud_enable_ui}}
-{% else %}
-#enable_ui = true
-{% endif %}
 
 # Whether to install Mistral in the Undercloud. (boolean value)
-{% if undercloud_enable_mistral is defined %}
 enable_mistral = {{undercloud_enable_mistral}}
-{% else %}
-#enable_mistral = false
-{% endif %}
 
 # Whether to use iPXE for deploy by default. (boolean value)
-{% if undercloud_ipxe_deploy is defined %}
 ipxe_deploy = {{undercloud_ipxe_deploy}}
-{% else %}
-#ipxe_deploy = true
-{% endif %}
 
 # Whether to install Monitoring services in the Undercloud. (boolean
 # value)
-{% if undercloud_enable_monitoring is defined %}
 enable_monitoring = {{undercloud_enable_monitoring}}
-{% else %}
-#enable_monitoring = false
-{% endif %}
 
 # Whether to install novajoin metadata service in the Undercloud.
 {% if undercloud_enable_novajoin or enable_tls_everywhere %}
 enable_novajoin = true
 {% else %}
-#enable_novajoin = false
+enable_novajoin = false
 {% endif %}
 
 # One Time Password to register Undercloud node with IPA server.
