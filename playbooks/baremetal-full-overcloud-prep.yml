@@ -1,0 +1,65 @@
+---
+- name:  copy over config files
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - overcloud-prep-config
+
+- name:  Perpare the baremetal overcloud
+  hosts: undercloud
+  gather_facts: yes
+  roles:
+    - baremetal-prep-overcloud
+
+- name:  Prepare overcloud containers
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - { role: overcloud-prep-containers, when: containerized_overcloud|bool }
+
+- name: Run tripleo-validations pre-introspection tests
+  hosts: undercloud
+  gather_facts: no
+  tags:
+    - tripleo-validations
+  vars:
+    validations_group: ['pre-introspection']
+  roles:
+    - { role: tripleo-validations,
+        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
+
+- name:  Prepare the overcloud images for deployment
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - overcloud-prep-images
+
+- name:  Prepare overcloud flavors
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - { role: overcloud-prep-flavors,
+        when: step_overcloud_prep_flavors|default(true)|bool }
+
+- name:  Prepare the undercloud networks for the overcloud deployment
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - overcloud-prep-network
+
+- name: Prepare the SSL Configuration for the overcloud deployment
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - { role: overcloud-ssl }
+
+- name: Run tripleo-validations pre-deployment tests
+  hosts: undercloud
+  gather_facts: no
+  tags:
+    - tripleo-validations
+  vars:
+    validations_group: ['pre-deployment']
+  roles:
+    - { role: tripleo-validations,
+        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}

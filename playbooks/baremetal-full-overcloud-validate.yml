@@ -1,0 +1,38 @@
+---
+# Execute sanity checks agsinst the overcloud deployment
+- name: Sanity check the overcloud services
+  hosts: undercloud
+  tags:
+    - overcloud-validate
+  gather_facts: no
+  roles:
+    - { role: validate-sanity-checks,
+        when: run_sanity_checks|default(false)|bool }
+
+# Validate the deployment
+- name:  validate the overcloud
+  hosts: undercloud
+  tags:
+    - overcloud-validate
+  gather_facts: no
+  roles:
+    - { role: validate-simple, when: test_ping|bool }
+
+# Execute tempest against the overcloud deployment
+- name:  Execute tempest against the overcloud
+  hosts: undercloud
+  tags:
+    - overcloud-validate
+  gather_facts: no
+  roles:
+    - { role: validate-tempest, when: run_tempest|bool }
+
+- name: Delete the overcloud
+  hosts: undercloud
+  tags:
+    - overcloud-delete
+  gather_facts: no
+  roles:
+    - { role: overcloud-delete,
+        when: step_delete_overcloud|default(false)|bool }
+

@@ -1,0 +1,39 @@
+---
+- name: Validate IPMI and instackenv.json
+  hosts: undercloud
+  gather_facts: yes
+  roles:
+    - { role: validate-ipmi,
+        when: not use_testenv_broker|default(false)|bool }
+
+- name:  Deploy the undercloud
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - undercloud-deploy
+
+- name: Configure tripleo-validations
+  hosts: undercloud
+  gather_facts: no
+  tags:
+    - tripleo-validations
+  vars:
+    run_tripleo_validations_setup: True
+  roles:
+    - { role: tripleo-validations,
+        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
+
+- name: Validate the undercloud
+  hosts: undercloud
+  roles:
+    - { role: validate-undercloud,
+        when: run_validate_undercloud|default(false)|bool }
+
+- name: Build images for quickstart
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - { role: build-images, when: to_build|default(false)|bool }
+  tags:
+    - get-images
+    - images
