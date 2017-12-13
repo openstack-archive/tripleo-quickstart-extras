@@ -2,6 +2,15 @@
 - include: etc-nodepool.yml
   become: true
 
+- name: Create and enable swap on subnode
+  shell: >
+    dd if=/dev/zero of=/root/swapfile bs=1024 count={{ subnode_swap_size }};
+    chmod 600 /root/swapfile;
+    mkswap /root/swapfile;
+    swapon /root/swapfile;
+    echo "/root/swapfile swap swap defaults 0 0" >> /etc/fstab;
+  become: true
+
 - name: Create /etc/ci directory
   file:
     path: /etc/ci

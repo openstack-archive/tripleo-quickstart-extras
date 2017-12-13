@@ -8,3 +8,4 @@ repos:
   - https://git.openstack.org/openstack-dev/devstack
   - https://git.openstack.org/openstack-infra/devstack-gate
 zuul_changes: "{{ lookup('env', 'ZUUL_CHANGES') }}"
+subnode_swap_size: 8388608 # 8GB
