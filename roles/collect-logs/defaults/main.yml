@@ -7,6 +7,7 @@ artcl_collect_list:
   - /var/lib/oooq-images/*/*.log
   - /var/lib/oooq-images/*/*.sh
   - /var/lib/pacemaker/cib/cib*
+  - /var/lib/pacemaker/pengine/pe-input*
   - /var/log/
   - /var/tmp/sosreport*
   - /etc/
