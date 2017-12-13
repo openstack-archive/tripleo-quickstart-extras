@@ -15,16 +15,19 @@ set -eux
 ## * Clone the t-h-t templates if needed.
 ## ::
 
-rm -rf {{ overcloud_templates_path }}
+sudo rm -rf {{ overcloud_templates_path }}
+chmod 755 $HOME
+rm -rf {{ working_dir }}/tripleo-heat-templates
 git clone {% if overcloud_templates_branch is defined %}-b {{ overcloud_templates_branch }} \
-    --single-branch{% endif %} {{ overcloud_templates_repo }} {{ overcloud_templates_path }}
+    --single-branch{% endif %} {{ overcloud_templates_repo }} {{ working_dir }}/tripleo-heat-templates
+sudo ln -s {{ working_dir }}/tripleo-heat-templates {{ overcloud_templates_path }}
 
 {% if overcloud_templates_refspec is defined %}
 ## * Checkout an open t-h-t review if specified
 ##    (this will stomp on the overcloud_templates_branch, so only one should be used).
 ## ::
 
-pushd {{overcloud_templates_path}}
+pushd {{ working_dir }}/tripleo-heat-templates
 git fetch {{ overcloud_templates_repo }} {{ overcloud_templates_refspec }} && git checkout FETCH_HEAD
 popd
 {% endif %}
