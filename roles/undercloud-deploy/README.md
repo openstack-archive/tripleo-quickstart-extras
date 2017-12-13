@@ -37,7 +37,7 @@ http://docs.openstack.org/developer/tripleo-quickstart/accessing-libvirt.html
 - `undercloud_extra_args`: <''> -- extra options for undercloud deploy command.
 - `undercloud_update_packages`: <'null'> -- a string with a list of packages to update as dependencies for
 your hacking setup. By defaults it updates nothing, which is backwards compatible.
-- `undercloud_enable_mistral`: <'false'> -- sets up the 'enable_mistral' option
+- `undercloud_enable_mistral`: <'true'> -- sets up the 'enable_mistral' option
   in undercloud.conf.
 - `undercloud_enable_monitoring`: <'false'> -- sets up the 'enable_monitoring'
   option in undercloud.conf.

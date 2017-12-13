@@ -64,7 +64,7 @@ libvirt_default_network_address: 192.168.122.1
 nameserver_from_virthost: false
 virthost_nameservers: []
 
-undercloud_enable_mistral: false
+undercloud_enable_mistral: true
 undercloud_enable_monitoring: false
 undercloud_enable_telemetry: true
 undercloud_enable_tempest: true
