@@ -63,3 +63,6 @@ known_failures:
   - test: 'tempest.scenario.test_network_basic_ops.TestNetworkBasicOps.test_mtu_sized_frames'
     reason: 'Test is failing, it is being investigated'
     lp: 'https://bugs.launchpad.net/tripleo/+bug/1731988'
+  - test: 'neutron.tests.tempest.scenario'
+    reason: 'Neutron tempest plugin scenario tests are unstable'
+    lp: 'https://launchpad.net/bugs/1737940'
