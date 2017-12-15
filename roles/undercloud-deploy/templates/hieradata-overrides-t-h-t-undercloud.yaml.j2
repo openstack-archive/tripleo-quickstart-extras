@@ -61,6 +61,19 @@ parameter_defaults:
     nova::conductor::workers: "%{hiera('undercloud_workers')}"
     {% endif %}
 
+    {% if undercloud_nova_max_concurrent_builds is defined %}
+    nova::compute::ironic::max_concurrent_builds: {{undercloud_nova_max_concurrent_builds}}
+    {% endif %}
+
+    {% if undercloud_nova_rpc_response_timeout is defined %}
+    nova::rpc_response_timeout: {{undercloud_nova_rpc_response_timeout}}
+    {% endif %}
+
+    {% if undercloud_ironic_rpc_response_timeout is defined %}
+    ironic::rpc_response_timeout: {{undercloud_ironic_rpc_response_timeout}}
+    {% endif %}
+
+
     {% if undercloud_swift_workers is defined %}
     swift::proxy::workers: {{undercloud_swift_workers}}
     {% elif undercloud_workers is defined %}

@@ -67,6 +67,21 @@ nova::api::osapi_compute_workers: "%{hiera('undercloud_workers')}"
 nova::conductor::workers: "%{hiera('undercloud_workers')}"
 {% endif %}
 
+{% if undercloud_nova_max_concurrent_builds is defined %}
+nova::compute::ironic::max_concurrent_builds: {{undercloud_nova_max_concurrent_builds}}
+{% endif %}
+
+{% if undercloud_nova_rpc_response_timeout is defined %}
+nova::rpc_response_timeout: {{undercloud_nova_rpc_response_timeout}}
+{% endif %}
+
+{% if undercloud_ironic_rpc_response_timeout is defined %}
+ironic::rpc_response_timeout: {{undercloud_ironic_rpc_response_timeout}}
+{% endif %}
+
+
+
+
 {% if undercloud_enable_novajoin or enable_tls_everywhere %}
 nova::api::vendordata_dynamic_connect_timeout: {{ novajoin_connect_timeout }}
 nova::api::vendordata_dynamic_read_timeout: {{ novajoin_read_timeout }}
