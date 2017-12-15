@@ -203,7 +203,7 @@ undercloud_update_packages: >-
   openstack-tripleo-heat-templates
   puppet-tripleo
   python-tripleoclient
-  python-heat-agent*
+  openstack-heat-agents
 ```
 
 Or use the ``undercloud_update_packages: "'*'"`` to update all packages
@@ -301,7 +301,7 @@ And an example playbook to call the role is:
       openstack-tripleo-heat-templates
       puppet-tripleo
       python-tripleoclient
-      python-heat-agent*
+      openstack-heat-agents
     undercloud_extra_args: >-
       -e {{overcloud_templates_path}}/environments/disable-telemetry.yaml
       -e {{overcloud_templates_path}}/environments/docker-minimal.yaml
