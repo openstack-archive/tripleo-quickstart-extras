@@ -9,4 +9,4 @@
   shell: >
     set -o pipefail &&
     {{ local_working_dir }}/ui_validate_simple.sh
-    2>&1  {{ ui_validate_simple_log }}
+    | tee {{ ui_validate_simple_log }}
