@@ -50,7 +50,7 @@ artcl_exclude_list:
   - /etc/pki/ca-trust/extracted
   - /etc/alternatives
   - /var/log/journal
-artcl_collect_dir: "{{ local_working_dir }}/collected_files"
+# artcl_collect_dir is defaulted in extras-common
 artcl_gzip_only: true
 artcl_tar_gz: false
 

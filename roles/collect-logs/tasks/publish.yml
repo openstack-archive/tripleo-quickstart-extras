@@ -55,6 +55,11 @@
     /(\/var\/log\/|\/etc\/)[^ \/\.]+\.gz$/ { rename($0) }';
   when: artcl_txt_rename|bool
 
+- name: Create the reproducer script
+  include_role:
+    name: create-reproducer-script
+  when: lookup('env', 'TOCI_JOBTYPE') != ''
+
 - name: upload to the artifact server using pubkey auth
   shell: rsync -av --quiet -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" {{ artcl_collect_dir }}/ {{ artcl_rsync_path }}/{{ lookup('env', 'BUILD_TAG') }}
   async: "{{ artcl_publish_timeout }}"
