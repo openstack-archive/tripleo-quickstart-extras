@@ -96,6 +96,26 @@ gate-tripleo-ci-centos-7-ovb-ha-oooq or
 gate-tripleo-ci-centos-7-ovb-containers-oooq has a test failure that matches
 the regex.
 
+```yaml
+...
+emails:
+ - mail: fail1@example.com
+   regex: '.*foo.*'
+   topics: foo1
+ - mail: fail1@example.com
+   regex: '.*bar.*'
+   topics: bar1
+ - mail: fail2@example.com
+   regex: '.*bar.*'
+   topics: bar2,extra
+...
+```
+
+if a jobs contains tests matching both 'foo' and 'bar', then:
+* fail1@ will receive an email '[foo1]...' and an email '[bar1]...'
+* fail2@ will receive an email '[bar2][extra]...'
+
+
 So, the order is:
 
 1. If there's no jobs list the user will receive all the emails.
