@@ -182,7 +182,7 @@ cat >"{{ env_vars_to_source_file }}" <<EOF
 export ZUUL_CHANGES="{{ zuul_changes }}"
 export NODES_FILE="{{ nodes_config }}"
 export TOCI_JOBTYPE="{{ toci_jobtype }}"
-export EXTRA_VARS="$EXTRA_VARS --extra-vars dlrn_hash_tag={{ hostvars['undercloud'].dlrn_hash }} "
+export EXTRA_VARS="\$EXTRA_VARS --extra-vars dlrn_hash_tag={{ hostvars['undercloud'].dlrn_hash }} "
 EOF
 
 {% if stable_release != '' %}
