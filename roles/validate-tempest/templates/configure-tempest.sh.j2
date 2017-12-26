@@ -161,6 +161,7 @@ ${TEMPESTCONF} --out etc/tempest.conf \
   compute.allow_tenant_isolation true \
   {% else %}
   auth.use_dynamic_credentials true \
+  auth.tempest_roles Member \
   {% endif %}
   compute-feature-enabled.attach_encrypted_volume False \
   network.tenant_network_cidr {{ tenant_network_cidr }} \
