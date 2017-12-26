@@ -135,7 +135,7 @@ export ANSIBLE_ROLES_PATH=$ANSIBLE_ROLES_PATH:$WORKSPACE/tripleo-quickstart/role
 export NODES_FILE="{{ nodes_config }}"
 
 {% if 'ovb' in toci_jobtype %}
-ansible-playbook tripleo-quickstart-extras/playbooks/ovb-create-stack.yml \
+ansible-playbook $WORKSPACE/tripleo-quickstart-extras/playbooks/ovb-create-stack.yml \
     -e local_working_dir=$WORKSPACE \
     -e virthost=localhost \
     -e @$WORKSPACE/tripleo-quickstart-extras/config/environments/rdocloud.yml \
@@ -161,7 +161,7 @@ else
     SUBNODE_COUNT=$(( $( awk '/node_count: / {print $2}' $WORKSPACE/tripleo-quickstart/$NODES_FILE ) +1 ))
 fi
 
-ansible-playbook tripleo-quickstart-extras/playbooks/provision_multinodes.yml \
+ansible-playbook $WORKSPACE/tripleo-quickstart-extras/playbooks/provision_multinodes.yml \
     -e local_working_dir=$WORKSPACE \
     -e subnode_count=$SUBNODE_COUNT \
     -e prefix=$NODESTACK_PREFIX
