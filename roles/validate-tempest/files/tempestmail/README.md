@@ -194,3 +194,9 @@ And here's an example you can use as email template:
     </body>
 </html>
 ```
+
+Tests
+-----
+
+[user@localhost tempestmail]$ python -m unittest discover -v
+
