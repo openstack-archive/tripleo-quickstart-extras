@@ -235,3 +235,10 @@
       -e {{ working_dir }}/overcloud_network_params.yaml
   when:
     - overcloud_neutron_global_physnet_mtu is defined
+
+# 15 is "reserved time for logs=10" + 5 minutes for inventory role
+# Time must be synchronised on hosts
+- name: Set overcloud deployment timeout in CI
+  set_fact:
+    deploy_timeout: "{{ ((ci_job_end_time|int - lookup('pipe','date +%s')|int)/60)|int -15 }}"
+  when: ci_job_end_time is defined
