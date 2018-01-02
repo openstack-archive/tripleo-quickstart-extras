@@ -1,0 +1,3 @@
+2017-01-18 08:51:03.877973 | {0} tempest.api.object_storage.test_container_quotas.ContainerQuotasTest.test_upload_valid_object [0.263364s] ... FAILED
+2017-01-18 08:51:46.676254 | {1} tempest.api.orchestration.stacks.test_soft_conf.TestSoftwareConfig.test_get_deployment_metadata [0.899338s] ... FAILED
+

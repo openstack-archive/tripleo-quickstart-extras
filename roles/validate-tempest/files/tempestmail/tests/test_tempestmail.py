@@ -199,8 +199,7 @@ class TestTempestMailCmd(unittest.TestCase):
 
         console, date, log_path = tmc.get_console()
         self.assertEquals(console, self.console_ok)
-        self.assertEquals(log_path, 'Not available yet. '
-                                    'Check https://logs.openstack.org')
+        self.assertEquals(log_path, None)
 
         tmc.parse_arguments(['-c', 'tests/fixtures/config.yaml', '--job',
                              'periodic-tripleo-ci-centos-7-ovb-nonha-tempest-'
@@ -241,7 +240,7 @@ class TestTempestMailCmd(unittest.TestCase):
         self.assertEquals(data['date'], None)
         self.assertEquals(data['run'], True)
         self.assertEquals(data['link'], 'http://logs.openstack.org')
-        self.assertEquals(len(data['ok']), 99)
+        self.assertEquals(len(data['ok']), 2)
         self.assertEquals(data.get('failed'), None)
         self.assertEquals(data.get('covered'), None)
         self.assertEquals(data.get('new'), None)
