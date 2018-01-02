@@ -1,9 +1,3 @@
-- when: deploy_steps_ansible_workflow|bool
-  block:
-    - name: Add subnodes to known hosts
-      shell: |
-        ssh-keyscan 192.168.24.3 >> ~/.ssh/known_hosts
-
 - name: Deploy the overcloud
   shell: >
     set -o pipefail &&
