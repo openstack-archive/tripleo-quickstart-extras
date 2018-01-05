@@ -72,6 +72,7 @@ timeout_args: "--timeout {{deploy_timeout}}"
 set_overcloud_workers: true
 
 cloud_name_args: ""
+hostnamemap_args: ""
 network_args: ""
 network_isolation_args: ""
 ntp_args: ""
@@ -108,6 +109,7 @@ deploy_args: >-
   {{ timeout_args }}
   {{ ntp_args }}
   {{ cloud_name_args }}
+  {{ hostnamemap_args }}
   {{ multinode_args }}
   {{ pacemaker_args }}
   {{ container_args }}
