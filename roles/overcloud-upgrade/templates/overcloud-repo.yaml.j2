@@ -18,9 +18,10 @@ parameter_defaults:
 
     popd
     yum clean all
-{% if target_upgrade_version in ['ocata', 'master'] %}
+{% if target_upgrade_version != 'newton' %}
     yum install -y python-heat-agent-*
     yum install -y ansible-pacemaker
+    yum update -y ansible
     # update ansible.cfg
     # FIXME: Workaround for bigswitch vendor pluging
     # we need to remove those package which is broken with Ocata neutron python code
