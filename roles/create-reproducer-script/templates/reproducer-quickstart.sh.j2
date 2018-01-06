@@ -110,6 +110,7 @@ fi
 
 # Start from a clean workspace
 export WORKSPACE
+mkdir -p $WORKSPACE
 cd $WORKSPACE
 rm -rf tripleo-quickstart tripleo-quickstart-extras
 
@@ -119,10 +120,10 @@ git clone https://github.com/openstack/tripleo-quickstart-extras
 
 # Set up a virtual env if requested
 if [ "$CREATE_VIRTUALENV" = "true" ]; then
-    virtualenv --system-site-packages $WORKSPACE/venv_ansible
+    virtualenv $WORKSPACE/venv_ansible
     source $WORKSPACE/venv_ansible/bin/activate
     pip install --upgrade setuptools pip
-    pip install -r $WORKSPACE/tripleo-quickstart/requirements.txt
+    pip install -Ur $WORKSPACE/tripleo-quickstart/requirements.txt
 fi
 
 if [ "$REMOVE_STACKS_KEYPAIRS" = "true" ]; then
@@ -138,6 +139,7 @@ export ZUUL_CHANGES="{{ zuul_changes }}"
 
 # Export our roles path so that we can use the roles from our workspace
 export ANSIBLE_ROLES_PATH=$ANSIBLE_ROLES_PATH:$WORKSPACE/tripleo-quickstart/roles:$WORKSPACE/tripleo-quickstart-extras/roles
+export ANSIBLE_HOST_KEY_CHECKING=False
 
 # Export a node config for the topology you need ie:
 export NODES_FILE="{{ nodes_config }}"
@@ -150,6 +152,7 @@ ansible-playbook $WORKSPACE/tripleo-quickstart-extras/playbooks/ovb-create-stack
     -e ssh_extra_args="" \
     -e ovb_dump_hosts=true \
     -e ovb_setup_user=true \
+    -e ansible_python_interpreter="/usr/bin/python" \
     -e cleanup_stacks_keypairs=$REMOVE_STACKS_KEYPAIRS \
     -e @$WORKSPACE/tripleo-quickstart/$NODES_FILE
 
