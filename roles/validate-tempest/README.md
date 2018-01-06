@@ -24,7 +24,7 @@ Role Variables
                        to empty if you don't want to run with blacklist_file option.
                        Default value is an empty list
 * `skip_file_src`: path to skip tests file, set it empty if running without skip list: `skip_file_src=''`
-* `tempest_workers`: int - how many parallel workers to run (default is number of cores)
+* `tempest_workers`: int - how many parallel workers to run (default is half the number of cores/threads)
 * `tempest_until_failure`: false/true - default is false, repeat the run again and again until failure occurs
 * `tempest_exit_on_failure`: true/false - whether to exit from role with tempest exit code (default: true)
 * `tempestmail_config`: config.yaml - name of config file for tempestmail script
