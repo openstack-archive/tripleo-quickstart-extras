@@ -4,12 +4,6 @@
   roles:
     - dump_vars
 
-- name: Run dump vars on localhost
-  hosts: localhost
-  gather_facts: yes
-  roles:
-    - { role: dump_vars, dump_vars_log_dir: "{{ local_working_dir }}" }
-
 - name: Collect logs
   hosts: all:!localhost:!127.0.0.2
   roles:
