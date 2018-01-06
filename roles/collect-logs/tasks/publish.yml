@@ -31,7 +31,7 @@
   shell: >
     if [ -d {{ artcl_collect_dir }}/undercloud/var/log/extra/stackviz/data ]; then
         cp -r {{ artcl_collect_dir }}/undercloud/var/log/extra/stackviz {{ artcl_collect_dir }};
-        gunzip -r {{ artcl_collect_dir }}/stackviz;
+        gunzip -fr {{ artcl_collect_dir }}/stackviz;
     fi;
 
 - name: fetch tempest results to the root of the collect_dir
