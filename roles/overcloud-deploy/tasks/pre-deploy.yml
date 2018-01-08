@@ -236,9 +236,21 @@
   when:
     - overcloud_neutron_global_physnet_mtu is defined
 
-# 15 is "reserved time for logs=10" + 5 minutes for inventory role
+# 15 is "reserved time for logs=10" + 5 minutes for inventory role for OVB jobs
 # Time must be synchronised on hosts
-- name: Set overcloud deployment timeout in CI
+- name: Set overcloud deployment timeout in CI for OVB
   set_fact:
     deploy_timeout: "{{ ((ci_job_end_time|int - lookup('pipe','date +%s')|int)/60)|int -15 }}"
-  when: ci_job_end_time is defined
+  when:
+    - ci_job_end_time is defined
+    - '"ovb" in lookup("env", "TOCI_JOBTYPE")'
+
+# 5 is "reserved time for 5 minutes for inventory role for multinode jobs
+# Time must be synchronised on hosts
+- name: Set overcloud deployment timeout in CI for multinode
+  set_fact:
+    deploy_timeout: "{{ ((ci_job_end_time|int - lookup('pipe','date +%s')|int)/60)|int -5 }}"
+  when:
+    - ci_job_end_time is defined
+    - '"ovb" not in lookup("env", "TOCI_JOBTYPE")'
+
