@@ -93,7 +93,7 @@ def translate(mapping, json_data, only_ok):
             if task['Name'] in mapping:
                 timestamp, duration = stamp(task['Time Start']), task_length(
                     task['Duration'])
-                items.append([mapping[task['Name']], timestamp, duration])
+                items.append([mapping[task['Name']], duration, timestamp])
     return items
 
 
