@@ -13,6 +13,7 @@
       inventory: all
   roles:
     - tripleo-inventory
+  ignore_errors: yes
 
 - name: Collect logs
   hosts: all:!localhost:!127.0.0.2
