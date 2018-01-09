@@ -4,17 +4,6 @@
   roles:
     - dump_vars
 
-- name: Ensure the overcloud nodes are added to the generated inventory
-  hosts: undercloud
-  gather_facts: yes
-  tags:
-    - collect-logs
-  vars:
-      inventory: all
-  roles:
-    - tripleo-inventory
-  ignore_errors: yes
-
 - name: Collect logs
   hosts: all:!localhost:!127.0.0.2
   roles:
