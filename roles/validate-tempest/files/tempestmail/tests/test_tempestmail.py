@@ -2,6 +2,7 @@ import datetime
 import mock
 import tempfile
 import unittest
+import re
 
 from tempestmail import Config
 from tempestmail import Mail
@@ -29,9 +30,9 @@ class MailTest(unittest.TestCase):
         config.require_auth = True
         config.emails = [
             {'mail': 'email1@example.com', 'name': 'name 1',
-             'jobs': [], 'regex': []},
+             'jobs': [], 'regex': [], 'topics': ''},
             {'mail': 'email2@example.com', 'name': 'name 2',
-             'jobs': [], 'regex': []}
+             'jobs': [], 'regex': [], 'topics': ''}
             ]
         config.template = 'template.html'
         return config
@@ -87,16 +88,45 @@ class MailTest(unittest.TestCase):
         self.assertEquals(self.data.get('has_errors'), None)
         addresses = mail.filter_emails(
             'periodic-tripleo-ci-centos-7-ovb-ha-tempest', self.data)
-        self.assertEquals(['email1@example.com', 'email2@example.com'],
+        self.assertEquals({'' : ['email1@example.com', 'email2@example.com']},
                           addresses)
         mail.config.emails[0]['jobs'].append('another-job')
         addresses = mail.filter_emails(
             'periodic-tripleo-ci-centos-7-ovb-ha-tempest', self.data)
-        self.assertEquals(['email2@example.com'], addresses)
+        self.assertEquals({'' : ['email2@example.com']}, addresses)
         self.assertEquals(self.data['has_errors'], True)
         mail.config.emails[0]['jobs'] = []
-        mail.config.emails[0]['regex'].append('tempest.some.regex')
-        self.assertEquals(['email2@example.com'], addresses)
+        mail.config.emails[0]['regex'].append(re.compile(
+            'tempest.some.regex'))
+        self.assertEquals({'' : ['email2@example.com']}, addresses)
+
+    def test_filter_emails_topics(self):
+        mail = Mail(self.config)
+        addresses = mail.filter_emails(
+            'periodic-tripleo-ci-centos-7-ovb-ha-tempest', self.data)
+        self.assertEquals({'' : ['email1@example.com',
+                                 'email2@example.com']},
+                          addresses)
+        mail.config.emails[0]['jobs'].append(
+            'periodic-tripleo-ci-centos-7-ovb-ha-tempest')
+        mail.config.emails[0]['regex'].append(re.compile(
+            'upload_too_many_objects'))
+        mail.config.emails[0]['topics'] = 'many_objects'
+        mail.config.emails[1]['regex'].append(re.compile(
+            'upload_valid_object'))
+        mail.config.emails[1]['topics'] = 'valid_object'
+        new = {'mail': 'email2@example.com', 'name': 'name 2',
+               'jobs': ['periodic-tripleo-ci-centos-7-ovb-ha-tempest'],
+               'regex': [re.compile('upload_valid_object')],
+               'topics': 'valid_object,object_storage'}
+        mail.config.emails.append(new)
+        addresses = mail.filter_emails(
+            'periodic-tripleo-ci-centos-7-ovb-ha-tempest', self.data)
+        bookaddr = {'[many_objects]' : ['email1@example.com'],
+                    '[valid_object]' : ['email2@example.com'],
+                    '[valid_object][object_storage]' : ['email2@example.com']
+                   }
+        self.assertEquals(bookaddr, addresses)
 
     @mock.patch('tempestmail.Mail._send_mail_api')
     @mock.patch('tempestmail.Mail._send_mail_local')

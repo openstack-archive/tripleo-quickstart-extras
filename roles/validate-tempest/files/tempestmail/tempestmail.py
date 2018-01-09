@@ -108,7 +108,7 @@ class Mail(object):
 
     def filter_emails(self, job, data):
         has_errors = False
-        addresses = []
+        bookaddr = {}
 
         for error in [data.get(x, []) for x in ('new', 'failed', 'errors')]:
             if error:
@@ -123,24 +123,33 @@ class Mail(object):
                       m.get('jobs') or not
                       m.get('jobs')]
 
-            # Now we filter for regex if doesn't exists
-            addresses = [m.get('mail') for m in emails if not m.get('regex')]
-
-            # And finally, if regex exists
+            # Add all addresses except those that regex don't match
             for email in emails:
-                for r in email.get('regex'):
-                    if len(filter(r.search, data.get('new'))):
-                        addresses.append(email.get('mail'))
-                        break
-
+                add = True
+                if email.get('regex'):
+                    for r in email.get('regex'):
+                        if len(filter(r.search, data.get('new'))):
+                            break
+                        add = False
+                if add:
+                    topics = ''
+                    if email.get('topics'):
+                        # Parse topics and format it between brackets
+                        t = email.get('topics').split(',')
+                        topics = ''.join('[{}]'.format(s) for s in t)
+                    # Add the address to the bookaddr dict
+                    # {'[foo][bar]' : ['john@redhat.com', 'mary@redhat.com']}
+                    bookaddr.setdefault(topics, []).append(email.get('mail'))
         else:
             self.log.debug('No failures send email to everybody')
             addresses = [m.get('mail') for m in self.config.emails
                          if not m.get('fail_only')]
+            # Single group with empty topic is added to the bookaddr
+            bookaddr.setdefault('', []).append(addresses)
 
         data['has_errors'] = has_errors
 
-        return addresses
+        return bookaddr
 
     def _send_mail_local(self, addresses, message, subject, output):
         msg = MIMEText(message, 'html')
@@ -167,14 +176,16 @@ class Mail(object):
         requests.post(self.config.api_server, data=data)
 
     def send_mail(self, job, data, output):
-        addresses = self.filter_emails(job, data)
+        bookaddr = self.filter_emails(job, data)
         message = self.render_template(data)
-        subject = 'Job {} results'.format(job)
 
-        if self.config.use_api_server:
-            self._send_mail_api(addresses, message, subject)
-        else:
-            self._send_mail_local(addresses, message, subject, output)
+        # Send a separate email to the addresses grouped by topics
+        for topics, addresses in bookaddr.items():
+            subject = '{} Job {} results'.format(topics, job).lstrip()
+            if self.config.use_api_server:
+                self._send_mail_api(addresses, message, subject)
+            else:
+                self._send_mail_local(addresses, message, subject, output)
 
 
 class TempestMailCmd(object):
@@ -367,6 +378,7 @@ class TempestMailCmd(object):
                                      'mail': e.get('mail'),
                                      'jobs': e.get('jobs', []),
                                      'regex': regex,
+                                     'topics': e.get('topics'),
                                      'fail_only': e.get('fail_only', False)})
         for t in config.get('known_failures', []):
             known_failures.append({'test': t.get('test'),
