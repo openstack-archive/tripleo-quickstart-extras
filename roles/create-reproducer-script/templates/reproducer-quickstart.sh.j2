@@ -12,6 +12,7 @@
 {% endif %}
 : ${REMOVE_STACKS_KEYPAIRS:=false}
 : ${NODESTACK_PREFIX:=""}
+: ${AUTORUN:=0}
 
 usage () {
     echo "Usage: $0 [options]"
@@ -32,6 +33,9 @@ usage () {
     echo "  -p, --nodestack-prefix"
     echo "                      add a unique prefix for multinode and singlenode stacks"
     echo "                      Defaults to empty."
+    echo "  -a, --autorun"
+    echo "                      Run job on prepared environment automatically"
+    echo "                      Default is to stop after environment is ready"
     echo "  -h, --help          print this help and exit"
 }
 
@@ -65,6 +69,10 @@ while [ "x$1" != "x" ]; do
         --nodestack-prefix|-p)
             NODESTACK_PREFIX=$2
             shift
+            ;;
+
+        --autorun|-a)
+            AUTORUN=1
             ;;
 
         --help|-h)
@@ -198,16 +206,23 @@ EOF
 {% endif %}
 
 scp "$WORKSPACE/{{ env_vars_to_source_file }}" zuul@$ansible_host:/home/zuul/
+if [[ "$AUTORUN" == "1" ]]; then
+    ssh zuul@$ansible_host -tt \
+    "screen -LS ci -h 25000 -dm bash -c 'set -m; source ~/{{ env_vars_to_source_file }}; ANSIBLE_FORCE_COLOR=true /opt/stack/tripleo-ci/toci_gate_test-oooq.sh 2>&1 | tee ~/console.log; exec bash' && screen -RD"
+else
+    # Remove -x so that the instructions don't print twice
+    set +x
 
-# Remove -x so that the instructions don't print twice
-set +x
+    # Instruct the user to execute toci_gate_test-oooq.sh on the undercloud
+    echo "
+        # Now complete the test excution on the undercloud:
+        # ssh to the undercloud:
+        ssh zuul@$ansible_host
+        # Source the environment settings file and run the toci gate script
+        source /home/zuul/env_vars_to_src.sh
+        /opt/stack/tripleo-ci/toci_gate_test-oooq.sh 2>&1 | tee console.log
 
-# Instruct the user to execute toci_gate_test-oooq.sh on the undercloud
-echo "
-    Now complete the test excution on the undercloud:
-    - ssh to the undercloud: $ ssh zuul@$ansible_host
-    - Source the environment settings file: $ source /home/zuul/env_vars_to_src.sh
-    - Run the toci gate script: $ /opt/stack/tripleo-ci/toci_gate_test-oooq.sh
-
-    To avoid timeouts, you can start a screen session before executing the commands: $ screen -S ci
-"
+        # To avoid timeouts, you can start a screen session before executing the commands:
+        screen -S ci
+    "
+fi
