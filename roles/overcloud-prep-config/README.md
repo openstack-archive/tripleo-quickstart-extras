@@ -33,6 +33,9 @@ Role Variables
   variable `tht_rpm_url`
 - `overcloud_templates_path`: <'/usr/share/openstack-tripleo-heat-templates'> --
   defined in roles/extras-common
+- `overcloud_prep_post_hook_script`: if set to a non-empty string, it should be the content
+  of a bash script that will be run at the end of the overcloud preparation configuration step.
+  This should only be use in rare case.
 
 [1] Names are derived from the `tripleo-heat-templates configuration <https://github.com/openstack/tripleo-heat-templates/tree/master/network/config>`_
 
