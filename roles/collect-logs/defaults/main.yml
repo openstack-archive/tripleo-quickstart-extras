@@ -126,3 +126,13 @@ ara_tasks_map:
   "overcloud-prep-images : Prepare the overcloud images for deploy": prepare_images.seconds
   "validate-simple : Validate the overcloud": overcloud.ping_test.seconds
   "validate-tempest : Execute tempest": overcloud.tempest.seconds
+# InfluxDB module settings
+influxdb_only_successful_tasks: true
+influxdb_measurement: test
+# influxdb_url:
+influxdb_port: 8086
+influxdb_user:
+influxdb_password:
+influxdb_dbname: testdb
+influxdb_data_file_path: "{{ lookup('env', 'LOCAL_WORKING_DIR')|default('/tmp', true) }}/influxdb_data"
+influxdb_create_data_file: true

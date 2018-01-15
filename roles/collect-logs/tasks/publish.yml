@@ -31,6 +31,10 @@
   when: ara_graphite_server is defined
   ignore_errors: yes
 
+- include: ara_influxdb.yml
+  when: influxdb_url is defined or influxdb_create_data_file|bool
+  ignore_errors: yes
+
 - name: fetch stackviz results to the root of the collect_dir
   shell: >
     if [ -d {{ artcl_collect_dir }}/undercloud/var/log/extra/stackviz/data ]; then
