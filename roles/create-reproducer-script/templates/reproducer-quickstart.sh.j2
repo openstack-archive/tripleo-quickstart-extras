@@ -175,6 +175,7 @@ fi
 ansible-playbook $WORKSPACE/tripleo-quickstart-extras/playbooks/provision_multinodes.yml \
     -e local_working_dir=$WORKSPACE \
     -e subnode_count=$SUBNODE_COUNT \
+    -e ansible_python_interpreter="/usr/bin/python" \
     -e prefix=$NODESTACK_PREFIX
 
 # Run the playbook to setup the undercloud/subnodes to look like nodepool nodes
