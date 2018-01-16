@@ -21,4 +21,4 @@
 
   - name: Deploy FreeIPA
     become: true
-    command: "~{{ supplemental_user }}/deploy_freeipa.sh &> ~{{ supplemental_user }}/deploy_freeipa.log"
+    shell: "~{{ supplemental_user }}/deploy_freeipa.sh &> ~{{ supplemental_user }}/deploy_freeipa.log"
