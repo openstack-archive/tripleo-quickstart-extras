@@ -18,8 +18,14 @@ undercloud_install_script: undercloud-install.sh.j2
 # FIXME(bogdando): do not attempt to change it yet the client's hardcode is fixed
 undercloud_roles_data: "{{overcloud_templates_path}}/roles_data_undercloud.yaml"
 
-# defines extra args for the undercloud deploy command
+# defines extra args and service templates for the undercloud deploy command
 undercloud_extra_args: ""
+undercloud_extra_services_args: >-
+  -e {{overcloud_templates_path}}/environments/services-docker/ironic.yaml
+  -e {{overcloud_templates_path}}/environments/services-docker/ironic-inspector.yaml
+  -e {{overcloud_templates_path}}/environments/services-docker/mistral.yaml
+  -e {{overcloud_templates_path}}/environments/services-docker/zaqar.yaml
+  -e {{overcloud_templates_path}}/environments/docker.yaml
 
 # The undercloud can also be deployed with heat
 # thus requiring a t-h-t driven undercloud *and* the classic undercloud

@@ -70,6 +70,8 @@ your hacking setup. By defaults it updates nothing, which is backwards compatibl
   FreeIPA. This sets up the 'overcloud_domain_name' configuration option in
   undercloud.conf . Note: This also affects `CloudDomain` in the
   `cloud-names.yaml` template used by the `overcloud-deploy` role.
+- `undercloud_cloud_domain`: The domain configured for use by containerized
+  undercloud via the tripleo client's `--local-domain` option. It is unset by default.
 - `tripleo_ui_secure_access`: Defaults to false due to the self signed certificate and
   usability issues. See the tripleo-quickstart documentation `accessing the undercloud` for details.
 - `undercloud_docker_registry_host`: <`docker_registry_host`> -- registry host/port
@@ -83,6 +85,9 @@ your hacking setup. By defaults it updates nothing, which is backwards compatibl
 - `undercloud_docker_image_tag`: <`docker_image_tag`> -- tag of docker images used for
   undercloud deployment. Defaults to the value provided for overcloud. Defaults to the
   value provided for overcloud.
+- `undercloud_extra_services_args`: -- additional t-h-t (TripleO heat templates)
+  environment files for extra services deployed on containerized underclouds. By default,
+  includes environments for docker, ironic, mistral and zaqar containerized services.
 
 Role Network Variables
 ----------------------

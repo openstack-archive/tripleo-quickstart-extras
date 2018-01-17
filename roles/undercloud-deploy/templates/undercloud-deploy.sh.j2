@@ -96,11 +96,7 @@ sudo ln -f -s /usr/share/openstack-puppet/modules/* /etc/puppet/modules/
 {% if containerized_undercloud|bool %}
 openstack overcloud container image prepare \
     --env-file {{ working_dir }}/undercloud-containers-default-parameters.yaml \
-    -e {{overcloud_templates_path}}/environments/services-docker/ironic.yaml \
-    -e {{overcloud_templates_path}}/environments/services-docker/ironic-inspector.yaml \
-    -e {{overcloud_templates_path}}/environments/services-docker/mistral.yaml \
-    -e {{overcloud_templates_path}}/environments/services-docker/zaqar.yaml \
-    -e {{overcloud_templates_path}}/environments/docker.yaml \
+    {{ undercloud_extra_services_args }} \
     -r {{undercloud_roles_data}} \
     --namespace {{ undercloud_docker_registry_host }}{% if undercloud_docker_registry_port is defined %}:{{ undercloud_docker_registry_port }}{% endif%}/{{ undercloud_docker_registry_namespace }} \
     --tag $BUILD_ID
@@ -126,13 +122,12 @@ sudo openstack undercloud deploy \
     --heat-native \
     --templates={{overcloud_templates_path}} \
     --local-ip=$undercloud_local_ip \
+{% if undercloud_cloud_domain is defined %}
+    --local-domain={{ undercloud_cloud_domain }} \
+{% endif %}
     -e {{ working_dir }}/custom_undercloud_deploy.yaml \
 {% if containerized_undercloud|bool %}
-    -e {{overcloud_templates_path}}/environments/services-docker/ironic.yaml \
-    -e {{overcloud_templates_path}}/environments/services-docker/ironic-inspector.yaml \
-    -e {{overcloud_templates_path}}/environments/services-docker/mistral.yaml \
-    -e {{overcloud_templates_path}}/environments/services-docker/zaqar.yaml \
-    -e {{overcloud_templates_path}}/environments/docker.yaml \
+    {{ undercloud_extra_services_args }} \
     -e {{ working_dir }}/undercloud-containers-default-parameters.yaml \
 {% endif %}
     {{ undercloud_extra_args }} \
