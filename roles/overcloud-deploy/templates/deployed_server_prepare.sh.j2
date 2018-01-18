@@ -4,7 +4,7 @@ source ${HOME}/stackrc
 
 # We did not have OVERCLOUD_ROLES var in the newton version of the
 # get-occ-config script. Instead we need to use CONTROLLER_HOSTS var.
-{% if release != "newton" %}
+{% if release != "newton" and (overcloud_release is not defined or overcloud_release != "newton") %}
 export OVERCLOUD_ROLES=""
 {% for role in deployed_server_overcloud_roles %}
 OVERCLOUD_ROLES="$OVERCLOUD_ROLES {{ role.name }}"
@@ -15,8 +15,9 @@ export OVERCLOUD_HOSTS="{{ deployed_server_overcloud_roles|map(attribute='hosts'
 export CONTROLLER_HOSTS="{{deployed_server_overcloud_roles|map(attribute='hosts')|join(' ') }}"
 {% endif %}
 
+{% set get_occ_config_script = overcloud_templates_path|default('/usr/share/openstack-tripleo-heat-templates') ~ '/deployed-server/scripts/get-occ-config.sh' %}
 
-/usr/share/openstack-tripleo-heat-templates/deployed-server/scripts/get-occ-config.sh 2>&1 | sudo dd of=/var/log/deployed-server-os-collect-config.log
+{{ get_occ_config_script }} 2>&1 | sudo dd of=/var/log/deployed-server-os-collect-config.log
 
 # We also do not have the deployed-server-enable-ssh-admin script on newton.
 {% if release != "newton" %}
