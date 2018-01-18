@@ -27,3 +27,4 @@ modify_image_vc_trace: false
 libguestfs_mode: true
 # TODO(sshnaidm): implement initramfs image modifying
 initramfs_image: false
+libguestfs_kernel_override: 3.10.0-693.el7.x86_64

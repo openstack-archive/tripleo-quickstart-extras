@@ -44,6 +44,11 @@
     > {{ working_dir }}/{{ modify_script|default('modify_image')|replace('/','_') }}.log 2>&1
   environment:
     LIBGUESTFS_BACKEND: direct
+    # FIXME(ykarel) SUPERMIN_* can be removed once
+    # https://bugs.launchpad.net/tripleo/+bug/1743749 is completely fixed.
+    SUPERMIN_KERNEL_VERSION: "{{ libguestfs_kernel_override }}"
+    SUPERMIN_KERNEL: "/boot/vmlinuz-{{ libguestfs_kernel_override }}"
+    SUPERMIN_MODULES: "/lib/modules/{{ libguestfs_kernel_override }}"
   args:
     chdir: "{{ modify_image_working_dir }}"
 
