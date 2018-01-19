@@ -29,6 +29,7 @@ emails:
       - 'gate-tripleo-ci-centos-7-scenario001-multinode-oooq'
     regex:
       - 'ceilometer.tests.tempest.scenario.test_telemetry_integration.TestTelemetryIntegration'
+      - 'telemetry_tempest_plugin.scenario.test_telemetry_integration.TestTelemetryIntegration'
   - mail: 'abregman@redhat.com'
     name: 'RHOS Networking'
     fail_only: True
