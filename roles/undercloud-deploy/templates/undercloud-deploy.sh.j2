@@ -23,9 +23,6 @@ cat > {{ working_dir }}/custom_undercloud_deploy.yaml << EOF_CAT
 # NOTE: many of these live in t-h-t in:
 # extraconfig/post_deploy/undercloud_post.yaml
 
-resource_registry:
-  OS::TripleO::Undercloud::Net::SoftwareConfig: {{overcloud_templates_path}}/net-config-noop.yaml
-
 parameter_defaults:
   UndercloudNetworkCidr: {{undercloud_network_cidr}}
   UndercloudDhcpRangeStart: {{undercloud_dhcp_start|default(
