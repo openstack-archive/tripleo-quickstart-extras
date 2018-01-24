@@ -1,8 +1,18 @@
 ---
+- name:  Prepare the undercloud networks for the overcloud deployment
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - overcloud-prep-network
+  tags:
+    - overcloud-prep-network
+
 - name:  copy over config files
   hosts: undercloud
   gather_facts: no
   roles:
+    - overcloud-prep-config
+  tags:
     - overcloud-prep-config
 
 - name:  Perpare the baremetal overcloud
@@ -10,12 +20,16 @@
   gather_facts: yes
   roles:
     - baremetal-prep-overcloud
+  tags:
+    - baremetal-prep-overcloud
 
 - name:  Prepare overcloud containers
   hosts: undercloud
   gather_facts: no
   roles:
     - { role: overcloud-prep-containers, when: containerized_overcloud|bool }
+  tags:
+    - overcloud-prep-containers
 
 - name: Run tripleo-validations pre-introspection tests
   hosts: undercloud
@@ -33,6 +47,8 @@
   gather_facts: no
   roles:
     - overcloud-prep-images
+  tags:
+    - overcloud-prep-images
 
 - name:  Prepare overcloud flavors
   hosts: undercloud
@@ -40,18 +56,16 @@
   roles:
     - { role: overcloud-prep-flavors,
         when: step_overcloud_prep_flavors|default(true)|bool }
-
-- name:  Prepare the undercloud networks for the overcloud deployment
-  hosts: undercloud
-  gather_facts: no
-  roles:
-    - overcloud-prep-network
+  tags:
+    - overcloud-prep-flavors
 
 - name: Prepare the SSL Configuration for the overcloud deployment
   hosts: undercloud
   gather_facts: no
   roles:
     - { role: overcloud-ssl }
+  tags:
+    - overcloud-ssl
 
 - name: Run tripleo-validations pre-deployment tests
   hosts: undercloud
