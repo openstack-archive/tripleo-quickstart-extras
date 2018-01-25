@@ -1,13 +1,13 @@
 # baremetal settings
 step_introspect: true
-network_isolation_type: public-bond
+network_isolation_type: multiple-nics
 network_isolation: true
 
 # template copies
-baremetal_nic_configs: "{{ local_working_dir }}/openstack-virtual-baremetal/bond-network-templates/nic-configs"
+baremetal_nic_configs: "{{ local_working_dir }}/openstack-virtual-baremetal/network-templates/nic-configs"
 use_resource_registry_nic_configs: true
 
-# This enables container deployments with Pike and later
+# This enables container deployments Pike and after
 containerized_overcloud: >-
   {% if release in ['newton', 'ocata'] -%}
   false
