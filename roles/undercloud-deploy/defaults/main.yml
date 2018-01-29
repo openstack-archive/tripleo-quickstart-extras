@@ -72,7 +72,7 @@ virthost_nameservers: []
 
 undercloud_enable_mistral: true
 undercloud_enable_monitoring: false
-undercloud_enable_telemetry: true
+undercloud_enable_telemetry: false
 undercloud_enable_tempest: true
 undercloud_enable_ui: true
 undercloud_enable_validations: true
