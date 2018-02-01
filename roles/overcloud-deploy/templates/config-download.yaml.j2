@@ -2,10 +2,6 @@ resource_registry:
   OS::TripleO::DeployedServer::ControlPlanePort: /usr/share/openstack-tripleo-heat-templates/deployed-server/deployed-neutron-port.yaml
 
 parameter_defaults:
-  HostnameMap:
-{% for subnode in groups['overcloud'] %}
-    overcloud-controller-{{ loop.index0 }}: {{ hostvars[subnode]['ansible_hostname'] }}
-{% endfor %}
   DeployedServerPortMap:
 {% for subnode in groups['overcloud'] %}
     {{ hostvars[subnode]['ansible_hostname'] }}-ctlplane:
