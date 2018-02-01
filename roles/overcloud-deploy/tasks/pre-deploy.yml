@@ -107,6 +107,13 @@
           -e {{ working_dir }}/cloud-names.yaml
   when: release not in ['mitaka', 'liberty']
 
+- name: Set the hostname_map config if defined
+  set_fact:
+      hostnamemap_args: >-
+          -e {{ working_dir }}/hostnamemap.yaml
+  when:
+    - overcloud_nodes[0].hostnamemap_override is defined
+
 - name: set set overcloud SSL args for releases after mitaka
   set_fact:
     ssl_overcloud_args: >-
