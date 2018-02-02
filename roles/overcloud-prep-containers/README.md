@@ -33,7 +33,10 @@ overcloud-prep-containers variables
 * delete_docker_cache: <false> -- whether to stop Docker, wipe all the Docker data, and restart
 * update_containers: <false> -- whether to run container-check to update containers
 * container_process_count: <8> -- number of concurrent processes to run when updating containers
-
+* use_overcloud_mixed_upgrade: <false> - when true, we use overcloud release tag and build_id for
+                                         container images in mixed upgrade context.
+* prep_container_upgrade_run: <false> - in mixed version upgrade offer a flag to have container
+                                        deployed during upgrade.
 
 overcloud-prep-config variables
 -------------------------------
