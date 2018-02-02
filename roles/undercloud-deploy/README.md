@@ -19,8 +19,6 @@ defaults imply the 'openstack undercloud install' command will be invoked. See t
 deployment methods section below for the alternative modes.
 - `undercloud_install_log`: <'{{ working_dir }}/undercloud_install.log'> -- the full path
 to the undercloud install log file.
-- `network_environment_file`: <'network-environment.yaml.j2'> -- the name of the jinja template
-used as the base for the network-environment for tripleo.
 - `undercloud_hieradata_override_file`: <'quickstart-hieradata-overrides-classic-undercloud.yaml.j2'> -- the name of
 jinja template used to override the undercloud's install hieradata
 - `undercloud_ironic_ipxe_port`: <'3816'> -- port to use for httpd ipxe server
@@ -123,6 +121,10 @@ the ``undercloud deploy --local_ip`` (and `local_ip` in the undercloud.conf)
 may not be used. Enable this variable instead. Doing so changes the heat endpoint
 type from the default internal to public and changes the signaling method to use
 TempURLs from OpenStack Object Storage (swift).
+- `undercloud_resource_registry_args`: Sets up network config for Undercloud
+  (resource_registry for heat templates). Defaults to Noop.
+- `undercloud_network_environment_args`: Complements Undercloud networking
+  setup with the default parameters for heat templates (parameter_defaults).
 
 Undercloud deployment methods
 -----------------------------
