@@ -7,7 +7,7 @@
     - overcloud-scripts
 
 - include: deployed-server.yml
-  when: deployed_server|bool
+  when: deployed_server|bool and not (deploy_steps_ansible_workflow|bool)
   tags:
     - overcloud-deploy
 
