@@ -14,31 +14,6 @@ set -eux
 export {{ var }}
 {% endfor %}
 
-
-## * Create the parameters for the deployment.
-## ::
-
-cat > {{ working_dir }}/custom_undercloud_deploy.yaml << EOF_CAT
-# custom undercloud deployment parameters from heat
-# NOTE: many of these live in t-h-t in:
-# extraconfig/post_deploy/undercloud_post.yaml
-
-parameter_defaults:
-  UndercloudNetworkCidr: {{undercloud_network_cidr}}
-  UndercloudDhcpRangeStart: {{undercloud_dhcp_start|default(
-    undercloud_network_cidr|nthhost(5))}}
-  UndercloudDhcpRangeEnd: {{undercloud_dhcp_end|default(
-    undercloud_network_cidr|nthhost(30))}}
-  UndercloudNetworkGateway: {{undercloud_network_gateway|default(
-    undercloud_network_cidr|nthhost(1))}}
-{% if undercloud_undercloud_nameservers is string %}
-  UndercloudNameserver: {{undercloud_undercloud_nameservers.split(',')[0]}}
-{% elif undercloud_undercloud_nameservers is sequence %}
-  UndercloudNameserver: {{undercloud_undercloud_nameservers[-1]}}
-{% endif %}
-  NeutronServicePlugins: ""
-EOF_CAT
-
 ## * Update requested packages.
 ## ::
 
@@ -122,7 +97,7 @@ sudo openstack undercloud deploy \
 {% if undercloud_cloud_domain is defined %}
     --local-domain={{ undercloud_cloud_domain }} \
 {% endif %}
-    -e {{ working_dir }}/custom_undercloud_deploy.yaml \
+    -e {{ working_dir }}/undercloud-parameter-defaults.yaml \
 {% if containerized_undercloud|bool %}
     {{ undercloud_extra_services_args }} \
     -e {{ working_dir }}/undercloud-containers-default-parameters.yaml \

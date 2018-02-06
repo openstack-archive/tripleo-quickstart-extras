@@ -67,3 +67,9 @@
      - overcloud_templates_repo is defined
      - overcloud_templates_path is defined
   static: no
+
+- name: Create the undercloud parameter defaults file.
+  template:
+    src: undercloud-parameter-defaults.yaml.j2
+    dest: "{{ working_dir }}/undercloud-parameter-defaults.yaml"
+    mode: 0600
