@@ -1,0 +1,7 @@
+---
+- include: quickstart.yml
+- include: multinode-undercloud.yml
+- include: multinode-overcloud-prep.yml
+- include: multinode-overcloud.yml
+- include: multinode-overcloud-upgrade.yml
+- include: multinode-validate.yml
