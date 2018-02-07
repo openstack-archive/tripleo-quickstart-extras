@@ -88,7 +88,7 @@ openstack overcloud container image prepare \
 
 ## * rename the base-os yum repos to disable them. This will speed up the update
 ## ::
-CENTOS_REPOS=$(find /etc/yum.repos.d -type f -name "CentOS-*.repo" -o -name "quickstart-centos-*.repo")
+CENTOS_REPOS=$(find /etc/yum.repos.d -type f -name "CentOS-*.repo" -o -name "quickstart-centos-*.repo" ! -name quickstart-centos-base.repo )
 for f in $CENTOS_REPOS ; do
     sudo mv "$f" "$f"_disabled
 done
