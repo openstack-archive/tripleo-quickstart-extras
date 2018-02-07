@@ -33,7 +33,7 @@
     - overcloud-prep-containers
   roles:
     - role: overcloud-prep-containers
-      when: containerized_overcloud|bool or containerized_overcloud_upgrade|bool
+      when: containerized_overcloud|bool
 
 - name: Run tripleo-validations pre-deployment tests
   hosts: undercloud

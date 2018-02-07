@@ -1,18 +1,12 @@
-- name: Set up repos on subnodes for upgrading
-  hosts: overcloud
-  vars:
-    ib_repo_host: undercloud
-  roles:
-    - role: repo-setup
-      when: mixed_upgrade|default(false)|bool
-    - role: install-built-repo
-      when: hostvars['undercloud']['compressed_gating_repo'] is defined and mixed_upgrade|default(false)|bool
+# TODO: This is to keep legacy job compatibility.
+# Currently used by P->Q and O->P job.
+- name: Overcloud upgrade compatibility mode.  Please switch to tripleo-upgrade role.
+  when: not use_tripleo_upgrade|default(false)|bool
+  include: multinode-overcloud-upgrade-legacy.yml
 
-- name:  Upgrade Tripleo
-  hosts: undercloud
-  tags:
-    - overcloud-upgrade
-  gather_facts: no
-  roles:
-    - role: overcloud-upgrade
-      when: containerized_overcloud_upgrade|bool
+# TODO(chem): that glue code part should be in its own role, to keep the
+# playbook clean.
+- name: Overcloud tripleo-upgrade.
+  when: use_tripleo_upgrade|default(false)|bool
+  include: multinode-overcloud-upgrade-new.yml
+
