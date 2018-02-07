@@ -14,7 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-export NODEPOOL_MIRROR_HOST=mirror.ord.rax.openstack.org
+export NODEPOOL_MIRROR_HOST=${NODEPOOL_MIRROR_HOST:-mirror.regionone.rdo-cloud.rdoproject.org}
 
 # This script generates a descriptor slug to use with AFS, composed of the
 # operating system, its version, and the processor architecture.
@@ -23,7 +23,7 @@ export NODEPOOL_MIRROR_HOST=mirror.ord.rax.openstack.org
 #   ID is 'fedora', 'centos', 'ubuntu'
 #   VERSION_ID is '23', '7', '14.04'
 #   Nothing else is useful and/or reliable across distros
-. /etc/os-release
+source /etc/os-release
 
 ################################################################################
 # Generate an OS Release Name
@@ -33,7 +33,7 @@ OS_TYPE=$ID
 # Generate a version string.
 OS_VERSION=$VERSION_ID
 if [ "$OS_TYPE" != "ubuntu" ]; then
-  OS_VERSION=$(echo $OS_VERSION | cut -d'.' -f1)
+    OS_VERSION=$(echo $OS_VERSION | cut -d'.' -f1)
 fi
 
 ################################################################################
