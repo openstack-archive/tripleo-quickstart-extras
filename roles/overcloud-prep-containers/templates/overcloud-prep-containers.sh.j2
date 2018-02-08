@@ -56,7 +56,7 @@ openstack overcloud container image prepare \
 {% endif %}
     --push-destination {{ local_docker_registry_host }}:8787
 
-openstack overcloud container image upload --verbose --config-file {{ working_dir }}/overcloud_containers.yaml
+openstack overcloud container image upload --debug --config-file {{ working_dir }}/overcloud_containers.yaml
 
 ## * Configure the {{ working_dir }}/containers-default-parameters.yaml, this is done automatically.
 ## ::
