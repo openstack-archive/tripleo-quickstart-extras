@@ -99,7 +99,7 @@ sudo ifup ifcfg-{{ network.device_name }}
     neutron subnet-update $CTLPLANE_SUBNET \
         {% for nameserver in overcloud_dns_servers %} --dns-nameserver "{{ nameserver }}" {% endfor %}
 {% else %}
-    neutron subnet-update $(neutron net-list | awk '/ctlplane/{print $(NF-2) }') --dns-nameserver $(cat /etc/resolv.conf | grep nameserver | awk '{ print $2 }' | sed ':a;N;$!ba;s/\n/ --dns-nameserver /g')
+    neutron subnet-update $(neutron net-list | awk '/ctlplane/{print $(NF-2) }') $(awk 'match($0, /nameserver\s+(([0-9]{1,3}.?){4})/,address){printf " --dns-nameserver %s", address[1]}' /etc/resolv.conf)
 {% endif %}
 
 ### --stop_docs
