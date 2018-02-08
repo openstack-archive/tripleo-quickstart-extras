@@ -58,8 +58,8 @@
         done;
         ovsdb-client dump) &> /var/log/extra/network-bridges;
 
-    - name: lsof -P
-      shell: "lsof -P &> /var/log/extra/lsof.txt"
+    - name: lsof -P -n
+      shell: "lsof -P -n &> /var/log/extra/lsof.txt"
 
     - name: pstree -p
       shell: "pstree -p &> /var/log/extra/pstree.txt"
