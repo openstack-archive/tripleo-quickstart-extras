@@ -38,6 +38,7 @@ extra_args: ""
 topology: ""
 ssl_overcloud: false
 libvirt_args: "--libvirt-type qemu"
+deploy_ha_ovn: false
 
 use_git_tht_repo: false
 tht_branch: master
@@ -100,6 +101,7 @@ deployed_server_prepare_log: "{{ working_dir }}/deployed_server_prepare.txt"
 container_args: ""
 scenario_args: ""
 multinode_args: ""
+ovn_args: ""
 telemetry_args: ""
 config_download_args: ""
 
@@ -111,6 +113,7 @@ deploy_args: >-
   {{ cloud_name_args }}
   {{ hostnamemap_args }}
   {{ multinode_args }}
+  {{ ovn_args }}
   {{ pacemaker_args }}
   {{ container_args }}
   {{ scenario_args }}
