@@ -5,8 +5,8 @@ containerized_overcloud: false
 containerized_undercloud: false
 containerized_overcloud_upgrade: false
 local_docker_registry_host: "{{undercloud_network_gateway|default(undercloud_network_cidr|nthhost(1))}}"
-docker_registry_host: trunk.registry.rdoproject.org
-docker_registry_namespace: "{{ release }}"
+docker_registry_host: docker.io
+docker_registry_namespace: "tripleo{{ release }}"
 docker_image_tag: current-tripleo
 additional_insecure_registry: false
 deployed_server: false

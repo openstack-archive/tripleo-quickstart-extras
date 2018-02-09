@@ -27,8 +27,8 @@ boot_from_volume: true
 
 overcloud_image_url: http://images.rdoproject.org/{{ release }}/rdo_trunk/{{ dlrn_hash|default(dlrn_hash_tag) }}/overcloud-full.tar
 ipa_image_url: http://images.rdoproject.org/{{ release }}/rdo_trunk/{{ dlrn_hash|default(dlrn_hash_tag) }}/ironic-python-agent.tar
-docker_registry_host: trunk.registry.rdoproject.org
-docker_registry_namespace: "{{ release }}"
+docker_registry_host: docker.io
+docker_registry_namespace: "tripleo{{ release }}"
 
 mtu: 1350
 mtu_interface:
