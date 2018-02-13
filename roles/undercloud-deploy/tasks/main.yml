@@ -21,6 +21,7 @@
 - include: undercloud-prep-containers.yml
   tags:
     - undercloud-scripts
+  when: containerized_undercloud|bool
 
 - include: install-undercloud.yml
   tags:
