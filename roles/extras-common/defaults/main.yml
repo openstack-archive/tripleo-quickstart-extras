@@ -26,3 +26,5 @@ enable_libvirt_tripleo_ui: false
 composable_scenario: ""
 upgrade_composable_scenario: ""
 artcl_collect_dir: "{{ local_working_dir }}/collected_files"
+undercloud_rpm_dependencies: >-
+  python-tripleoclient
