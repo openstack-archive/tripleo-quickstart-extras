@@ -14,11 +14,6 @@
     | gzip > {{ artcl_collect_dir }}/console.txt.gz
   when: lookup('env', 'BUILD_URL') != ""
 
-- name: Generate the README for the logs
-  template:
-    src: README-logs.html.j2
-    dest: "{{ artcl_readme_file }}"
-
 - name: Generate and retrieve the ARA static playbook report
   shell: >
     {{ local_working_dir }}/bin/ara generate html {{ local_working_dir }}/ara_oooq;
