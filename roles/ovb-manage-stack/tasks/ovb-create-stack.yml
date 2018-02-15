@@ -180,7 +180,7 @@
       chdir={{ local_working_dir }}
       export OS_CLIENT_CONFIG_FILE="{{ local_working_dir }}/clouds.yaml";
       export OS_CLOUD="{{ cloud_name}}";
-      {{ ovb_dir }}/bin/build-nodes-json --env {{ local_working_dir }}/{{ prefix }}env.yaml
+      {{ ovb_dir }}/bin/build-nodes-json --env {{ local_working_dir }}/{{ prefix }}env.yaml --driver {{ baremetal_driver }}
   register: nodes_json
 
 - name: remove clouds.yaml file
