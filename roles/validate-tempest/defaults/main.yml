@@ -40,7 +40,7 @@ tempest_until_failure: false
 tempest_exit_on_failure: true
 # Set tempest_version for different release
 # For forked-tempest, we have branched name in synced with releases.
-tempest_version_dict: { 'newton': 'newton', 'ocata': '16.1.0', 'pike': '17.1.0', 'master': 'master'}
+tempest_version_dict: { 'newton': 'newton', 'ocata': '16.1.0', 'pike': '17.1.0', 'queens': '17.2.0', 'master': 'master'}
 tempest_version: "{{ tempest_version_dict[release] }}"
 tempestmail_config: config.yaml
 tempestmail_log_server: http://logs.openstack.org
