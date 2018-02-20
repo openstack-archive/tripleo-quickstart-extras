@@ -4,6 +4,7 @@ nodepool_cirros_checksum: md5:f8ab98ff5e73ebab884d80c9dc9c7290
 repos:
   - https://git.openstack.org/openstack/tripleo-quickstart
   - https://git.openstack.org/openstack/tripleo-quickstart-extras
+  - https://git.openstack.org/openstack/tripleo-upgrade
   - https://git.openstack.org/openstack-infra/tripleo-ci
   - https://git.openstack.org/openstack-dev/devstack
   - https://git.openstack.org/openstack-infra/devstack-gate
