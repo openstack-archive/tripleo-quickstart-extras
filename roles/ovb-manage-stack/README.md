@@ -56,6 +56,9 @@ Parameters used the env.yaml file to create the OVB heat stack (See defaults/mai
 
 - registered_releases -- releases for which images should be available for the undercloud
 
+- baremetal_driver -- ironic driver to use for overcloud nodes, 'pxe_ipmitool'
+  for < Queens, 'ipmi' for >= Queens
+
 Dependencies
 ------------
 

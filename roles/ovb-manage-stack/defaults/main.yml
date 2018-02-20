@@ -92,6 +92,13 @@ registered_releases:
   - rhos-11
   - rhos-12
 
+baremetal_driver: >-
+    {% if release not in ['newton', 'ocata', 'pike'] -%}
+    "ipmi"
+    {%- else -%}
+    "pxe_ipmitool"
+    {%- endif -%}
+
 # OVB environment clean up
 cleanup_stacks_keypairs: false
 cleanup_stacks_keypairs_script: cleanup-stacks-keypairs.sh.j2
