@@ -10,3 +10,4 @@
   set_fact:
     # deploy_args end with a newline, remove to make deploy_args_used easier to use
     deploy_args_used: "{{ deploy_args | replace('\n', ' ') }}"
+    cacheable: true
