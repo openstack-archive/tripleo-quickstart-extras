@@ -1,6 +1,6 @@
 ---
 release: master
-ovb_repo_version: d6b5e1ae7b9319b8e4673b5cdbaa319e48ec5831
+ovb_repo_version: a3786bca1604d6048562af80eca3bcad119e5065
 
 node:
     prefix:
