@@ -93,6 +93,10 @@ http://docs.openstack.org/developer/tripleo-quickstart/accessing-libvirt.html
   it provides the default parameters generated from `undercloud_resource_registry_args` and
   `undercloud_network_environment_args`. For the `undercloud deploy`, use
   `undercloud_extra_services_args` instead.
+- `undercloud_undercloud_output_dir`: <null> -- allows customize output directory for state, like
+  downloaded ansible configs and processed heat templates for heat installer
+- `undercloud_undercloud_cleanup`: <null> -- controls tear down of the processed heat templates
+  in the output directory for heat installer
 
 Role Network Variables
 ----------------------
