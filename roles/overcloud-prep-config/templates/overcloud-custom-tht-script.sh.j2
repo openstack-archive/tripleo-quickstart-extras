@@ -71,4 +71,6 @@ cp -R usr/share/openstack-tripleo-heat-templates {{ overcloud_templates_path }}
 popd
 {% endif %}
 
+{{overcloud_prep_post_hook_script}}
+
 ### --stop_docs
