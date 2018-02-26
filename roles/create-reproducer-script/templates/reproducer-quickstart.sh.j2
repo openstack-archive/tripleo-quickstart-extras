@@ -201,7 +201,7 @@ ansible-playbook -i $WORKSPACE/multinode_hosts $WORKSPACE/tripleo-quickstart-ext
 export $(awk '/subnode-0/ {print $2}' multinode_hosts)
 {% endif %}
 
-{% if dlrn_hash_newest is defined %}
+{% if dlrn_hash_newest is defined or ('undercloud' in hostvars and 'dlrn_hash_newest' in hostvars['undercloud']) %}
 EXTRA_VARS="$EXTRA_VARS --extra-vars dlrn_hash_tag_newest={{ hostvars['undercloud'].dlrn_hash_newest }} "
 {% endif %}
 
@@ -210,8 +210,8 @@ cat >"{{ env_vars_to_source_file }}" <<EOF
 export ZUUL_CHANGES="{{ zuul_changes }}"
 export NODES_FILE="{{ nodes_config }}"
 export TOCI_JOBTYPE="{{ toci_jobtype }}"
+export EXTRA_VARS="\$EXTRA_VARS {% if dlrn_hash is defined or ('undercloud' in hostvars and 'dlrn_hash' in hostvars['undercloud']) %}--extra-vars dlrn_hash_tag={{ hostvars['undercloud'].dlrn_hash }}{% endif %} "
 export REMAINING_TIME="$TIMEOUT"
-export EXTRA_VARS="\$EXTRA_VARS --extra-vars dlrn_hash_tag={{ hostvars['undercloud'].dlrn_hash }} "
 EOF
 
 {% if stable_release != '' %}

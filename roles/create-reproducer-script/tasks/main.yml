@@ -1,13 +1,4 @@
 ---
-- name: Set fact for environment variables
-  set_fact:
-    zuul_changes: "{{ lookup('env', 'ZUUL_CHANGES') }}"
-    nodes_config: "{{ lookup('env', 'NODES_FILE') | regex_replace('^.*/tripleo-quickstart','') }}"
-    toci_jobtype: "{{ lookup('env', 'TOCI_JOBTYPE') }}"
-
-- name: Set fact for stable branch
-  set_fact:
-    stable_release: "{{ lookup('env', 'STABLE_RELEASE') }}"
 
 - name: Create the reproducer file from template
   template:
