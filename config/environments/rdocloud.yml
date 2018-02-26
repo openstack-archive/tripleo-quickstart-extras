@@ -15,6 +15,7 @@ baremetal_flavor: m1.large
 undercloud_flavor: m1.large2
 provision_net_cidr: 192.168.24.0/24
 
+nameserver_from_virthost: false
 custom_nameserver:
     - 38.145.33.91
     - 38.145.32.66
