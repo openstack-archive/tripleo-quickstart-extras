@@ -29,7 +29,7 @@
   tags:
     - overcloud-upgrade
   vars:
-    update_repo_script: "{{ lookup('file', '{{ working_dir }}/repo-setup-{{ target_upgrade_version }}.sh') }}"
+    update_repo_script: "{{ lookup('first_found', dict(files=['{{ working_dir }}/repo-setup-{{ target_upgrade_version }}.sh'], skip=true)) }}"
     tripleo_upgrade_branch: "{{ 'stable/'+target_upgrade_version if target_upgrade_version!='master' else target_upgrade_version }}"
   tasks:
     - name: Filter ansible_br_*
@@ -40,6 +40,7 @@
       synchronize:
         src: /usr/share/openstack-tripleo-heat-templates
         dest: "{{ overcloud_templates_path }}"
+      when: containerized_overcloud_upgrade|bool
 
     - name: Check if we have a local copy of the tripleo-upgrade role
       stat:
@@ -66,4 +67,4 @@
         upgrade_init_command: "{{ update_repo_script }}"
       include_role:
         name: tripleo-upgrade
-      when: containerized_overcloud_upgrade|bool
+      when: containerized_overcloud_upgrade|bool or undercloud_upgrade|default(false)|bool
