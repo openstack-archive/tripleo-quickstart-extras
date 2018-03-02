@@ -68,14 +68,12 @@ openstack overcloud container image prepare \
     --env-file {{ working_dir }}/containers-default-parameters.yaml \
     ${PREPARE_ARGS} \
     --namespace {{ local_docker_registry_host }}:8787/{{ docker_registry_namespace }} \
+    --set ceph_namespace={{ local_docker_registry_host }}:8787/ceph \
 {% if docker_prep_prefix is defined %}
     --prefix={{ docker_prep_prefix}} \
 {% endif %}
 {% if docker_prep_suffix is defined %}
     --suffix={{ docker_prep_suffix }} \
-{% endif %}
-{% if docker_ceph_namespace is defined %}
-    --set ceph_namespace={{ docker_ceph_namespace }} \
 {% endif %}
 {% if docker_ceph_image is defined %}
     --set ceph_image={{ docker_ceph_image }} \
