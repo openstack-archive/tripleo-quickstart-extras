@@ -15,6 +15,7 @@ artg_skipped_projects:
   - openstack/puppet-watcher
   - openstack/tripleo-quickstart
   - openstack/tripleo-quickstart-extras
+  - openstack/tripleo-upgrade
   - openstack-dev/grenade
   - openstack-infra/project-config
   - openstack-infra/tripleo-ci
