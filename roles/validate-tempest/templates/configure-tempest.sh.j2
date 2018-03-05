@@ -163,6 +163,7 @@ ${TEMPESTCONF} --out etc/tempest.conf \
   {% else %}
   auth.use_dynamic_credentials true \
   auth.tempest_roles Member \
+  network-feature-enabled.port_security true \
   {% endif %}
   compute-feature-enabled.attach_encrypted_volume False \
   network.tenant_network_cidr {{ tenant_network_cidr }} \
