@@ -5,6 +5,3 @@ known_failures:
   - test: 'neutron_tempest_plugin.scenario'
     reason: 'Neutron Tempest plugin scenario tests are not yet stable.'
     lp: 'https://launchpad.net/bugs/1737940'
-  - test: 'barbican_tempest_plugin.tests.scenario.test_volume_encryption.VolumeEncryptionTest'
-    reason: 'Test is sometimes failing while trying to delete a volume that is still in use'
-    lp: 'https://bugs.launchpad.net/tripleo/+bug/1744151'
