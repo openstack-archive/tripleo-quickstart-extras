@@ -14,6 +14,8 @@
 : ${NODESTACK_PREFIX:=""}
 : ${AUTORUN:=0}
 
+SSH_OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+
 usage () {
     echo "Usage: $0 [options]"
     echo ""
@@ -161,7 +163,7 @@ ansible-playbook -i $WORKSPACE/ovb_hosts $WORKSPACE/tripleo-quickstart-extras/pl
 
 # Copy the nodes.json file to the undercloud
 export $(awk '/subnode-0/ {print $2}' ovb_hosts)
-scp $WORKSPACE/nodes.json zuul@$ansible_host:/home/zuul/
+scp ${SSH_OPTS}  $WORKSPACE/nodes.json zuul@$ansible_host:/home/zuul/
 {% endif %}
 
 {% if 'multinode' in toci_jobtype or 'singlenode' in toci_jobtype %}
@@ -209,9 +211,9 @@ export TE_DATAFILE=/home/zuul/nodes.json
 EOF
 {% endif %}
 
-scp "$WORKSPACE/{{ env_vars_to_source_file }}" zuul@$ansible_host:/home/zuul/
+scp ${SSH_OPTS} "$WORKSPACE/{{ env_vars_to_source_file }}" zuul@$ansible_host:/home/zuul/
 if [[ "$AUTORUN" == "1" ]]; then
-    ssh zuul@$ansible_host -tt \
+    ssh ${SSH_OPTS} zuul@$ansible_host -tt \
     "screen -LS ci -h 25000 -dm bash -c 'set -m; source ~/{{ env_vars_to_source_file }}; ANSIBLE_FORCE_COLOR=true /opt/stack/tripleo-ci/toci_gate_test-oooq.sh 2>&1 | tee ~/console.log; exec bash' && screen -RD"
 else
     # Remove -x so that the instructions don't print twice
@@ -221,7 +223,7 @@ else
     echo "
         # Now complete the test excution on the undercloud:
         # ssh to the undercloud:
-        ssh zuul@$ansible_host
+        ssh ${SSH_OPTS} zuul@$ansible_host
         # Source the environment settings file and run the toci gate script
         source /home/zuul/env_vars_to_src.sh
         /opt/stack/tripleo-ci/toci_gate_test-oooq.sh 2>&1 | tee console.log
