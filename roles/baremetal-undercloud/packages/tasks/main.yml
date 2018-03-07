@@ -5,8 +5,9 @@
 - name: Install TripleO package
   become: true
   package:
-    name: "{{ undercloud_rpm_dependencies }}"
+    name: "{{ item }}"
     state: present
+  with_items: "{{ undercloud_rpm_dependencies.split() }}"
   tags:
     - undercloud-tripleo-pkg
 
