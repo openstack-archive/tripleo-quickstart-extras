@@ -113,7 +113,7 @@
           -e {{ working_dir }}/hostnamemap.yaml
   when:
     - overcloud_nodes is defined
-    - overcloud_nodes|length > 0
+    - overcloud_nodes[0] is defined
     - overcloud_nodes[0].hostnamemap_override is defined
 
 - name: set set overcloud SSL args for releases after mitaka
