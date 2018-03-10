@@ -8,7 +8,7 @@
 {% if tempest_format == "venv" %}
 export TEMPESTCLI='{{ working_dir }}/tempest_git/tools/with_venv.sh tempest'
 export OSTESTR='{{ working_dir }}/tempest_git/tools/with_venv.sh ostestr'
-{% elif tempest_format == "packages" %}
+{% else %}
 export OSTESTR='ostestr'
 export TEMPESTCLI='/usr/bin/tempest'
 {% endif %}
@@ -24,6 +24,7 @@ $TEMPESTCLI cleanup --init-saved-state
 
 {% if release not in ["master", "queens"] %} $OSTESTR {% else %} $TEMPESTCLI run {% endif %}{% if test_regex != '' %} --regex '({{ test_regex }})' {% endif %}
 {% if tempest_whitelist|length > 0 %} --whitelist_file={{ working_dir }}/{{ tempest_whitelist_file }} {% endif %}
+{% if release not in ["newton", "ocata", "pike"] %} {% if test_black_regex|length > 0 %} --black-regex='{{ test_black_regex|join('|') }}' {% endif %} {% endif %}
 {% if skip_file_src != '' %} --blacklist_file={{ working_dir }}/{{ skip_file }} {% endif %}
 {% if tempest_workers is defined %} --concurrency {{ tempest_workers }} {% endif %}
 {% if tempest_until_failure|bool %} --until-failure {% endif %}
@@ -34,4 +35,26 @@ $TEMPESTCLI cleanup --init-saved-state
 $TEMPESTCLI cleanup --dry-run
 {% endif %}
 
+{% if tempest_format == "container" %}
+EOF
+
+chmod +x {{ working_dir }}/tempest_container.sh
+# Run tempest container using docker mouting required files
+sudo docker run -i -v $RCFILE:$RCFILE \
+    {% if skip_file_src != '' %}
+    -v {{ working_dir }}/{{ skip_file }}:{{ working_dir }}/{{ skip_file }} \
+    {% endif %}
+    {% if tempest_whitelist|length > 0 %}
+    -v {{ working_dir }}/{{ tempest_whitelist_file }}:{{ working_dir }}/{{ tempest_whitelist_file }} \
+    -v {{ working_dir }}/{{ tempest_deployer_input_file }}:{{ working_dir }}/{{ tempest_deployer_input_file }} \
+    {% endif %}
+    -v {{ tempest_dir }}:{{ tempest_dir }} \
+    -v {{ working_dir }}/tempest_container.sh:{{ working_dir }}/tempest_container.sh \
+    {% if not 'http' in tempest_test_image_path %}
+    -v {{ tempest_test_image_path }}:{{ tempest_test_image_path }} \
+    {% endif %}
+    {{ tempest_container_registry }}/{{ tempest_container_namespace }}:{{ tempest_container_tag }} \
+    /usr/bin/bash -c 'set -e; {{ working_dir }}/tempest_container.sh'
+
+{% endif %}
 ### --stop_docs

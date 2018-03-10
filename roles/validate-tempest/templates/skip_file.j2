@@ -1,4 +1,5 @@
 {% for skip_test in known_failures %}
+{% if (tempest_undercloud and skip_test.undercloud is defined and skip_test.undercloud) or (not tempest_undercloud and skip_test.undercloud is not defined) %}
 # {{ skip_test.reason }}
 {% if skip_test.bz is defined %}
 # {{ skip_test.bz }}
@@ -7,4 +8,5 @@
 # {{ skip_test.lp }}
 {% endif %}
 {{ skip_test.test }}
+{% endif %}
 {% endfor %}

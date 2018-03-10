@@ -6,6 +6,7 @@ public_net_pool_end: "{{ floating_ip_cidr|nthhost(120) }}"
 public_net_gateway: "{{ floating_ip_cidr|nthhost(1) }}"
 tempest_log_file: 'tempest_output.log'
 test_regex: smoke
+test_black_regex: []
 check_tempest_bugs: false
 
 public_net_name: public
@@ -22,7 +23,11 @@ tempest_config: true
 tempest_overcloud: true
 run_tempest: false
 post_tempest: true
-tempest_format: packages # venv or packages
+tempest_format: packages # venv or packages or container
+tempest_container_registry: "{{ docker_registry_host }}/{{ docker_registry_namespace }}"
+tempest_container_namespace: centos-binary-tempest
+tempest_container_tag: "{{ docker_image_tag }}"
+tempest_dir: "{{ working_dir }}/tempest"
 tempest_whitelist_file_src: "whitelist_file.j2"
 tempest_whitelist_file: "whitelist_file.conf"
 tempest_whitelist: []
@@ -42,6 +47,8 @@ tempest_exit_on_failure: true
 # For forked-tempest, we have branched name in synced with releases.
 tempest_version_dict: { 'newton': 'newton', 'ocata': '16.1.0', 'pike': '17.1.0', 'queens': '17.2.0', 'master': 'master'}
 tempest_version: "{{ tempest_version_dict[release] }}"
+tempest_conf_version_dict: {'ocata': '1.1.3', 'pike': '1.1.3', 'queens': '1.1.4', 'master': 'master'}
+tempest_conf_version: "{{ tempest_conf_version_dict[release] }}"
 tempestmail_config: config.yaml
 tempestmail_log_server: http://logs.openstack.org
 tempest_track_resources: true

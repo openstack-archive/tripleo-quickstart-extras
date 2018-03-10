@@ -17,7 +17,7 @@ Role Variables
 * `tempest_format`: venv/packages - Which tempest installation to use - either install python virtual environment
                     with installed there python modules from requirements file, or to use installed with RDO RPM packages
 * `tempest_log_file` - name of log file for tempest run
-* `test_regex` - tests regular expression for testr run, i.e. smoke or tempest.api.object_storage|keystone_tempest_plugin.
+* `test_regex` - tests regular expression for tempest run, i.e. smoke or tempest.api.object_storage|keystone_tempest_plugin.
 * `run_tempest`: false/true - to run tempest or not
 * `tempest_config`: false/true - whether to prepare the script which configures and runs tempest or not
 * `tempest_whitelist`: list - list of tests you want to be executed. set `skip_file_src`
@@ -39,6 +39,11 @@ Role Variables
                           removed from tempest.conf file.
                           Format: section.key: value
 * `public_physical_network`: <string> The name of the border physical network (default: datacentre).
+* `tempest_container_registry`: <string> The name of the container registry to use (default: docker.io/tripleomaster)
+* `tempest_container_namespace`: <string> The name of tempest container image to use (default: centos-binary-tempest)
+* `tempest_container_tag`: <string> The tag of the tempest container image to use (default: current-tripleo)
+* `tempest_dir`: <string> The path to tempest workspace directory (default: /home/stack/tempest)
+* `test_black_regex`: <list> A set of tempest tests to skip (default: [])
 
 Skip tests file
 ---------------

@@ -1,6 +1,20 @@
 ---
 - ignore_errors: true
   block:
+    - name: Install packages to generate subunit results
+      become: yes
+      package: name={{ item }} state=present
+      with_items:
+        - python-stestr
+        - python-subunit
+        - subunit-filters
+      when: tempest_format == 'container'
+
+    - name: Change permission of tempest container directory
+      shell: |
+        sudo chmod -R 777 {{ tempest_dir }}
+      when: tempest_format == 'container'
+
     - name: Generate testrepository.subunit results file
       shell: >
         {% if tempest_format == 'venv' %}source {{ working_dir }}/tempest_git/.venv/bin/activate; {% endif %}

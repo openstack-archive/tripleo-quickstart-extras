@@ -1,0 +1,37 @@
+---
+- name: Cloning tempest from redhat-openstack repository
+  git:
+    repo: 'https://github.com/redhat-openstack/tempest.git'
+    dest: '{{ working_dir }}/tempest_git'
+    version: '{{ tempest_version }}'
+  when: release == 'newton'
+
+- name: Cloning tempest from openstack repository
+  git:
+    repo: 'https://github.com/openstack/tempest.git'
+    dest: '{{ working_dir }}/tempest_git'
+    version: '{{ tempest_version }}'
+  when: release != 'newton'
+
+- name: Cloning python-tempestconf
+  git:
+    repo: 'https://github.com/openstack/python-tempestconf.git'
+    dest: '{{ working_dir }}/python-tempestconf'
+    version: '{{ tempest_conf_version }}'
+  when: release != 'newton'
+
+- name: Install packages required for create venv
+  package: name={{ item }} state=present
+  with_items:
+    - libffi-devel
+    - openssl-devel
+    - python-virtualenv
+    - gcc
+
+- name: Set tempest init command
+  set_fact:
+      tempest_init: "{{ working_dir }}/tempest_git/tools/{% if release == 'newton' %}configure-tempest-directory{% else %}with_env.sh tempest init{% endif %}"
+
+- name: Set tempestconf call
+  set_fact:
+      tempestconf: "{% if release == 'newton' %}{{ working_dir }}/tools/config_tempest.py{% else %}{{ working_dir }}/tempest_git/tools/with_venv.sh discover-tempest-config{% endif %}"

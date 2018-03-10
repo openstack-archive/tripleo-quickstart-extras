@@ -1,8 +1,18 @@
 ---
-- include: undercloud-config.yml
-  when: tempest_undercloud|bool
+- include: tempest-venv.yml
+  when: tempest_config|bool and tempest_format == 'venv'
   tags:
-    - tempest-undercloud-config
+    - pre-tempest-config
+
+- include: tempest-rpm.yml
+  when: tempest_config|bool and tempest_format == 'packages'
+  tags:
+    - pre-tempest-config
+
+- include: tempest-containers.yml
+  when: tempest_config|bool and tempest_format == 'container'
+  tags:
+    - pre-tempest-config
 
 - include: pre-tempest.yml
   when: tempest_config|bool or run_tempest|bool

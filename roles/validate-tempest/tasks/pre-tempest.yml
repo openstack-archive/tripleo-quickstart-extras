@@ -4,13 +4,17 @@
       tempest_workers: "{{ ansible_processor_vcpus|int // 2 }}"
   when: tempest_workers is not defined
 
+- name: Set rc file to be sourced to run tempest
+  set_fact:
+      rc_file: "{{ working_dir }}/{% if tempest_undercloud %}stackrc{% else %}overcloudrc{% endif %}"
+
 - name: Create overcloud tempest setup script
   template:
     src: tempest-setup.j2
     dest: "{{ working_dir }}/tempest-setup.sh"
     mode: 0744
 
-- name: Load skip list variables
+- name: Load skip list variables (undercloud or overcloud)
   include_vars:
     file: "tempest_skip_{{ release }}.yml"
   when: skip_file_src != ''

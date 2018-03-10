@@ -3,158 +3,112 @@
 ## Configure tempest
 ## -----------------
 
-{% if tempest_overcloud|bool %}
-## ::
-source {{ working_dir }}/overcloudrc
-
 ## * Clean up from any previous tempest run
 ## ::
 
-rm -rf {{ working_dir }}/tempest
 # On doing tempest init workspace, it will create workspace directory
 # as well as .workspace directory to store workspace information
 # We need to delete .workspace directory otherwise tempest init failed
 # to create tempest directory.
 rm -rf {{ working_dir }}/.tempest
-rm -rf {{ working_dir }}/tempest_git
+rm -rf {{ tempest_dir }}
 rm -rf {{ working_dir }}/python-tempestconf
+
+# Source rc file
+source {{ rc_file }}
+
+## Create Tempest resources
+## ------------------------
+## * For overcloud
+
+{% if tempest_overcloud|bool %}
 
 ## * Clean up network if it exists from previous run
 ## ::
 
-for i in $(neutron floatingip-list -c id -f value)
-do
-    neutron floatingip-disassociate $i
-    neutron floatingip-delete $i
-done
-for i in $(neutron router-list -c id -f value); do neutron router-gateway-clear $i; done
-for r in $(neutron router-list -c id -f value); do
-    for p in $(neutron router-port-list $r -c id -f value); do
-        neutron router-interface-delete $r port=$p || true
-    done
-done
-for i in $(neutron router-list -c id -f value); do neutron router-delete $i; done
-for i in $(neutron port-list -c id -f value); do neutron port-delete $i; done
-for i in $(neutron net-list -c id -f value); do neutron net-delete $i; done
+{% include 'cleanup-network.sh.j2' %}
 
-neutron net-create {{ public_net_name }} --router:external=True \
-{% if public_physical_network != '' %}
-    --provider:network_type {{ public_network_type }} \
-    {% if public_segmentation_id != '' %}
-    --provider:segmentation_id {{ public_segmentation_id }} \
-{% endif %}
-    --provider:physical_network {{ public_physical_network }}
-{% endif %}
-
-
-public_net_id=$(neutron net-show {{ public_net_name }} -f value -c id)
-
-neutron subnet-create --name ext-subnet \
-    --allocation-pool \
-    start={{ public_net_pool_start }},end={{ public_net_pool_end }} \
-    --disable-dhcp \
-    --gateway {{ public_net_gateway }} \
-    {{ public_net_name }} {{ floating_ip_cidr }}
-{% else %}
-source {{ working_dir }}/stackrc
-public_net_id=$(neutron net-show {{ undercloud_public_net_name }} -f value -c id)
 {% endif %}
 
 ## * Ensure creator and Member role is present
 ## * Member role is needed for Heat tests.
 ## * creator role is needed for Barbican for running volume encryption tests.
 ## ::
+
 openstack role show Member > /dev/null || openstack role create Member
 
 openstack role show creator > /dev/null || openstack role create creator
 
-## * Generate a tempest configuration
+# Create Tempest directory
+
+mkdir {{ tempest_dir }}
+
+## Install openstack-tempest
+## -------------------------
+## * Using git
 ## ::
 
-mkdir {{ working_dir }}/tempest
 {% if tempest_format == "venv" %}
-{% if release == 'newton' %}
-# Clone all the git related stuff in a seperate directory
-git clone https://github.com/redhat-openstack/tempest {{ working_dir }}/tempest_git
-{% else %}
-git clone https://github.com/openstack/tempest {{ working_dir }}/tempest_git
-{% endif %}
-# set tempest_version
-pushd {{ working_dir }}/tempest_git
-git fetch origin {{ tempest_version }}
-git checkout {{ tempest_version }}
-popd
-# Install required dependency for creating venv
-sudo yum install -y libffi-devel openssl-devel python-virtualenv gcc
 # Create .venv in tempest_git directory with --system-site-packages to access tempest plugins
 virtualenv --system-site-packages {{ working_dir }}/tempest_git/.venv
 {{ working_dir }}/tempest_git/tools/with_venv.sh pip install -U pip
 {{ working_dir }}/tempest_git/tools/with_venv.sh pip install -U setuptools
 {{ working_dir }}/tempest_git/tools/with_venv.sh pip install {{ working_dir }}/tempest_git junitxml
-# Create Tempest Workspace using tempest git
-cd {{ working_dir }}/tempest
-{% if release == 'newton' %}
-{{ working_dir }}/tempest_git/tools/configure-tempest-directory
-{% else %}
-{{ working_dir }}/tempest_git/tools/with_venv.sh tempest init {{ working_dir }}/tempest
-{% endif %}
-{% elif tempest_format == "packages" %}
-# Install OpenStack Tempest, python-junitxml for Newton
-# From Ocata, config_tempest is moved to python-tempestconf. So for
-# Ocata onwards, Install python-tempestconf
-sudo yum -y install openstack-tempest python-junitxml {% if release != 'newton' %}python-tempestconf{% endif %}
 
-# Create Tempest Workspace from tempest rdo package
-{% if release == 'newton' %}
-cd {{ working_dir }}/tempest
-/usr/share/openstack-tempest-*/tools/configure-tempest-directory
-{% else %}
-tempest init {{ working_dir }}/tempest
-{% endif %}
-{% endif %}
-
-# Install OpenStack Services Tempest plugin
-{% if release == "newton" %}
-# FIXME(chkumar246): Install tempest plugin from package currently then switch to install_test_packages script
-sudo yum -y install python-ceilometer-tests python-zaqar-tests python-ironic-inspector-tests \
-    python-gnocchi-tests python-aodh-tests python-mistral-tests python-heat-tests python-keystone-tests \
-    python-ironic-tests python-neutron-tests python-cinder-tests
-{% endif %}
-
-# Generate tempest configuration files
-{% if release == 'newton' %}
-export TEMPESTCONF="{{ working_dir }}/tempest/tools/config_tempest.py"
-{% else %}
-{% if tempest_format == "venv" %}
 # Install python-tempestconf
-git clone https://git.openstack.org/openstack/python-tempestconf {{ working_dir }}/python-tempestconf
+{% if release != 'newton'%}
 {{ working_dir }}/tempest_git/tools/with_venv.sh pip install {{ working_dir }}/python-tempestconf
-export TEMPESTCONF="{{ working_dir }}/tempest_git/tools/with_venv.sh discover-tempest-config"
-{% elif tempest_format == "packages" %}
-export TEMPESTCONF="/usr/bin/discover-tempest-config"
 {% endif %}
 {% endif %}
 
-# Go to Tempest Workspace
-cd {{ working_dir }}/tempest
+{% if tempest_format == "container" %}
+export RCFILE="{{ rc_file }}"
+cat <<'EOF' >> {{ working_dir }}/tempest_container.sh
+# Set the exit status for the command
+set -e
+# Install OpenStack client  to create tempest resources with in containers
+{% endif %}
 
+## Create Tempest Workspace
+## ------------------------
+## ::
+
+# Create Tempest workspace
+pushd {{ tempest_dir }}
+{{ tempest_init }}
+popd
+
+## Generate tempest configuration using python-tempestconf
+## -------------------------------------------------------
+## ::
+export TEMPESTCONF="{{ tempestconf }}"
+
+# Source rc file for tempestconf generation
+source {{ rc_file }}
+
+{% if not tempest_overcloud|bool %}
+export OS_AUTH_URL="$OS_AUTH_URL/v$OS_IDENTITY_API_VERSION"
+{% endif %}
 # Generate Tempest Config file using python-tempestconf
 # Notice aodh_plugin will be set to False if telemetry service is disabled
 # TODO(arxcruz) In the future the
 # compute_feature_enabled.attach_encrypted_volume should be handled by
 # python-tempestconf tool
-${TEMPESTCONF} --out etc/tempest.conf \
-  --network-id $public_net_id \
+cd {{ tempest_dir }}
+$TEMPESTCONF --out etc/tempest.conf \
+  {% if tempest_overcloud|bool %}
   --deployer-input ~/{{ tempest_deployer_input_file }} \
+  --network-id $public_net_id \
+  {% endif %}
   --image {{ tempest_test_image_path }} \
   --debug \
-  {% if tempest_conf_removal %}
+  {% if tempest_conf_removal and tempest_overcloud|bool %}
   {% for key, value in tempest_conf_removal.iteritems() %}
   --remove {{ key }}={{ value }} \
   {% endfor %}
   {% endif %}
   --create \
-  {% if release in ['newton','ocata', 'pike'] %}
+  {% if release in ['ocata', 'pike'] %}
   identity.uri $OS_AUTH_URL \
   identity.admin_password $OS_PASSWORD \
   identity.admin_username $OS_USERNAME \
@@ -185,4 +139,3 @@ ${TEMPESTCONF} --out etc/tempest.conf \
   orchestration.stack_owner_role Member
 
 ### --stop_docs
-
