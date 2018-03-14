@@ -42,6 +42,7 @@
     name: "kernel-{{ libguestfs_kernel_override }}"
     state: present
   become: true
+  when: not chrooted|bool
 
 - name: Run virt-customize on the provided image
   shell: >
