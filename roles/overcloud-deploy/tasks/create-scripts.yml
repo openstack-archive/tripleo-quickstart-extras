@@ -45,6 +45,8 @@
 
 - name: Create the hostname_map parameters yaml
   when:
+    - overcloud_nodes is defined
+    - overcloud_nodes[0] is defined
     - overcloud_nodes[0].hostnamemap_override is defined
   template:
     src: "hostnamemap.yaml.j2"
