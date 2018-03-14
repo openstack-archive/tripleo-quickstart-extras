@@ -112,7 +112,7 @@ overcloud_domain_name = {{overcloud_cloud_domain}}
 # /etc/pki/tls/certs/undercloud-[undercloud_public_vip].pem.  This
 # certificate is signed by CA selected by the
 # "certificate_generation_ca" option. (boolean value)
-#generate_service_certificate = false
+#generate_service_certificate = true
 {% if undercloud_generate_service_certificate is defined %}
 generate_service_certificate = {{undercloud_generate_service_certificate}}
 {% endif %}
