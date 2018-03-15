@@ -26,7 +26,7 @@
       export OS_PASSWORD="{{ os_password }}";
       export OS_TENANT_NAME="{{ os_tenant_name }}";
       export OS_AUTH_URL="{{ os_auth_url }}";
-      nova keypair-delete {{ prefix }}key
+      nova keypair-delete key-{{ idnum }}
   ignore_errors: true
   no_log: true
 

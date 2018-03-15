@@ -19,9 +19,9 @@
 - include: ovb-cleanup-stacks-keypairs.yml
   when: cleanup_stacks_keypairs|bool
 
-- name: generate prefix for all run-related entities
+- name: generate idnum for all run-related entities
   set_fact:
-    prefix: "{{ tmp.node_prefix }}"
+    idnum: "{{ tmp.idnum }}"
 
 - name: set fact for undercloud image
   set_fact:
@@ -39,7 +39,7 @@
 - name: Copy deploy stack parameters template
   template:
       src: env.yaml.j2
-      dest: "{{ local_working_dir }}/{{ prefix }}env.yaml"
+      dest: "{{ local_working_dir }}/env-{{ idnum }}.yaml"
       mode: 0755
 
 - name: Add keypair
@@ -48,7 +48,7 @@
       export OS_PASSWORD="{{ os_password }}";
       export OS_TENANT_NAME="{{ os_tenant_name }}";
       export OS_AUTH_URL="{{ os_auth_url }}";
-      nova keypair-add --pub-key {{ existing_key_location }}.pub {{ prefix }}key
+      nova keypair-add --pub-key {{ existing_key_location }}.pub key-{{ idnum }}
   ignore_errors: true
   no_log: true
 
@@ -62,7 +62,7 @@
   shell: >
       export OS_CLIENT_CONFIG_FILE="{{ local_working_dir }}/clouds.yaml";
       export OS_CLOUD="{{ cloud_name }}";
-      {{ ovb_dir }}/bin/deploy.py --env {{ local_working_dir }}/{{ prefix }}env.yaml --name {{ stack_name }} --quintupleo
+      {{ ovb_dir }}/bin/deploy.py --env {{ local_working_dir }}/env-{{ idnum }}.yaml --name {{ stack_name }} --quintupleo
   args:
     chdir: "{{ ovb_dir }}"
 
@@ -180,7 +180,7 @@
       chdir={{ local_working_dir }}
       export OS_CLIENT_CONFIG_FILE="{{ local_working_dir }}/clouds.yaml";
       export OS_CLOUD="{{ cloud_name}}";
-      {{ ovb_dir }}/bin/build-nodes-json --env {{ local_working_dir }}/{{ prefix }}env.yaml --driver {{ baremetal_driver }}
+      {{ ovb_dir }}/bin/build-nodes-json --env {{ local_working_dir }}/env-{{ idnum }}.yaml --driver {{ baremetal_driver }}
   register: nodes_json
 
 - name: remove clouds.yaml file

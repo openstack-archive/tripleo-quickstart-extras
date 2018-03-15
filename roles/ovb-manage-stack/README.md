@@ -22,8 +22,7 @@ To interact with the Openstack Virtual Baremetal host cloud, credentials are nee
 - os_region_name: <os_region_name> # Most probably RegionOne
 
 Parameters required to access the stack:
-- prefix --used as in id for the image and the stack parameters
-- stack_name: <'oooq-{{ prefix }}stack'> -- name for OVB heat stack
+- stack_name: <'baremetal_{{ idnum }}'> -- name for OVB heat stack
 - rc_file: </home/stack/overcloudrc> -- file to reference the overcloud
 - node_name: 'undercloud'
 - existing_key_location: <local_working_dir> -- required to access the undercloud node
