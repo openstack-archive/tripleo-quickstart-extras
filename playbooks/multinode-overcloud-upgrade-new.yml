@@ -29,12 +29,21 @@
   tags:
     - overcloud-upgrade
   vars:
-    update_repo_script: "{{ lookup('first_found', dict(files=['{{ working_dir }}/repo-setup-{{ target_upgrade_version }}.sh'], skip=true)) }}"
+    repo_setup_script: "{{ working_dir }}/repo-setup-{{ target_upgrade_version }}.sh"
     tripleo_upgrade_branch: "{{ 'stable/'+target_upgrade_version if target_upgrade_version!='master' else target_upgrade_version }}"
   tasks:
     - name: Filter ansible_br_*
       setup:
         filter: ansible_br_*
+
+    - name: Check repo setup script exists
+      stat:
+        path: "{{ repo_setup_script }}"
+      register: repo_script_status
+
+    - name: Set fact with repo script content or false
+      set_fact:
+          update_repo_script_content: "{% if repo_script_status.stat.exists %}{{ lookup('file', repo_setup_script) }}{% else %}false{% endif %}"
 
     - name: Copy current T-H-T directory to the upgrade working dir
       synchronize:
@@ -64,7 +73,7 @@
 
     - name: Run Tripleo-upgrade role
       vars:
-        upgrade_init_command: "{{ update_repo_script }}"
+        upgrade_init_command: "{{ update_repo_script_content }}"
       include_role:
         name: tripleo-upgrade
       when: containerized_overcloud_upgrade|bool or undercloud_upgrade|default(false)|bool
