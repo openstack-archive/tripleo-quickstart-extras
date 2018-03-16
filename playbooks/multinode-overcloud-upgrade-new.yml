@@ -85,4 +85,4 @@
         upgrade_init_command: "{{ update_repo_script_content }}"
       include_role:
         name: tripleo-upgrade
-      when: containerized_overcloud_upgrade|bool or undercloud_upgrade|default(false)|bool
+      when: containerized_overcloud_upgrade|bool
