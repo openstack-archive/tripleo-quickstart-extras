@@ -49,7 +49,6 @@ libvirt_uri: qemu:///session
 # port to use for httpd ipxe server for ironic deploy
 undercloud_ironic_ipxe_port: 3816
 
-enable_vbmc: true
 undercloud_conf_extra: ""
 
 undercloud_enable_novajoin: false

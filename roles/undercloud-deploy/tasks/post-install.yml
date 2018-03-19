@@ -37,6 +37,3 @@
         src: stackrc
         dest: "{{ local_working_dir }}/stackrc"
 
-- name: Include VBMC setup if enabled
-  include: configure-vbmc.yml
-  when: enable_vbmc|bool
