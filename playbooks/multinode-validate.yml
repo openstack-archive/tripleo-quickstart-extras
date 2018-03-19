@@ -4,6 +4,7 @@
   hosts: undercloud
   tags:
     - overcloud-validate
+    - undercloud-validate
   gather_facts: no
   roles:
     - { role: validate-simple, when: test_ping|bool }
