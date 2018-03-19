@@ -28,3 +28,8 @@ upgrade_composable_scenario: ""
 artcl_collect_dir: "{{ local_working_dir }}/collected_files"
 undercloud_rpm_dependencies: >-
   python-tripleoclient
+
+# moved from overcloud-deploy
+# If `test_ping` is `true`, run a simple ping test to validate the
+# overcloud.
+test_ping: true
