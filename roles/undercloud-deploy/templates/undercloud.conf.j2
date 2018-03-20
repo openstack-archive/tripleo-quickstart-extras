@@ -443,3 +443,18 @@ undercloud_swift_hash_suffix = {{undercloud_undercloud_swift_hash_suffix}}
 {% else %}
 #undercloud_swift_hash_suffix = <None>
 {% endif %}
+
+# Output directory for state, like downloaded ansible configs and
+# processed heat templates for heat installer
+{% if undercloud_undercloud_output_dir is defined %}
+output_dir = {{undercloud_undercloud_output_dir}}
+{% else %}
+#output_dir = $HOME/.undercloud-heat-installer
+{% endif %}
+
+# Clean up mode for the temp files for heat installer on exit
+{% if undercloud_undercloud_cleanup is defined and undercloud_undercloud_cleanup|bool %}
+cleanup = {{undercloud_undercloud_cleanup}}
+{% else %}
+#cleanup = False
+{% endif %}
