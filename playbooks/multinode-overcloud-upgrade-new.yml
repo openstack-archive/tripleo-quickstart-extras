@@ -1,12 +1,3 @@
-- name: Prepare containers for Upgrade
-  hosts: undercloud
-  gather_facts: no
-  tags:
-    - overcloud-prep-containers
-  roles:
-    - role: overcloud-prep-containers
-      when: containerized_overcloud_upgrade|bool
-
 - name: Generate repo-setup script for overcloud upgrade
   hosts: undercloud
   tags:
@@ -20,7 +11,19 @@
   roles:
     - role: repo-setup
       when: containerized_overcloud_upgrade|bool
+      role: install-built-repo
+      when: hostvars['undercloud']['compressed_gating_repo'] is defined and mixed_upgrade|default(false)|bool
 
+- name: Prepare containers for Upgrade
+  hosts: undercloud
+  gather_facts: no
+  tags:
+    - overcloud-prep-containers
+  roles:
+    - role: overcloud-prep-containers
+      # This need the new repo in place.
+      update_containers: true
+      when: containerized_overcloud_upgrade|bool
 
 #FIXME(chem): tech-debt LP#1749740
 - name: Upgrade TripleO
