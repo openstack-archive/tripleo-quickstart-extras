@@ -13,6 +13,7 @@
 : ${REMOVE_STACKS_KEYPAIRS:=false}
 : ${NODESTACK_PREFIX:=""}
 : ${AUTORUN:=0}
+: ${TIMEOUT:=240}
 
 SSH_OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
@@ -38,6 +39,9 @@ usage () {
     echo "  -a, --autorun"
     echo "                      Run job on prepared environment automatically"
     echo "                      Default is to stop after environment is ready"
+    echo "  -t, --timeout"
+    echo "                      Timeout in minutes for the deployment"
+    echo "                      Default is 240 minutes"
     echo "  -h, --help          print this help and exit"
 }
 
@@ -75,6 +79,11 @@ while [ "x$1" != "x" ]; do
 
         --autorun|-a)
             AUTORUN=1
+            shift
+            ;;
+
+        --timeout|-t)
+            TIMEOUT=$2
             ;;
 
         --help|-h)
@@ -196,6 +205,7 @@ cat >"{{ env_vars_to_source_file }}" <<EOF
 export ZUUL_CHANGES="{{ zuul_changes }}"
 export NODES_FILE="{{ nodes_config }}"
 export TOCI_JOBTYPE="{{ toci_jobtype }}"
+export REMAINING_TIME="$TIMEOUT"
 export EXTRA_VARS="\$EXTRA_VARS --extra-vars dlrn_hash_tag={{ hostvars['undercloud'].dlrn_hash }} "
 EOF
 
