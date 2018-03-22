@@ -23,7 +23,8 @@ mtu_interface:
 external_interface: eth2
 external_interface_ip: 10.0.0.1
 external_interface_netmask: 255.255.255.0
-custom_nameserver: 8.8.8.8
+custom_nameserver:
+  - 8.8.8.8
 
 # default value for undercloud_rpm_dependencies
 # is in extras-common
