@@ -38,7 +38,7 @@ Role Variables
 - hostname_correction: <false> -- Switch to set the transient hostname to the static hostname (TripleO requirement)
 - step_set_undercloud_hostname: <false> -- Switch to set the undercloud hostname explicitly
 - package_installs: <true> -- Switch to install required OpenStack packages for an undercloud (requires repos to already be setup)
-- custom_nameserver: <8.8.8.8> -- Added to /etc/resolv.conf for access in custom environments
+- custom_nameserver: <['8.8.8.8']> -- A list, added to /etc/resolv.conf for access in custom environments
 - ovb_setup_connectivity: <false> -- Setup external network, custom nameserver and set MTUS valuse for OVB environments
 
 Dependencies
