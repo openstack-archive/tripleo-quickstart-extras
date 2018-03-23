@@ -21,6 +21,12 @@
     - name: Collecting cpu information
       shell: cat /proc/cpuinfo &> /var/log/extra/cpuinfo.txt
 
+    - name: Collect installed cron jobs
+      shell: |
+        for user in $(cut -f1 -d':' /etc/passwd); do \
+        echo $user; crontab -u $user -l | grep -v '^$\|^\s*\#\|^\s*PATH'; done \
+        &> /var/log/extra/installed_crons.txt
+
     # used by OSP Release Engineering to import into internal builds
     - name: package import delorean
       shell: |
