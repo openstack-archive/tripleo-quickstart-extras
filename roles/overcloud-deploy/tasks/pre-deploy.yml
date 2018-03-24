@@ -113,6 +113,7 @@
           -e {{ working_dir }}/hostnamemap.yaml
   when:
     - groups['overcloud'] is defined
+    - groups['overcloud'][0] is defined
     - overcloud_nodes is defined
     - overcloud_nodes[0] is defined
     - overcloud_nodes[0].hostnamemap_override is defined
