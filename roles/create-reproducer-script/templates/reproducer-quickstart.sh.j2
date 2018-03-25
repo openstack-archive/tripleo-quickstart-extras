@@ -45,8 +45,13 @@ set -e
 
 # Check that tenant credentials have been sourced
 if [[ ! -v OS_TENANT_NAME ]]; then
-    echo "Tenant credentials are not sourced."
-    exit 1;
+    # TODO(aschultz): work around for LP#1750455
+    if [[ -v OS_PROJECT_NAME ]]; then
+        export OS_TENANT_NAME=$OS_PROJECT_NAME
+    else
+        echo "Tenant credentials are not sourced."
+        exit 1;
+    fi
 fi
 
 # Input argument assignments
