@@ -115,7 +115,7 @@ fi
 ## * Create test ping stack
 ## ::
 
-echo > {{ working_dir }}/validate-template-override.yaml << EOF
+cat << EOF > {{ working_dir }}/validate-template-override.yaml
 {{ validate_template_environment|to_nice_yaml }}
 EOF
 
