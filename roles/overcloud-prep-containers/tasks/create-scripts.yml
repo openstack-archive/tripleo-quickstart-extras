@@ -9,6 +9,6 @@
 
 - name: Create overcloud prep-containers script
   template:
-    src: "{{ overcloud_prep_containers_script }}"
-    dest: "{{ working_dir }}/overcloud-prep-containers.sh"
+    src: "{{ overcloud_prep_containers_template }}"
+    dest: "{{ working_dir }}/{{ overcloud_prep_containers_script }}"
     mode: 0755
