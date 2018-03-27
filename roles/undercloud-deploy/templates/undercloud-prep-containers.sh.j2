@@ -20,6 +20,12 @@ BUILD_ID={{ undercloud_docker_image_tag }}
 ## * Generate {{ working_dir }}/undercloud-containers-default-parameters.yaml
 ## ::
 
+{% if release in ['pike', 'queens'] -%}
+{%- set env_files_path='services-docker' -%}
+{%- else -%}
+{%- set env_files_path='services' -%}
+{%- endif %}
+
 openstack overcloud container image prepare \
     --output-env-file {{ working_dir }}/undercloud-containers-default-parameters.yaml \
     --template-file /usr/share/openstack-tripleo-common/container-images/overcloud_containers.yaml.j2 \
@@ -27,26 +33,26 @@ openstack overcloud container image prepare \
     -e {{overcloud_templates_path}}/environments/services-docker/tripleo-ui.yaml \
 {% endif %}
 {% if undercloud_enable_mistral|bool %}
-    -e {{overcloud_templates_path}}/environments/services-docker/mistral.yaml \
+    -e {{overcloud_templates_path}}/environments/{{env_files_path}}/mistral.yaml \
 {% endif %}
 {% if undercloud_enable_ironic|bool %}
-    -e {{overcloud_templates_path}}/environments/services-docker/ironic.yaml \
+    -e {{overcloud_templates_path}}/environments/{{env_files_path}}/ironic.yaml \
 {% endif %}
 {% if undercloud_enable_ironic_inspector|bool %}
-    -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/ironic-inspector.yaml \
+    -e /usr/share/openstack-tripleo-heat-templates/environments/{{env_files_path}}/ironic-inspector.yaml \
 {% endif %}
 {% if undercloud_generate_service_certificate is defined %}
-    -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/undercloud-haproxy.yaml \
-    -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/undercloud-keepalived.yaml \
+    -e /usr/share/openstack-tripleo-heat-templates/environments/{{env_files_path}}/undercloud-haproxy.yaml \
+    -e /usr/share/openstack-tripleo-heat-templates/environments/{{env_files_path}}/undercloud-keepalived.yaml \
 {% endif %}
 {% if undercloud_enable_zaqar|bool %}
-    -e {{overcloud_templates_path}}/environments/services-docker/zaqar.yaml \
+    -e {{overcloud_templates_path}}/environments/{{env_files_path}}/zaqar.yaml \
 {% endif %}
 {% if undercloud_enable_telemetry|bool %}
-    -e {{overcloud_templates_path}}/environments/services-docker/undercloud-gnocchi.yaml \
-    -e {{overcloud_templates_path}}/environments/services-docker/undercloud-aodh.yaml \
-    -e {{overcloud_templates_path}}/environments/services-docker/undercloud-panko.yaml \
-    -e {{overcloud_templates_path}}/environments/services-docker/undercloud-ceilometer.yaml \
+    -e {{overcloud_templates_path}}/environments/{{env_files_path}}/undercloud-gnocchi.yaml \
+    -e {{overcloud_templates_path}}/environments/{{env_files_path}}/undercloud-aodh.yaml \
+    -e {{overcloud_templates_path}}/environments/{{env_files_path}}/undercloud-panko.yaml \
+    -e {{overcloud_templates_path}}/environments/{{env_files_path}}/undercloud-ceilometer.yaml \
 {% endif %}
 {% if undercloud_extra_services_args %}
     {{ undercloud_extra_services_args }} \

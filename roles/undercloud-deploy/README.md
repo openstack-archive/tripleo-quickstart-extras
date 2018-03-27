@@ -232,7 +232,7 @@ the ephemeral undercloud heat agent running for debug purposes:
 undercloud_extra_services_args: >-
   -e {{overcloud_templates_path}}/environments/disable-telemetry.yaml
   -e {{overcloud_templates_path}}/environments/docker-minimal.yaml
-  -e {{overcloud_templates_path}}/environments/services-docker/etcd.yaml
+  -e {{overcloud_templates_path}}/environments/services/etcd.yaml
   -e {{overcloud_templates_path}}/environments/services/octavia.yaml
   -e {{overcloud_templates_path}}/environments/debug.yaml
   -e {{overcloud_templates_path}}/environments/config-debug.yaml
@@ -302,7 +302,7 @@ And an example playbook to call the role is:
     undercloud_extra_services_args: >-
       -e {{overcloud_templates_path}}/environments/disable-telemetry.yaml
       -e {{overcloud_templates_path}}/environments/docker-minimal.yaml
-      -e {{overcloud_templates_path}}/environments/services-docker/etcd.yaml
+      -e {{overcloud_templates_path}}/environments/services/etcd.yaml
       -e {{overcloud_templates_path}}/environments/services/octavia.yaml
       -e {{overcloud_templates_path}}/environments/debug.yaml
       -e {{overcloud_templates_path}}/environments/config-debug.yaml
