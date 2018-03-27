@@ -11,7 +11,7 @@
   roles:
     - role: repo-setup
       when: containerized_overcloud_upgrade|bool
-      role: install-built-repo
+    - role: install-built-repo
       when: hostvars['undercloud']['compressed_gating_repo'] is defined and mixed_upgrade|default(false)|bool
 
 - name: Prepare containers for Upgrade
