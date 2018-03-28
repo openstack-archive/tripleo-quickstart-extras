@@ -7,26 +7,18 @@ set -eux
 ## =================================
 
 ## .. note: The following set of scripts are generated from a jinja template
-##    which may be viewed here: https://github.com/redhat-openstack/ansible-role-tripleo-overcloud-validate/blob/master/templates/overcloud-validate.sh.j2
+##    which may be viewed here: https://github.com/openstack/tripleo-quickstart-extras/blob/master/roles/validate-simple/templates/overcloud-validate.sh.j2
 
 ## * Create cleanup env function for heat
 ## ::
 
 function cleanup {
-{% if release in ['kilo', 'liberty', 'rhos-7'] %}
-    heat stack-delete {{ validate_stack_name }}
-{% else  %}
     openstack stack delete --yes {{ validate_stack_name }}
-{% endif %}
-    if [[ $({{ working_dir }}/wait_for -w 300 -d 30 -s "Stack not found" -- "heat stack-show {{ validate_stack_name }}") ]]; then
+    if [[ $({{ working_dir }}/wait_for -w 300 -d 30 -s "Stack not found" -- "openstack stack show {{ validate_stack_name }}") ]]; then
         echo "openstack stack delete"
     else
-        if [[ $(heat stack-list | grep {{ validate_stack_name }} | grep -i failed) ]]; then
-        {% if release in ['kilo', 'liberty', 'rhos-7'] %}
-            heat stack-delete {{ validate_stack_name }}
-        {% else  %}
+        if [[ $(openstack stack list | grep {{ validate_stack_name }} | grep -i failed) ]]; then
             openstack stack delete --yes {{ validate_stack_name }}
-        {% endif %}
         fi
     fi
     openstack image list | awk '/pingtest/ {print $2}' | while read IMAGEID; do openstack image delete $IMAGEID; done
@@ -55,7 +47,7 @@ source {{ working_dir }}/{{ tenantrc }}
 ## * Check if an environment is already deployed and, in case, cleanup it
 ## ::
 
-[ "x$(heat stack-list | grep {{ validate_stack_name }} || true)" != "x" ] && cleanup
+[ "x$(openstack stack list | grep {{ validate_stack_name }} || true)" != "x" ] && cleanup
 # get validate image
 if [[ ! -d {{ validate_image_dir }} ]]; then
     mkdir {{ validate_image_dir }};
@@ -119,15 +111,9 @@ cat << EOF > {{ working_dir }}/validate-template-override.yaml
 {{ validate_template_environment|to_nice_yaml }}
 EOF
 
-{% if release in ['kilo', 'liberty', 'rhos-7'] %}
-heat stack-create {{ validate_stack_name }} \
-    --template-file {{ validate_template_path }}/{{ validate_template }} \
-    --environment-file {{ working_dir }}/validate-template-override.yaml
-{% else  %}
 openstack stack create {{ validate_stack_name }} \
     --template {{ validate_template_path }}/{{ validate_template }} \
     --environment {{ working_dir }}/validate-template-override.yaml
-{% endif %}
 
 ## * Wait for the stack creation to complete
 ## * Give time to the instance to boot
@@ -135,7 +121,7 @@ openstack stack create {{ validate_stack_name }} \
 ### --stop_docs
 /bin/bash {{ working_dir }}/wait_for -w 600 --delay 30 \
     --success-match {{ validate_success_status }} \
-    --fail-match {{ validate_failed_status }} -- heat stack-show {{ validate_stack_name }}
+    --fail-match {{ validate_failed_status }} -- openstack stack show {{ validate_stack_name }}
 sleep 30
 
 ### --start_docs
