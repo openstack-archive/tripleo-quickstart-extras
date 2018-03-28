@@ -1,5 +1,12 @@
 ---
 # Execute sanity checks agsinst the overcloud deployment
+- name: setup dstat performance monitoring
+  hosts: overcloud
+  tags:
+    - overcloud-validate
+  roles:
+    - { role: validate-perf, when: validate_performance|bool }
+
 - name: Sanity check the overcloud services
   hosts: undercloud
   tags:
