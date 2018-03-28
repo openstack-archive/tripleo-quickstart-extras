@@ -5,12 +5,9 @@
 
 ## ::
 
-## FIXME(chkumar246): Tempest run interface is unstable till that use ostestr for
-## running tests: https://bugs.launchpad.net/tempest/+bug/1669455
-
 {% if tempest_format == "venv" %}
-export OSTESTR='{{ working_dir }}/tempest_git/tools/with_venv.sh ostestr'
 export TEMPESTCLI='{{ working_dir }}/tempest_git/tools/with_venv.sh tempest'
+export OSTESTR='{{ working_dir }}/tempest_git/tools/with_venv.sh ostestr'
 {% elif tempest_format == "packages" %}
 export OSTESTR='ostestr'
 export TEMPESTCLI='/usr/bin/tempest'
@@ -25,7 +22,7 @@ $TEMPESTCLI list-plugins
 $TEMPESTCLI cleanup --init-saved-state
 {% endif %}
 
-$OSTESTR {% if test_regex != '' %} --regex '({{ test_regex }})' {% endif %}
+{% if release not in ["master", "queens"] %} $OSTESTR {% else %} $TEMPESTCLI run {% endif %}{% if test_regex != '' %} --regex '({{ test_regex }})' {% endif %}
 {% if tempest_whitelist|length > 0 %} --whitelist_file={{ working_dir }}/{{ tempest_whitelist_file }} {% endif %}
 {% if skip_file_src != '' %} --blacklist_file={{ working_dir }}/{{ skip_file }} {% endif %}
 {% if tempest_workers is defined %} --concurrency {{ tempest_workers }} {% endif %}
