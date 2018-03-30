@@ -23,14 +23,12 @@ if ! sudo iptables -nvL INPUT | grep "$COMMENT"; then
 fi
 {% endif %}
 
-{% if network_isolation|bool and not overcloud_ipv6|bool %}
-
+{% if network_isolation|bool and not overcloud_ipv6|bool and (release in ['newton','ocata','pike','queens'] or not containerized_undercloud|bool) %}
 ## Setup Networking
 ## ----------------
 
 ## * Enable Masquerading for undercloud network.
-## This is technical debt, please look for full context:
-## https://bugs.launchpad.net/tripleo/+bug/1756183
+##   This is only useful before Rocky cycle.
 ## ::
 
 sudo iptables -w -t nat -D POSTROUTING -j BOOTSTACK_MASQ_OVB || true
