@@ -1,20 +1,6 @@
-- name: Prepare directory with extra logs
-  file: dest=/var/log/extra state=directory
-  become: true
-
-- name: Install dstat if it is not present
-  yum:
-    name: dstat
-    state: present
-  become: true
-
-- name: Run dstat for collecting metrics during 2 hours
-  command: >
-    dstat -tcmndrylpg --nocolor --output /var/log/extra/dstat-csv.log 1 7200 \
-    >/dev/null
-  async: 7200
-  poll: 0
-  become: true
+- name: Run dstat on the undercloud prior to undercloud install
+  include_role:
+    name: validate-perf
   when: step_install_undercloud|bool
 
 - name: Install the undercloud

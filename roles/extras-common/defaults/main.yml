@@ -33,3 +33,6 @@ undercloud_rpm_dependencies: >-
 # If `test_ping` is `true`, run a simple ping test to validate the
 # overcloud.
 test_ping: true
+
+# install and execute dstat across nodes
+validate_performance: true

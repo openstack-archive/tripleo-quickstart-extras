@@ -1,4 +1,11 @@
 ---
+- name: setup dstat performance monitoring
+  hosts: overcloud
+  tags:
+    - overcloud-validate
+  roles:
+    - { role: validate-perf, when: validate_performance|bool }
+
 # Validate the deployment
 - name:  validate the overcloud
   hosts: undercloud
