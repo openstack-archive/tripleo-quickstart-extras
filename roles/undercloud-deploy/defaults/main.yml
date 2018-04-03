@@ -78,6 +78,7 @@ undercloud_enable_validations: true
 undercloud_enable_zaqar: true
 undercloud_ipxe_deploy: true
 
+undercloud_enable_tempest: false
 undercloud_undercloud_debug: true
 
 # Use to populate the resource registry for nic configs and networking setup
