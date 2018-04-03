@@ -1,4 +1,14 @@
 ---
+- name: Check if collect directory exists
+  stat:
+    path: "{{ artcl_collect_dir }}"
+  register: collect_dir
+
+- name: Create collect directory
+  file:
+    path: "{{ artcl_collect_dir }}"
+    state: directory
+  when: not collect_dir.stat.exists
 
 - name: Create the reproducer file from template
   template:
