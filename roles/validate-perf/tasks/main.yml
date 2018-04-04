@@ -1,27 +1,29 @@
 ---
-- name: install the latest version of dstat on overcloud
-  package:
-    name: dstat
-    state: present
+- name: Validate performance (dstat) on overcloud
+  block:
+  - name: Install the latest version of dstat on overcloud
+    package:
+      name: dstat
+      state: present
+  - name: Ensure /var/log/extra exists
+    file:
+      path: /var/log/extra
+      state: directory
+      mode: 0777
+  - name: Run dstat for collecting metrics on overcloud
+    shell:
+      cmd: >
+        dstat
+        -{{ dstat_options }}
+        --nocolor
+        --output /var/log/extra/{{ dstat_log_name }}
+        {{ dstat_delay }}
+        > /dev/null &
+    async: 1
+    poll: 0
+    executable: /bin/bash
+    changed_when: false
+  rescue:
+  - debug:
+      msg: "Warning: Performance cannot be validated."
   become: true
-
-- name: ensure /var/log/extra exists
-  file:
-    path: /var/log/extra
-    state: directory
-    mode: 0755
-  become: true
-
-- name: Run dstat for collecting metrics on overcloud
-  command: >-
-    dstat
-    -{{ dstat_options }}
-    --nocolor
-    --output /var/log/extra/{{ dstat_log_name }}
-    {{ dstat_delay }}
-    {{ dstat_count }}
-    > /dev/null
-  async: 7200
-  poll: 0
-  become: true
-  changed_when: false

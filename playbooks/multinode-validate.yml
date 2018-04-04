@@ -4,7 +4,9 @@
   tags:
     - overcloud-validate
   roles:
-    - { role: validate-perf, when: validate_performance|bool }
+    - { role: validate-perf,
+        when: validate_performance|bool and run_tempest|bool }
+  ignore_errors: true
 
 # Validate the deployment
 - name:  validate the overcloud
