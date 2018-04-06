@@ -93,3 +93,5 @@ undercloud_network_environment_args:
     undercloud_network_cidr|nthhost(1))}}"
   UndercloudNameserver: "{% if undercloud_undercloud_nameservers is string %}{{undercloud_undercloud_nameservers.split(',')[0]}}{% else %}{{undercloud_undercloud_nameservers[-1]}}{% endif %}"
   ControlPlaneSubnetCidr: 24
+
+ctlplane_masquerade: false

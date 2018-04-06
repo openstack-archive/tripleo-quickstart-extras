@@ -461,3 +461,8 @@ undercloud_swift_hash_suffix = {{undercloud_undercloud_swift_hash_suffix}}
 {% else %}
 #undercloud_swift_hash_suffix = <None>
 {% endif %}
+
+{% if ctlplane_masquerade|default(false)|bool %}
+[ctlplane-subnet]
+masquerade={{ ctlplane_masquerade }}
+{% endif %}
