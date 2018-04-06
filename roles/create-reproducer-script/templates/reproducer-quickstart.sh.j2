@@ -84,11 +84,11 @@ while [ "x$1" != "x" ]; do
 
         --autorun|-a)
             AUTORUN=1
-            shift
             ;;
 
         --timeout|-t)
             TIMEOUT=$2
+            shift
             ;;
 
         --help|-h)
