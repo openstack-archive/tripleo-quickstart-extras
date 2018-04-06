@@ -46,7 +46,7 @@
 
     - name: Collect network status info
       shell: >
-        (ip a; ip r; iptables-save; iptables -nL) &> /var/log/extra/network.txt;
+        (ip a; ip r; netstat -i; iptables-save; iptables -nL) &> /var/log/extra/network.txt;
         (for NS in $(ip netns list); do
         echo "==== $NS ====";
         ip netns exec $NS ip a;
