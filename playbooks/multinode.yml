@@ -3,5 +3,6 @@
 - include: multinode-undercloud.yml
 - include: multinode-overcloud-prep.yml
 - include: multinode-overcloud.yml
+- include: multinode-overcloud-update.yml
 - include: multinode-overcloud-upgrade.yml
 - include: multinode-validate.yml
