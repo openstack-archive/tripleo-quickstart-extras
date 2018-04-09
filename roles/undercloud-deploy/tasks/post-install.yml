@@ -27,13 +27,3 @@
         line: "export OS_PASSWORD={{ undercloud_admin_password.stdout }}"
         regexp: "OS_PASSWORD"
 
-- when: containerized_undercloud|bool
-  block:
-    - name: Copy stackrc to ansible host
-      tags:
-        - undercloud-post-install
-      fetch:
-        flat: true
-        src: stackrc
-        dest: "{{ local_working_dir }}/stackrc"
-
