@@ -27,4 +27,8 @@ modify_image_vc_trace: false
 libguestfs_mode: true
 # TODO(sshnaidm): implement initramfs image modifying
 initramfs_image: false
+
+# kernel bug
+# https://bugzilla.redhat.com/show_bug.cgi?id=1535973
 libguestfs_kernel_override: 3.10.0-693.el7.x86_64
+use_non_default_kernel: true
