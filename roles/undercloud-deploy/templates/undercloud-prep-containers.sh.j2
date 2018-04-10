@@ -30,7 +30,7 @@ openstack overcloud container image prepare \
     --output-env-file {{ working_dir }}/undercloud-containers-default-parameters.yaml \
     --template-file /usr/share/openstack-tripleo-common/container-images/overcloud_containers.yaml.j2 \
 {% if undercloud_enable_ui|bool %}
-    -e {{overcloud_templates_path}}/environments/services-docker/tripleo-ui.yaml \
+-e {{overcloud_templates_path}}/environments/{{env_files_path}}/tripleo-ui.yaml \
 {% endif %}
 {% if undercloud_enable_mistral|bool %}
     -e {{overcloud_templates_path}}/environments/{{env_files_path}}/mistral.yaml \
