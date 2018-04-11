@@ -29,22 +29,10 @@
         | head -1) {{ working_dir }}/tempest/tempest.html \
         2>&1 >> {{ tempest_log_file }}
 
-    - name: Test the subunit version
-      shell: |
-        {% if tempest_format == 'venv' %}source {{ working_dir }}/tempest_git/.venv/bin/activate; {% endif %}
-        python -c 'import subunit; import sys; exit(int(subunit.__version__[0] <= 1 and subunit.__version__[1] <= 1))'
-      register: need_subunit1to2
-      failed_when: False
-
     - name: Generate XML results file
       shell: >
         {% if tempest_format == 'venv' %}source {{ working_dir }}/tempest_git/.venv/bin/activate; {% endif %}
-        subunit2junitxml
-        {% if need_subunit1to2.rc == 0 %}
-        {{ working_dir }}/tempest/testrepository.subunit
-        {% else %}
-        $(find {{ working_dir }}/tempest/{{ testr_dir }} -name [0-9] | head -1)
-        {% endif %} --output-to {{ working_dir }}/tempest/tempest.xml 2>&1 >> {{ tempest_log_file }}
+        subunit2junitxml {{ working_dir }}/tempest/testrepository.subunit --output-to {{ working_dir }}/tempest/tempest.xml 2>&1 >> {{ tempest_log_file }}
 
     - name: Fetch HTML results
       fetch:
