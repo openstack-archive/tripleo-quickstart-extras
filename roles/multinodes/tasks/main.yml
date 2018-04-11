@@ -89,7 +89,7 @@
         if [ $COUNTER -lt 30 ]; then
           sleep 10;
           if openstack stack show {{ stack_name }} | grep FAILED ; then
-            echo "Failed to create OVB stack {{ stack_name }}" | tee -a {{ stack_log }};
+            echo "Failed to create multinode stack {{ stack_name }}" | tee -a {{ stack_log }};
             openstack stack show {{ stack_name }} >> {{ stack_log }} 2>&1;
             openstack stack failures list --long {{ stack_name }} >> {{ stack_log }} 2>&1 || echo 'Failed to list stack failures' >> {{ stack_log }};
             exit 0;
@@ -109,8 +109,8 @@
 
 - name: Fail if stack failed to create
   fail:
-    msg: "Failed to create OVB stack {{ stack_name }}, check log: {{ stack_log }}"
-  when: '"Failed to create OVB stack" in create_stack.stdout'
+    msg: "Failed to create multinode stack {{ stack_name }}, check log: {{ stack_log }}"
+  when: '"Failed to create multinode stack" in create_stack.stdout'
 
 - name: Log
   debug:
