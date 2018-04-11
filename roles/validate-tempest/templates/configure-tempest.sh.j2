@@ -98,7 +98,9 @@ public_net_id=$(openstack network show {{ public_net_name }} -f value -c id)
 {% endif %}
 {% endif %}
 
-{% if not tempest_overcloud|bool %}
+{% if not tempest_overcloud|bool and release not in ['newton', 'ocata'] %}
+# OS_AUTH_URL does not contains identity api version in stackrc from
+# Pike onwards.
 export OS_AUTH_URL="$OS_AUTH_URL/v$OS_IDENTITY_API_VERSION"
 {% endif %}
 # Generate Tempest Config file using python-tempestconf
