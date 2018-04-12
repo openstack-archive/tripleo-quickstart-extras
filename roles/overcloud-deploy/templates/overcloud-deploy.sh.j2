@@ -96,7 +96,7 @@ elif ! openstack stack list | grep -Eq '(CREATE|UPDATE)_COMPLETE'; then
     echo "puppet standard error for deployment: $failed" >> {{ failed_deployments_log }}
     echo "######################################################" >> {{ failed_deployments_log }}
     # the sed part removes color codes from the text
-    openstack software deployment show $failed |
+    openstack software deployment show $failed -f json |
         jq -r .output_values.deploy_stderr |
         sed -r "s:\x1B\[[0-9;]*[mK]::g" >> {{ failed_deployments_log }}
     echo "######################################################" >> {{ failed_deployments_log }}
