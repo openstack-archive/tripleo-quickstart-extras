@@ -97,3 +97,4 @@ undercloud_network_environment_args:
 ctlplane_masquerade: false
 
 update_containers: false
+undercloud_enable_routed_networks: false

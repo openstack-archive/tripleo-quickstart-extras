@@ -280,6 +280,11 @@ templates = {{overcloud_templates_path}}
 {{ undercloud_conf_extra }}
 {% endif %}
 
+# Enable support for routed ctlplane networks
+{% if undercloud_enable_routed_networks|default(false)|bool %}
+enable_routed_networks = {{undercloud_enable_routed_networks}}
+{% endif %}
+
 [auth]
 
 #
