@@ -1,0 +1,20 @@
+- name: Configure next release repository in the undercloud
+  hosts: undercloud
+  tags:
+    - undercloud-upgrade
+  vars:
+    repo_setup_script: "repo-setup-{{ lookup('env', 'UPGRADE_RELEASE') }}.sh"
+    repo_setup_log: "repo-setup-{{ lookup('env', 'UPGRADE_RELEASE') }}.log"
+    repo_setup_run_update: false
+    dlrn_hash_path: ''
+    dlrn_hash_path_newest: ''
+  roles:
+    - role: repo-setup
+
+- name: Run tripleo-upgrade role to upgrade undercloud
+  hosts: undercloud
+  tags:
+    - undercloud-upgrade
+  roles:
+    - role: tripleo-upgrade
+
