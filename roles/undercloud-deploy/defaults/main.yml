@@ -95,3 +95,5 @@ undercloud_network_environment_args:
   ControlPlaneSubnetCidr: 24
 
 ctlplane_masquerade: false
+
+update_containers: false

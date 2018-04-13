@@ -97,6 +97,7 @@ http://docs.openstack.org/developer/tripleo-quickstart/accessing-libvirt.html
   downloaded ansible configs and processed heat templates for heat installer
 - `undercloud_undercloud_cleanup`: <null> -- controls tear down of the processed heat templates
   in the output directory for heat installer
+- update_containers: <false> -- whether to update containers from the local registry.
 
 Role Network Variables
 ----------------------

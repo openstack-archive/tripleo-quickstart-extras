@@ -79,4 +79,4 @@
     src: undercloud-prep-containers.sh.j2
     dest: "{{ working_dir }}/undercloud-prep-containers.sh"
     mode: 0755
-  when: containerized_undercloud|bool
+  when: containerized_undercloud|bool and update_containers|bool

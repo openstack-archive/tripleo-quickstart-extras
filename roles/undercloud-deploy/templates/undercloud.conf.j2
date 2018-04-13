@@ -245,7 +245,7 @@ docker_registry_mirror = {{undercloud_docker_registry_mirror}}
 
 # additional env files for undercloud, used with containers
 
-{% if undercloud_container_images_file is defined %}
+{% if undercloud_container_images_file is defined and update_containers|bool %}
 container_images_file = {{ undercloud_container_images_file }}
 {% else %}
 #container_images_file = <None>
