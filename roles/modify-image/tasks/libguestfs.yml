@@ -37,12 +37,16 @@
   set_fact: _vc_args="{{ _vc_args }} --root-password password:{{ modify_image_vc_root_password }}"
   when: modify_image_vc_root_password is defined
 
+# kernel bug
+# https://bugzilla.redhat.com/show_bug.cgi?id=1535973
 - name: ensure libguestfs_kernel_override kernel is installed
   yum:
     name: "kernel-{{ libguestfs_kernel_override }}"
     state: present
   become: true
-  when: not chrooted|bool
+  when:
+    - not chrooted|bool
+    - use_non_default_kernel|bool
 
 - name: Run virt-customize on the provided image
   shell: >
