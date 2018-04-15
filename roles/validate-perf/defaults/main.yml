@@ -1,4 +1,3 @@
 dstat_log_name: dstat-csv.log
 dstat_options: tcmndrylpg
 dstat_delay: 1
-dstat_count: 7200
