@@ -29,7 +29,7 @@
 - name: Set oooq extras to install from local copy
   copy:
     dest: /opt/stack/tripleo-quickstart/quickstart-extras-requirements.txt
-    content: git+file:///opt/stack/tripleo-quickstart-extras/#egg=tripleo-quickstart-extras
+    content: "git+file:///opt/stack/tripleo-quickstart-extras/#egg=tripleo-quickstart-extras\n"
 
 - name: Create /opt/cache/files directory
   file:
