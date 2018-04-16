@@ -36,4 +36,4 @@
 
 - name: Set tempestconf call
   set_fact:
-      tempestconf: "{% if release == 'newton' %}{{ working_dir }}/tools/config_tempest.py{% else %}/usr/bin/discover-tempest-config{% endif %}"
+      tempestconf: "{% if release == 'newton' %}{{ tempest_dir }}/tools/config_tempest.py{% else %}/usr/bin/discover-tempest-config{% endif %}"
