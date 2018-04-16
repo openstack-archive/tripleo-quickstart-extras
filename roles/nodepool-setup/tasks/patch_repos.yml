@@ -30,6 +30,8 @@
           git fetch {{ repo_item }} $refs && git cherry-pick --allow-empty FETCH_HEAD
         fi
       with_items: "{{ zuul_changes_list }}"
-      when: proj in item
+      when:
+        - proj in item
+        - stable_release|default('master', true) in item
       args:
         chdir: /opt/stack
