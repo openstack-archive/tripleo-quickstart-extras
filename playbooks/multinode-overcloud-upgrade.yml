@@ -1,12 +1,44 @@
-# TODO: This is to keep legacy job compatibility.
-# Currently used by P->Q and O->P job.
-- name: Overcloud upgrade compatibility mode.  Please switch to tripleo-upgrade role.
-  when: not use_tripleo_upgrade|default(false)|bool
-  include: multinode-overcloud-upgrade-legacy.yml
+- name: Generate repo-setup script for overcloud upgrade
+  hosts: undercloud
+  tags:
+    - overcloud-upgrade
+  gather_facts: no
+  vars:
+    repo_run_live: false
+    repo_setup_script: "repo-setup-{{ target_upgrade_version }}.sh"
+    # Avoid running yum update, only set up repos
+    repo_setup_run_update: false
+  roles:
+    - role: repo-setup
+      when: containerized_overcloud_upgrade|default(false)|bool
+    - role: install-built-repo
+      when: hostvars['undercloud']['compressed_gating_repo'] is defined and mixed_upgrade|default(false)|bool
 
-# TODO(chem): that glue code part should be in its own role, to keep the
-# playbook clean.
-- name: Overcloud tripleo-upgrade.
-  when: use_tripleo_upgrade|default(false)|bool
-  include: multinode-overcloud-upgrade-new.yml
+- name: Prepare containers for Upgrade
+  hosts: undercloud
+  gather_facts: no
+  tags:
+    - overcloud-prep-containers
+  roles:
+    - role: overcloud-prep-containers
+      # This need the new repo in place.
+      update_containers: true
+      # This enable us to run it even on non-containerized overcloud deployment
+      # ie, ffu upgrade where deployment is on newton.
+      containerized_overcloud: "{{prep_container_upgrade_run|default(false)}}"
+      # Do not overwrite the deployment log if any.
+      overcloud_prep_containers_log: "upgrade_overcloud_prep_containers.log"
+      overcloud_prep_containers_script: "upgrade_overcloud_prep_containers.sh"
+      when: containerized_overcloud_upgrade|default(false)|bool
 
+- name: Run tripleo-upgrade role to upgrade overcloud
+  hosts: undercloud
+  gather_facts: yes
+  tags:
+    - overcloud-upgrade
+  vars:
+    repo_setup_script: "{{ working_dir }}/repo-setup-{{ target_upgrade_version }}.sh"
+  roles:
+    - role: tripleo-upgrade
+      upgrade_init_command: "{{ (repo_setup_script|exists) | ternary(lookup('file', repo_setup_script), false) }}"
+      when: overcloud_upgrade|default(false)|bool
