@@ -49,6 +49,14 @@
       tempest_dstat_opt: '--dstat /var/log/extra/dstat-csv.log'
   when: dstat_result.stat.exists
 
+- name: Set the proper permission for tempest directory and files
+  file:
+    dest: "{{ working_dir }}/tempest"
+    owner: "{{ undercloud_user }}"
+    group: "{{ undercloud_user }}"
+    recurse: yes
+  become: true
+
 - name: Collecting data from tempest
   shell: >
     {% if tempest_format == 'venv' %}source {{ working_dir }}/tempest_git/.venv/bin/activate; {% endif %}
