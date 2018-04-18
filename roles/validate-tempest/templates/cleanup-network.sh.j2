@@ -24,8 +24,6 @@ neutron net-create {{ public_net_name }} --router:external=True \
     --provider:physical_network {{ public_physical_network }}
 {% endif %}
 
-public_net_id=$(neutron net-show {{ public_net_name }} -f value -c id)
-
 neutron subnet-create --name ext-subnet \
     --allocation-pool \
     start={{ public_net_pool_start }},end={{ public_net_pool_end }} \
@@ -58,9 +56,6 @@ openstack network create {{ public_net_name }} --external \
 {% endif %}
     --provider-physical-network {{ public_physical_network }}
 {% endif %}
-
-
-public_net_id=$(openstack network show {{ public_net_name }} -f value -c id)
 
 openstack subnet create ext-subnet \
     --allocation-pool \
