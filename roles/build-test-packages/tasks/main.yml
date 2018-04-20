@@ -79,7 +79,8 @@
     gawk '{ print $0 }; /^# repos$/ { exit }' {{ build_repo_dir }}/DLRN/scripts/centos.cfg
     > {{ build_repo_dir }}/DLRN/scripts/centos-local.cfg;
     cat /etc/yum.repos.d/quickstart-centos-*.repo >> {{ build_repo_dir }}/DLRN/scripts/centos-local.cfg;
-    cat /etc/yum.repos.d/delorean*.repo >> {{ build_repo_dir }}/DLRN/scripts/centos-local.cfg;
+    find /etc/yum.repos.d -name "delorean*repo" ! -name "delorean*build-deps.repo" -exec cat {} \; >> {{ build_repo_dir }}/DLRN/scripts/centos-local.cfg;
+    find /etc/yum.repos.d -name "delorean*build-deps.repo" -exec sed 's/enabled=.*/enabled=1/g' {} \; >> {{ build_repo_dir }}/DLRN/scripts/centos-local.cfg;
     echo '"""' >> {{ build_repo_dir }}/DLRN/scripts/centos-local.cfg;
     mkdir -p /tmp/fake-dlrn-repos/current;
     touch /tmp/fake-dlrn-repos/delorean-deps.repo;
