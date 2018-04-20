@@ -39,6 +39,15 @@
   become: yes
   when: tempest_plugins|length > 0
 
+- name: Install packages to generate subunit results
+  become: yes
+  package: name={{ item }} state=present
+  with_items:
+    - python-stestr
+    - python-subunit
+    - subunit-filters
+  when: tempest_format in ['container', 'packages']
+
 - ignore_errors: true
   block:
     - name: Copying bugcheck files
