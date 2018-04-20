@@ -5,3 +5,6 @@ known_failures:
   - test: 'neutron_tempest_plugin.scenario'
     reason: 'Neutron Tempest plugin scenario tests are not yet stable.'
     lp: 'https://launchpad.net/bugs/1737940'
+  - test: 'neutron_tempest_plugin.api.test_timestamp.TestTimeStamp.test_segment_with_timestamp'
+    reason: 'segments plugin not enabled'
+    lp: 'https://bugs.launchpad.net/tripleo/+bug/1765008'
