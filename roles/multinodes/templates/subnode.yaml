@@ -29,22 +29,12 @@ parameters:
 
 resources:
 
-  subnode_port:
-    type: OS::Neutron::Port
-    properties:
-      network_id: { get_param: private_net }
-      fixed_ips:
-        - subnet_id: { get_param: private_subnet }
-      security_groups:
-        - "default"
-        - { get_param: server_security_group }
-
   subnode_floating_ip:
     type: OS::Neutron::FloatingIP
     # depends_on: router_interface, subnode_port
     properties:
       floating_network: { get_param: public_net_name }
-      port_id: { get_resource: subnode_port }
+      port_id: {get_attr: [subnode, addresses, {get_param: private_net}, 0, port]}
 
   subnode:
     type: OS::Nova::Server
@@ -54,7 +44,9 @@ resources:
       flavor: { get_param: subnode_flavor }
       key_name: { get_param: key_name }
       networks:
-        - port: { get_resource: subnode_port }
+        - network: { get_param: private_net }
+      security_groups:
+        - { get_param: server_security_group }
 
 outputs:
   subnode_ip_pair:

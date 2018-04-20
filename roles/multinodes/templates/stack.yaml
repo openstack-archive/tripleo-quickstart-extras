@@ -80,6 +80,7 @@ resources:
 
   subnodes:
     type: OS::Heat::ResourceGroup
+    depends_on: router_interface
     properties:
       count: { get_param: subnode_count }
       resource_def:
