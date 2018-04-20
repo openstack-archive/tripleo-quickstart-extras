@@ -1,0 +1,4 @@
+# By default the role does nothing since both operations
+# are potentially destructive.
+snapshot_create: false
+snapshot_restore: false

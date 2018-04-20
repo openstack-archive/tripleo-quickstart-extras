@@ -1,0 +1,65 @@
+---
+
+- name: Shut down vms
+  virt:
+    name: "{{ item.name }}"
+    command: shutdown
+    state: shutdown
+    uri: "{{ libvirt_uri }}"
+  with_items: "{{ overcloud_nodes }}"
+
+- name: Wait for vms to shutdown
+  async: 300
+  poll: 0
+  shell: |
+    while true
+    do virsh list | grep subnode > /dev/null || break
+    done
+  register: vms_shutdown
+
+- name: Check that vms are shutdown
+  async_status:
+    jid: "{{ vms_shutdown.ansible_job_id }}"
+  register: job_result
+  until: job_result.finished
+  retries: 30
+
+- name: Commit any changes if a snapshot already exists
+  shell: |
+    qemu-img commit {{ libvirt_volume_path }}/{{ item.name }}.qcow2
+  args:
+    removes: "{{ libvirt_volume_path }}/{{ item.name }}.qcow2.bak"
+  with_items: "{{ overcloud_nodes }}"
+  when: snapshot_create|bool
+
+- name: Create snapshot
+  shell: |
+    mv {{ libvirt_volume_path }}/{{ item.name }}.qcow2 {{ libvirt_volume_path }}/{{ item.name }}.qcow2.bak
+    qemu-img create -f qcow2 -b {{ libvirt_volume_path }}/{{ item.name }}.qcow2.bak {{ libvirt_volume_path }}/{{ item.name }}.qcow2
+  args:
+    creates: "{{ libvirt_volume_path }}/{{ item.name }}.qcow2.bak"
+  with_items: "{{ overcloud_nodes }}"
+  when: snapshot_create|bool
+
+- name: Restore previous snapshot
+  shell: |
+    rm {{ libvirt_volume_path }}/{{ item.name }}.qcow2
+    qemu-img create -f qcow2 -b {{ libvirt_volume_path }}/{{ item.name }}.qcow2.bak {{ libvirt_volume_path }}/{{ item.name }}.qcow2
+  with_items: "{{ overcloud_nodes }}"
+  when: snapshot_restore|bool
+
+- name: Start vms
+  virt:
+    name: "{{ item.name }}"
+    command: start
+    autostart: true
+    state: running
+    uri: "{{ libvirt_uri }}"
+  with_items: "{{ overcloud_nodes }}"
+
+- name: "Wait for the vms to start"
+  wait_for:
+    host: "{{ hostvars[item]['ansible_host'] }}"
+    port: 22
+    state: started
+  with_items: "{{ groups['subnodes'] }}"
