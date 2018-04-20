@@ -98,6 +98,7 @@ http://docs.openstack.org/developer/tripleo-quickstart/accessing-libvirt.html
 - `undercloud_undercloud_cleanup`: <null> -- controls tear down of the processed heat templates
   in the output directory for heat installer
 - update_containers: <false> -- whether to update containers from the local registry.
+- `undercloud_enable_tempest`: <null> -- The tempest container will be available on the undercloud.
 
 Role Network Variables
 ----------------------
