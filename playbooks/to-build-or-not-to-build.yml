@@ -23,7 +23,7 @@
 
     - name: Cleanup end of ZUUL_CHANGES
       set_fact:
-        zuul_changes: "{{ zuul_changes|regex_replace(':[a-z]*:refs/changes/\\d{2}/\\d{6}/\\d{1}','') }}"
+        zuul_changes: "{{ zuul_changes|regex_replace(':[a-z]*:refs/changes/\\d{2}/\\d+/\\d+','') }}"
 
     - name: Split zuul_changes to a list
       set_fact:
