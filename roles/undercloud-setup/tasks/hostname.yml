@@ -2,23 +2,40 @@
 # sanitize the /etc/hosts file in the same way the overcloud node is.
 # https://github.com/openstack-infra/tripleo-ci/blob/master/toci-quickstart/playbooks/multinode.yml#L14-L31
 # for undercloud containers only
-- name: Create a clean hosts file on the undercloud/slave
-  copy:
-    dest: /etc/hosts
-    content: |
-      127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4
-      ::1        localhost localhost.localdomain localhost6 localhost6.localdomain6
-  become: true
-  when: containerized_undercloud|bool
+- name: Override undercloud CI hostname ad-hock
+  when: release in ['newton','ocata','pike','queens']
+  block:
+    - name: Create a clean hosts file on the undercloud/slave
+      copy:
+        dest: /etc/hosts
+        content: |
+          127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4
+          ::1        localhost localhost.localdomain localhost6 localhost6.localdomain6
+      become: true
+      when: containerized_undercloud|bool
 
-- name: Install hostname correcting script
-  template:
-    src: hostname.sh.j2
-    dest: "{{ working_dir }}/hostname.sh"
-    mode: 0755
+    - name: Install hostname correcting script
+      template:
+        src: hostname.sh.j2
+        dest: "{{ working_dir }}/hostname.sh"
+        mode: 0755
 
-- name: Run the hostname correcting script
-  shell: >
-    set -o pipefail &&
-    {{ working_dir }}/hostname.sh 2>&1 {{ timestamper_cmd }} > {{ working_dir }}/hostname.sh.log
-  become: true
+    - name: Run the hostname correcting script
+      shell: >
+        set -o pipefail &&
+        {{ working_dir }}/hostname.sh 2>&1 {{ timestamper_cmd }} > {{ working_dir }}/hostname.sh.log
+      become: true
+
+- name: Override containerized undercloud CI hostname for tripleo client
+  when:
+    - not release in ['newton','ocata','pike','queens']
+    - containerized_undercloud|bool
+  block:
+    - name: Get the hostname info
+      command: hostnamectl --static
+      register: hostnamectl_result
+
+    - name: Set fact for undercloud_hostname override
+      set_fact:
+      cacheable: true
+      undercloud_undercloud_hostname: "{{ hostnamectl_result.stdout }}"
