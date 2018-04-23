@@ -54,7 +54,7 @@ sudo openstack undercloud deploy \
     -e {{overcloud_templates_path}}/environments/{{env_files_path}}/mistral.yaml \
 {% endif %}
 {% if undercloud_enable_tempest|bool %}
-    -e {{overcloud_templates_path}}/environments/services-docker/tempest.yaml \
+    -e {{overcloud_templates_path}}/environments/{{env_files_path}}/tempest.yaml \
 {% endif %}
 {% if undercloud_enable_ironic|bool %}
     -e {{overcloud_templates_path}}/environments/{{env_files_path}}/ironic.yaml \
