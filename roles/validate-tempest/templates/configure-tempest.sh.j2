@@ -10,9 +10,11 @@
 # as well as .workspace directory to store workspace information
 # We need to delete .workspace directory otherwise tempest init failed
 # to create tempest directory.
-rm -rf {{ working_dir }}/.tempest
-rm -rf {{ tempest_dir }}
-rm -rf {{ working_dir }}/python-tempestconf
+# We are doing this as sudo because tempest in containers create the files as
+# root.
+sudo rm -rf {{ working_dir }}/.tempest
+sudo rm -rf {{ tempest_dir }}
+sudo rm -rf {{ working_dir }}/python-tempestconf
 
 # Source rc file
 source {{ rc_file }}
@@ -85,6 +87,16 @@ export TEMPESTCONF="{{ tempestconf }}"
 
 # Source rc file for tempestconf generation
 source {{ rc_file }}
+
+{% if tempest_overcloud|bool %}
+# Get public net id
+
+{% if release == 'newton' %}
+public_net_id=$(neutron net-show {{ public_net_name }} -f value -c id)
+{% else %}
+public_net_id=$(openstack network show {{ public_net_name }} -f value -c id)
+{% endif %}
+{% endif %}
 
 {% if not tempest_overcloud|bool %}
 export OS_AUTH_URL="$OS_AUTH_URL/v$OS_IDENTITY_API_VERSION"
