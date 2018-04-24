@@ -43,6 +43,7 @@
     - screen
     - vim
     - wget
+    - iptables-services
   become: true
 
 - include: clone-ci-repos.yml
@@ -69,11 +70,33 @@
     - subnodes
   become: true
 
-- name: start services
+- name: start unbound service
   service:
     name: unbound
     state: started
     enabled: yes
+  become: true
+
+- name: start iptables service
+  service:
+    name: iptables
+    state: started
+    enabled: true
+  become: true
+
+- name: Add iptables rules for subnodes
+  iptables:
+    chain: INPUT
+    source: "{{ hostvars[item].subnode_private_ip }}"
+    jump: ACCEPT
+    action: insert
+  with_inventory_hostnames:
+    - subnodes
+  become: true
+
+- name: Save the iptables rules
+  shell:
+    iptables-save > /etc/sysconfig/iptables
   become: true
 
 - name: Set some env vars
