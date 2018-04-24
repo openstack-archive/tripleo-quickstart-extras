@@ -64,7 +64,7 @@ openstack overcloud container image prepare \
 {% endfor %}
     -e {{ working_dir }}/undercloud-parameter-defaults.yaml \
 {% endif %}
-    -r {{undercloud_roles_data}} \
+    -r {{undercloud_roles_data|default('roles_data_undercloud.yaml')}} \
     --namespace {{ undercloud_docker_registry_host }}{% if undercloud_docker_registry_port is defined %}:{{ undercloud_docker_registry_port }}{% endif%}/{{ undercloud_docker_registry_namespace }} \
     --tag $BUILD_ID
 

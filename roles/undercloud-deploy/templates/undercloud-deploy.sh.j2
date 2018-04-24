@@ -32,9 +32,6 @@ undercloud_local_ip={{ hostvars['undercloud'].undercloud_ip }}
 ## * Deploy the undercloud
 ## ::
 
-# TODO(bogdando) add '-r {{undercloud_roles_data}}' once the client
-# starts supporting 'openstack undercloud deploy -r' option.
-
 {% if release in ['pike', 'queens'] -%}
 {%- set env_files_path='services-docker' -%}
 {%- else -%}
@@ -82,6 +79,9 @@ sudo openstack undercloud deploy \
 {% for f in undercloud_custom_env_files.split() %}
     -e {{ f }} \
 {% endfor %}
+{% endif %}
+{% if release not in ['pike', 'queens'] and undercloud_roles_data is defined -%}
+    -r {{undercloud_roles_data}} \
 {% endif %}
 {% if undercloud_extra_args %}
     {{ undercloud_extra_args }} \

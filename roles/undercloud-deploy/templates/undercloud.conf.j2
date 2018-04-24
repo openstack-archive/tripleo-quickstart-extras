@@ -311,6 +311,10 @@ templates = {{overcloud_templates_path}}
 enable_routed_networks = {{undercloud_enable_routed_networks}}
 {% endif %}
 
+{% if undercloud_roles_data is defined %}
+roles_file = {{undercloud_roles_data}}
+{% endif %}
+
 # Whether to clean overcloud nodes (wipe the hard drive) between
 # deployments and after the introspection.
 {% if undercloud_clean_nodes is defined %}

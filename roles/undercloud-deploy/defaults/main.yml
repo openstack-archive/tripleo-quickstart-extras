@@ -14,11 +14,6 @@ undercloud_docker_registry_namespace: "{{ docker_registry_namespace }}"
 undercloud_docker_image_tag: "{{ docker_image_tag }}"
 undercloud_install_script: undercloud-install.sh.j2
 
-# defines a custom undercloud roles file should be used with
-# openstack overcloud container image prepare (and undercloud deploy, in future)
-# FIXME(bogdando): do not attempt to change it yet the client's hardcode is fixed
-undercloud_roles_data: "{{overcloud_templates_path}}/roles_data_undercloud.yaml"
-
 # defines extra args for the undercloud deploy command
 undercloud_extra_args: ""
 

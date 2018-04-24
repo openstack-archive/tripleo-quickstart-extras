@@ -1,0 +1,10 @@
+---
+fixes:
+  - |
+    Fix `undercloud_roles_data` to contain a relative path as tripleoclient
+    expects it.
+other:
+  - |
+    ``undercloud deploy`` CLI now supports `undercloud_roles_data`.
+    It can also be defined in `undercloud.conf` as `roles_file` to be
+    used with ``undercloud install --use-heat`` as well.

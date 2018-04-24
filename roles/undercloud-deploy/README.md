@@ -96,6 +96,8 @@ https://docs.openstack.org/tripleo-quickstart/latest/accessing-libvirt.html
 - `undercloud_upgrade_cleanup`: <null> -- controls post upgrade cleanup after we containerize the undercloud.
 - update_containers: <false> -- whether to update containers from the local registry.
 - `undercloud_enable_tempest`: <null> -- The tempest container will be available on the undercloud.
+- `undercloud_roles_data`: <null> -- A custom t-h-t roles file (the path must be relative to
+   ``overcloud_templates_path``).
 
 Role Network Variables
 ----------------------
@@ -274,11 +276,9 @@ Mistral). If you need a lightweight undercloud, make sure your custom
 undercloud installation script template omits those services and the
 `environments/docker.yaml` defaults.
 
-Also note, if you want to override the undercloud roles data, you should
-provide a custom roles file and put it in place of the default
-`./roles_data_undercloud.yaml` by the given ``overcloud_templates_path``.
-This can be done with a ``cp`` command in the custom undercloud deploy
-script. For the example above, custom undercloud roles may look like:
+You may also override ``undercloud_roles_data`` with a custom roles file
+(the path must be relative to the t-h-t templates ``overcloud_templates_path``).
+For the example above, custom undercloud roles may look like:
 
 ```
 - name: Undercloud
