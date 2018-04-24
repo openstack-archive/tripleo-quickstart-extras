@@ -43,10 +43,14 @@
   become: yes
   package: name={{ item }} state=present
   with_items:
-    - python-stestr
     - python-subunit
     - subunit-filters
   when: tempest_format in ['container', 'packages']
+
+- name: Install stestr
+  become: yes
+  package: name=python-stestr state=present
+  when: tempest_format in ['container', 'packages'] and release not in ['newton', 'ocata']
 
 - ignore_errors: true
   block:
