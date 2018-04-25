@@ -120,7 +120,7 @@ $TEMPESTCONF --out etc/tempest.conf \
   {% endfor %}
   {% endif %}
   --create \
-  {% if release in ['ocata', 'pike'] %}
+  {% if release in ['newton', 'ocata', 'pike'] %}
   identity.uri $OS_AUTH_URL \
   identity.admin_password $OS_PASSWORD \
   identity.admin_username $OS_USERNAME \
