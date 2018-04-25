@@ -1,50 +1,10 @@
-# TODO: DRY update and upgrade prep code into update-upgrade-common.yaml
-# https://bugs.launchpad.net/tripleo/+bug/1749740
-- name: Prepare tripleo-upgrade role
+- name: Run tripleo-upgrade role to update the overcloud
   hosts: undercloud
-  gather_facts: no
+  gather_facts: yes
   tags:
     - overcloud-update
-  vars:
-    tripleo_upgrade_branch: "{{ 'stable/'+release if release!='master' else release }}"
-  tasks:
-    - name: Check if we have a local copy of the tripleo-upgrade role
-      stat:
-        path: /opt/stack/new/tripleo-upgrade
-      register: tripleo_upgrade_local_role
-
-    - name: Set the pip URL when we have a local copy of the role
-      set_fact:
-        tripleo_upgrade_pip_url: "file:///opt/stack/new/tripleo-upgrade#egg=tripleo-upgrade"
-      when: tripleo_upgrade_local_role.stat.exists
-
-    - name: Set the pip URL when we DO NOT have a local copy of the role
-      set_fact:
-        tripleo_upgrade_pip_url: "git+https://git.openstack.org/openstack/tripleo-upgrade.git@{{ tripleo_upgrade_branch }}#egg=tripleo-upgrade"
-      when: not tripleo_upgrade_local_role.stat.exists
-
-    - name: Install tripleo-upgrade role "{{ tripleo_upgrade_branch }}" branch
-      pip:
-        name: "{{ tripleo_upgrade_pip_url }}"
-        executable: "{{ local_working_dir }}/bin/pip"
-
-- name: Update overcloud
-  hosts: undercloud
-  gather_facts: no
-  tags:
-    - overcloud-update
-  vars:
-    tripleo_upgrade_branch: "{{ 'stable/'+release if release!='master' else release }}"
-    # NOTE: right now the container images stay the same before and
-    # after update. This makes the job run fast while still testing
-    # the update workflow itself. For the future we may consider
-    # updating the container images too. (This might have to be paired
-    # with some work on the image building side to get meaningful
-    # from-to combination of images.
-    container_registry_file: containers-default-parameters.yaml
-  tasks:
-    - when: overcloud_update|default(false)|bool
-      block:
-        - name: Run update via tripleo-upgrade role
-          include_role:
-            name: tripleo-upgrade
+  roles:
+    - role: tripleo-upgrade
+      # TODO: Remove this once the fs containing the parameter is merged
+      container_registry_file: containers-default-parameters.yaml
+      when: overcloud_update|default(false)|bool
