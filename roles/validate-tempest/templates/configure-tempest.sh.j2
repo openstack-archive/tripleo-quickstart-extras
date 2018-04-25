@@ -68,7 +68,12 @@ export RCFILE="{{ rc_file }}"
 cat <<'EOF' >> {{ working_dir }}/tempest_container.sh
 # Set the exit status for the command
 set -e
-# Install OpenStack client  to create tempest resources with in containers
+
+# Get the list of tempest/-plugins rpms installed within a tempest container
+# It will be useful for debugging and making sure at what commit
+# tempest/tempest plugins rpms are installed in the same.
+
+rpm -qa | grep tempest
 {% endif %}
 
 ## Create Tempest Workspace
