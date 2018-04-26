@@ -8,6 +8,7 @@
 
     - name: Generate testrepository.subunit results file
       shell: >
+        set -o pipefail &&
         {% if tempest_format == 'venv' %}source {{ working_dir }}/tempest_git/.venv/bin/activate; {% endif %}
         {{ testr_command }} last --subunit | subunit-1to2 > {{ working_dir }}/tempest/testrepository.subunit
       args:
@@ -15,6 +16,7 @@
 
     - name: Generate HTML results file
       shell: |
+        set -o pipefail &&
         {% if tempest_format == 'venv' %}source {{ working_dir }}/tempest_git/.venv/bin/activate; {% endif %}
         subunit2html $(find {{ working_dir }}/tempest/{{ testr_dir }} -name [0-9] \
         | head -1) {{ working_dir }}/tempest/tempest.html \
@@ -29,6 +31,7 @@
 
     - name: Generate XML results file
       shell: >
+        set -o pipefail &&
         {% if tempest_format == 'venv' %}source {{ working_dir }}/tempest_git/.venv/bin/activate; {% endif %}
         subunit2junitxml
         {% if need_subunit1to2.rc == 0 %}

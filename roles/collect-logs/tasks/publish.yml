@@ -10,6 +10,7 @@
 
 - name: fetch and gzip the console log
   shell: >
+    set -o pipefail &&
     curl -k "{{ lookup('env', 'BUILD_URL') }}/timestamps/?time=yyyy-MM-dd%20HH:mm:ss.SSS%20|&appendLog&locale=en_GB"
     | gzip > {{ artcl_collect_dir }}/console.txt.gz
   when: lookup('env', 'BUILD_URL') != ""
@@ -52,6 +53,7 @@
 
 - name: Rename compressed text based files to end with txt.gz extension
   shell: >
+    set -o pipefail &&
     find {{ artcl_collect_dir }}/ -type f |
     awk 'function rename(orig)
     { new=orig; sub(/\.gz$/, ".txt.gz", new); system("mv " orig " " new) }

@@ -31,7 +31,7 @@
       become: true
 
 - name: Extract initramfs image
-  shell: gunzip -c {{ image_to_modify_abs_path.stdout }} | cpio -i
+  shell: set -o pipefail && gunzip -c {{ image_to_modify_abs_path.stdout }} | cpio -i
   become: true
   args:
     chdir: "{{ mount_tempdir }}"
@@ -62,6 +62,7 @@
 
   - name: Close initramfs image
     shell: >
+      set -o pipefail &&
       pushd {{ mount_tempdir }};
       find . -print | cpio -o -H newc | gzip > {{ image_to_modify_abs_path.stdout }};
       popd;

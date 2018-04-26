@@ -256,6 +256,7 @@
 - name: Gather the logs to /tmp
   become: yes
   shell: >
+    set -o pipefail &&
     rsync --quiet --recursive --copy-links --prune-empty-dirs
     --filter '. /tmp/{{ inventory_hostname }}-rsync-filter' / /tmp/{{ inventory_hostname }};
     find /tmp/{{ inventory_hostname }} -type d -print0 | xargs -0 chmod 755;
