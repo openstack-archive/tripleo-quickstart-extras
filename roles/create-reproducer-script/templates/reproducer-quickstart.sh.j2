@@ -14,6 +14,7 @@
 : ${NODESTACK_PREFIX:=""}
 : ${AUTORUN:=0}
 : ${TIMEOUT:=240}
+: ${LIBVIRT:=0}
 
 SSH_OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
@@ -32,7 +33,7 @@ usage () {
     echo "                      delete all Heat stacks (both Multinode and OVB created) "
     echo "                      in the tenant before deployment."
     echo "                      Will also delete associated keypairs if they exist."
-    echo "                      Options to pass true/false.Defaults to false."
+    echo "                      Options to pass true/false. Defaults to false."
     echo "  -p, --nodestack-prefix"
     echo "                      add a unique prefix for multinode and singlenode stacks"
     echo "                      Defaults to empty."
@@ -42,21 +43,16 @@ usage () {
     echo "  -t, --timeout"
     echo "                      Timeout in minutes for the deployment"
     echo "                      Default is 240 minutes"
+    echo "  -l, --libvirt"
+    echo "                      Runs a 2-node multinode job or singlenode job on a"
+    echo "                      single virthost using libvirt to create the nodes."
+    echo "                      The script sets the virthost to be 127.0.0.2"
+    echo "                      so the reproducer must be run from the virthost."
+    echo "                      If a singlenode reproducer is run, two VMs will still be created."
     echo "  -h, --help          print this help and exit"
 }
 
 set -e
-
-# Check that tenant credentials have been sourced
-if [[ ! -v OS_TENANT_NAME ]]; then
-    # TODO(aschultz): work around for LP#1750455
-    if [[ -v OS_PROJECT_NAME ]]; then
-        export OS_TENANT_NAME=$OS_PROJECT_NAME
-    else
-        echo "Tenant credentials are not sourced."
-        exit 1;
-    fi
-fi
 
 # Input argument assignments
 while [ "x$1" != "x" ]; do
@@ -91,6 +87,10 @@ while [ "x$1" != "x" ]; do
             shift
             ;;
 
+        --libvirt|-l)
+            LIBVIRT=1
+            ;;
+
         --help|-h)
             usage
             exit
@@ -112,7 +112,18 @@ while [ "x$1" != "x" ]; do
     shift
 done
 
-set -x
+# Check that tenant credentials have been sourced
+# when deploying on a host cloud
+if [[ (! -v OS_TENANT_NAME) && ("$LIBVIRT" != "1") ]]; then
+    # TODO(aschultz): work around for LP#1750455
+    if [[ -v OS_PROJECT_NAME ]]; then
+        export OS_TENANT_NAME=$OS_PROJECT_NAME
+    else
+        echo "Tenant credentials are not sourced."
+        exit 1;
+    fi
+fi
+
 # Exit if running ovb-fakeha-caserver
 # This test is not converted to run with tripleo-quickstart
 export TOCI_JOBTYPE="{{ toci_jobtype }}"
@@ -123,6 +134,16 @@ if [[ "$TOCI_JOBTYPE" == *"ovb-fakeha-caserver"* ]]; then
     "
     exit 1;
 fi
+
+# Exit of the user request a Libvirt reproducer for an OVB job
+if [[ "$TOCI_JOBTYPE" == *"ovb"* && "$LIBVIRT" == "1" ]]; then
+    echo "
+        The Libvirt reproducer option is only valid for
+        Multinode and Singlenode jobs."
+    exit 1;
+fi
+
+set -x
 
 # Start from a clean workspace
 export WORKSPACE
@@ -156,6 +177,7 @@ export ZUUL_CHANGES="{{ zuul_changes }}"
 # Export our roles path so that we can use the roles from our workspace
 export ANSIBLE_ROLES_PATH=$ANSIBLE_ROLES_PATH:$WORKSPACE/tripleo-quickstart/roles:$WORKSPACE/tripleo-quickstart-extras/roles
 export ANSIBLE_HOST_KEY_CHECKING=False
+export ANSIBLE_LIBRARY=$WORKSPACE/tripleo-quickstart/library
 
 # Export a node config for the topology you need ie:
 export NODES_FILE="{{ nodes_config }}"
@@ -181,24 +203,45 @@ scp ${SSH_OPTS}  $WORKSPACE/nodes.json zuul@$ansible_host:/home/zuul/
 {% endif %}
 
 {% if 'multinode' in toci_jobtype or 'singlenode' in toci_jobtype %}
-# Calculate subnode_count
-if  [[ -z "$NODES_FILE" ]]; then
-    SUBNODE_COUNT=1
+
+if [[ "$LIBVIRT" == "1" ]]; then
+    echo "Running a libvirt reproducer ..."
+
+    # Run from the Virthost
+    export VIRTHOST=127.0.0.2
+    echo -e "[virthost]\n$VIRTHOST" > $WORKSPACE/virthost
+
+    ansible-playbook $WORKSPACE/tripleo-quickstart/playbooks/libvirt-fake-noodpool.yml \
+        -i $WORKSPACE/virthost \
+        -e ansible_python_interpreter="/usr/bin/python" \
+        -e local_working_dir=$WORKSPACE \
+        -e working_dir=$WORKSPACE \
+        -e non_root_user=$USER \
+        -e non_root_group=$USER
+
+    HOSTS_FILE="hosts"
 else
-    SUBNODE_COUNT=$(( $( awk '/node_count: / {print $2}' $WORKSPACE/tripleo-quickstart/$NODES_FILE ) +1 ))
+    # Calculate subnode_count
+    if  [[ -z "$NODES_FILE" ]]; then
+        SUBNODE_COUNT=1
+    else
+        SUBNODE_COUNT=$(( $( awk '/node_count: / {print $2}' $WORKSPACE/tripleo-quickstart/$NODES_FILE ) +1 ))
+    fi
+
+    ansible-playbook $WORKSPACE/tripleo-quickstart-extras/playbooks/provision_multinodes.yml \
+        -e local_working_dir=$WORKSPACE \
+        -e subnode_count=$SUBNODE_COUNT \
+        -e ansible_python_interpreter="/usr/bin/python" \
+        -e prefix=$NODESTACK_PREFIX
+
+    HOSTS_FILE="multinode_hosts"
 fi
 
-ansible-playbook $WORKSPACE/tripleo-quickstart-extras/playbooks/provision_multinodes.yml \
-    -e local_working_dir=$WORKSPACE \
-    -e subnode_count=$SUBNODE_COUNT \
-    -e ansible_python_interpreter="/usr/bin/python" \
-    -e prefix=$NODESTACK_PREFIX
-
 # Run the playbook to setup the undercloud/subnodes to look like nodepool nodes
-ansible-playbook -i $WORKSPACE/multinode_hosts $WORKSPACE/tripleo-quickstart-extras/playbooks/nodepool-setup.yml
+ansible-playbook -i $WORKSPACE/$HOSTS_FILE $WORKSPACE/tripleo-quickstart-extras/playbooks/nodepool-setup.yml
 
 # Get ansible_host
-export $(awk '/subnode-0/ {print $2}' multinode_hosts)
+export $(awk '/subnode-0/ {print $2}' $WORKSPACE/$HOSTS_FILE)
 {% endif %}
 
 {% if dlrn_hash_newest is defined or ('undercloud' in hostvars and 'dlrn_hash_newest' in hostvars['undercloud']) %}
@@ -225,6 +268,15 @@ cat >>"{{ env_vars_to_source_file }}" <<EOF
 export TE_DATAFILE=/home/zuul/nodes.json
 EOF
 {% endif %}
+
+if [[ "$LIBVIRT" == "1" ]]; then
+cat >>"{{ env_vars_to_source_file }}" <<EOF
+# Uncomment this if you have established docker proxy on virthost
+# export NODEPOOL_DOCKER_REGISTRY_PROXY=$NODEPOOL_DOCKER_REGISTRY_PROXY
+export NODEPOOL_CENTOS_MIRROR=$NODEPOOL_CENTOS_MIRROR
+export NODEPOOL_MIRROR_HOST=mirror.mtl01.inap.openstack.org
+EOF
+fi
 
 scp ${SSH_OPTS} "$WORKSPACE/{{ env_vars_to_source_file }}" zuul@$ansible_host:/home/zuul/
 if [[ "$AUTORUN" == "1" ]]; then
