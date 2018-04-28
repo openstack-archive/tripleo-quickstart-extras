@@ -10,3 +10,12 @@ repos:
   - https://git.openstack.org/openstack-infra/devstack-gate
 zuul_changes: "{{ lookup('env', 'ZUUL_CHANGES') }}"
 subnode_swap_size: 8388608 # 8GB
+update_subnodes: true
+rdo_cloud_provider: true
+packages_list:
+  - git
+  - unbound
+  - screen
+  - vim
+  - wget
+  - iptables-services
