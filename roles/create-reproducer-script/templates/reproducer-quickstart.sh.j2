@@ -15,6 +15,10 @@
 : ${AUTORUN:=0}
 : ${TIMEOUT:=240}
 : ${LIBVIRT:=0}
+: ${TOCI_JOBTYPE:="{{ toci_jobtype }}"}
+: ${NODES_FILE:="{{ nodes_config }}"}
+: ${ZUUL_CHANGES:="{{ zuul_changes }}"}
+
 
 SSH_OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
@@ -49,6 +53,15 @@ usage () {
     echo "                      The script sets the virthost to be 127.0.0.2"
     echo "                      so the reproducer must be run from the virthost."
     echo "                      If a singlenode reproducer is run, two VMs will still be created."
+    echo "  -n, --nodes-file"
+    echo "                      Node config file of the topology needed"
+    echo "                      default: $NODES_FILE"
+    echo "  -z, --zuul-changes"
+    echo "                      Refspecs with changes to test"
+    echo "                      default: $ZUUL_CHANGES"
+    echo "  -j, --toci-jobtype"
+    echo "                      TOCI descriptoin of the job to run"
+    echo "                      default: $TOCI_JOBTYPE"
     echo "  -h, --help          print this help and exit"
 }
 
@@ -91,6 +104,21 @@ while [ "x$1" != "x" ]; do
             LIBVIRT=1
             ;;
 
+        --nodes-file|-n)
+            NODES_FILE=$2
+            shift
+            ;;
+
+        --zuul-changes|-z)
+            ZUUL_CHANGES=$2
+            shift
+            ;;
+
+        --toci-jobtype|-j)
+            TOCI_JOBTYPE=$2
+            shift
+            ;;
+
         --help|-h)
             usage
             exit
@@ -123,10 +151,11 @@ if [[ (! -v OS_TENANT_NAME) && ("$LIBVIRT" != "1") ]]; then
         exit 1;
     fi
 fi
+set -x
+
 
 # Exit if running ovb-fakeha-caserver
 # This test is not converted to run with tripleo-quickstart
-export TOCI_JOBTYPE="{{ toci_jobtype }}"
 if [[ "$TOCI_JOBTYPE" == *"ovb-fakeha-caserver"* ]]; then
     echo "
         ovb-fakeha-caserver is not run with tripleo-quickstart.
@@ -169,18 +198,10 @@ if [ "$REMOVE_STACKS_KEYPAIRS" = "true" ]; then
     sed -i "s#{.*/bin/##g" $WORKSPACE/tripleo-quickstart-extras/roles/ovb-manage-stack/templates/cleanup-stacks-keypairs.sh.j2
 fi
 
-# Export ZUUL_CHANGES in the Ansible host if there are changes in
-# tripleo-quickstart, tripleo-quickstart-extras or tripleo-ci repos
-# before running playbooks
-export ZUUL_CHANGES="{{ zuul_changes }}"
-
 # Export our roles path so that we can use the roles from our workspace
 export ANSIBLE_ROLES_PATH=$ANSIBLE_ROLES_PATH:$WORKSPACE/tripleo-quickstart/roles:$WORKSPACE/tripleo-quickstart-extras/roles
 export ANSIBLE_HOST_KEY_CHECKING=False
 export ANSIBLE_LIBRARY=$WORKSPACE/tripleo-quickstart/library
-
-# Export a node config for the topology you need ie:
-export NODES_FILE="{{ nodes_config }}"
 
 {% if 'ovb' in toci_jobtype %}
 ansible-playbook $WORKSPACE/tripleo-quickstart-extras/playbooks/ovb-create-stack.yml \
@@ -250,9 +271,9 @@ EXTRA_VARS="$EXTRA_VARS --extra-vars dlrn_hash_tag_newest={{ hostvars['underclou
 
 # Create the env_vars_to_source file and copy it to the undercloud
 cat >"{{ env_vars_to_source_file }}" <<EOF
-export ZUUL_CHANGES="{{ zuul_changes }}"
-export NODES_FILE="{{ nodes_config }}"
-export TOCI_JOBTYPE="{{ toci_jobtype }}"
+export ZUUL_CHANGES="${ZUUL_CHANGES}"
+export NODES_FILE="${NODES_FILE}"
+export TOCI_JOBTYPE="${TOCI_JOBTYPE}"
 export EXTRA_VARS="\$EXTRA_VARS {% if dlrn_hash is defined or ('undercloud' in hostvars and 'dlrn_hash' in hostvars['undercloud']) %}--extra-vars dlrn_hash_tag={{ hostvars['undercloud'].dlrn_hash }}{% endif %} "
 export REMAINING_TIME="$TIMEOUT"
 EOF
