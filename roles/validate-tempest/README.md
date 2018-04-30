@@ -17,7 +17,8 @@ Role Variables
 * `tempest_format`: venv/packages - Which tempest installation to use - either install python virtual environment
                     with installed there python modules from requirements file, or to use installed with RDO RPM packages
 * `tempest_log_file` - name of log file for tempest run
-* `test_regex` - tests regular expression for tempest run, i.e. smoke or tempest.api.object_storage|keystone_tempest_plugin.
+* `test_white_regex` - tests regular expression for tempest run, i.e. smoke or tempest.api.object_storage|keystone_tempest_plugin.
+                       `test_regex` is deprecated and switch to `test_white_regex`, will be removed by end of Rocky release.
 * `run_tempest`: false/true - to run tempest or not
 * `tempest_config`: false/true - whether to prepare the script which configures and runs tempest or not
 * `tempest_whitelist`: list - list of tests you want to be executed. set `skip_file_src`

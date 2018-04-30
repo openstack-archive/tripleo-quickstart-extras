@@ -14,6 +14,11 @@
     dest: "{{ working_dir }}/tempest-setup.sh"
     mode: 0744
 
+- name: Deprecation message for test_regex
+  debug:
+    msg: "WARNING: The variable test_regex is deprecated and will be removed by end of ROCKY release in the favor of test_white_regex."
+  when: test_regex is defined
+
 - name: Load skip list variables (undercloud or overcloud)
   include_vars:
     file: "tempest_skip_{{ release }}.yml"
