@@ -77,6 +77,10 @@ resources:
           port_range_max: 22
         - remote_ip_prefix: 0.0.0.0/0
           protocol: icmp
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: udp
+          port_range_min: 4789
+          port_range_max: 4789
 
   subnodes:
     type: OS::Heat::ResourceGroup
