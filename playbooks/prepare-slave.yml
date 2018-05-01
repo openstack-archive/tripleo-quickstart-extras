@@ -23,6 +23,12 @@
         sudo cp {{tripleo_root}}/tripleo-ci/test-environments/overcloud-cacert.pem /etc/pki/ca-trust/source/anchors/;
         sudo update-ca-trust extract;
         cp -f {{ lookup('env', 'TE_DATAFILE') }} ~/instackenv.json;
+
+    - name: Correct the driver for newer releases
+      # TODO(dtantsur): remove when Pike is not supported
+      command: sed -i s/pxe_ipmitool/ipmi/ ~/instackenv.json
+      when: release not in ['newton', 'ocata', 'pike']
+
     - name: Create eth2.conf file
       blockinfile:
         dest: "{{ working_dir }}/eth2.conf"
