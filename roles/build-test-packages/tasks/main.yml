@@ -146,6 +146,7 @@
 
     - name: Copy the generated rpms
       shell: >
+        set -o pipefail &&
         rm -rf {{ build_repo_dir }}/gating_repo/*;
         find {{ build_repo_dir }}/DLRN/data/repos -type f -name '*.rpm' -print0 | xargs -0 cp -t {{ build_repo_dir }}/gating_repo;
 

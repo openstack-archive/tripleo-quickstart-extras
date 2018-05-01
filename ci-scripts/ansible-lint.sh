@@ -15,7 +15,7 @@ SKIPLIST="ANSIBLE0006,ANSIBLE0007,ANSIBLE0010,ANSIBLE0012,ANSIBLE0013,ANSIBLE001
 # lint the playbooks separately to avoid linting the roles multiple times
 pushd playbooks
 for playbook in `find . -type f -regex '.*\.y[a]?ml'`; do
-    ansible-lint -vvv -x $SKIPLIST $playbook || lint_error=1
+    ansible-lint -vvv -x $SKIPLIST -R -r ../ci-scripts/ansible_rules $playbook || lint_error=1
 done
 popd
 
@@ -23,7 +23,7 @@ popd
 # Due to https://github.com/willthames/ansible-lint/issues/210, the roles
 # directories need to contain a trailing slash at the end of the path.
 for rolesdir in `find ./roles -maxdepth 1 -type d`; do
-    ansible-lint -vvv -x $SKIPLIST $rolesdir/ || lint_error=1
+    ansible-lint -vvv -x $SKIPLIST -R -r ./ci-scripts/ansible_rules $rolesdir/ || lint_error=1
 done
 
 ## exit with 1 if we had a least an error or warning.

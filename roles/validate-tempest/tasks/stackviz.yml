@@ -59,6 +59,7 @@
 
 - name: Collecting data from tempest
   shell: >
+    set -o pipefail &&
     {% if tempest_format == 'venv' %}source {{ working_dir }}/tempest_git/.venv/bin/activate; {% endif %}
     {{ testr_command }} last --subunit | subunit-1to2 | stackviz-export {{ tempest_dstat_opt | default('') }} --env --stdin {{ working_dir }}/stackviz_static/data
   args:
