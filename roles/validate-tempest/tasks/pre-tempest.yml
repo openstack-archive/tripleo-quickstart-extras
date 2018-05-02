@@ -50,6 +50,7 @@
   with_items:
     - python-subunit
     - subunit-filters
+    - python-os-testr
   when: tempest_format in ['container', 'packages']
 
 - name: Install stestr
