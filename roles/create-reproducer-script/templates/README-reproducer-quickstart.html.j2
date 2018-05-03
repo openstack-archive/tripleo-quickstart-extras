@@ -30,7 +30,7 @@ where you can access the cloud tenant you want to run the reproducer on.
 Make sure that the copied script is executable (has +x permissions) before you
 attempt to run it.
 
-<b>Source the tenant credentials before running the script.</b>
+<b>Source the tenant credentials before running the script on a host cloud.</b>
 
 Also, it is a good idea to check that the tenant has enough capacity
 and resources to reproduce the job before you begin.</p>
@@ -38,6 +38,35 @@ and resources to reproduce the job before you begin.</p>
 <p>Note that, by default, the <b>reproducer-quickstart.sh</b>
  script is written to run an a personal RDO Cloud tenant. Instructions on how to
 modify the script to run on another host cloud are included in a section below.</p>
+
+<h2>Running the reproducer-quickstart.sh script on a single virt host using libvirt</h2>
+
+<p>The <code>-l|--libvirt</code> option allows the user to reproduce multinode
+or single node jobs running on a single virt host, using libvirt. This
+option was added as an alternative when host clouds are not available.</p>
+
+<p>Note that the script sets the virthost to be 127.0.0.2 so the reproducer
+<b>must be run from the virt host itself</b>. Attempting to use a
+working machine/laptop as the Ansible host and targeting a test box
+indirectly is not recommended.
+Run <code>cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys</code>
+to allow for login to 127.0.0.2.</p>
+
+<p>When using libvirt, volumes (and later snapshots) have to be stored.
+The directory defaults to <code>/opt/vm_images</code> but can be overridden
+using the <code>-e|--extras-params</code> option, setting
+<code>libvirt_volume_path</code> to another location. This is useful because
+in a default Fedora installation, the root partition is not large enough
+to support the volumes.</p>
+
+<p>When using libvirt, the default DNS server added to the VMs provides
+insufficient access in some cases. As such, a second DNS server,
+can be added by defining the <code>custom_nameserver</code> setting
+in the <code>-e|--extras-params</code> option.
+This nameserver is added to <code>/etc/resolv.conf</code>
+files on the VMs.</p>
+
+<h2>Executing toci_gate_test-oooq.sh</h2>
 
 <p>When the script completes, you will see a list of instructions printed out on how
 to run <b>toci_gate_test.sh</b> from the undercloud:</p>
@@ -47,6 +76,9 @@ to run <b>toci_gate_test.sh</b> from the undercloud:</p>
 <li><code>Source the environment settings file: $ source /home/zuul/env_vars_to_src.sh</code></li>
 <li><code>Run the toci gate script: $ /opt/stack/tripleo-ci/toci_gate_test.sh</code></li>
 </ul>
+
+<p> If you pass the <code>-a</code> options the above steps will be executed
+automatically.</p>
 
 <h2>Input argument options in the reproducer-quickstart.sh script</h2>
 <p>Running <code>reproducer-quickstart.sh --help</code> will show a list of the
@@ -63,6 +95,23 @@ will also delete associated keypairs if they exist.
 Defaults to false.</li>
 <li><code>-p, --nodestack-prefix</code>: add a unique prefix for multinode and singlenode stacks
 Defaults to empty.</li>
+<li><code>-a, --autorun</code>: run toci gate script on prepared environment automatically
+Default is to stop after the environment is set up.</li>
+<li><code>-t, --timeout</code>: set the timeout in minutes for the deployment.
+Defaults to 240 minutes.</li>
+<li><code>-l, --libvirt</code>:runs a 2-node multinode job or singlenode job on a
+single virthost using libvirt to create the nodes.
+Defaults to false.</li>
+<li><code>-e, --extra-params</code>: File(s) and/or parameters used to override
+playbook settings.</li>
+Defaults to /opt/vm_images.</li>
+<li><code>-n, --nodes-file</code>: node config file of the topology needed.
+Defaults to $NODES_FILE (set in the job).</li>
+<li><code>-z, --zuul-changes</code>: refspecs with changes to test.
+Defaults to $ZUUL_CHANGES (set in the job).</li>
+<li><code>-j, --toci-jobtype</code>: TOCI description of the job to run.
+Defaults to $TOCI_JOBTYPE (set in the job).</li>
+<li><code>-h, --help</code>:Displays usage text and exits.</li>
 </ul>
 
 <h2>Using an alternative host cloud</h2>
