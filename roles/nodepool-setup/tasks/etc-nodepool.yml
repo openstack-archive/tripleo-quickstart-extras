@@ -28,7 +28,11 @@
 - name: Create /etc/nodepool/provider
   copy:
     content: |
-      NODEPOOL_PROVIDER={% if rdo_cloud_provider|bool %}rdo-cloud-tripleo{% else %}fake-cloud{% endif %}
+      NODEPOOL_PROVIDER={% if rdo_cloud_provider|bool %}
+      rdo-cloud-tripleo
+      {% else %}
+      fake-cloud
+      {% endif %}
       NODEPOOL_CLOUD=fake-cloud
       NODEPOOL_REGION=FAKE
       NODEPOOL_AZ=
