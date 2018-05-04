@@ -12,12 +12,6 @@
     virthost_nameservers: "{{ virthost_nameservers_output.stdout_lines }}"
   when: nameserver_from_virthost|bool
 
-- name: Create undercloud configuration
-  template:
-    src: "{{ undercloud_config_file }}"
-    dest: "./undercloud.conf"
-    mode: 0600
-
 - when: undercloud_hieradata_override_file is defined
   block:
     - name: deprecation message
@@ -41,15 +35,37 @@
         mode: 0600
 
 - name: Create t-h-t driven undercloud hieradata overrides
-  template:
-    src: "{{ hieradata_override_file_t_h_t_undercloud }}"
-    dest: "./hieradata-overrides-t-h-t-undercloud.yaml"
-    mode: 0600
+  when: undercloud_install_cli_options == '--use-heat' or containerized_undercloud|bool
+  block:
+    - name: Generate undercloud hieradata overrides file from template
+      template:
+        src: "{{ hieradata_override_file_t_h_t_undercloud }}"
+        dest: "./hieradata-overrides-t-h-t-undercloud.yaml"
+        mode: 0600
+
+    - name: Set fact for undercloud hieradata overrides file
+      set_fact:
+        undercloud_hieradata_override: "./hieradata-overrides-t-h-t-undercloud.yaml"
 
 - name: Create classic undercloud hieradata overrides
+  when:
+    - not undercloud_install_cli_options
+    - not containerized_undercloud|bool
+  block:
+    - name: Generate undercloud hieradata overrides file from template
+      template:
+        src: "{{ hieradata_override_file_classic_undercloud }}"
+        dest: "./hieradata-overrides-classic-undercloud.yaml"
+        mode: 0600
+
+    - name: Set fact for undercloud hieradata overrides file
+      set_fact:
+        undercloud_hieradata_override: "./hieradata-overrides-classic-undercloud.yaml"
+
+- name: Create undercloud configuration
   template:
-    src: "{{ hieradata_override_file_classic_undercloud }}"
-    dest: "./hieradata-overrides-classic-undercloud.yaml"
+    src: "{{ undercloud_config_file }}"
+    dest: "./undercloud.conf"
     mode: 0600
 
 - name: Create undercloud install script

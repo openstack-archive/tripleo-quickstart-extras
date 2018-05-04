@@ -19,8 +19,12 @@ defaults imply the 'openstack undercloud install' command will be invoked. See t
 deployment methods section below for the alternative modes.
 - `undercloud_install_log`: <'{{ working_dir }}/undercloud_install.log'> -- the full path
 to the undercloud install log file.
-- `undercloud_hieradata_override_file`: <'quickstart-hieradata-overrides-classic-undercloud.yaml.j2'> -- the name of
-jinja template used to override the undercloud's install hieradata
+- `undercloud_hieradata_override_file`: <'hieradata-overrides-classic-undercloud.yaml.j2'> -- the name of
+jinja template used to override the undercloud's install hieradata. DEPRECATED. Use instead:
+- `hieradata_override_file_classic_undercloud`: <hieradata-overrides-classic-undercloud.yaml.j2> --
+the source template for hieradata overrides for instack-undercloud deployments.
+- `hieradata_override_file_t_h_t_undercloud`: <hieradata-overrides-t-h-t-undercloud.yaml.j2> --
+the source template for hieradata overrides for heat driven containerized undercloud deployments.
 - `undercloud_ironic_ipxe_port`: <'3816'> -- port to use for httpd ipxe server
 for ironic deploy
 - `enable_vbmc`: <'true'> use a virtual bmc instead of pxe ssh
@@ -147,14 +151,23 @@ By default, the undercloud uses ``openstack undercloud install`` command,
 ``hieradata_override_file_classic_undercloud`` variable to set the hieradata
 overrides that will be used for the puppet deployment.
 
-However, there exists another method, explained below, for setting up the
-undercloud based on containers with the ``openstack undercloud deploy`` command.
-This method can be used by setting the ``containerized_undercloud`` variable to
-'true' and it's currently experimental. Instead of using the "classic" way to set
-up hieradata, it uses the file coming from the
-``hieradata_override_file_t_h_t_undercloud`` variable. As the name hints, this
-deployment method is based on tripleo-heat-templates, and thus, the way of
-overriding hieradata for it is similar as we do for the overcloud.
+However, there exists more methods for setting up the undercloud based on
+containers with the ``openstack undercloud install --use-heat`` and
+``openstack undercloud deploy`` commands. Both methods are based on
+tripleo-heat-templates. The former one provides the instack compatible
+`undercloud.conf` format. It may be requested via settings:
+```
+undercloud_install_cli_options: --use-heat
+undercloud_install_script: undercloud-install.sh.j2
+```
+And the latter deployment method is more "free to go". It can be
+enabled with:
+```
+containerized_undercloud: true
+undercloud_install_script: undercloud-deploy.sh.j2
+```
+For these cases, hiera override data is consumed from
+``hieradata_override_file_t_h_t_undercloud``.
 
 Note, the containerized undercloud is a hacking mode for developers, that allows
 to test containerized components undercloud, with custom, like very minimal,
