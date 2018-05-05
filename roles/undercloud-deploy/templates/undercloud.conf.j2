@@ -278,10 +278,10 @@ output_dir = {{undercloud_undercloud_output_dir}}
 {% endif %}
 
 # Clean up mode for the temp files for heat installer on exit
-{% if undercloud_undercloud_cleanup is defined and undercloud_undercloud_cleanup|bool %}
+{% if undercloud_undercloud_cleanup is defined %}
 cleanup = {{undercloud_undercloud_cleanup}}
 {% else %}
-#cleanup = False
+#cleanup = True
 {% endif %}
 
 # Heat templates directory
