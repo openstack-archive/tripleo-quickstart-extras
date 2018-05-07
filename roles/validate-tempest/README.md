@@ -31,6 +31,8 @@ Role Variables
 * `tempestmail_config`: config.yaml - name of config file for tempestmail script
 * `tempestmail_log_server`: <string> - Server where the logs are saved
 * `tempest_track_resources`: true/false - whether to save the state of resources after tempest run (default: true)
+* `tempest_log_dir`: <directory path> - The directory path where tempest log file is stored (default: /var/log/tempest)
+* `tempest_log_file`: <file name> - The name of tempest log file (default: tempest.log)
 * `check_tempest_bugs`: true/false - Will check every bugzilla and launchpad bug in the yaml skip file
 * `tempest_plugins`: list - List of openstack services tempest plugins to be
                      installed

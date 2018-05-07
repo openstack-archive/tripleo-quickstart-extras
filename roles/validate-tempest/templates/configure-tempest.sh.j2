@@ -132,6 +132,10 @@ $TEMPESTCONF --out etc/tempest.conf \
   {% endfor %}
   {% endif %}
   --create \
+  {% if tempest_format == 'container' %}
+  DEFAULT.log_dir {{ tempest_log_dir }} \
+  DEFAULT.log_file {{ tempest_log_file }} \
+  {% endif %}
   {% if release in ['newton', 'ocata', 'pike'] %}
   identity.uri $OS_AUTH_URL \
   identity.admin_password $OS_PASSWORD \

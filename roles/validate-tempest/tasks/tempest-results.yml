@@ -6,6 +6,11 @@
         sudo chmod -R 777 {{ tempest_dir }}
       when: tempest_format == 'container'
 
+    - name: Change permission of tempest container log directory
+      shell: |
+        sudo chmod -R 777 /var/log/containers/tempest
+      when: tempest_format == 'container'
+
     - name: Generate testrepository.subunit results file
       shell: >
         set -o pipefail &&

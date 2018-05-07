@@ -30,6 +30,8 @@ tempest_dir: "{{ working_dir }}/tempest"
 tempest_whitelist_file_src: "whitelist_file.j2"
 tempest_whitelist_file: "whitelist_file.conf"
 tempest_whitelist: []
+tempest_log_dir: "/var/log/tempest"
+tempest_log_file: "tempest.log"
 tempest_plugins: >-
   {% if release not in ['newton', 'ocata', 'pike'] -%}
   [ "python-keystone-tests-tempest", "python-neutron-tests-tempest" ]
