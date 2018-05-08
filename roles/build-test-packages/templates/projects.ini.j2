@@ -27,3 +27,9 @@ fallback_to_master=1
 #directory=/openstack
 #skip=openstack-macros,keystoneauth1
 #use_version_from_spec=1
+
+[mockbuild_driver]
+# options to be specified if build_driver is set to
+# dlrn.drivers.mockdriver.MockBuildDriver
+# We want to prevent the package from being installed in the Mock env
+install_after_build=0

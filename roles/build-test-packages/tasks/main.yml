@@ -94,10 +94,17 @@
     line: 'target=centos-local'
   when: dlrn_use_local_mirrors|bool
 
+# FIXME(jpena): once DLRN 0.8.0 is released, we can remove this
+- name: Check if DLRN/scripts/build_rpm.sh exists
+  stat:
+    path: '{{ build_repo_dir }}/DLRN/scripts/build_rpm.sh'
+  register: old_dlrn
+
 - name: Remove DLRN RPM install test
   shell: >
     sed -i -e 's%--postinstall%%'
     {{ build_repo_dir }}/DLRN/scripts/build_rpm.sh
+  when: old_dlrn.stat.exists
 
 - name: get env variables for changes and default change list
   set_fact:
