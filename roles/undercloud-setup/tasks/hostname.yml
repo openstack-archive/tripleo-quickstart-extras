@@ -1,19 +1,9 @@
 ---
-# sanitize the /etc/hosts file in the same way the overcloud node is.
-# https://github.com/openstack-infra/tripleo-ci/blob/master/toci-quickstart/playbooks/multinode.yml#L14-L31
-# for undercloud containers only
+# for instack-undercloud only, retain the existing behavior.
+# FIXME(bogdando): only check for releases once instack removed from Rocky CI fully
 - name: Override undercloud CI hostname ad-hock
-  when: release in ['newton','ocata','pike','queens']
+  when: release in ['newton','ocata','pike','queens'] or not containerized_undercloud|bool
   block:
-    - name: Create a clean hosts file on the undercloud/slave
-      copy:
-        dest: /etc/hosts
-        content: |
-          127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4
-          ::1        localhost localhost.localdomain localhost6 localhost6.localdomain6
-      become: true
-      when: containerized_undercloud|bool
-
     - name: Install hostname correcting script
       template:
         src: hostname.sh.j2
@@ -26,6 +16,7 @@
         {{ working_dir }}/hostname.sh 2>&1 {{ timestamper_cmd }} > {{ working_dir }}/hostname.sh.log
       become: true
 
+# for undercloud containers only, starting from Rocky.
 - name: Override containerized undercloud CI hostname for tripleo client
   when:
     - not release in ['newton','ocata','pike','queens']
