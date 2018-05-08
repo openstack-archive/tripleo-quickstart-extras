@@ -32,7 +32,7 @@ artcl_collect_list:
   - /home/*/tempest/etc/*.conf
   - /home/*/tempest/*.subunit
   - /home/*/tempest/*.json
-  - /home/*/templates/
+  - /home/*/tripleo-heat-installer-templates/
   - /home/*/local_tht/
   - /home/*/gating_repo.tar.gz
   - /home/*/browbeat/ansible/bug_report.log
