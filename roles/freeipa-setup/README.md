@@ -12,7 +12,7 @@ Role Variables
 --------------
 
 - `freeipa_hostname`: <'ipa.tripleodomain'> -- Hostname for the FreeIPA server
-- `freeipa_ip`: <'192.168.24.250'> -- IP for the the FreeIPA server
+- `freeipa_ip`: <'192.168.24.250'> -- IP for the FreeIPA server
 - `directory_manager_password`: <string> -- Password for the directory manager
 - `freeipa_admin_password`: <string> -- FreeIPA server admin password
 - `undercloud_fqdn`: <'undercloud.tripleodomain'> -- FQDN for the undercloud
