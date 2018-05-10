@@ -111,9 +111,13 @@ yum repolist
 ## * update the containers with yum updates from OpenStack repos.  ( delorean-current, dependent patches built by DLRN )
 ## ::
 
+packages_for_update="$(repoquery --disablerepo='*' --enablerepo={{ gating_repo_name }} --qf %{NAME} -a 2>{{ working_dir }}/repoquery.err.log | sort -u | xargs)"
+
 # do not update ceph
 cat overcloud_containers.yaml | grep -v ceph > containers_update.yaml
-container-check -c {{ working_dir }}/containers_update.yaml -u -p {{ container_process_count }}
+if [[ -n "$packages_for_update" ]]; then
+    container-check -c {{ working_dir }}/containers_update.yaml -u -p {{ container_process_count }} -k $packages_for_update
+fi
 
 ## * re-enable the base-os yum repos.
 ## ::
