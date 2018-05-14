@@ -88,15 +88,8 @@ http://docs.openstack.org/developer/tripleo-quickstart/accessing-libvirt.html
   value provided for overcloud.
 - `undercloud_container_images_file`: <"{{ working_dir }}/undercloud-containers-default-parameters.yaml"> --
   the environment file with default parameters for containers to use with undercloud install CLI.
-- `undercloud_extra_services_args`: -- additional t-h-t (TripleO heat templates)
-  environment files for extra services deployed on containerized underclouds. By default,
-  includes environments for docker. Those are only applied for the `undercloud deploy` CLI and not
-  for the `undercloud install`'s `undercloud.conf`. Use `undercloud_custom_env_files` for the latter.
-- `undercloud_custom_env_files`: <"{{ working_dir }}/undercloud-parameter-defaults.yaml"> --
-  custom t-h-t env files for the `undercloud install`'s `undercloud.conf` interface. By default,
-  it provides the default parameters generated from `undercloud_resource_registry_args` and
-  `undercloud_network_environment_args`. For the `undercloud deploy`, use
-  `undercloud_extra_services_args` instead.
+- `undercloud_custom_env_files`: <null> --
+  A space-separate string for custom t-h-t env files for `undercloud.conf` used with heat installer.
 - `undercloud_undercloud_output_dir`: <null> -- allows customize output directory for state, like
   downloaded ansible configs and processed heat templates for heat installer
 - `undercloud_undercloud_cleanup`: <null> -- controls tear down of the processed heat templates
@@ -142,6 +135,8 @@ TempURLs from OpenStack Object Storage (swift).
   (resource_registry for heat templates). Defaults to Noop.
 - `undercloud_network_environment_args`: Complements Undercloud networking
   setup with the default parameters for heat templates (parameter_defaults).
+- `undercloud_net_config_override`: <null> -- a j2 template for os-net-config
+  used to override network configuration. Accepts instack tags like LOCAL_IP et al.
 
 Undercloud deployment methods
 -----------------------------
@@ -244,16 +239,15 @@ debug logs for services and puppet, given a decent timeout, and keeping
 the ephemeral undercloud heat agent running for debug purposes:
 
 ```yaml
-undercloud_extra_services_args: >-
-  -e {{overcloud_templates_path}}/environments/disable-telemetry.yaml
-  -e {{overcloud_templates_path}}/environments/docker-minimal.yaml
-  -e {{overcloud_templates_path}}/environments/services/etcd.yaml
-  -e {{overcloud_templates_path}}/environments/services/octavia.yaml
-  -e {{overcloud_templates_path}}/environments/debug.yaml
-  -e {{overcloud_templates_path}}/environments/config-debug.yaml
+undercloud_custom_env_files: >-
+  {{overcloud_templates_path}}/environments/disable-telemetry.yaml
+  {{overcloud_templates_path}}/environments/docker-minimal.yaml
+  {{overcloud_templates_path}}/environments/services/etcd.yaml
+  {{overcloud_templates_path}}/environments/services/octavia.yaml
+  {{overcloud_templates_path}}/environments/debug.yaml
+  {{overcloud_templates_path}}/environments/config-debug.yaml
 undercloud_extra_args: >-
   --timeout 60
-  --keep-running
 ```
 
 Where the t-h-t's `environments/docker-minimal.yaml` is like:
@@ -314,16 +308,15 @@ And an example playbook to call the role is:
     undercloud_install_script: undercloud-deploy.sh.j2
     overcloud_templates_repo: https://github.com/johndoe/tripleo-heat-templates
     overcloud_templates_branch: dev
-    undercloud_extra_services_args: >-
-      -e {{overcloud_templates_path}}/environments/disable-telemetry.yaml
-      -e {{overcloud_templates_path}}/environments/docker-minimal.yaml
-      -e {{overcloud_templates_path}}/environments/services/etcd.yaml
-      -e {{overcloud_templates_path}}/environments/services/octavia.yaml
-      -e {{overcloud_templates_path}}/environments/debug.yaml
-      -e {{overcloud_templates_path}}/environments/config-debug.yaml
+    undercloud_custom_env_files: >-
+      {{overcloud_templates_path}}/environments/disable-telemetry.yaml
+      {{overcloud_templates_path}}/environments/docker-minimal.yaml
+      {{overcloud_templates_path}}/environments/services/etcd.yaml
+      {{overcloud_templates_path}}/environments/services/octavia.yaml
+      {{overcloud_templates_path}}/environments/debug.yaml
+      {{overcloud_templates_path}}/environments/config-debug.yaml
     undercloud_extra_args: >-
       --timeout 60
-      --keep-running
   roles:
     - undercloud-deploy
 ```

@@ -264,9 +264,15 @@ container_images_file = {{ undercloud_container_images_file }}
 {% endif %}
 
 {% if undercloud_custom_env_files is defined %}
-custom_env_files = {{ undercloud_custom_env_files }}
+custom_env_files = {{ undercloud_custom_env_files.split()|join(',') }}
 {% else %}
 #custom_env_files = <None>
+{% endif %}
+
+{% if undercloud_net_config_override is defined %}
+net_config_override = {{ undercloud_net_config_override }}
+{% else %}
+#net_config_override = <None>
 {% endif %}
 
 # Output directory for state, like downloaded ansible configs and

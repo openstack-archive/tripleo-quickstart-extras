@@ -57,8 +57,12 @@ openstack overcloud container image prepare \
     -e {{overcloud_templates_path}}/environments/{{env_files_path}}/undercloud-panko.yaml \
     -e {{overcloud_templates_path}}/environments/{{env_files_path}}/undercloud-ceilometer.yaml \
 {% endif %}
-{% if undercloud_extra_services_args %}
-    {{ undercloud_extra_services_args }} \
+    -e {{overcloud_templates_path}}/environments/docker.yaml \
+{% if undercloud_custom_env_files is defined %}
+{% for f in undercloud_custom_env_files.split() %}
+    -e {{ f }} \
+{% endfor %}
+    -e {{ working_dir }}/undercloud-parameter-defaults.yaml \
 {% endif %}
     -r {{undercloud_roles_data}} \
     --namespace {{ undercloud_docker_registry_host }}{% if undercloud_docker_registry_port is defined %}:{{ undercloud_docker_registry_port }}{% endif%}/{{ undercloud_docker_registry_namespace }} \

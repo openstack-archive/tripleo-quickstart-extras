@@ -48,7 +48,6 @@ sudo openstack undercloud deploy \
 {% if undercloud_cloud_domain is defined %}
     --local-domain={{ undercloud_cloud_domain }} \
 {% endif %}
-    -e {{ working_dir }}/undercloud-parameter-defaults.yaml \
 {% if containerized_undercloud|bool %}
 {% if undercloud_enable_mistral|bool %}
     -e {{overcloud_templates_path}}/environments/{{env_files_path}}/mistral.yaml \
@@ -75,10 +74,14 @@ sudo openstack undercloud deploy \
     -e {{overcloud_templates_path}}/environments/{{env_files_path}}/undercloud-panko.yaml \
     -e {{overcloud_templates_path}}/environments/{{env_files_path}}/undercloud-ceilometer.yaml \
 {% endif %}
+    -e {{overcloud_templates_path}}/environments/docker.yaml \
     -e {{ working_dir }}/undercloud-containers-default-parameters.yaml \
+    -e {{ working_dir }}/undercloud-parameter-defaults.yaml \
 {% endif %}
-{% if undercloud_extra_services_args %}
-    {{ undercloud_extra_services_args }} \
+{% if undercloud_custom_env_files is defined %}
+{% for f in undercloud_custom_env_files.split() %}
+    -e {{ f }} \
+{% endfor %}
 {% endif %}
 {% if undercloud_extra_args %}
     {{ undercloud_extra_args }} \
