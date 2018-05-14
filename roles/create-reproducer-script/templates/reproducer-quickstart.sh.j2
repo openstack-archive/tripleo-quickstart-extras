@@ -18,7 +18,7 @@
 : ${TOCI_JOBTYPE:="{{ toci_jobtype }}"}
 : ${NODES_FILE:="{{ nodes_config }}"}
 : ${ZUUL_CHANGES:="{{ zuul_changes }}"}
-: ${LIBVIRT_VOLUME_PATH:="/opt/vm_images"}
+: ${EXTRA_PARAMS:=""}
 
 SSH_OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
@@ -53,13 +53,6 @@ usage () {
     echo "                      The script sets the virthost to be 127.0.0.2"
     echo "                      so the reproducer must be run from the virthost."
     echo "                      If a singlenode reproducer is run, two VMs will still be created."
-    echo "  -d, --libvirt-volume-path"
-    echo "                      Specify the full path to the directory where libvirt volumes"
-    echo "                      and snapshots will be stored."
-    echo "                      The volume directory will default to /opt/vm_images."
-    echo "                      If running with a small root partition, consider changing"
-    echo "                      the directory location."
-    echo "                      This option is only valid when running with -l|--libvirt."
     echo "  -n, --nodes-file"
     echo "                      Node config file of the topology needed"
     echo "                      default: $NODES_FILE"
@@ -69,6 +62,11 @@ usage () {
     echo "  -j, --toci-jobtype"
     echo "                      TOCI description of the job to run"
     echo "                      default: $TOCI_JOBTYPE"
+    echo "  -e, --extra-params"
+    echo "                      File or/and parameters used to override default"
+    echo "                      parameters for playbooks. Multiple files"
+    echo "                      can be passed [-e @file1.yml -e @file2.yml ...]"
+    echo "                      and arguments [-e var=value -e var2=value2 ...]"
     echo "  -h, --help          print this help and exit"
 }
 
@@ -111,8 +109,9 @@ while [ "x$1" != "x" ]; do
             LIBVIRT=1
             ;;
 
-        --libvirt-volume-path|-d)
-            LIBVIRT_VOLUME_PATH=$2
+
+        --extra-params|-e)
+            [[ ${2::1} == "@" ]] && EXTRA_PARAMS+=("-e @$(realpath ${2#@}) ") || EXTRA_PARAMS+=("-e ${2} ")
             shift
             ;;
 
@@ -184,15 +183,6 @@ if [[ "$TOCI_JOBTYPE" == *"ovb"* && "$LIBVIRT" == "1" ]]; then
     exit 1;
 fi
 
-# Exit if the user requests the libvirt-volume-path option without
-# running a libvirt reproducer
-if [[ "$LIBVIRT_VOLUME_PATH" != "/opt/vm_images" && "$LIBVIRT" != "1" ]]; then
-    echo "
-        The libvirt-volume-path option is only valid
-        when running a libvirt reproducer."
-    exit 1;
-fi
-
 set -x
 
 # Start from a clean workspace
@@ -234,10 +224,13 @@ ansible-playbook $WORKSPACE/tripleo-quickstart-extras/playbooks/ovb-create-stack
     -e ovb_setup_user=true \
     -e ansible_python_interpreter="/usr/bin/python" \
     -e cleanup_stacks_keypairs=$REMOVE_STACKS_KEYPAIRS \
-    -e @$WORKSPACE/tripleo-quickstart/$NODES_FILE
+    -e @$WORKSPACE/tripleo-quickstart/$NODES_FILE \
+    ${EXTRA_PARAMS[@]}
 
 # Run the playbook to setup the undercloud/subnodes to look like nodepool nodes
-ansible-playbook -i $WORKSPACE/ovb_hosts $WORKSPACE/tripleo-quickstart-extras/playbooks/nodepool-setup.yml
+ansible-playbook $WORKSPACE/tripleo-quickstart-extras/playbooks/nodepool-setup.yml \
+    -i $WORKSPACE/ovb_hosts \
+    ${EXTRA_PARAMS[@]}
 
 # Copy the nodes.json file to the undercloud
 export $(awk '/subnode-0/ {print $2}' ovb_hosts)
@@ -260,7 +253,7 @@ if [[ "$LIBVIRT" == "1" ]]; then
         -e working_dir=$WORKSPACE \
         -e non_root_user=$USER \
         -e non_root_group=$USER \
-        -e libvirt_volume_path=$LIBVIRT_VOLUME_PATH
+        ${EXTRA_PARAMS[@]}
 
     HOSTS_FILE="hosts"
 else
@@ -275,13 +268,16 @@ else
         -e local_working_dir=$WORKSPACE \
         -e subnode_count=$SUBNODE_COUNT \
         -e ansible_python_interpreter="/usr/bin/python" \
-        -e prefix=$NODESTACK_PREFIX
+        -e prefix=$NODESTACK_PREFIX \
+        ${EXTRA_PARAMS[@]}
 
     HOSTS_FILE="multinode_hosts"
 fi
 
 # Run the playbook to setup the undercloud/subnodes to look like nodepool nodes
-ansible-playbook -i $WORKSPACE/$HOSTS_FILE $WORKSPACE/tripleo-quickstart-extras/playbooks/nodepool-setup.yml
+ansible-playbook $WORKSPACE/tripleo-quickstart-extras/playbooks/nodepool-setup.yml \
+    -i $WORKSPACE/$HOSTS_FILE \
+    ${EXTRA_PARAMS[@]}
 
 # Get ansible_host
 export $(awk '/subnode-0/ {print $2}' $WORKSPACE/$HOSTS_FILE)
