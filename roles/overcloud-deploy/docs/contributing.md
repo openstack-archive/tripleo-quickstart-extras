@@ -38,6 +38,6 @@ After committing your changes, resubmit the review:
     git review
 
 
-[gerrit]: http://docs.openstack.org/infra/manual/developers.html#development-workflow
-[git-review]: http://docs.openstack.org/infra/manual/developers.html#installing-git-review
+[gerrit]: https://docs.openstack.org/infra/manual/developers.html#development-workflow
+[git-review]: https://docs.openstack.org/infra/manual/developers.html#installing-git-review
 
