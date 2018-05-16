@@ -69,14 +69,13 @@ undercloud_enable_ironic_inspector: true
 undercloud_enable_mistral: true
 undercloud_enable_monitoring: false
 undercloud_enable_telemetry: false
-undercloud_enable_tempest: true
+undercloud_enable_tempest: false
 undercloud_enable_ui: true
 undercloud_enable_validations: true
 undercloud_enable_zaqar: true
 undercloud_ipxe_deploy: true
 undercloud_enable_swift_encryption: false
 
-undercloud_enable_tempest: false
 undercloud_undercloud_debug: true
 
 # Use to populate the resource registry for nic configs and networking setup
