@@ -1,5 +1,3 @@
-### --start_docs
-
 ## Run tempest
 ## -----------
 
@@ -14,10 +12,15 @@ export TEMPESTCLI='/usr/bin/tempest'
 {% endif %}
 
 ## List tempest plugins
+
+## ::
+
 $TEMPESTCLI list-plugins
 
 ## Save the resources before running tempest tests
 ## It will create saved_state.json in tempest workspace.
+## ::
+
 {% if tempest_track_resources|bool %}
 $TEMPESTCLI cleanup --init-saved-state
 {% endif %}
@@ -31,6 +34,8 @@ $TEMPESTCLI cleanup --init-saved-state
 
 ## Check which all tenants would be modified in the tempest run
 ## It will create dry_run.json in tempest workspace.
+## ::
+
 {% if tempest_track_resources|bool %}
 $TEMPESTCLI cleanup --dry-run
 {% endif %}
