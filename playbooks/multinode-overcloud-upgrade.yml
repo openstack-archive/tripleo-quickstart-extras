@@ -8,9 +8,11 @@
     repo_setup_script: "repo-setup-{{ target_upgrade_version }}.sh"
     # Avoid running yum update, only set up repos
     repo_setup_run_update: false
+    artg_compressed_gating_repo: "${HOME}/gating_repo.tar.gz"
   roles:
     - role: repo-setup
       when: containerized_overcloud_upgrade|default(false)|bool
+    - role: build-test-packages
     - role: install-built-repo
       when: hostvars['undercloud']['compressed_gating_repo'] is defined and mixed_upgrade|default(false)|bool
 
