@@ -47,6 +47,7 @@
 
   - name: Run script on image
     shell: >
+      mount -o bind /dev {{ mount_tempdir }}/dev/;
       mv {{ mount_tempdir }}/etc/resolv.conf{,_};
       echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" > {{ mount_tempdir }}/etc/resolv.conf;
       cp {{ modify_script }} {{ mount_tempdir }}/tmp/{{ modify_script|basename }};
@@ -63,6 +64,7 @@
   - name: Close initramfs image
     shell: >
       set -o pipefail &&
+      umount {{ mount_tempdir }}/dev/;
       pushd {{ mount_tempdir }};
       find . -print | cpio -o -H newc | gzip > {{ image_to_modify_abs_path.stdout }};
       popd;
@@ -72,6 +74,7 @@
   - name: Close qcow2 image
     shell: >
       chroot {{ mount_tempdir }} setfiles /etc/selinux/targeted/contexts/files/file_contexts / ;
+      umount {{ mount_tempdir }}/dev/;
       umount {{ mount_tempdir }};
       kpartx -dv {{ image_to_modify_raw }};
       qemu-img convert -c -f raw -O qcow2 {{ image_to_modify_raw }} {{ image_to_modify_qcow }};
