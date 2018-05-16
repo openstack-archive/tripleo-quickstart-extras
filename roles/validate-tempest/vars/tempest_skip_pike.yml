@@ -193,3 +193,9 @@ known_failures:
   - test: 'tempest.api.network.test_ports.PortsTestJSON.test_port_list_filter_by_router_id'
     reason: 'Running on undercloud'
     undercloud: true
+  - test: 'tempest.api.identity.v2.test_tenants.IdentityTenantsTest.test_list_tenants_returns_only_authorized_tenants'
+    reason: 'Running on undercloud'
+    undercloud: true
+  - test: 'tempest.api.identity.v2.test_users.IdentityUsersTest.test_user_update_own_password'
+    reason: 'Running on undercloud'
+    undercloud: true
