@@ -99,3 +99,6 @@ known_failures:
   - test: 'tempest.api.identity.admin.v3.test_roles.RolesV3TestJSON'
     reason: 'Running on undercloud'
     undercloud: true
+  - test: 'telemetry_tempest_plugin.scenario.test_telemetry_integration.TestTelemetryIntegration.test_autoscaling'
+    reason: 'Telemetry tests fail in scenario-001 and 002 jobs'
+    lp: 'https://bugs.launchpad.net/tripleo/+bug/1771508'
