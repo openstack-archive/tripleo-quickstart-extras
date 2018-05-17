@@ -1,3 +1,8 @@
+## PLEASE READ ##
+## Do not add tests to the skip list that are in    ##
+## featureset016 - featureset019 w/o permission from ##
+## the TripleO PTL, Thanks                          ##
+
 known_failures:
   - test: '.*test_external_network_visibility'
     reason: 'Tempest test "external network visibility" fails with tripleo'
