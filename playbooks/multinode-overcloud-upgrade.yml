@@ -41,4 +41,4 @@
   roles:
     - role: tripleo-upgrade
       upgrade_init_command: "{{ (repo_setup_script|exists) | ternary(lookup('file', repo_setup_script), false) }}"
-      when: overcloud_upgrade|default(false)|bool
+      when: overcloud_upgrade|default(false)|bool or ffu_overcloud_upgrade|default(false)|bool
