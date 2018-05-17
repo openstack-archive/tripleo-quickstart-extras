@@ -1,3 +1,8 @@
+## PLEASE READ ##
+## Do not add tests to the skip list that are in    ##
+## featureset016 - featureset019 w/o permission from ##
+## the TripleO PTL, Thanks                          ##
+
 known_failures:
   - test: 'tempest.api.identity.admin.v3.test_roles.RolesV3TestJSON.test_implied_roles_create_check_show_delete'
     reason: 'Difference in Implied Roles check API return code'
