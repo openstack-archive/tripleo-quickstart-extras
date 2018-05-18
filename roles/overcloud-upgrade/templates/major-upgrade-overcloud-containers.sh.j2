@@ -15,8 +15,7 @@ source {{ upgrade_working_dir }}/stackrc
 {% if containerized_overcloud_upgrade_pull_images|bool %}
 # pull latest containers to the registry
 openstack overcloud container image prepare \
-    --output-images-file {{ upgrade_working_dir }}/overcloud_upgrade_containers.yaml \
-    --output-env-file ~/containers-default-parameters.yaml \
+    --images-file {{ upgrade_working_dir }}/overcloud_upgrade_containers.yaml \
     -e {{ tht_dir }}/environments/docker.yaml \
     {{ scenario_args }} \
 {% for item in upgrade_custom_templates %}
@@ -26,15 +25,8 @@ openstack overcloud container image prepare \
     --tag {{ docker_image_tag }} \
     --push-destination {{ local_docker_registry_host }}:8787
 
-openstack overcloud container image upload --verbose --config-file {{ working_dir }}/overcloud_upgrade_containers.yaml
-
-{% endif %}
-
-{% if target_upgrade_version in ['pike'] %}
-
-# generate container image parameters to pull from local registry
 openstack overcloud container image prepare \
-    --output-env-file ~/containers-default-parameters.yaml \
+    --env-file ~/containers-default-parameters.yaml \
     -e {{ tht_dir }}/environments/docker.yaml \
     {{ scenario_args }} \
 {% for item in upgrade_custom_templates %}
@@ -42,6 +34,12 @@ openstack overcloud container image prepare \
 {% endfor %}
     --namespace {{ local_docker_registry_host }}:8787/{{ docker_registry_namespace }} \
     --tag {{ docker_image_tag }}
+
+openstack overcloud container image upload --verbose --config-file {{ working_dir }}/overcloud_upgrade_containers.yaml
+
+{% endif %}
+
+{% if target_upgrade_version in ['pike'] %}
 
 echo "execute overcloud upgrade"
 openstack overcloud deploy --templates {{ tht_dir }} \
