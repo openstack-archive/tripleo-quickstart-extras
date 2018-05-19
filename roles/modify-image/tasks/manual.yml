@@ -47,6 +47,7 @@
 
   - name: Run script on image
     shell: >
+      chmod 775 {{ mount_tempdir }};
       mount -o bind /dev {{ mount_tempdir }}/dev/;
       mv {{ mount_tempdir }}/etc/resolv.conf{,_};
       echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" > {{ mount_tempdir }}/etc/resolv.conf;
