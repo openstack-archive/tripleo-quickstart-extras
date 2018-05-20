@@ -46,11 +46,13 @@ BUILD_ID={{ docker_image_tag }}
 
 PREPARE_ARGS=${PREPARE_ARGS:-"{{ prepare_service_env_args }}"}
 
-## * Populate the docker registry
+## * Configure the {{ working_dir }}/containers-default-parameters.yaml, and
+##   populate the docker registry. This is done automatically.
 ## ::
 
 openstack overcloud container image prepare \
     --images-file {{ working_dir }}/overcloud_containers.yaml \
+    --env-file {{ working_dir }}/containers-default-parameters.yaml \
     ${PREPARE_ARGS} \
     --namespace {{ docker_registry_host }}/{{ docker_registry_namespace_used }} \
     --tag $BUILD_ID \
@@ -73,28 +75,32 @@ openstack overcloud container image prepare \
 
 openstack overcloud container image upload --debug --config-file {{ working_dir }}/overcloud_containers.yaml
 
-## * Configure the {{ working_dir }}/containers-default-parameters.yaml, this is done automatically.
+{% if release in ['ocata', 'pike'] %}
+## * Configure the {{ working_dir }}/containers-default-parameters.yaml to pull
+##   from a local registry, this is done automatically.
 ## ::
 
-openstack overcloud container image prepare \
-    --images-file {{ working_dir }}/overcloud_containers.yaml \
-    --env-file {{ working_dir }}/containers-default-parameters.yaml \
-    ${PREPARE_ARGS} \
-    --namespace {{ local_docker_registry_host }}:8787/{{ docker_registry_namespace_used }} \
-    --set ceph_namespace={{ local_docker_registry_host }}:8787/ceph \
-{% if docker_prep_prefix is defined %}
-    --prefix={{ docker_prep_prefix}} \
+    openstack overcloud container image prepare \
+        --env-file {{ working_dir }}/containers-default-parameters.yaml \
+        ${PREPARE_ARGS} \
+        --namespace {{ local_docker_registry_host }}:8787/{{ docker_registry_namespace }} \
+    {% if docker_prep_prefix is defined %}
+        --prefix={{ docker_prep_prefix}} \
+    {% endif %}
+    {% if docker_prep_suffix is defined %}
+        --suffix={{ docker_prep_suffix }} \
+    {% endif %}
+    {% if docker_ceph_namespace is defined %}
+        --set ceph_namespace={{ docker_ceph_namespace }} \
+    {% endif %}
+    {% if docker_ceph_image is defined %}
+        --set ceph_image={{ docker_ceph_image }} \
+    {% endif %}
+    {% if docker_ceph_tag is defined %}
+        --set ceph_tag={{ docker_ceph_tag }} \
+    {% endif %}
+        --tag $BUILD_ID
 {% endif %}
-{% if docker_prep_suffix is defined %}
-    --suffix={{ docker_prep_suffix }} \
-{% endif %}
-{% if docker_ceph_image is defined %}
-    --set ceph_image={{ docker_ceph_image }} \
-{% endif %}
-{% if docker_ceph_tag is defined %}
-    --set ceph_tag={{ docker_ceph_tag }} \
-{% endif %}
-    --tag $BUILD_ID
 
 {% if update_containers|bool and not use_overcloud_mixed_upgrade|default(false)|bool %}
 # See https://github.com/imain/container-check for script and documentation
