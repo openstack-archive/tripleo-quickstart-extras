@@ -48,6 +48,7 @@ sudo docker run -i -v $RCFILE:$RCFILE \
     -v {{ working_dir }}/{{ tempest_whitelist_file }}:{{ working_dir }}/{{ tempest_whitelist_file }} \
     -v {{ working_dir }}/{{ tempest_deployer_input_file }}:{{ working_dir }}/{{ tempest_deployer_input_file }} \
     {% endif %}
+    -v /var/log/containers/tempest:{{ tempest_log_dir }} \
     -v {{ tempest_dir }}:{{ tempest_dir }} \
     -v {{ working_dir }}/tempest_container.sh:{{ working_dir }}/tempest_container.sh \
     {% if not 'http' in tempest_test_image_path %}
