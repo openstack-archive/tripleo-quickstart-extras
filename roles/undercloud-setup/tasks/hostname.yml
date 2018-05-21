@@ -28,5 +28,5 @@
 
     - name: Set fact for undercloud_hostname override
       set_fact:
-      cacheable: true
-      undercloud_undercloud_hostname: "{{ hostnamectl_result.stdout }}"
+        cacheable: true
+        undercloud_undercloud_hostname: "{{ hostnamectl_result.stdout }}"
