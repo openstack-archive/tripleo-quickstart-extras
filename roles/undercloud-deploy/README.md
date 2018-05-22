@@ -93,7 +93,7 @@ https://docs.openstack.org/tripleo-quickstart/latest/accessing-libvirt.html
 - `undercloud_undercloud_output_dir`: <null> -- allows customize output directory for state, like
   downloaded ansible configs and processed heat templates for heat installer
 - `undercloud_undercloud_cleanup`: <null> -- controls tear down of the processed heat templates
-  in the output directory for heat installer
+- `undercloud_upgrade_cleanup`: <null> -- controls post upgrade cleanup after we containerize the undercloud.
 - update_containers: <false> -- whether to update containers from the local registry.
 - `undercloud_enable_tempest`: <null> -- The tempest container will be available on the undercloud.
 
