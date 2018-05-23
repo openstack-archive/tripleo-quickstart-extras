@@ -113,9 +113,6 @@ export OS_AUTH_URL="$OS_AUTH_URL/v2.0"
 {% endif %}
 # Generate Tempest Config file using python-tempestconf
 # Notice aodh_plugin will be set to False if telemetry service is disabled
-# TODO(arxcruz) In the future the
-# compute_feature_enabled.attach_encrypted_volume should be handled by
-# python-tempestconf tool
 cd {{ tempest_dir }}
 $TEMPESTCONF --out etc/tempest.conf \
   {% if tempest_overcloud|bool %}
@@ -145,7 +142,6 @@ $TEMPESTCONF --out etc/tempest.conf \
   auth.tempest_roles Member \
   network-feature-enabled.port_security true \
   {% endif %}
-  compute-feature-enabled.attach_encrypted_volume False \
   network.tenant_network_cidr {{ tenant_network_cidr }} \
   compute.build_timeout 500 \
   network.build_timeout 500 \
@@ -158,5 +154,6 @@ $TEMPESTCONF --out etc/tempest.conf \
   {{ key }} {{ value }} \
   {% endfor %}
   {% endif %}
-  compute-feature-enabled.console_output true \
   orchestration.stack_owner_role Member
+
+### --stop_docs
