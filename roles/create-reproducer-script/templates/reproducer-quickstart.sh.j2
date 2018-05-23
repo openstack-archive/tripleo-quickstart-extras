@@ -185,8 +185,11 @@ fi
 
 set -x
 
-# Start from a clean workspace
+# Export set variables, they make visible to ansible roles
 export WORKSPACE
+export ZUUL_CHANGES
+
+# Start from a clean workspace
 mkdir -p $WORKSPACE
 cd $WORKSPACE
 rm -rf tripleo-quickstart tripleo-quickstart-extras
