@@ -290,6 +290,14 @@ cleanup = {{undercloud_undercloud_cleanup}}
 #cleanup = True
 {% endif %}
 
+# Whether to clean undercloud rpms after an upgrade
+# to a containerized undercloud.
+{% if undercloud_upgrade_cleanup is defined %}
+upgrade_cleanup = {{undercloud_upgrade_cleanup}}
+{% else %}
+#upgrade_cleanup = False
+{% endif %}
+
 # Heat templates directory
 templates = {{overcloud_templates_path}}
 
