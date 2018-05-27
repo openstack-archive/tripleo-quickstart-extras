@@ -8,5 +8,5 @@ parameter_defaults:
       fixed_ips:
         - ip_address: 192.168.24.{{ 3 + loop.index0 }}
       subnet:
-        - cidr: 24
+        - cidr: 192.168.24.0/24
 {% endfor %}
