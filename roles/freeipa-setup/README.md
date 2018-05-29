@@ -19,6 +19,7 @@ Role Variables
 - `provisioning_cidr`: <'{{ freeipa_ip }}/24'> -- If set, it adds the given CIDR to the
 provisioning interface (which is hardcoded to eth1)
 - `supplemental_user`: <stack> The user which is used to deploy FreeIpa on the supplemental node
+- `ipa_server_install_params`: <''> -- Additional parameters to pass to the ipa-server-install command
 
 Example Playbook
 ----------------

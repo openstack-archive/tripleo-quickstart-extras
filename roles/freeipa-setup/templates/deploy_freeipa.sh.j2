@@ -45,7 +45,7 @@ ipa-server-install -U \
     -a $CA_ADMIN_PASS \
     --hostname `hostname -f ` \
     --ip-address=$IPA_SERVER_IP \
-    --setup-dns --auto-forwarders --auto-reverse
+    --setup-dns --auto-forwarders --auto-reverse {{ ipa_server_install_params|default('') }}
 
 ## * Set iptables rules::
 
