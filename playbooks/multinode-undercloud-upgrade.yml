@@ -8,8 +8,11 @@
     repo_setup_run_update: false
     dlrn_hash_path: ''
     dlrn_hash_path_newest: ''
+    artg_compressed_gating_repo: "${HOME}/gating_repo.tar.gz"
   roles:
     - role: repo-setup
+    - role: build-test-packages
+    - { role: install-built-repo, when: compressed_gating_repo is defined }
 
 - name: Run tripleo-upgrade role to upgrade undercloud
   hosts: undercloud
