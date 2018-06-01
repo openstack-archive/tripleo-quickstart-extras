@@ -40,7 +40,7 @@ EOF
 
 chmod +x {{ working_dir }}/tempest_container.sh
 # Run tempest container using docker mouting required files
-sudo docker run -i -v $RCFILE:$RCFILE \
+sudo docker run --net=host -i -v $RCFILE:$RCFILE \
     {% if skip_file_src != '' %}
     -v {{ working_dir }}/{{ skip_file }}:{{ working_dir }}/{{ skip_file }} \
     {% endif %}
