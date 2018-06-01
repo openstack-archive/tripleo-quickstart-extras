@@ -7,28 +7,6 @@
       -e {{ overcloud_templates_path }}/ci/environments/{{ composable_scenario }}
   when: not composable_scenario|trim == ''
 
-- name: set docker_registry_namespace_used
-  set_fact:
-    docker_registry_namespace_used: "{{ docker_registry_namespace }}"
-
-- name: set container_build_id from get_build_command
-  set_fact:
-    container_build_id: "{{ get_build_command }}"
-  when: get_build_command is defined
-
-- name: set mixed upgrade container_build_id
-  set_fact:
-    container_build_id: "{{ overcloud_docker_image_tag }}"
-    docker_registry_namespace_used: "{{ overcloud_docker_registry_namespace }}"
-  when:
-  - container_build_id is not defined
-  - use_overcloud_mixed_upgrade|default(false)|bool
-
-- name: set container_build_id from docker_image_tag
-  set_fact:
-    container_build_id: "{{ docker_image_tag }}"
-  when: container_build_id is not defined
-
 - name: Create overcloud prep-containers script
   template:
     src: "{{ overcloud_prep_containers_template }}"

@@ -75,19 +75,14 @@ https://docs.openstack.org/tripleo-quickstart/latest/accessing-libvirt.html
   undercloud via the tripleo client's `--local-domain` option. It is unset by default.
 - `tripleo_ui_secure_access`: Defaults to false due to the self signed certificate and
   usability issues. See the tripleo-quickstart documentation `accessing the undercloud` for details.
-- `undercloud_docker_registry_host`: <`docker_registry_host`> -- registry host/port
+- `local_docker_registry_host`: <`docker_registry_host`> -- registry host/port
   for containerized undercloud services. Defaults to the value provided for overcloud.
   You may want to diverge it, if building locally, or fetching from remote registries
   not fitting the overcloud deployment needs.
-- `undercloud_docker_registry_port`: <null> -- an optional port for
-  `undercloud_docker_registry_host`.
-- `undercloud_docker_registry_namespace`: <`docker_registry_namespace`> -- namespace of
-  docker images used for undercloud deployment. Defaults to the value provided for overcloud.
-- `undercloud_docker_image_tag`: <`docker_image_tag`> -- tag of docker images used for
-  undercloud deployment. Defaults to the value provided for overcloud. Defaults to the
-  value provided for overcloud.
-- `undercloud_container_images_file`: <"{{ working_dir }}/undercloud-containers-default-parameters.yaml"> --
-  the environment file with default parameters for containers to use with undercloud install CLI.
+- `undercloud_container_images_file`: <""> --
+  The environment file with default parameters for containers to use with
+  undercloud install CLI. This should only be used to override image prepare
+  generating this during the undercloud install.
 - `undercloud_custom_env_files`: <null> --
   A space-separate string for custom t-h-t env files for `undercloud.conf` used with heat installer.
 - `undercloud_undercloud_output_dir`: <null> -- allows customize output directory for state, like

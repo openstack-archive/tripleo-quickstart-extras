@@ -18,11 +18,7 @@ export {{ var }}
 
 ## * get build id
 ## ::
-{% if get_build_command is defined %}
-BUILD_ID={{ get_build_command }}
-{% else %}
-BUILD_ID={{ undercloud_docker_image_tag }}
-{% endif %}
+BUILD_ID={{ container_build_id }}
 
 ## * Set the local ip used for the undercloud install
 ## ::

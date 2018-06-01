@@ -31,6 +31,15 @@ PREPARE_ARGS=${PREPARE_ARGS:-"{{ prepare_service_env_args }}"}
 ## ::
 
 BUILD_ID=${BUILD_ID:-"{{ container_build_id }}"}
+
+{% if release not in ['ocata', 'pike', 'queens'] %}
+openstack tripleo container image prepare \
+    --output-env-file {{ working_dir }}/containers-default-parameters.yaml \
+    ${PREPARE_ARGS} \
+    -e {{ working_dir }}/containers-prepare-parameter.yaml
+
+{% else %}
+
 openstack overcloud container image prepare \
     --output-images-file {{ working_dir }}/overcloud_containers.yaml \
     --output-env-file {{ working_dir }}/containers-default-parameters.yaml \
@@ -38,19 +47,19 @@ openstack overcloud container image prepare \
     --namespace {{ docker_registry_host }}/{{ docker_registry_namespace_used }} \
     --tag $BUILD_ID \
 {% if docker_prep_prefix is defined %}
-    --prefix {{ docker_prep_prefix}} \
+    --prefix "{{ docker_prep_prefix }}" \
 {% endif %}
 {% if docker_prep_suffix is defined %}
-    --suffix {{ docker_prep_suffix }} \
+    --suffix "{{ docker_prep_suffix }}" \
 {% endif %}
 {% if docker_ceph_namespace is defined %}
-    --set ceph_namespace={{ docker_ceph_namespace }} \
+    --set "ceph_namespace={{ docker_ceph_namespace }}" \
 {% endif %}
 {% if docker_ceph_image is defined %}
-    --set ceph_image={{ docker_ceph_image }} \
+    --set "ceph_image={{ docker_ceph_image }}" \
 {% endif %}
 {% if docker_ceph_tag is defined %}
-    --set ceph_tag={{ docker_ceph_tag }} \
+    --set "ceph_tag={{ docker_ceph_tag }}" \
 {% endif %}
 {% if docker_openshift_namespace is defined %}
     --set openshift_namespace={{ docker_openshift_namespace }} \
@@ -84,21 +93,22 @@ openstack overcloud container image upload --debug --config-file {{ working_dir 
         ${PREPARE_ARGS} \
         --namespace {{ local_docker_registry_host }}:8787/{{ docker_registry_namespace }} \
     {% if docker_prep_prefix is defined %}
-        --prefix={{ docker_prep_prefix}} \
+        --prefix "{{ docker_prep_prefix }}" \
     {% endif %}
     {% if docker_prep_suffix is defined %}
-        --suffix={{ docker_prep_suffix }} \
+        --suffix "{{ docker_prep_suffix }}" \
     {% endif %}
     {% if docker_ceph_namespace is defined %}
-        --set ceph_namespace={{ docker_ceph_namespace }} \
+        --set "ceph_namespace={{ docker_ceph_namespace }}" \
     {% endif %}
     {% if docker_ceph_image is defined %}
-        --set ceph_image={{ docker_ceph_image }} \
+        --set "ceph_image={{ docker_ceph_image }}" \
     {% endif %}
     {% if docker_ceph_tag is defined %}
-        --set ceph_tag={{ docker_ceph_tag }} \
+        --set "ceph_tag={{ docker_ceph_tag }}" \
     {% endif %}
         --tag $BUILD_ID
+{% endif %}
 {% endif %}
 
 {% if update_containers|bool and not use_overcloud_mixed_upgrade|default(false)|bool %}
@@ -118,10 +128,10 @@ if [[ -n "$packages_for_update" ]]; then
         --exclude kubernetes \
         --namespace {{ local_docker_registry_host }}:8787/{{ docker_registry_namespace }} \
     {% if docker_prep_prefix is defined %}
-        --prefix={{ docker_prep_prefix}} \
+        --prefix "{{ docker_prep_prefix }}" \
     {% endif %}
     {% if docker_prep_suffix is defined %}
-        --suffix={{ docker_prep_suffix }} \
+        --suffix "{{ docker_prep_suffix }}" \
     {% endif %}
         --tag $BUILD_ID
 

@@ -7,11 +7,6 @@
   tags:
     - undercloud-scripts
 
-- include: undercloud-prep-containers.yml
-  tags:
-    - undercloud-scripts
-  when: containerized_undercloud|bool and update_containers|bool
-
 - include: install-undercloud.yml
   tags:
     - undercloud-install

@@ -4,14 +4,7 @@ undercloud_config_file: undercloud.conf.j2
 undercloud_install_cli_options: ""
 undercloud_post_install_script: undercloud-install-post.sh.j2
 undercloud_install_log: "{{ working_dir }}/undercloud_install.log"
-undercloud_container_images_file: "{{ working_dir }}/undercloud-containers-default-parameters.yaml"
 
-# default undercloud install method
-# containerized_undercloud is an EXPERIMENTAL FEATURE
-containerized_undercloud: false
-undercloud_docker_registry_host: "{{ docker_registry_host }}"
-undercloud_docker_registry_namespace: "{{ docker_registry_namespace }}"
-undercloud_docker_image_tag: "{{ docker_image_tag }}"
 undercloud_install_script: undercloud-install.sh.j2
 
 # defines extra args for the undercloud deploy command

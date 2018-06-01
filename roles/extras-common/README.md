@@ -33,6 +33,13 @@ Role Variables
   docker images used for TripleO deployment
 - `docker_image_tag`: <'latest'> -- tag of docker images used for
   TripleO deployment
+- `docker_prep_prefix`: <'centos-binary-'> Prefix for container image names
+- `docker_prep_suffix: <''> Suffix for container image names
+- `docker_ceph_namespace: <'docker.io/ceph'> Namespace for the ceph container
+  image
+- `docker_ceph_image: <'daemon'> Name of the ceph container image
+- `docker_ceph_tag: <'v3.0.3-stable-3.0-luminous-centos-7-x86_64'> Tag for the
+  ceph container image
 - `composable_scenario`: <''> -- path to the composable scenarios used at deployment time
 - `upgrade_composable_scenario`: <''> -- path to the composable scenarios used at upgrade time
 - `undercloud_rpm_dependencies`: <'python-tripleoclient'> -- Dependency packages for undercloud deployments.
