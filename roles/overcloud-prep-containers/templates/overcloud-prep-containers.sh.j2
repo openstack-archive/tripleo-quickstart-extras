@@ -99,34 +99,27 @@ openstack overcloud container image prepare \
 {% if update_containers|bool and not use_overcloud_mixed_upgrade|default(false)|bool %}
 # See https://github.com/imain/container-check for script and documentation
 
-## * rename the base-os yum repos to disable them. This will speed up the update
-## ::
-CENTOS_REPOS=$(find /etc/yum.repos.d -type f -name "CentOS-*.repo" -o -name "quickstart-centos-*.repo" ! -name quickstart-centos-base.repo )
-for f in $CENTOS_REPOS ; do
-    sudo mv "$f" "$f"_disabled
-done
-yum clean all
-yum repolist
-
 ## * update the containers with yum updates from OpenStack repos.  ( delorean-current, dependent patches built by DLRN )
 ## ::
 
 packages_for_update="$(repoquery --disablerepo='*' --enablerepo={{ gating_repo_name }} --qf %{NAME} -a 2>{{ working_dir }}/repoquery.err.log | sort -u | xargs)"
 
-# do not update ceph
-cat overcloud_containers.yaml | grep -v ceph > containers_update.yaml
 if [[ -n "$packages_for_update" ]]; then
+    openstack overcloud container image prepare \
+        --images-file {{ working_dir }}/containers_update.yaml \
+        ${PREPARE_ARGS} \
+        --exclude ceph \
+        --namespace {{ local_docker_registry_host }}:8787/{{ docker_registry_namespace }} \
+    {% if docker_prep_prefix is defined %}
+        --prefix={{ docker_prep_prefix}} \
+    {% endif %}
+    {% if docker_prep_suffix is defined %}
+        --suffix={{ docker_prep_suffix }} \
+    {% endif %}
+        --tag $BUILD_ID
     container-check -c {{ working_dir }}/containers_update.yaml -u -p {{ container_process_count }} -k $packages_for_update
 fi
 
-## * re-enable the base-os yum repos.
-## ::
-DISABLED_REPOS=$(find /etc/yum.repos.d -type f -name "*.repo_disabled")
-for f in $DISABLED_REPOS ; do
-    sudo mv -- "$f" "${f%.repo_disabled}.repo"
-done
-yum clean all
-yum repolist
 {% endif %}
 
 echo "============================="
