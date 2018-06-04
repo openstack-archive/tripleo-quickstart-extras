@@ -240,7 +240,9 @@ export $(awk '/subnode-0/ {print $2}' ovb_hosts)
 scp ${SSH_OPTS}  $WORKSPACE/nodes.json zuul@$ansible_host:/home/zuul/
 {% endif %}
 
-{% if 'multinode' in toci_jobtype or 'singlenode' in toci_jobtype %}
+{% set jobtype = toci_jobtype.split('-')[0] %}
+{% set types = [ "multinode", "singlenode", "standalone" ] %}
+{% if jobtype in types %}
 
 if [[ "$LIBVIRT" == "1" ]]; then
     echo "Running a libvirt reproducer ..."
