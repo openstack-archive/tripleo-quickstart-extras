@@ -20,3 +20,4 @@ run_preintro_val_log: "{{ val_working_dir }}/run_preintro_validations_negative_t
 
 validations_dir: "/usr/share/openstack-tripleo-validations/validations"
 validations_static_inventory: "{{ val_working_dir }}/validations_static_inventory"
+validations_max_retries: 40
