@@ -12,7 +12,6 @@
 # root.
 sudo rm -rf {{ working_dir }}/.tempest
 sudo rm -rf {{ tempest_dir }}
-sudo rm -rf {{ working_dir }}/python-tempestconf
 
 # Source rc file
 source {{ rc_file }}
@@ -57,7 +56,7 @@ virtualenv --system-site-packages {{ working_dir }}/tempest_git/.venv
 
 # Install python-tempestconf
 {% if release != 'newton'%}
-{{ working_dir }}/tempest_git/tools/with_venv.sh pip install {{ working_dir }}/python-tempestconf
+{{ working_dir }}/tempest_git/tools/with_venv.sh pip install {{ working_dir }}/tempestconf_git
 {% endif %}
 {% endif %}
 
