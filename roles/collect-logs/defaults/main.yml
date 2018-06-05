@@ -138,3 +138,5 @@ influxdb_password:
 influxdb_dbname: testdb
 influxdb_data_file_path: "{{ lookup('env', 'LOCAL_WORKING_DIR')|default('/tmp', true) }}/influxdb_data"
 influxdb_create_data_file: true
+odl_extra_log_dir: /var/log/extra/odl
+odl_extra_info_log: "{{ odl_extra_log_dir }}/odl_info.log"

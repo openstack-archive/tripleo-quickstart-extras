@@ -99,6 +99,33 @@
     - name: lvm debug
       shell: "(vgs; pvs; lvs) &> /var/log/extra/lvm.txt"
 
+    - name: check if ODL is enabled via docker
+      shell: docker ps | grep opendaylight_api
+      register: odl_docker_enabled
+
+    - name: check if ODL is enabled via rpm
+      shell: rpm -qa | grep opendaylight
+      register: odl_rpm_enabled
+
+    - name: Create ODL log directory
+      file: dest="{{ odl_extra_log_dir }}" state=directory
+      when: (odl_rpm_enabled.rc == 0) or (odl_docker_enabled.rc == 0)
+
+    - name: Create rsync filter file
+      template:
+        src: "odl_extra_logs.j2"
+        dest: "/tmp/odl_extra_logs.sh"
+
+    - name: Collect OVS outputs for ODL
+      shell: "bash /tmp/odl_extra_logs.sh"
+      when: (odl_rpm_enabled.rc == 0) or (odl_docker_enabled.rc == 0)
+
+    - name: Collect ODL info and logs (RPM deployment)
+      shell: >
+        cp /opt/opendaylight/data/log/* /var/log/extra/odl/;
+        journalctl -u opendaylight > /var/log/extra/odl/odl_journal.log
+      when: odl_rpm_enabled.rc == 0
+
     - name: Generate human-readable SAR logs
       shell: "[[ -f /usr/lib64/sa/sa2 ]] && /usr/lib64/sa/sa2 -A"
 
