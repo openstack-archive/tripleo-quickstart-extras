@@ -20,3 +20,8 @@
   set_fact:
     container_build_id: "{{ docker_image_tag }}"
   when: container_build_id is not defined
+
+- name: Set update_containers_append_tag for the play
+  set_fact:
+    update_containers_append_tag: "{{ lookup('pipe','date +-updated-%Y%m%d%H%M%S') }}"
+  when: update_containers and update_containers_append_tag is undefined

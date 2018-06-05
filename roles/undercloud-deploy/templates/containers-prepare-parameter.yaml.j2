@@ -3,11 +3,24 @@ parameter_defaults:
   - {{ local_docker_registry_host }}:8787
   ContainerImagePrepare:
   - push_destination: "{{ local_docker_registry_host }}:8787"
+    excludes: [ceph]
+{% if update_containers|bool and not use_overcloud_mixed_upgrade|default(false)|bool %}
+    modify_role: tripleo-modify-image
+    modify_append_tag: "{{ update_containers_append_tag }}"
+    modify_vars:
+      tasks_from: yum_update.yml
+      compare_host_packages: true
+      yum_repos_dir_path: /etc/yum.repos.d
+      update_repo: gating-repo
+{% endif %}
     set:
       tag: "{{ container_build_id }}"
       namespace: "{{ docker_registry_host }}/{{ docker_registry_namespace_used }}"
       name_prefix: "{{ docker_prep_prefix }}"
       name_suffix: "{{ docker_prep_suffix }}"
+  - push_destination: "{{ local_docker_registry_host }}:8787"
+    includes: [ceph]
+    set:
       ceph_namespace: "{{ docker_ceph_namespace }}"
       ceph_image: "{{ docker_ceph_image }}"
       ceph_tag: "{{ docker_ceph_tag }}"

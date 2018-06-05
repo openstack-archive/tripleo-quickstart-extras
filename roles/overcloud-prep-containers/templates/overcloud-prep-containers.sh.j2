@@ -30,8 +30,6 @@ PREPARE_ARGS=${PREPARE_ARGS:-"{{ prepare_service_env_args }}"}
 ##   populate the docker registry. This is done automatically.
 ## ::
 
-BUILD_ID=${BUILD_ID:-"{{ container_build_id }}"}
-
 {% if release not in ['ocata', 'pike', 'queens'] %}
 openstack tripleo container image prepare \
     --output-env-file {{ working_dir }}/containers-default-parameters.yaml \
@@ -39,6 +37,7 @@ openstack tripleo container image prepare \
     -e {{ working_dir }}/containers-prepare-parameter.yaml
 
 {% else %}
+BUILD_ID=${BUILD_ID:-"{{ container_build_id }}"}
 
 openstack overcloud container image prepare \
     --output-images-file {{ working_dir }}/overcloud_containers.yaml \
@@ -109,7 +108,6 @@ openstack overcloud container image upload --debug --config-file {{ working_dir 
     {% endif %}
         --tag $BUILD_ID
 {% endif %}
-{% endif %}
 
 {% if update_containers|bool and not use_overcloud_mixed_upgrade|default(false)|bool %}
 # See https://github.com/imain/container-check for script and documentation
@@ -141,6 +139,7 @@ if [[ -n "$packages_for_update" ]]; then
         -k $packages_for_update
 fi
 
+{% endif %}
 {% endif %}
 
 echo "============================="
