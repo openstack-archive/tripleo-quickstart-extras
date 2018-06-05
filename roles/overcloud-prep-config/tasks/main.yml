@@ -18,6 +18,8 @@
     dest: "{{ working_dir }}/network-environment.yaml"
     mode: 0644
   when: network_isolation|bool and undercloud_type != "baremetal" or deployed_server|bool
+  tags:
+    - overcloud-scripts
 
 - when: undercloud_type == "baremetal"
   block:
