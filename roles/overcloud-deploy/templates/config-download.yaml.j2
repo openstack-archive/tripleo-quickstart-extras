@@ -7,6 +7,6 @@ parameter_defaults:
     {{ hostvars[subnode]['ansible_hostname'] }}-ctlplane:
       fixed_ips:
         - ip_address: 192.168.24.{{ 3 + loop.index0 }}
-      subnet:
+      subnets:
         - cidr: 192.168.24.0/24
 {% endfor %}
