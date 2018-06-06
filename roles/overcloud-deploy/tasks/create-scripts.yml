@@ -26,7 +26,7 @@
     dest: "{{ working_dir }}/config-download.yaml"
 
 - name: Write composable roles file
-  when: composable_roles|bool
+  when: composable_roles|bool and generate_overcloud_roles is not defined
   template:
     src: "overcloud_roles.yaml.j2"
     dest: "{{ working_dir }}/overcloud_roles.yaml"
