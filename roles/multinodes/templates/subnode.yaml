@@ -45,6 +45,7 @@ resources:
       key_name: { get_param: key_name }
       networks:
         - network: { get_param: private_net }
+        - network: { get_param: private_net }
       security_groups:
         - { get_param: server_security_group }
 
