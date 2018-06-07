@@ -25,6 +25,7 @@
   user:
     name: '{{ ansible_user }}'
     groups: mock
+    append: yes
 
 - name: Remove data files from previous runs
   file:
