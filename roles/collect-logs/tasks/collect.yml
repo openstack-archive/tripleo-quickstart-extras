@@ -261,7 +261,7 @@
 
 - name: Set default collect list
   set_fact:
-    collect_list: "{{ artcl_collect_list }}"
+    collect_list: "{{ artcl_collect_list }} + {{ artcl_collect_list_append|default([]) }}"
 
 - name: Override collect list
   set_fact:
