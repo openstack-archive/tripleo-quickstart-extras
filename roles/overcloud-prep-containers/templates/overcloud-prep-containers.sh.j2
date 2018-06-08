@@ -114,6 +114,8 @@ if [[ -n "$packages_for_update" ]]; then
         --output-images-file {{ working_dir }}/containers_update.yaml \
         ${PREPARE_ARGS} \
         --exclude ceph \
+        --exclude openshift \
+        --exclude kubernetes \
         --namespace {{ local_docker_registry_host }}:8787/{{ docker_registry_namespace }} \
     {% if docker_prep_prefix is defined %}
         --prefix={{ docker_prep_prefix}} \
@@ -122,7 +124,11 @@ if [[ -n "$packages_for_update" ]]; then
         --suffix={{ docker_prep_suffix }} \
     {% endif %}
         --tag $BUILD_ID
-    container-check -c {{ working_dir }}/containers_update.yaml -u -p {{ container_process_count }} -k $packages_for_update
+
+    container-check -u \
+        -c {{ working_dir }}/containers_update.yaml \
+        -p {{ container_process_count }} \
+        -k $packages_for_update
 fi
 
 {% endif %}
