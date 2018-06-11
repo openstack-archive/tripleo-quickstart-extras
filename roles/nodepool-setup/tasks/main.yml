@@ -42,13 +42,18 @@
 
   - name: Set contentdir to altarch
     set_fact:
-      yum_contentdir: altarch
+      yum_contentdir_data: altarch
     when: rpm_arch.stdout in ['aarch64', 'ppc64le']
+
+  - name: Set contentdir to default centos arch
+    set_fact:
+      yum_contentdir_data: centos
+    when: rpm_arch.stdout not in ['aarch64', 'ppc64le']
 
   - name: Populate /etc/yum/vars/contentdir
     copy:
       dest: /etc/yum/vars/contentdir
-      content: "{{ yum_contentdir|default('centos') }}"
+      content: "{{ yum_contentdir_data }}"
     become: true
 
 - name: Install repos (will be removed by toci_gatetest)
