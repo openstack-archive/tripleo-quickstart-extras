@@ -32,8 +32,8 @@ PREPARE_ARGS=${PREPARE_ARGS:-"{{ prepare_service_env_args }}"}
 
 BUILD_ID=${BUILD_ID:-"{{ container_build_id }}"}
 openstack overcloud container image prepare \
-    --images-file {{ working_dir }}/overcloud_containers.yaml \
-    --env-file {{ working_dir }}/containers-default-parameters.yaml \
+    --output-images-file {{ working_dir }}/overcloud_containers.yaml \
+    --output-env-file {{ working_dir }}/containers-default-parameters.yaml \
     ${PREPARE_ARGS} \
     --namespace {{ docker_registry_host }}/{{ docker_registry_namespace_used }} \
     --tag $BUILD_ID \
@@ -93,7 +93,7 @@ packages_for_update="$(repoquery --disablerepo='*' --enablerepo={{ gating_repo_n
 
 if [[ -n "$packages_for_update" ]]; then
     openstack overcloud container image prepare \
-        --images-file {{ working_dir }}/containers_update.yaml \
+        --output-images-file {{ working_dir }}/containers_update.yaml \
         ${PREPARE_ARGS} \
         --exclude ceph \
         --namespace {{ local_docker_registry_host }}:8787/{{ docker_registry_namespace }} \
