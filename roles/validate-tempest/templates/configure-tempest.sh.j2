@@ -122,7 +122,7 @@ $TEMPESTCONF --out etc/tempest.conf \
   --image {{ tempest_test_image_path }} \
   --debug \
   {% if tempest_conf_removal and tempest_overcloud|bool %}
-  {% for key, value in tempest_conf_removal.iteritems() %}
+  {% for key, value in tempest_conf_removal.items() %}
   --remove {{ key }}={{ value }} \
   {% endfor %}
   {% endif %}
@@ -155,7 +155,7 @@ $TEMPESTCONF --out etc/tempest.conf \
   service_available.aodh_plugin False \
   {% endif %}
   {% if tempest_extra_config %}
-  {% for key, value in tempest_extra_config.iteritems() %}
+  {% for key, value in tempest_extra_config.items() %}
   {{ key }} {{ value }} \
   {% endfor %}
   {% endif %}
