@@ -1,0 +1,35 @@
+---
+- name: Add the overcloud nodes to the generated inventory
+  hosts: undercloud
+  gather_facts: yes
+  tags:
+    - standalone
+  vars:
+    inventory: multinode
+  roles:
+    - tripleo-inventory
+
+- name: Prepare the undercloud for installation
+  hosts: undercloud
+  roles:
+    - undercloud-setup
+  tags:
+    - standalone
+
+- name: Run DLRN gate role and install repo
+  hosts: undercloud
+  vars:
+    artg_compressed_gating_repo: "${HOME}/gating_repo.tar.gz"
+  roles:
+    - build-test-packages
+    - { role: install-built-repo, when: compressed_gating_repo is defined }
+  tags:
+    - build
+
+- name: Deploy Standalone
+  hosts: undercloud
+  roles:
+    - standalone
+  tags:
+    - standalone
+

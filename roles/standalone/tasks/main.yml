@@ -1,0 +1,21 @@
+---
+# tasks file for all_in_one
+
+# standalone params
+- name: Create the standalone params
+  template:
+    src: "{{ standalone_config }}"
+    dest: "{{ working_dir}}/standalone_parameters.yaml"
+    mode: 0755
+
+- name: Create the deploy command for standalone
+  template:
+    src: "{{ standalone_deploy_script }}"
+    dest: "{{ working_dir}}/standalone.sh"
+    mode: 0755
+
+- name: Deploy the standalone
+  shell: >
+    set -o pipefail &&
+    {{ working_dir }}/standalone.sh 2>&1 {{ timestamper_cmd }} > {{ working_dir }}/{{ standalone_deploy_log }}
+

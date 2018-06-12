@@ -1,0 +1,8 @@
+sudo openstack tripleo deploy \
+  --templates \
+  --local-ip={{ standalone_ip }} \
+  -e {{ overcloud_templates_path }}/environments/standalone.yaml \
+  -r {{ overcloud_templates_path }}/roles/{{ standalone_role }} \
+  -e "{{ working_dir }}/standalone_parameters.yaml" \
+  --output-dir {{ working_dir }} \
+  --standalone

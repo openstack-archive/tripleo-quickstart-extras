@@ -1,0 +1,34 @@
+parameter_defaults:
+  CertmongerCA: local
+  CloudName: {{ standalone_ip }}
+  ContainerImagePrepare:
+  - set:
+      ceph_image: daemon
+      ceph_namespace: docker.io/ceph
+      ceph_tag: v3.0.3-stable-3.0-luminous-centos-7-x86_64
+      name_prefix: centos-binary-
+      name_suffix: ''
+      namespace: docker.io/{{ docker_registry_namespace }}
+      neutron_driver: null
+      tag: {{ dlrn_hash_tag }}
+    tag_from_label: rdo_version
+  ControlPlaneStaticRoutes: []
+  Debug: true
+  DeploymentUser: {{ undercloud_user }}
+  DnsServers: {{ undercloud_undercloud_nameservers }}
+  DockerInsecureRegistryAddress:
+  - {{ standalone_ip }}:8787
+  MasqueradeNetworks:
+    {{ standalone_network }}.0/24:
+    - {{ standalone_network }}.0/24
+  NeutronPublicInterface: {{ standalone_interface }}
+  StandaloneCtlplaneLocalSubnet: ctlplane-subnet
+  StandaloneCtlplaneSubnets:
+    ctlplane-subnet:
+      DhcpRangeEnd: {{ standalone_network }}.40
+      DhcpRangeStart: {{ standalone_network }}.20
+      NetworkCidr: {{ standalone_network }}.0/24
+      NetworkGateway: {{ standalone_ip }}
+  StandaloneEnableRoutedNetworks: false
+  StandaloneHomeDir: {{ working_dir }}
+  StandaloneLocalMtu: 1500
