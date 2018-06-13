@@ -52,6 +52,24 @@ openstack overcloud container image prepare \
 {% if docker_ceph_tag is defined %}
     --set ceph_tag={{ docker_ceph_tag }} \
 {% endif %}
+{% if docker_openshift_namespace is defined %}
+    --set openshift_namespace={{ docker_openshift_namespace }} \
+{% endif %}
+{% if docker_openshift_tag is defined %}
+    --set openshift_tag={{ docker_openshift_tag }} \
+{% endif %}
+{% if docker_openshift_base_image is defined %}
+    --set openshift_base_image={{ docker_openshift_base_image }} \
+{% endif %}
+{% if docker_openshift_cockpit_namespace is defined %}
+    --set openshift_cockpit_namespace={{ docker_openshift_cockpit_namespace }} \
+{% endif %}
+{% if docker_openshift_cockpit_image is defined %}
+    --set openshift_cockpit_image={{ docker_openshift_cockpit_image }} \
+{% endif %}
+{% if docker_openshift_cockpit_tag is defined %}
+    --set openshift_cockpit_tag={{ docker_openshift_cockpit_tag }} \
+{% endif %}
     --push-destination {{ local_docker_registry_host }}:8787
 
 openstack overcloud container image upload --debug --config-file {{ working_dir }}/overcloud_containers.yaml
