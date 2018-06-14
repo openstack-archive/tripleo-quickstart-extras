@@ -23,6 +23,15 @@
     {% if artcl_gzip_only|bool %}gzip --best --recursive {{ artcl_collect_dir }}/ara_oooq;{% endif %}
   ignore_errors: yes
 
+- name: Generate and retrieve root the ARA static playbook report
+  become: yes
+  shell: >
+    {{ local_working_dir }}/bin/ara generate html {{ local_working_dir }}/ara_oooq_root;
+    {{ local_working_dir }}/bin/ara task list --all -f json > {{ artcl_collect_dir }}/ara.oooq.root.json;
+    cp -r {{ local_working_dir }}/ara_oooq_root {{ artcl_collect_dir }}/;
+    {% if artcl_gzip_only|bool %}gzip --best --recursive {{ artcl_collect_dir }}/ara_oooq_root;{% endif %}
+  ignore_errors: yes
+
 - include: ara_graphite.yml
   when: ara_graphite_server is defined
   ignore_errors: yes

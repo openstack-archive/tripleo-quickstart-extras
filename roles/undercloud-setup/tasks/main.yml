@@ -26,3 +26,9 @@
   include: hostname.yml
   when: hostname_correction|bool or step_set_undercloud_hostname|bool
 
+- name: Include ansible.cfg configuration for the undercloud / node
+  include: ansible_cfg.yml
+  when:
+    - undercloud_ansible_cfg|bool
+    - containerized_undercloud|bool
+

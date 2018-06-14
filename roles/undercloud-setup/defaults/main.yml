@@ -28,3 +28,5 @@ custom_nameserver:
 
 # default value for undercloud_rpm_dependencies
 # is in extras-common
+
+undercloud_ansible_cfg: true
