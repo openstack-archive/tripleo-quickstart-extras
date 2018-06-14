@@ -52,4 +52,6 @@ resources:
 outputs:
   subnode_ip_pair:
     description: IP addresses of subnode in network
-    value: { get_attr: [ subnode, networks, {{ private_net_name }} ] }
+    value:
+    - get_attr: [subnode_floating_ip, fixed_ip_address]
+    - get_attr: [subnode_floating_ip, floating_ip_address]
