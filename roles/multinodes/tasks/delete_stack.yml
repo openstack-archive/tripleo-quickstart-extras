@@ -10,6 +10,8 @@
             echo "Failed deleting OVB stack" | tee -a {{ stack_log }};
             openstack stack show {{ stack_name }} &>> {{ stack_log }};
             openstack stack failures list --long {{ stack_name }} &>> {{ stack_log }} || echo 'Failed to list stack failures' >> {{ stack_log }};
+            # NOTE(emilien) "openstack overcloud failures" was introduced in Rocky
+            openstack overcloud failures &>> {{ stack_log }} || echo 'Failed to list deployment failures' >> {{ stack_log }};
             exit 0;
           fi;
           COUNTER=$((COUNTER+1));
