@@ -95,18 +95,21 @@ artcl_logstash_files:
   - /home/*/install_built_repo.log
   - /home/*/install_packages.sh.log
   - /home/*/ironic-python-agent.log
+  - /home/*/nova_actions_check.log
   - /home/*/overcloud_create_ssl_cert.log
   - /home/*/overcloud_custom_tht_script.log
   - /home/*/overcloud_delete.log
   - /home/*/overcloud_deploy.log
   - /home/*/overcloud_deploy_post.log
+  - /home/*/overcloud_failed_prepare_resources.log
   - /home/*/overcloud-full.log
   - /home/*/overcloud_image_build.log
   - /home/*/overcloud_prep_containers.log
   - /home/*/overcloud_prep_images.log
   - /home/*/overcloud_prep_network.log
-  - /home/*/overcloud_upgrade_console.log
   - /home/*/overcloud_validate.log
+  - /home/*/*upgrade*.log
+  - /home/*/*update*.log
   - /home/*/repo_setup.log
   - /home/*/repo_setup.sh.*.log
   - /home/*/undercloud_install.log
@@ -114,6 +117,7 @@ artcl_logstash_files:
   - /home/*/upgrade-undercloud-repo.sh.log
   - /home/*/validate-overcloud-ipmi-connection.log
   - /home/*/vxlan_networking.sh.log
+  - /home/*/workload_launch.log
   - /home/*/yum_mirror_error.log
   - /home/*/yum_mirror.log
   - /home/*/tempest_output.log
