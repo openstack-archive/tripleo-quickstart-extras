@@ -3,7 +3,10 @@ parameter_defaults:
   - {{ local_docker_registry_host }}:8787
   ContainerImagePrepare:
   - push_destination: "{{ local_docker_registry_host }}:8787"
-    excludes: [ceph]
+    excludes:
+    - ceph
+    - openshift
+    - kubernetes
 {% if update_containers|bool and not use_overcloud_mixed_upgrade|default(false)|bool %}
     modify_role: tripleo-modify-image
     modify_append_tag: "{{ update_containers_append_tag }}"
@@ -19,8 +22,29 @@ parameter_defaults:
       name_prefix: "{{ docker_prep_prefix }}"
       name_suffix: "{{ docker_prep_suffix }}"
   - push_destination: "{{ local_docker_registry_host }}:8787"
-    includes: [ceph]
+    includes:
+    - ceph
+    - openshift
+    - kubernetes
     set:
       ceph_namespace: "{{ docker_ceph_namespace }}"
       ceph_image: "{{ docker_ceph_image }}"
       ceph_tag: "{{ docker_ceph_tag }}"
+{% if docker_openshift_namespace is defined %}
+      openshift_namespace: "{{ docker_openshift_namespace }}"
+{% endif %}
+{% if docker_openshift_tag is defined %}
+      openshift_tag: "{{ docker_openshift_tag }}"
+{% endif %}
+{% if docker_openshift_base_image is defined %}
+      openshift_base_image: "{{ docker_openshift_base_image }}"
+{% endif %}
+{% if docker_openshift_cockpit_namespace is defined %}
+      openshift_cockpit_namespace: "{{ docker_openshift_cockpit_namespace }}"
+{% endif %}
+{% if docker_openshift_cockpit_image is defined %}
+      openshift_cockpit_image: "{{ docker_openshift_cockpit_image }}"
+{% endif %}
+{% if docker_openshift_cockpit_tag is defined %}
+      openshift_cockpit_tag: "{{ docker_openshift_cockpit_tag }}"
+{% endif %}
