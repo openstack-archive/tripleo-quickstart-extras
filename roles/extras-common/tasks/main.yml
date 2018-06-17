@@ -24,4 +24,4 @@
 - name: Set update_containers_append_tag for the play
   set_fact:
     update_containers_append_tag: "{{ lookup('pipe','date +-updated-%Y%m%d%H%M%S') }}"
-  when: update_containers and update_containers_append_tag is undefined
+  when: update_containers is defined and update_containers|bool and update_containers_append_tag is undefined
