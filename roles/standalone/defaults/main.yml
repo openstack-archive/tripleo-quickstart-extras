@@ -2,7 +2,7 @@
 standalone_config: standalone_config.yaml.j2
 standalone_network: 192.168.24
 standalone_ip: 192.168.24.1
-standalone_interface: eth1
+standalone_interface: br-ex
 
 # deploy script
 standalone_deploy_script: standalone.sh.j2
