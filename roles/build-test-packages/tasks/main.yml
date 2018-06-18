@@ -195,3 +195,9 @@
   when:
     - repo_built is defined
     - repo_built.skipped is not defined
+
+- name: Don't trigger repo injection if nothing is built
+  set_fact:
+    compressed_gating_repo: ""
+    cacheable: true
+  when: repo_built is not defined or repo_built.skipped is defined
