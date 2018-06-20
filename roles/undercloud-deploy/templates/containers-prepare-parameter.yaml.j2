@@ -48,3 +48,12 @@ parameter_defaults:
 {% if docker_openshift_cockpit_tag is defined %}
       openshift_cockpit_tag: "{{ docker_openshift_cockpit_tag }}"
 {% endif %}
+{% if docker_openshift_etcd_namespace is defined %}
+      openshift_etcd_namespace: "{{ docker_openshift_etcd_namespace }}"
+{% endif %}
+{% if docker_openshift_etcd_image is defined %}
+      openshift_etcd_image: "{{ docker_openshift_etcd_image }}"
+{% endif %}
+{% if docker_openshift_etcd_tag is defined %}
+      openshift_etcd_tag: "{{ docker_openshift_etcd_tag }}"
+{% endif %}
