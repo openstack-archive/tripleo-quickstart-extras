@@ -101,7 +101,7 @@ enabled=1
 EOF
 
 sudo yum install -y yum-plugin-priorities;
-sudo yum-config-manager --save --setopt centos-opstools.enable=0;
+sudo yum-config-manager --save --setopt quickstart-centos-opstools.enabled=0;
 sudo yum-config-manager --disable rdo-qemu-ev;
 sudo rpm -e epel-release || true;
 sudo yum remove -y rdo-release centos-release-openstack-* || true;
