@@ -135,6 +135,7 @@ $TEMPESTCONF --out etc/tempest.conf \
   identity.uri $OS_AUTH_URL \
   identity.admin_password $OS_PASSWORD \
   identity.admin_username $OS_USERNAME \
+  identity.disable_ssl_certificate_validation true \
   compute.allow_tenant_isolation true \
   scenario.img_file {{ tempest_test_image_name }} \
   {% else %}
