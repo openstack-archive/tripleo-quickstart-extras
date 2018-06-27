@@ -15,9 +15,9 @@ issue.</p>
 
 <h2>What is the reproducer-quickstart.sh script?</h2>
 <p>A <b>reproducer-quickstart.sh</b> script is generated at the top-level log directory
-for jobs that run TripleO-Quickstart and toci_gate_test-oooq.sh. Running the script
+for jobs that run TripleO-Quickstart and toci_gate_test.sh. Running the script
 from a host machine will set up a stack to the point where the user can ssh to the
-undercloud, source a variable file, and run <b>toci_gate_test-oooq.sh</b>. As such,
+undercloud, source a variable file, and run <b>toci_gate_test.sh</b>. As such,
 reproducing the complete jobs result requires some manual interaction.</p>
 
 <p>The <b>reproducer-quickstart.sh</b> script is generated to be specific to that
@@ -40,12 +40,12 @@ and resources to reproduce the job before you begin.</p>
 modify the script to run on another host cloud are included in a section below.</p>
 
 <p>When the script completes, you will see a list of instructions printed out on how
-to run <b>toci_gate_test-oooq.sh</b> from the undercloud:</p>
+to run <b>toci_gate_test.sh</b> from the undercloud:</p>
 
 <ul>
 <li><code>ssh to the undercloud: $ ssh zuul@$ansible_host</code></li>
 <li><code>Source the environment settings file: $ source /home/zuul/env_vars_to_src.sh</code></li>
-<li><code>Run the toci gate script: $ /opt/stack/tripleo-ci/toci_gate_test-oooq.sh</code></li>
+<li><code>Run the toci gate script: $ /opt/stack/tripleo-ci/toci_gate_test.sh</code></li>
 </ul>
 
 <h2>Input argument options in the reproducer-quickstart.sh script</h2>
