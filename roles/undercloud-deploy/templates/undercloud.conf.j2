@@ -192,6 +192,13 @@ inspection_runbench = {{undercloud_inspection_runbench}}
 # services. (boolean value)
 undercloud_debug = {{undercloud_undercloud_debug}}
 
+# Enable or disable SELinux during the deployment. (boolean value)
+{% if undercloud_enable_selinux is defined %}
+undercloud_enable_selinux = {{undercloud_enable_selinux}}
+{% else %}
+# undercloud_enable_selinux = true
+{% endif %}
+
 # Whether to install Tempest in the Undercloud. (boolean value)
 enable_tempest = {{undercloud_enable_tempest}}
 
