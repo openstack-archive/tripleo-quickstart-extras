@@ -222,7 +222,11 @@
                 docker cp $cont:/var/lib/kolla/config_files/config.json $INFO_DIR/config.json;
                 # NOTE(flaper87): This should go away. Services should be
                 # using a `logs` volume
-                docker cp $cont:/var/log $INFO_DIR/log;
+                # NOTE(mandre) Do not copy logs if the containers is bind mounting /var/log directory
+                if ! docker exec $cont stat $BASE_DOCKER_EXTRA 2>1 > /dev/null; then
+                  docker cp $cont:/var/log $INFO_DIR/log;
+                fi;
+
                 # Delete symlinks because they break log collection and are generally
                 # not useful
                 find $INFO_DIR -type l -delete;
