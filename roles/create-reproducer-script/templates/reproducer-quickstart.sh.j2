@@ -326,19 +326,19 @@ fi
 scp ${SSH_OPTS} "$WORKSPACE/{{ env_vars_to_source_file }}" zuul@$ansible_host:/home/zuul/
 if [[ "$AUTORUN" == "1" ]]; then
     ssh ${SSH_OPTS} zuul@$ansible_host -tt \
-    "screen -LS ci -h 25000 -dm bash -c 'set -m; source ~/{{ env_vars_to_source_file }}; ANSIBLE_FORCE_COLOR=true /opt/stack/tripleo-ci/toci_gate_test-oooq.sh 2>&1 | tee ~/console.log; exec bash' && screen -RD"
+    "screen -LS ci -h 25000 -dm bash -c 'set -m; source ~/{{ env_vars_to_source_file }}; ANSIBLE_FORCE_COLOR=true /opt/stack/tripleo-ci/toci_gate_test.sh 2>&1 | tee ~/console.log; exec bash' && screen -RD"
 else
     # Remove -x so that the instructions don't print twice
     set +x
 
-    # Instruct the user to execute toci_gate_test-oooq.sh on the undercloud
+    # Instruct the user to execute toci_gate_test.sh on the undercloud
     echo "
         # Now complete the test excution on the undercloud:
         # ssh to the undercloud:
         ssh ${SSH_OPTS} zuul@$ansible_host
         # Source the environment settings file and run the toci gate script
         source /home/zuul/env_vars_to_src.sh
-        /opt/stack/tripleo-ci/toci_gate_test-oooq.sh 2>&1 | tee console.log
+        /opt/stack/tripleo-ci/toci_gate_test.sh 2>&1 | tee console.log
 
         # To avoid timeouts, you can start a screen session before executing the commands:
         screen -S ci
