@@ -240,7 +240,7 @@ export $(awk '/subnode-0/ {print $2}' ovb_hosts)
 scp ${SSH_OPTS}  $WORKSPACE/nodes.json zuul@$ansible_host:/home/zuul/
 {% endif %}
 
-{% set jobtype = toci_jobtype.split('-')[0] %}
+{% set jobtype = toci_jobtype.replace('periodic-','').split('-')[0] %}
 {% set types = [ "multinode", "singlenode", "standalone" ] %}
 {% if jobtype in types %}
 
