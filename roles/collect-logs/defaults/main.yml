@@ -35,8 +35,7 @@ artcl_collect_list:
   - /home/*/tripleo-heat-installer-templates/
   - /home/*/local_tht/
   - /home/*/gating_repo.tar.gz
-  - /home/*/browbeat/ansible/bug_report.log
-  - /home/*/browbeat/results/
+  - /home/*/browbeat/
   - /usr/share/openstack-tripleo-heat-templates/
   - /tmp/tripleoclient*
   # The next 2 items are temporary until config-download is executed
