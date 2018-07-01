@@ -2,11 +2,15 @@
 - name: set docker_registry_namespace_used
   set_fact:
     docker_registry_namespace_used: "{{ docker_registry_namespace }}"
+  tags:
+    - undercloud-install
 
 - name: set container_build_id from get_build_command
   set_fact:
     container_build_id: "{{ get_build_command }}"
   when: get_build_command is defined
+  tags:
+    - undercloud-install
 
 - name: set mixed upgrade container_build_id
   set_fact:
@@ -15,13 +19,31 @@
   when:
   - container_build_id is not defined
   - use_overcloud_mixed_upgrade|default(false)|bool
+  tags:
+    - undercloud-install
 
 - name: set container_build_id from docker_image_tag
   set_fact:
     container_build_id: "{{ docker_image_tag }}"
   when: container_build_id is not defined
+  tags:
+    - undercloud-install
 
 - name: Set update_containers_append_tag for the play
   set_fact:
     update_containers_append_tag: "{{ lookup('pipe','date +-updated-%Y%m%d%H%M%S') }}"
   when: update_containers is defined and update_containers|bool and update_containers_append_tag is undefined
+  tags:
+    - undercloud-install
+
+- name: Finally set container_build_id when it's not set by the above
+  set_fact:
+    container_build_id: "{{ dlrn_hash_tag }}"
+  when: container_build_id is not defined
+
+- name: echo container_build_id
+  debug:
+    var: container_build_id
+  tags:
+    - undercloud-install
+
