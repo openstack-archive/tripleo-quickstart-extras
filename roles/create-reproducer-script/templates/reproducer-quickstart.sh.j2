@@ -151,6 +151,22 @@ while [ "x$1" != "x" ]; do
     shift
 done
 
+
+function check_installed {
+    local binary=$1
+    if ! which $binary >/dev/null ; then
+        echo "Error: Could not find required binary $binary. Ensure you have
+            it installed before trying again."
+        exit 1
+    fi
+}
+BOOTSTRAP_DEPENDENCIES=("virtualenv" "ansible" "pip" "openstack")
+function check_bootstrap_dependencies {
+    for dependency in ${BOOTSTRAP_DEPENDENCIES[@]} ; do
+        check_installed $dependency
+    done
+}
+
 # Check that tenant credentials have been sourced
 # when deploying on a host cloud
 if [[ (! -v OS_TENANT_NAME) && ("$LIBVIRT" != "1") ]]; then
@@ -200,6 +216,7 @@ git clone https://github.com/openstack/tripleo-quickstart-extras
 
 # Set up a virtual env if requested
 if [ "$CREATE_VIRTUALENV" = "true" ]; then
+    check_installed virtualenv
     virtualenv $WORKSPACE/venv_ansible
     source $WORKSPACE/venv_ansible/bin/activate
     pip install --upgrade setuptools pip
@@ -211,6 +228,9 @@ if [ "$REMOVE_STACKS_KEYPAIRS" = "true" ]; then
     # To use the clients sourced from venv
     sed -i "s#{.*/bin/##g" $WORKSPACE/tripleo-quickstart-extras/roles/ovb-manage-stack/templates/cleanup-stacks-keypairs.sh.j2
 fi
+
+# sanity check the env has ansible/pip/virtualenv/openstack/etc bootstrap dependencies
+check_bootstrap_dependencies
 
 # Export our roles path so that we can use the roles from our workspace
 export ANSIBLE_ROLES_PATH=$ANSIBLE_ROLES_PATH:$WORKSPACE/tripleo-quickstart/roles:$WORKSPACE/tripleo-quickstart-extras/roles
