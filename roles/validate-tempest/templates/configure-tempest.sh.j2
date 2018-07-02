@@ -142,6 +142,10 @@ $TEMPESTCONF --out etc/tempest.conf \
   auth.tempest_roles Member \
   network-feature-enabled.port_security true \
   {% endif %}
+  {% if release in ['newton', 'ocata', 'pike', 'queens'] %}
+  compute-feature-enabled.attach_encrypted_volume False \
+  compute-feature-enabled.console_output true \
+  {% endif %}
   network.tenant_network_cidr {{ tenant_network_cidr }} \
   compute.build_timeout 500 \
   network.build_timeout 500 \
