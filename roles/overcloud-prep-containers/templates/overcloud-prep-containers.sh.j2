@@ -31,7 +31,7 @@ PREPARE_ARGS=${PREPARE_ARGS:-"{{ prepare_service_env_args }}"}
 ## ::
 
 {% if release not in ['ocata', 'pike', 'queens'] %}
-openstack tripleo container image prepare \
+openstack tripleo container image prepare --verbose \
     --output-env-file {{ working_dir }}/containers-default-parameters.yaml \
     ${PREPARE_ARGS} \
     -e {{ working_dir }}/containers-prepare-parameter.yaml
