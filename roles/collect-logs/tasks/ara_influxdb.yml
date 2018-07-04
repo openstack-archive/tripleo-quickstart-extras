@@ -14,3 +14,24 @@
     measurement: "{{ influxdb_measurement }}"
     data_file: "{{ influxdb_data_file_path }}"
     only_successful_tasks: "{{ influxdb_only_successful_tasks }}"
+
+- name: Get ARA json data
+  become: yes
+  shell: "{{ local_working_dir }}/bin/ara result list --all -f json"
+  register: ara_root_data
+
+- name: Collect and send data to InfluxDB
+  ara_influxdb:
+    influxdb_url: "{{ influxdb_url|default('') }}"
+    influxdb_port: "{{ influxdb_port }}"
+    influxdb_user: "{{ influxdb_user }}"
+    influxdb_password: "{{ influxdb_password }}"
+    influxdb_db: "{{ influxdb_dbname}}"
+    ara_data: "{{ ara_root_data.stdout }}"
+    measurement: "undercloud"
+    data_file: "{{ influxdb_data_file_path }}"
+    only_successful_tasks: "{{ influxdb_only_successful_tasks }}"
+    mapped_fields: false
+    standard_fields: false
+    longest_tasks: 15
+  when: ara_root_data.stdout != "[]"
