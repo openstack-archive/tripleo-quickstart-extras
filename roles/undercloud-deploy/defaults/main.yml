@@ -77,3 +77,11 @@ update_containers: false
 undercloud_enable_routed_networks: false
 
 default_undercloud_roles_data_path: "{{ overcloud_templates_path }}/roles_data_undercloud.yaml"
+
+# We disable selinux when running under CentOS. It's enabled for RHEL
+undercloud_selinux_enabled: >-
+   {% if ansible_distribution == 'CentOS' -%}
+   false
+   {%- else -%}
+   true
+   {%- endif -%}

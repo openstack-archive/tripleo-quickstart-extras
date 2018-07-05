@@ -93,6 +93,7 @@ https://docs.openstack.org/tripleo-quickstart/latest/accessing-libvirt.html
 - `undercloud_enable_tempest`: <null> -- The tempest container will be available on the undercloud.
 - `undercloud_roles_data`: <null> -- A custom t-h-t roles file (the path must be relative to
    ``overcloud_templates_path``).
+- `undercloud_selinux_enabled`: <'true'> -- Enabled for RHEL by default, Disabled for CentOS by default
 
 Role Network Variables
 ----------------------
