@@ -14,6 +14,7 @@ Role Variables
 
 - standalone_config: <'standalone_config.yaml.j2'> -- jinja template of the deployment configuration
 - standalone_network: <'192.168.24'> -- First three octets of the network used
+- standalone_network_prefix: <'24'> --  The subnet size for the standalone deployment network
 - standalone_ip: <'192.168.24.1'> --  The IP address of the standalone deployment
 - standalone_interface: <'br-ex'> --  The interface for the standalone deployment
 

@@ -19,15 +19,15 @@ parameter_defaults:
   DockerInsecureRegistryAddress:
   - {{ standalone_ip }}:8787
   MasqueradeNetworks:
-    {{ standalone_network }}.0/24:
-    - {{ standalone_network }}.0/24
+    {{ standalone_network }}.0/{{ standalone_network_prefix }}:
+    - {{ standalone_network }}.0/{{ standalone_network_prefix }}
   NeutronPublicInterface: {{ standalone_interface }}
   StandaloneCtlplaneLocalSubnet: ctlplane-subnet
   StandaloneCtlplaneSubnets:
     ctlplane-subnet:
       DhcpRangeEnd: {{ standalone_network }}.40
       DhcpRangeStart: {{ standalone_network }}.20
-      NetworkCidr: {{ standalone_network }}.0/24
+      NetworkCidr: {{ standalone_network }}.0/{{ standalone_network_prefix }}
       NetworkGateway: {{ standalone_ip }}
   StandaloneEnableRoutedNetworks: false
   StandaloneHomeDir: {{ working_dir }}
