@@ -48,9 +48,7 @@
         undercloud_hieradata_override: "./hieradata-overrides-t-h-t-undercloud.yaml"
 
 - name: Create classic undercloud hieradata overrides
-  when:
-    - not undercloud_install_cli_options
-    - not containerized_undercloud|bool
+  when: not containerized_undercloud|bool
   block:
     - name: Generate undercloud hieradata overrides file from template
       template:
