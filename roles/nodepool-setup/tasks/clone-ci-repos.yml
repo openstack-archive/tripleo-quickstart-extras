@@ -31,6 +31,14 @@
     dest: /opt/stack/tripleo-quickstart/quickstart-extras-requirements.txt
     content: "git+file:///opt/stack/tripleo-quickstart-extras/#egg=tripleo-quickstart-extras\n"
 
+- name: Add additional repos to quickstart-extras-requirements.txt
+  lineinfile:
+    dest: /opt/stack/tripleo-quickstart/quickstart-extras-requirements.txt
+    line: "git+file:///opt/stack/{{ item }}/#egg={{ item }}"
+  with_items:
+    - "browbeat"
+    - "tripleo-ha-utils"
+
 - name: Create /opt/cache/files directory
   file:
     path: /opt/cache/files

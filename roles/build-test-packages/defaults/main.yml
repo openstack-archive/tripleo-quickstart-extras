@@ -16,6 +16,8 @@ artg_skipped_projects:
   - openstack/tripleo-quickstart
   - openstack/tripleo-quickstart-extras
   - openstack/tripleo-upgrade
+  - openstack/browbeat
+  - openstack/tripleo-ha-utils
   - openstack-dev/grenade
   - openstack-infra/project-config
   - openstack-infra/tripleo-ci
