@@ -140,7 +140,7 @@
   command:
     ssh -o BatchMode=yes -o "StrictHostKeyChecking=no" centos@{{ hostvars[item].ansible_host }} -i "{{ private_key_location }}"
   register: result
-  until: result|success
+  until: result is success
   retries: 100
   delay: 5
   with_items:
