@@ -31,7 +31,7 @@ from six.moves.urllib.parse import urljoin
 
 HREF = re.compile('href="([^"]+)"')
 JOBRE = re.compile('[a-z0-9]{7}/')
-TESTRE = re.compile('(tempest\.[^ \(\)]+|\w+\.tests\.[^ \(\)]+)')
+TESTRE = re.compile('(tempest[^ \(\)]+|\w+\.tests\.[^ \(\)]+)')
 TIMEST = re.compile('(\d{4}-\d{2}-\d{2} \d{2}:\d{2}):\d{2}\.\d+ \|')
 TITLE = re.compile('<title>(.*?)</title>')
 
@@ -74,6 +74,7 @@ def get_tests_results(console):
           for l in console.splitlines() if OK in l]
     errors = [TESTRE.search(l).group(1)
               for l in console.splitlines() if ERROR in l]
+
     # all_skipped = [TESTRE.search(l).group(1)
     #               for l in console.splitlines() if SKIPPED in l]
     return failed, ok, errors
