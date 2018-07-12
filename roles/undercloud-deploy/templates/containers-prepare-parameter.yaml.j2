@@ -14,7 +14,7 @@ parameter_defaults:
       tasks_from: yum_update.yml
       compare_host_packages: true
       yum_repos_dir_path: /etc/yum.repos.d
-      update_repo: gating-repo
+      update_repo: "{{ gating_repo_name|default('gating-repo') }}"
 {% endif %}
     set:
       tag: "{{ container_build_id }}"
