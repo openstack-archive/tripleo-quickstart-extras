@@ -12,7 +12,8 @@
   roles:
     - role: repo-setup
     - role: build-test-packages
-    - { role: install-built-repo, when: compressed_gating_repo is defined }
+    - role: install-built-repo
+      when: compressed_gating_repo is defined and compressed_gating_repo
 
 - name: Run tripleo-upgrade role to upgrade undercloud
   hosts: undercloud
