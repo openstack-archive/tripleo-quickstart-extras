@@ -14,10 +14,7 @@
       when: containerized_overcloud_upgrade|default(false)|bool
     - role: build-test-packages
     - role: install-built-repo
-      when:
-        - hostvars['undercloud']['compressed_gating_repo'] is defined
-        - hostvars['undercloud']['compressed_gating_repo']
-        - mixed_upgrade|default(false)|bool
+      when: hostvars['undercloud']['compressed_gating_repo'] is defined and mixed_upgrade|default(false)|bool
 
 - name: Prepare containers for Upgrade
   hosts: undercloud
