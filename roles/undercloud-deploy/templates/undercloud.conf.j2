@@ -92,6 +92,15 @@ undercloud_nameservers = {{ undercloud_undercloud_nameservers|join(',') }}
 # undercloud_nameservers = <None>
 {% endif %}
 
+# List of ntp servers to use. (list value)
+{% if undercloud_undercloud_ntp_servers is string %}
+undercloud_ntp_servers = {{ undercloud_undercloud_ntp_servers }}
+{% elif undercloud_undercloud_ntp_servers is sequence %}
+undercloud_ntp_servers = {{ undercloud_undercloud_ntp_servers|join(',') }}
+{% else %}
+#undercloud_ntp_servers =
+{% endif %}
+
 # DNS domain name to use when deploying the overcloud. The overcloud
 # parameter "CloudDomain" must be set to a matching value. (string
 # value)
