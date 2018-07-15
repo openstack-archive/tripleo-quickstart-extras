@@ -22,8 +22,7 @@
     artg_compressed_gating_repo: "${HOME}/gating_repo.tar.gz"
   roles:
     - build-test-packages
-    - role: install-built-repo
-      when: compressed_gating_repo is defined and compressed_gating_repo
+    - { role: install-built-repo, when: compressed_gating_repo is defined }
   tags:
     - build
 

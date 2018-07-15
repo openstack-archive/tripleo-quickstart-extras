@@ -41,8 +41,7 @@
     artg_compressed_gating_repo: "${HOME}/gating_repo.tar.gz"
   roles:
     - build-test-packages
-    - role: install-built-repo
-      when: compressed_gating_repo is defined and compressed_gating_repo
+    - { role: install-built-repo, when: compressed_gating_repo is defined }
   tags:
     - build
 
@@ -54,10 +53,7 @@
     - role: repo-setup
       when: not mixed_upgrade|default(false)|bool
     - role: install-built-repo
-      when:
-        - hostvars['undercloud']['compressed_gating_repo'] is defined
-        - hostvars['undercloud']['compressed_gating_repo']
-        - not mixed_upgrade|default(false)|bool
+      when: hostvars['undercloud']['compressed_gating_repo'] is defined and not mixed_upgrade|default(false)|bool
 
   tags:
     - build
