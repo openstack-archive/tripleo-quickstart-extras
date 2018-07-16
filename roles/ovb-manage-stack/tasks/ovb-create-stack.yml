@@ -94,9 +94,17 @@
   debug:
       var: stack_status.stdout_lines
 
-- name: Fail if stack did not deploy successfully
-  fail:
-     msg: "Stack {{ stack_name }} did not deploy successfully. See the stack status message above."
+- block:
+  - name: Get full stack status info in case of failure
+    shell: openstack stack show "{{ stack_name }}"
+    register: failed_stack
+
+  - name: Show stack status in case of failure
+    debug: var="failed_stack.stdout"
+
+  - name: Fail if stack did not deploy successfully
+    fail:
+       msg: "Stack {{ stack_name }} did not deploy successfully. See the stack status message above."
   when: stack_status.stdout.find("CREATE_COMPLETE") == -1
 
 - name: Return floating ip outputs
