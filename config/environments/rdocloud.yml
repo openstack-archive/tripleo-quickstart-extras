@@ -8,6 +8,7 @@ cloud_name: rdocloud
 latest_guest_image:
     ocata: CentOS-7-x86_64-GenericCloud-1708
     pike: CentOS-7-x86_64-GenericCloud-1708
+    queens: CentOS-7-x86_64-GenericCloud-1708
     master: CentOS-7-x86_64-GenericCloud-1708
 
 bmc_flavor: m1.small
@@ -22,7 +23,6 @@ undercloud_undercloud_nameservers: "{{ custom_nameserver }}"
 external_net: '38.145.32.0/22'
 overcloud_dns_servers: "{{ custom_nameserver }}"
 ntp_server: 'pool.ntp.org'
-boot_from_volume: true
 
 overcloud_image_url: http://images.rdoproject.org/{{ release }}/rdo_trunk/{{ dlrn_hash|default(dlrn_hash_tag) }}/overcloud-full.tar
 ipa_image_url: http://images.rdoproject.org/{{ release }}/rdo_trunk/{{ dlrn_hash|default(dlrn_hash_tag) }}/ironic-python-agent.tar
