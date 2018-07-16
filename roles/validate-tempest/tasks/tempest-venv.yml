@@ -8,15 +8,15 @@
 
 - name: Cloning tempest from openstack repository
   git:
-    repo: 'https://github.com/openstack/tempest.git'
+    repo: 'https://git.openstack.org/openstack/tempest'
     dest: '{{ working_dir }}/tempest_git'
     version: '{{ tempest_version }}'
   when: release != 'newton'
 
 - name: Cloning python-tempestconf
   git:
-    repo: 'https://github.com/openstack/python-tempestconf.git'
-    dest: '{{ working_dir }}/python-tempestconf'
+    repo: 'https://git.openstack.org/openstack/python-tempestconf'
+    dest: '{{ working_dir }}/tempestconf_git'
     version: '{{ tempest_conf_version }}'
   when: release != 'newton'
 
