@@ -32,6 +32,9 @@ A description of the settable variables for this role should go here, including 
 * `overcloud_roles`: contents of custom `roles_data.yaml` (as a YAML
   structure, not a string). See `roles_data.yaml` in the
   tripleo-heat-templates repository for example contents.
+* `generate_overcloud_roles`: String specifying of roles to generate overcloud_roles.yaml
+   using the openstack overcloud roles generate command.
+   Note this takes precedence over the `overcloud_roles` variable.
 * `tripleo_config_download_log`: Sets the TripleO config-download log file path.
 * `ansible_steps_log`: Sets the TripleO Ansible steps log file path.
 * `config_download_args`: Sets the arguments to load config-download
