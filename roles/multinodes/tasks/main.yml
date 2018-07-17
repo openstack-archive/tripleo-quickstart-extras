@@ -41,7 +41,7 @@
   block:
 
     - name: find image
-      shell: openstack image list --long -f value -c ID  --property latest=centos-7-latest
+      shell: openstack image list --long -f value -c ID --public --property latest=centos-7-latest
       register: image_id_latest
 
     - name: Set fact for image
