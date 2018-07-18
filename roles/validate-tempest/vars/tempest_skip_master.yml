@@ -16,9 +16,6 @@ known_failures:
   - test: 'tempest.api.volume.test_volumes_snapshots.VolumesSnapshotTestJSON'
     reason: 'network resource conflict'
     lp: 'https://bugs.launchpad.net/tripleo/+bug/1753211'
-  - test: 'tempest.api.object_storage.test_object_services'
-    reason: 'Failing with bad status'
-    lp: 'https://bugs.launchpad.net/tripleo/+bug/1773325'
   # skip list for undercloud
   - test: 'tempest.api.network.test_networks.NetworksTest.test_external_network_visibility'
     reason: 'Running on undercloud'
