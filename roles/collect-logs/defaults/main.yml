@@ -8,7 +8,66 @@ artcl_collect_list:
   - /var/lib/oooq-images/*/*.sh
   - /var/lib/pacemaker/cib/cib*
   - /var/lib/pacemaker/pengine/pe-input*
-  - /var/log/
+  - /var/log/dmesg.txt
+  - /var/log/host_info.txt
+  - /var/log/journal.txt
+  - /var/log/postci.txt
+  - /var/log/secure
+  - /var/log/bootstrap-subnodes.log
+  - /var/log/unbound.log
+  - /var/log/yum.log
+  - /var/log/aodh/
+  - /var/log/audit/
+  - /var/log/barbican/
+  - /var/log/ceilometer/
+  - /var/log/ceph/
+  - /var/log/cinder/
+  - /var/log/cloudkitty/
+  - /var/log/cluster/
+  - /var/log/config-data/
+  - /var/log/congress/
+  - /var/log/containers/
+  - /var/log/deployed-server-enable-ssh-admin.log
+  - /var/log/deployed-server-os-collect-config.log
+  - /var/log/designate/
+  - /var/log/dmesg/
+  - /var/log/extra/
+  - /var/log/ec2api/
+  - /var/log/glance/
+  - /var/log/gnocchi/
+  - /var/log/heat/
+  - /var/log/heat-launcher/
+  - /var/log/horizon/
+  - /var/log/httpd/
+  - /var/log/ironic/
+  - /var/log/ironic-inspector/
+  - /var/log/libvirt/
+  - /var/log/keystone/
+  - /var/log/manila/
+  - /var/log/mariadb/
+  - /var/log/mistral/
+  - /var/log/monasca/
+  - /var/log/murano/
+  - /var/log/neutron/
+  - /var/log/nova/
+  - /var/log/novajoin/
+  - /var/log/octavia/
+  - /var/log/openvswitch/
+  - /var/log/ovn/
+  - /var/log/pacemaker/
+  - /var/log/panko/
+  - /var/log/qdr/
+  - /var/log/rabbitmq/
+  - /var/log/redis/
+  - /var/log/sahara/
+  - /var/log/sensu/
+  - /var/log/swift/
+  - /var/log/tacker/
+  - /var/log/tempest/
+  - /var/log/trove/
+  - /var/log/vitrage/
+  - /var/log/watcher/
+  - /var/log/zaqar/
   - /var/tmp/sosreport*
   - /etc/
   - /home/*/.instack/install-undercloud.log
