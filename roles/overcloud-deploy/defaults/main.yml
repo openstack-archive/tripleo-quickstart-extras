@@ -37,7 +37,7 @@ composable_args: ""
 extra_args: ""
 topology: ""
 ssl_overcloud: false
-libvirt_args: "--libvirt-type qemu"
+libvirt_args: "--libvirt-type kvm"
 deploy_ha_ovn: false
 
 use_git_tht_repo: false

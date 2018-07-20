@@ -41,6 +41,8 @@ A description of the settable variables for this role should go here, including 
   environment in THT.
 * `deploy_steps_ansible_workflow`: false/true - whether to deploy the overcloud with
   config-download Ansible steps from a Mistral workflow.
+* `libvirt_args`:  qemu|kvm default is kvm
+
 
 
 Dependencies
