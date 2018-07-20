@@ -23,9 +23,19 @@ tempest_overcloud: true
 run_tempest: false
 post_tempest: true
 tempest_format: packages # venv or packages or container
-tempest_container_registry: "{{ docker_registry_host }}/{{ docker_registry_namespace }}"
+tempest_container_registry: >-
+  {% if (undercloud_enable_tempest is defined) and undercloud_enable_tempest|bool -%}
+  {{ local_docker_registry_host }}:8787/{{ docker_registry_namespace }}
+  {%- else -%}
+  {{ docker_registry_host }}/{{ docker_registry_namespace }}
+  {%- endif %}
 tempest_container_namespace: centos-binary-tempest
-tempest_container_tag: "{{ docker_image_tag }}"
+tempest_container_tag: >-
+  {% if (undercloud_enable_tempest is defined and undercloud_enable_tempest|bool) and (update_containers_append_tag is defined)-%}
+  {{ container_build_id }}{{ update_containers_append_tag }}
+  {%- else -%}
+  {{ docker_image_tag }}
+  {%- endif %}
 tempest_dir: "{{ working_dir }}/tempest"
 tempest_whitelist_file_src: "whitelist_file.j2"
 tempest_whitelist_file: "whitelist_file.conf"
