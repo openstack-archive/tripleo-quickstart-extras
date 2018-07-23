@@ -38,10 +38,6 @@ openstack role show Member > /dev/null || openstack role create Member
 
 openstack role show creator > /dev/null || openstack role create creator
 
-# Create Tempest directory
-
-mkdir {{ tempest_dir }}
-
 ## Install openstack-tempest
 ## -------------------------
 ## * Using git
@@ -76,6 +72,10 @@ rpm -qa | grep tempest
 ## Create Tempest Workspace
 ## ------------------------
 ## ::
+
+# Create Tempest directory
+
+mkdir {{ tempest_dir }}
 
 # Create Tempest workspace
 pushd {{ tempest_dir }}

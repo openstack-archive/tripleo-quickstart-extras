@@ -42,25 +42,58 @@ $TEMPESTCLI cleanup --dry-run
 
 {% if tempest_format == "container" %}
 EOF
-
 chmod +x {{ working_dir }}/tempest_container.sh
-# Run tempest container using docker mouting required files
-sudo docker run --net=host -i -v $RCFILE:$RCFILE \
+# Copy all the required files in a temprory directory
+mkdir {{ working_dir }}/tempest_data
+
+cp $RCFILE \
     {% if skip_file_src != '' %}
-    -v {{ working_dir }}/{{ skip_file }}:{{ working_dir }}/{{ skip_file }} \
+    {{ working_dir }}/{{ skip_file }} \
     {% endif %}
     {% if tempest_whitelist|length > 0 %}
-    -v {{ working_dir }}/{{ tempest_whitelist_file }}:{{ working_dir }}/{{ tempest_whitelist_file }} \
-    -v {{ working_dir }}/{{ tempest_deployer_input_file }}:{{ working_dir }}/{{ tempest_deployer_input_file }} \
+    {{ working_dir }}/{{ tempest_whitelist_file }} \
     {% endif %}
+    {% if tempest_overcloud|bool %}
+    {{ working_dir }}/{{ tempest_deployer_input_file }} \
+    {% endif %}
+    {{ working_dir }}/tempest_container.sh \
+    {{ working_dir }}/tempest_data
+
+# TODO(chkumar246): https://review.openstack.org/#/c/583940/ added tempest user to
+# tempest container, The file getting mounted from host to tempest container have
+# different permission as tempest user does not own those folders which will give
+# permission denied So first check whether tempest user is there or not if present
+# run the docker command to change the dir permission and if not found the usual
+# command, Once new container image is available after promotion, we will the add
+# the volume in THT itself and fix other stuffs.
+
+if [ 'x$(sudo docker inspect --format "{{ '{{' }} .Config.User {{ '}}' }}" {{ tempest_container_registry }}/{{ tempest_container_namespace }}:{{ tempest_container_tag }})' == 'xtempest' ]; then
+    sudo docker run --net=host -u root -v {{ working_dir }}/tempest_data:{{ working_dir }} \
+    {% if not 'http' in tempest_test_image_path %}
+        -v {{ tempest_test_image_path }}:{{ tempest_test_image_path }} \
+    {% endif %}
+        {{ tempest_container_registry }}/{{ tempest_container_namespace }}:{{ tempest_container_tag }} \
+        chown -R tempest:tempest \
+        {% if not 'http' in tempest_test_image_path %}
+        {{ tempest_test_image_path }} \
+        {% endif %}
+        {{ working_dir }}
+fi
+
+# Run tempest container using docker mouting required files
+sudo docker run --net=host -i -v {{ working_dir }}/tempest_data/:{{ working_dir }} \
     -v /var/log/containers/tempest:{{ tempest_log_dir }} \
-    -v {{ tempest_dir }}:{{ tempest_dir }} \
-    -v {{ working_dir }}/tempest_container.sh:{{ working_dir }}/tempest_container.sh \
     {% if not 'http' in tempest_test_image_path %}
     -v {{ tempest_test_image_path }}:{{ tempest_test_image_path }} \
     {% endif %}
     {{ tempest_container_registry }}/{{ tempest_container_namespace }}:{{ tempest_container_tag }} \
     /usr/bin/bash -c 'set -e; {{ working_dir }}/tempest_container.sh'
+
+# Change permission of tempest workspace directory
+sudo chmod -R 777 {{ working_dir }}/tempest_data
+
+# Copy tempest related data to tempest folder so that stackviz can use it
+cp -R {{ working_dir }}/tempest_data/tempest {{ working_dir }}
 
 {% endif %}
 ### --stop_docs
