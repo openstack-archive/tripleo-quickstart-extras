@@ -195,7 +195,7 @@
         if command -v docker && systemctl is-active docker; then
             BASE_DOCKER_EXTRA=/var/log/extra/docker;
             mkdir -p $BASE_DOCKER_EXTRA;
-            All_FILE=$BASE_DOCKER_EXTRA/docker_allinfo.log;
+            ALL_FILE=$BASE_DOCKER_EXTRA/docker_allinfo.log;
 
             DOCKER_INFO_CMDS=(
                 "docker ps --all --size"
