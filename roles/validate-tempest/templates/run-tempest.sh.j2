@@ -65,9 +65,10 @@ cp $RCFILE \
 # permission denied So first check whether tempest user is there or not if present
 # run the docker command to change the dir permission and if not found the usual
 # command, Once new container image is available after promotion, we will the add
-# the volume in THT itself and fix other stuffs.
-
-if [ 'x$(sudo docker inspect --format "{{ '{{' }} .Config.User {{ '}}' }}" {{ tempest_container_registry }}/{{ tempest_container_namespace }}:{{ tempest_container_tag }})' == 'xtempest' ]; then
+# the volume in THT itself and fix other stuffs. Also pull docker image locally
+# as docker inspect needs the image to exist.
+sudo docker pull {{ tempest_container_registry }}/{{ tempest_container_namespace }}:{{ tempest_container_tag }}
+if [ x$(sudo docker inspect --format "{{ '{{' }} .Config.User {{ '}}' }}" {{ tempest_container_registry }}/{{ tempest_container_namespace }}:{{ tempest_container_tag }}) == 'xtempest' ]; then
     sudo docker run --net=host -u root -v {{ working_dir }}/tempest_data:{{ working_dir }} \
     {% if not 'http' in tempest_test_image_path %}
         -v {{ tempest_test_image_path }}:{{ tempest_test_image_path }} \
