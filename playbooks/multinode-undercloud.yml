@@ -79,3 +79,9 @@
   roles:
     - validate-undercloud
 
+- name: Set Libvirt type
+  hosts: overcloud
+  roles:
+    - set-libvirt-type
+  tags:
+    - overcloud-deploy
