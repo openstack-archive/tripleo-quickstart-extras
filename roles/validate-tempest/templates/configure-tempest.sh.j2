@@ -12,6 +12,8 @@
 # root.
 sudo rm -rf {{ working_dir }}/.tempest
 sudo rm -rf {{ tempest_dir }}
+# Remove tempest_data directory created before running tempest container
+sudo rm -rf {{ working_dir }}/tempest_data
 
 # Source rc file
 source {{ rc_file }}
@@ -67,6 +69,7 @@ set -e
 # tempest/tempest plugins rpms are installed in the same.
 
 rpm -qa | grep tempest
+
 {% endif %}
 
 ## Create Tempest Workspace
