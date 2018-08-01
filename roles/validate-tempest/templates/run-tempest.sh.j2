@@ -83,6 +83,8 @@ fi
 
 # Run tempest container using docker mouting required files
 sudo docker run --net=host -i -v {{ working_dir }}/tempest_data/:{{ working_dir }} \
+    -e PYTHONWARNINGS="${PYTHONWARNINGS:-}" \
+    -e CURL_CA_BUNDLE="" \
     -v /var/log/containers/tempest:{{ tempest_log_dir }} \
     {% if not 'http' in tempest_test_image_path %}
     -v {{ tempest_test_image_path }}:{{ tempest_test_image_path }} \
