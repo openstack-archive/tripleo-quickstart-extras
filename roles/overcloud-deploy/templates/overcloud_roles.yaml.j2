@@ -1,1 +1,1 @@
-{{ overcloud_roles | to_nice_yaml }}
+{{ overcloud_roles | default('') | to_nice_yaml }}
