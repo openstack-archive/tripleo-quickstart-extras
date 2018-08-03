@@ -18,7 +18,8 @@ provision_net_cidr: 192.168.24.0/24
 
 nameserver_from_virthost: false
 custom_nameserver:
-    - 38.145.33.91
+    - 1.1.1.1
+    - 1.0.0.1
 undercloud_undercloud_nameservers: "{{ custom_nameserver }}"
 external_net: '38.145.32.0/22'
 overcloud_dns_servers: "{{ custom_nameserver }}"
