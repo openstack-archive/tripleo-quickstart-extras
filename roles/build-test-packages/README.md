@@ -32,6 +32,8 @@ Role Variables
   to skip projects that DLRN cannot build.
 * `artg_repos_dir` -- Root directory which contains project directories with
    sources for build.
+* `dlrn_target` -- Target for the DLRN build Can be something like centos or
+   fedora. Defaults to centos.
 * `dlrn_baseurl` -- URL used by DLRN to get the repo definitions when building
    packages
 * `dlrn_use_local_mirrors` -- use the local repo definitions from
