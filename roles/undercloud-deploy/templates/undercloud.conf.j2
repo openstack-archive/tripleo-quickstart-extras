@@ -317,7 +317,7 @@ upgrade_cleanup = {{undercloud_upgrade_cleanup}}
 {% endif %}
 
 # Heat templates directory
-templates = {{overcloud_templates_path}}
+templates = {{ undercloud_templates_path }}
 
 # Extra config elements.
 {% if undercloud_conf_extra != "" %}

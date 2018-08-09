@@ -11,6 +11,8 @@ This requires a running host to deploy the undercloud.
 Role Variables
 --------------
 
+- `undercloud_templates_path`: <'/usr/share/openstack-tripleo-heat-templates'> --
+a path to git clone and check-out t-h-t templates from the corresponding repo/branch/ref paths.
 - `undercloud_config_file`: <'undercloud.conf.j2'> -- the name of the jinja template
 used as the base for the undercloud.conf
 - `undercloud_install_script`: <'undercloud-install.j2'> -- the name of the jinja template
@@ -89,10 +91,10 @@ https://docs.openstack.org/tripleo-quickstart/latest/accessing-libvirt.html
   downloaded ansible configs and processed heat templates for heat installer
 - `undercloud_undercloud_cleanup`: <null> -- controls tear down of the processed heat templates
 - `undercloud_upgrade_cleanup`: <null> -- controls post upgrade cleanup after we containerize the undercloud.
-- update_containers: <false> -- whether to update containers from the local registry.
+- `update_containers`: <false> -- whether to update containers from the local registry.
 - `undercloud_enable_tempest`: <null> -- The tempest container will be available on the undercloud.
-- `undercloud_roles_data`: <null> -- A custom t-h-t roles file (the path must be relative to
-   ``overcloud_templates_path``).
+- `undercloud_roles_data`: <null> -- A custom t-h-t roles file. Consumed from ``undercloud_templates_path``
+  or an alternative location as well.
 - `undercloud_selinux_enabled`: <'true'> -- Enabled for RHEL by default, Disabled for CentOS by default
 
 Role Network Variables
@@ -168,6 +170,21 @@ Note, the containerized undercloud is a hacking mode for developers, that allows
 to test containerized components undercloud, with custom, like very minimal,
 setup layouts. Please do not expect more than that when using it.
 
+To diverge TripleO Heat Templates installation scripts used to deploy/upgrade
+undercloud from the similar overcloud cases, use the following variables:
+
+```yaml
+  undercloud_composable_scenario: < similarly to composable_scenario for OC >
+  undercloud_upgrade_composable_scenario: < similarly to upgrade_composable_scenario for OC >
+  undercloud_prep_post_hook_script: < similarly to overcloud_prep_post_hook_script >
+  download_undercloud_templates_rpm: < similarly to download_overcloud_templates_rpm >
+  undercloud_tht_rpm_url: < similarly to tht_rpm_url for OC >
+  undercloud_templates_path: < similarly to overcloud_templates_path >
+  undercloud_templates_repo: < similarly to overcloud_templates_repo >
+  undercloud_templates_branch: < similarly to overcloud_templates_branch >
+  undercloud_templates_refspec: < similarly to overcloud_templates_refspec >
+```
+
 Example Playbook
 ----------------
 
@@ -240,12 +257,12 @@ the ephemeral undercloud heat agent running for debug purposes:
 
 ```yaml
 undercloud_custom_env_files: >-
-  {{overcloud_templates_path}}/environments/disable-telemetry.yaml
-  {{overcloud_templates_path}}/environments/docker-minimal.yaml
-  {{overcloud_templates_path}}/environments/services/etcd.yaml
-  {{overcloud_templates_path}}/environments/services/octavia.yaml
-  {{overcloud_templates_path}}/environments/debug.yaml
-  {{overcloud_templates_path}}/environments/config-debug.yaml
+  {{undercloud_templates_path}}/environments/disable-telemetry.yaml
+  {{undercloud_templates_path}}/environments/docker-minimal.yaml
+  {{undercloud_templates_path}}/environments/services/etcd.yaml
+  {{undercloud_templates_path}}/environments/services/octavia.yaml
+  {{undercloud_templates_path}}/environments/debug.yaml
+  {{undercloud_templates_path}}/environments/config-debug.yaml
 undercloud_extra_args: >-
   --timeout 60
 ```
@@ -275,7 +292,7 @@ undercloud installation script template omits those services and the
 `environments/docker.yaml` defaults.
 
 You may also override ``undercloud_roles_data`` with a custom roles file
-(the path must be relative to the t-h-t templates ``overcloud_templates_path``).
+(the path must be relative to the t-h-t templates ``undercloud_templates_path``).
 For the example above, custom undercloud roles may look like:
 
 ```
@@ -307,12 +324,12 @@ And an example playbook to call the role is:
     overcloud_templates_repo: https://github.com/johndoe/tripleo-heat-templates
     overcloud_templates_branch: dev
     undercloud_custom_env_files: >-
-      {{overcloud_templates_path}}/environments/disable-telemetry.yaml
-      {{overcloud_templates_path}}/environments/docker-minimal.yaml
-      {{overcloud_templates_path}}/environments/services/etcd.yaml
-      {{overcloud_templates_path}}/environments/services/octavia.yaml
-      {{overcloud_templates_path}}/environments/debug.yaml
-      {{overcloud_templates_path}}/environments/config-debug.yaml
+      {{undercloud_templates_path}}/environments/disable-telemetry.yaml
+      {{undercloud_templates_path}}/environments/docker-minimal.yaml
+      {{undercloud_templates_path}}/environments/services/etcd.yaml
+      {{undercloud_templates_path}}/environments/services/octavia.yaml
+      {{undercloud_templates_path}}/environments/debug.yaml
+      {{undercloud_templates_path}}/environments/config-debug.yaml
     undercloud_extra_args: >-
       --timeout 60
   roles:
