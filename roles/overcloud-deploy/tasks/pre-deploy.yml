@@ -180,13 +180,6 @@
     - release not in ['mitaka', 'liberty']
     - set_overcloud_workers|bool
 
-- name: Use KVM for Red Hat distro
-  set_fact:
-    libvirt_args: "--libvirt-type kvm"
-  when:
-    - ansible_distribution is defined
-    - ansible_distribution == 'RedHat'
-
 - name: set container_args fact
   set_fact:
     container_args: >-
