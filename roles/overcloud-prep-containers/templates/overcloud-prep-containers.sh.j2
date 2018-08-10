@@ -30,7 +30,7 @@ PREPARE_ARGS=${PREPARE_ARGS:-"{{ prepare_service_env_args }}"}
 ##   populate the docker registry. This is done automatically.
 ## ::
 
-{% if release not in ['ocata', 'pike', 'queens'] %}
+{% if release not in ['ocata', 'pike', 'queens'] and not mixed_upgrade|default(false)|bool %}
 openstack tripleo container image prepare --verbose \
     --output-env-file {{ working_dir }}/containers-default-parameters.yaml \
     ${PREPARE_ARGS} \
