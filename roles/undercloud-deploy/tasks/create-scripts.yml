@@ -2,7 +2,7 @@
 # environment.
 - name: Check the dns information provided by the virthost
   shell: >
-    gawk '/^nameserver +/ { print $2 }' /etc/resolv.conf
+    awk 'match($0, /nameserver\s+(([0-9]{1,3}.?){4})/,address){ print address[1] }' /etc/resolv.conf
   delegate_to: virthost
   register: virthost_nameservers_output
   when: nameserver_from_virthost|bool
