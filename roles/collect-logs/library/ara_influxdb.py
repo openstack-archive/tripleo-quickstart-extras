@@ -108,9 +108,7 @@ SCHEME = (
     'pingtest={pingtest},'
     'tempest_run={tempest_run},'
     'undercloud_reinstall={undercloud_reinstall},'
-    'overcloud_delete={overcloud_delete},'
-    'undercloud_upgrade={undercloud_upgrade},'
-    'overcloud_upgrade={overcloud_upgrade} '
+    'overcloud_delete={overcloud_delete} '
     '{timestamp}'
 )
 
@@ -146,8 +144,6 @@ DATA = {
         "validate-undercloud : Reinstall the undercloud to check idempotency"],
     'overcloud_delete': [
         "overcloud-delete : check for delete command to complete or fail"],
-    'overcloud_upgrade': ["overcloud-upgrade : Upgrade the overcloud"],
-    'undercloud_upgrade': ["overcloud-upgrade : Upgrade the undercloud"],
     'timestamp': int(datetime.datetime.utcnow().strftime("%s")),
 }
 

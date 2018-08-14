@@ -1,7 +1,0 @@
----
-# Upgrade a tripleo deployment already deploy and configure
-- name:  Upgrade Tripleo
-  hosts: undercloud
-  gather_facts: no
-  roles:
-    - overcloud-upgrade
