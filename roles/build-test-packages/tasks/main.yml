@@ -50,6 +50,13 @@
     state: latest
     extra_args: --upgrade
 
+- name: Pip install rdopkg
+  pip:
+    name: rdopkg
+    virtualenv: "{{ build_repo_dir }}/dlrn-venv"
+    version: 0.46.3
+  when: not dlrn_pre_installed|bool
+
 - name: Pip install DLRN
   pip:
     name: dlrn
