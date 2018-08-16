@@ -25,7 +25,7 @@ $TEMPESTCLI list-plugins
 $TEMPESTCLI cleanup --init-saved-state
 {% endif %}
 
-{% if release not in ["master", "queens"] %} $OSTESTR {% else %} $TEMPESTCLI run {% endif %}{% if test_white_regex != '' %} --regex '({{ test_white_regex }})' {% endif %}
+{% if release in ["newton", "ocata", "pike"] %} $OSTESTR {% else %} $TEMPESTCLI run {% endif %}{% if test_white_regex != '' %} --regex '({{ test_white_regex }})' {% endif %}
 {% if tempest_whitelist|length > 0 %} --whitelist_file={{ working_dir }}/{{ tempest_whitelist_file }} {% endif %}
 {% if release not in ["newton", "ocata", "pike"] %} {% if test_black_regex|length > 0 %} --black-regex='{{ test_black_regex|join('|') }}' {% endif %} {% endif %}
 {% if skip_file_src != '' %} --blacklist_file={{ working_dir }}/{{ skip_file }} {% endif %}
