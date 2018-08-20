@@ -59,6 +59,13 @@ glance image-create --container-format bare \
 
 {% endif %}
 
+## * List out all the available OpenStack flavors.
+## ::
+
+for i in `openstack flavor list -c Name  -f value`; do
+    echo $i; openstack flavor show $i;
+done || true
+
 
 {% if step_register|bool %}
 
