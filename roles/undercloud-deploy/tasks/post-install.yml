@@ -27,3 +27,13 @@
         line: "export OS_PASSWORD={{ undercloud_admin_password.stdout }}"
         regexp: "OS_PASSWORD"
 
+- name: Copy stackrc created at the UC user $HOME to the working dir
+  tags:
+    - undercloud-post-install
+  copy:
+    src: /home/{{ undercloud_user }}/stackrc
+    dest: "{{ working_dir }}/stackrc"
+    owner: "{{ undercloud_user }}"
+    mode: 0640
+  become: true
+  when: containerized_undercloud|bool
