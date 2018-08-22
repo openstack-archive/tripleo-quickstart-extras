@@ -77,6 +77,8 @@ undercloud_network_environment_args: {}
 ctlplane_masquerade: false
 
 update_containers: false
+gating_repo_name: gating-repo
+update_containers_repo: "{{ gating_repo_name }},delorean-current"
 undercloud_enable_routed_networks: false
 
 default_undercloud_roles_data_path: "{{ undercloud_templates_path }}/roles_data_undercloud.yaml"

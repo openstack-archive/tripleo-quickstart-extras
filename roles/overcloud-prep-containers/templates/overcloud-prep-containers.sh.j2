@@ -115,7 +115,7 @@ openstack overcloud container image upload --debug --config-file {{ working_dir 
 ## * update the containers with yum updates from OpenStack repos.  ( delorean-current, dependent patches built by DLRN )
 ## ::
 
-packages_for_update="$(repoquery --disablerepo='*' --enablerepo={{ gating_repo_name }} --qf %{NAME} -a 2>{{ working_dir }}/repoquery.err.log | sort -u | xargs)"
+packages_for_update="$(repoquery --disablerepo='*' --enablerepo={{ update_containers_repo }} --qf %{NAME} -a 2>{{ working_dir }}/repoquery.err.log | sort -u | xargs)"
 
 if [[ -n "$packages_for_update" ]]; then
     openstack overcloud container image prepare \
