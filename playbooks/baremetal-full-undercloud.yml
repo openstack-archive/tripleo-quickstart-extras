@@ -4,6 +4,8 @@
   gather_facts: no
   roles:
     - undercloud-deploy
+  tags:
+    - undercloud-deploy
 
 - name: Configure tripleo-validations
   hosts: undercloud
@@ -21,6 +23,8 @@
   roles:
     - { role: validate-undercloud,
         when: run_validate_undercloud|default(false)|bool }
+  tags:
+    - validate-undercloud
 
 - name: Build images for quickstart
   hosts: undercloud

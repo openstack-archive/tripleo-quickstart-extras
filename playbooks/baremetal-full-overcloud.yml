@@ -4,6 +4,8 @@
   gather_facts: no
   roles:
     - overcloud-deploy
+  tags:
+    - overcloud-deploy
 
 # Add the overcloud nodes to the generated inventory.
 - name:  Inventory the overcloud
