@@ -146,3 +146,6 @@ known_failures:
   - test: 'tempest.api.identity.admin.v3.test_roles.RolesV3TestJSON'
     reason: 'Running on undercloud'
     undercloud: true
+  - test: 'vitrage_tempest_plugin'
+    reason: 'Not supported in TripleO Undercloud'
+    undercloud: true
