@@ -29,3 +29,11 @@
     - baremetal-undercloud/packages
   tags:
     - undercloud-pkgs-install
+
+- name: Fetch the overcloud images
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - fetch-images
+  tags:
+    - overcloud-fetch-images
