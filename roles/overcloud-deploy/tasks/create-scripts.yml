@@ -66,3 +66,9 @@
   template:
     src: "overcloud_network_params.yaml.j2"
     dest: "{{ working_dir }}/overcloud_network_params.yaml"
+
+- name: Create overriding ansible.cfg for overcloud deployment
+  when: override_ansiblecfg|bool
+  template:
+    src: "ansible.cfg.j2"
+    dest: "{{ working_dir }}/custom_ansible.cfg"
