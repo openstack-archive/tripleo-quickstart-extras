@@ -216,6 +216,7 @@
                 DOCKER_CONTAINER_INFO_CMDS=(
                     "docker top $cont auxw"
                     "docker exec $cont top -bwn1"
+                    "docker exec $cont yum list installed"
                     "docker inspect $cont"
                 );
                 for cmd in "${DOCKER_CONTAINER_INFO_CMDS[@]}"; do
