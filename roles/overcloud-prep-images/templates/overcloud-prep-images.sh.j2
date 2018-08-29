@@ -75,7 +75,7 @@ done || true
 {% if release in ['mitaka'] %}
 openstack baremetal import --json instackenv.json
 openstack baremetal configure boot
-{% elif step_introspect|bool %}
+{% elif step_introspect|bool or step_introspect_with_retry|bool %}
 openstack overcloud node import instackenv.json
 {% else %}
 openstack overcloud node import instackenv.json --provide
@@ -88,7 +88,7 @@ openstack overcloud node import instackenv.json --provide
 ## * Get nodes UUID
 ## ::
 
-export items="$( ironic node-list | awk '/power/ {print $2}' )"
+export items="$( openstack baremetal node list | awk '/power/ {print $2}' )"
 
 ## * Find disk size from instackenv.json
 ## ::
@@ -105,7 +105,7 @@ for item in $items; do
     if  [ $ROOT_DEVICE_SIZE -ge ${ARRAY_DISK_SIZE[$count]} ]; then
         declare i ADS
         ADS=${ARRAY_DISK_SIZE[$count]}
-        ironic node-update $item add properties/root_device='{"size": '$ADS'}'
+        openstack baremetal node set --property root_device='{"size": '$ADS'}' $item
     fi
     count=$((count+1))
 done
@@ -120,18 +120,18 @@ sudo mistral-db-manage populate
 ## * Get nodes UUID
 ## ::
 
-export ironic_nodes="$( ironic node-list | awk '/power/ {print $2}' )"
+export ironic_nodes="$( openstack baremetal node list | awk '/power/ {print $2}' )"
 
 for ironic_node in $ironic_nodes; do
     # extract IP from ironic node details
-    ip_address=$(ironic node-show $ironic_node --fields driver_info | sed -n "s/.*ipmi_address': u'\([0-9\.]*\)'.*/\1/p")
+    ip_address=$(openstack baremetal node show -f value -c driver_info $ironic_node | sed -n "s/.*ipmi_address': u'\([0-9\.]*\)'.*/\1/p")
 
     # get information for the matching template
     {% for node in root_device_hints %}
         NODE_IP="{{ node['ip'] }}"
         if [ "$NODE_IP" == "$ip_address" ]; then
             # set property
-            ironic node-update $ironic_node add properties/root_device='{"{{ node['key'] }}": "{{ node['value'] }}"}'
+            openstack baremetal node set --property root_device='{"{{ node['key'] }}": "{{ node['value'] }}"}' $ironic_node
         fi
     {% endfor %}
 done
@@ -181,7 +181,7 @@ pidof_tcpdump=$(ps --ppid $! -o pid=)
 ## ::
 introspect()
 {
-    for node in `ironic --json node-list | jq -r '.[]| select(.["provision_state"] == "manageable")| .["uuid"]'`; do
+    for node in `openstack baremetal node list -f json | jq -r '.[]| select(.["Provisioning State"] == "manageable")| .["UUID"]'`; do
         openstack baremetal introspection start $node
         sleep 30s
     done
@@ -189,22 +189,22 @@ introspect()
     manageable_count=1
     on_count=0
     while [ $on_count -eq 0 ] && [ $manageable_count -gt 0 ]; do
-        manageable_count=$(ironic --json node-list | jq -r '.[]| select(.["provision_state"] == "manageable")| .["uuid"]' | wc -l)
-        on_count=$(ironic --json node-list|jq -r '.[]| select(.["power_state"] == "power on")| .["uuid"]' | wc -l)
+        manageable_count=$(openstack baremetal node list -f json | jq -r '.[]| select(.["Provisioning State"] == "manageable")| .["UUID"]' | wc -l)
+        on_count=$(openstack baremetal node list -f json|jq -r '.[]| select(.["Power State"] == "power on")| .["UUID"]' | wc -l)
         sleep 30
     done
 
     set +e
     timeout $1 bash -c -- 'source $HOME/stackrc; \
-                            on_count=$(ironic --json node-list|jq -r ".[]| select(.[\"power_state\"] == \"power on\")| .[\"uuid\"]" | wc -l) ; \
+                            on_count=$(openstack baremetal node list -f json|jq -r ".[]| select(.[\"Power State\"] == \"power on\")| .[\"UUID\"]" | wc -l) ; \
                             while [ $on_count -gt 0 ]; do \
                                 sleep 30s; \
-                                on_count=$(ironic --json node-list|jq -r ".[]| select(.[\"power_state\"] == \"power on\")| .[\"uuid\"]" | wc -l) ; \
+                                on_count=$(openstack baremetal node list -f json|jq -r ".[]| select(.[\"Power State\"] == \"power on\")| .[\"UUID\"]" | wc -l) ; \
                             done'
     set -e
 
-    for node in `ironic --json node-list | jq -r '.[]| select(.["power_state"] == "power off")| select(.["provision_state"] == "manageable")|.["uuid"]'`; do
-        ironic node-set-provision-state $node provide
+    for node in `openstack baremetal node list -f json | jq -r '.[]| select(.["Power State"] == "power off")| select(.["Provisioning State"] == "manageable")|.["UUID"]'`; do
+        openstack baremetal node provide $node
     done
 }
 
@@ -214,8 +214,8 @@ introspect()
 ##   has reliability issues.
 ## ::
 
-for node in `ironic --json node-list | jq -r '.[]| select(.["provision_state"] == "available")| .["uuid"]'`; do
-    ironic node-set-provision-state $node manage
+for node in `openstack baremetal node list -f json | jq -r '.[]| select(.["Provisioning State"] == "available")| .["UUID"]'`; do
+    openstack baremetal node manage $node
 done
 
 introspect 15m
