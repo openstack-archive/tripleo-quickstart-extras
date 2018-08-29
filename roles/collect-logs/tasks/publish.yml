@@ -66,7 +66,7 @@
     find {{ artcl_collect_dir }}/ -type f |
     awk 'function rename(orig)
     { new=orig; sub(/\.gz$/, ".txt.gz", new); system("mv " orig " " new) }
-    /\.(conf|ini|json|sh|log|yaml|yml|repo)\.gz$/ { rename($0) }
+    /\.(conf|ini|json|sh|log|yaml|yml|repo|cfg|j2|py)\.gz$/ { rename($0) }
     /(\/var\/log\/|\/etc\/)[^ \/\.]+\.gz$/ { rename($0) }';
   when: artcl_txt_rename|bool
 
