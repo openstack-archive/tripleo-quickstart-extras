@@ -3,7 +3,9 @@
 - include: create-scripts.yml
   tags:
     - undercloud-scripts
+  when: release in ['ocata', 'pike', 'queens', 'rocky']
 
 - include: overcloud-prep-containers.yml
   tags:
     - containers
+  when: release in ['ocata', 'pike', 'queens', 'rocky']

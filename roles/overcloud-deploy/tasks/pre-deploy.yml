@@ -189,7 +189,11 @@
       {% if enable_pacemaker|bool or osp_release is defined%}
       -e {{ overcloud_templates_path }}/environments/docker-ha.yaml
       {% endif %}
+      {% if release in ['ocata', 'pike', 'queens', 'rocky'] %}
       -e {{ working_dir }}/containers-default-parameters.yaml
+      {% else %}
+      -e {{ working_dir }}/containers-prepare-parameter.yaml
+      {% endif %}
   when:
     - containerized_overcloud|bool
 
