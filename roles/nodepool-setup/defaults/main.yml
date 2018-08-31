@@ -5,6 +5,8 @@ repos:
   - https://git.openstack.org/openstack/tripleo-quickstart
   - https://git.openstack.org/openstack/tripleo-quickstart-extras
   - https://git.openstack.org/openstack/tripleo-upgrade
+  - https://git.openstack.org/openstack/browbeat
+  - https://git.openstack.org/openstack/tripleo-ha-utils
   - https://git.openstack.org/openstack-infra/tripleo-ci
   - https://git.openstack.org/openstack-dev/devstack
   - https://git.openstack.org/openstack-infra/devstack-gate

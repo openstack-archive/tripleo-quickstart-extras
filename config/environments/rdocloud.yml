@@ -40,3 +40,8 @@ undercloud_local_mtu: "{{ mtu }}"
 overcloud_neutron_global_physnet_mtu: "{{ mtu }}"
 
 run_tripleo_validations: True
+
+# Browbeat settings
+cloud_name: rdocloud
+elastic_host: browbeat.test.com
+grafana_host: browbeat.test.com

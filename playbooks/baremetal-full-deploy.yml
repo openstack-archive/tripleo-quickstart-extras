@@ -11,4 +11,7 @@
 - include: baremetal-quickstart-extras.yml
 
 - include: overcloud-validate-ha.yml
-  when: validate_ha_overcloud is defined and validate_ha_overcloud|bool
+  when: validate_ha_overcloud|default(false)|bool
+
+- include: browbeat-minimal.yml
+  when: enable_minimal_browbeat|default(false)|bool
