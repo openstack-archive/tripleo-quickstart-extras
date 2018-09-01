@@ -215,16 +215,6 @@ rm -rf tripleo-quickstart tripleo-quickstart-extras
 git clone https://github.com/openstack/tripleo-quickstart
 git clone https://github.com/openstack/tripleo-quickstart-extras
 
-# cherry pick any zull changes affecting the cloned repos
-for CR in ${ZUUL_CHANGES//^/ }; do
-    if [[ "${CR}" =~ ^openstack\/(tripleo\-quickstart|tripleo\-quickstart\-extras):[^:]+:(refs\/changes\/[[:digit:]]+\/[[:digit:]]+\/[[:digit:]]+) ]]; then
-        pushd ${WORKSPACE}/${BASH_REMATCH[1]} >/dev/null
-        git fetch https://git.openstack.org/openstack/${BASH_REMATCH[1]} ${BASH_REMATCH[2]}
-        git cherry-pick --allow-empty FETCH_HEAD
-        popd >/dev/null
-    fi
-done
-
 # Set up a virtual env if requested
 if [ "$CREATE_VIRTUALENV" = "true" ]; then
     check_installed virtualenv
