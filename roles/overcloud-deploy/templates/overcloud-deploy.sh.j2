@@ -49,8 +49,6 @@ elif ! openstack stack list | grep -Eq '(CREATE|UPDATE)_COMPLETE'; then
     {%if release not in ['mitaka', 'liberty'] %}
     # get the failures list
     openstack stack failures list overcloud --long > {{ failed_deployment_list }} || true
-    # NOTE(emilien) "openstack overcloud failures" was introduced in Rocky
-    openstack overcloud failures >> {{ failed_deployment_list }} || true
     {% endif %}
 
     # get any puppet related errors
@@ -72,5 +70,10 @@ elif ! openstack stack list | grep -Eq '(CREATE|UPDATE)_COMPLETE'; then
     # We need to exit with 1 because of the above || true
     done
     exit 1
+{%if release in ['rocky', 'master'] %}
+elif ! openstack overcloud status | grep -Eq 'DEPLOY_SUCCESS'; then
+    # NOTE(emilien) "openstack overcloud failures" was introduced in Rocky
+    openstack overcloud failures >> {{ failed_deployment_list }} || true
+{% endif %}
 fi
 exit $status_code
