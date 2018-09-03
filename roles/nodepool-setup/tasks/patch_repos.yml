@@ -29,6 +29,7 @@
           cd $dir
           git fetch {{ repo_item }} $refs && git cherry-pick --allow-empty FETCH_HEAD
         fi
+        git rebase {{ stable_release|default('master', true) }}
       with_items: "{{ zuul_changes_list }}"
       when:
         - proj in item
