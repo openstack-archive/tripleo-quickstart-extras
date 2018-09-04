@@ -5,6 +5,4 @@
     - overcloud-update
   roles:
     - role: tripleo-upgrade
-      # TODO: Remove this once the fs containing the parameter is merged
-      container_registry_file: containers-default-parameters.yaml
       when: overcloud_update|default(false)|bool
