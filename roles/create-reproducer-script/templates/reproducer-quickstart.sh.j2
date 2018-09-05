@@ -330,7 +330,7 @@ export NODES_FILE="${NODES_FILE}"
 export TOCI_JOBTYPE="${TOCI_JOBTYPE}"
 export EXTRA_VARS="\$EXTRA_VARS {% if dlrn_hash is defined or ('undercloud' in hostvars and 'dlrn_hash' in hostvars['undercloud']) %}--extra-vars dlrn_hash_tag={{ hostvars['undercloud'].dlrn_hash }}{% endif %} "
 export REMAINING_TIME="$TIMEOUT"
-export PLAYBOOKS=$PLAYBOOKS
+export PLAYBOOKS="$PLAYBOOKS"
 EOF
 
 {% if stable_release != '' %}
