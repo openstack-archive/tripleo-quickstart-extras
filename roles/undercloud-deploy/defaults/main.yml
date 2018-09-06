@@ -91,6 +91,8 @@ undercloud_selinux_enabled: >-
    true
    {%- endif -%}
 
+undercloud_container_cli: docker
+
 # Define a custom t-h-t installation for UC
 undercloud_custom_tht_script: custom-tht-script.sh.j2
 undercloud_custom_tht_log: undercloud_custom_tht_script.log
