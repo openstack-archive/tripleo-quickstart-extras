@@ -2,7 +2,7 @@
 
 - name: Ensure DLRN package dependencies
   become: yes
-  yum: name={{ item }} state=present
+  package: name={{ item }} state=present
   with_items:
     - createrepo
     - gcc
@@ -15,6 +15,7 @@
     - sqlite
     - redhat-rpm-config
     - rpmdevtools
+    - libselinux-python
 
 - name: Create mock group
   become: yes
