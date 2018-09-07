@@ -61,6 +61,7 @@ Role Variables
   `public_physical_network`, `public_segmentation_id` -- parameters used to create the public floating IP network
 * `tempest_deployer_input_file`: <file path> The path to tripleo deployer input file which contains the pre configured
                                  configuration for the deployed cloud using TripleO.
+* `tempest_os_cloud`: <string> String name of the cloud to export as OS_CLOUD when using clouds.yaml rather than stackrc
 
 
 Skip tests file
