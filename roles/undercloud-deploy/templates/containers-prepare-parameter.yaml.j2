@@ -10,7 +10,6 @@ parameter_defaults:
     - kolla_version
     modify_vars:
       tasks_from: yum_update.yml
-      compare_host_packages: true
       yum_repos_dir_path: /etc/yum.repos.d
       update_repo: "{{ update_containers_repo }}"
 {% endif %}
