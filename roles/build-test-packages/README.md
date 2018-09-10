@@ -39,12 +39,28 @@ Role Variables
 * `dlrn_use_local_mirrors` -- use the local repo definitions from
   /etc/yum.repos.d/ for CentOS and DLRN while building packages; used upstream
 
+
+Example artg_change_list for just code changes:
 ```yaml
 artg_change_list:
     - host: "review.openstack.org"
       project: "openstack/tripleo-heat-templates"
       branch: "master"
       refspec: "refs/changes/1/123456/1"
+    - host: ...
+```
+
+Example artg_change_list for code changes and package changes:
+```yaml
+artg_change_list:
+    - host: "review.openstack.org"
+      project: "openstack/tripleo-heat-templates"
+      branch: "master"
+      refspec: "refs/changes/1/123456/1"
+      distgit:
+          host: "ssh://user@review.rdoproject.org"
+          project: "openstack/tripleo-heat-templates-distgit"
+          refspec: "refs/changes/1/123456/1"
     - host: ...
 ```
 
