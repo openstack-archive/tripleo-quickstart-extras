@@ -74,7 +74,7 @@ def _open_yaml(filename):
 
 
 def create_enable_file(certpem, keypem, source_dir, dest_dir, tht_release):
-    output_dict = _open_yaml("{}environments/enable-tls.yaml".format(source_dir))
+    output_dict = _open_yaml("{}environments/ssl/enable-tls.yaml".format(source_dir))
 
     if tht_release == 'mitaka':
         for key in output_dict["parameter_defaults"]["EndpointMap"]:
