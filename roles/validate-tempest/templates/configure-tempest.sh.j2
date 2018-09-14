@@ -17,7 +17,7 @@ sudo rm -rf {{ working_dir }}/tempest_data
 
 
 # Cloud Credentials
-{% if tempest_os_cloud is defined and tempest_os_cloud != '' %}
+{% if tempest_os_cloud != '' %}
 export OS_CLOUD={{ tempest_os_cloud }}
 {% else %}
 source {{ rc_file }}
@@ -95,7 +95,7 @@ popd
 ## ::
 export TEMPESTCONF="{{ tempestconf }}"
 
-{% if not tempest_os_cloud != '' %}
+{% if tempest_os_cloud == '' %}
 source {{ rc_file }}
 {% endif %}
 
@@ -131,7 +131,7 @@ $TEMPESTCONF --out etc/tempest.conf \
   --deployer-input {{ working_dir }}/{{ tempest_deployer_input_file }} \
   --network-id $public_net_id \
   {% endif %}
-  {% if tempest_os_cloud %}
+  {% if tempest_os_cloud != '' %}
   --os-cloud {{ tempest_os_cloud }} \
   {% endif %}
   --image {{ tempest_test_image_path }} \
