@@ -110,10 +110,6 @@ for item in $items; do
     count=$((count+1))
 done
 
-# Temporary step to avoid introspection failure
-# Workaround for: https://bugs.launchpad.net/tripleo/+bug/1649350
-sudo mistral-db-manage populate
-
 {% endif %}
 
 {% if step_root_device_hints|bool %}
@@ -135,10 +131,6 @@ for ironic_node in $ironic_nodes; do
         fi
     {% endfor %}
 done
-
-# Temporary step to avoid introspection failure
-# Workaround for: https://bugs.launchpad.net/tripleo/+bug/1649350
-sudo mistral-db-manage populate
 
 {% endif %}
 
