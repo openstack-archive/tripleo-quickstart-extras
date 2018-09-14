@@ -43,17 +43,8 @@
     msg: "WARNING: Unable to build {{ artg_change.project }}. No pkg found."
   when: project_name_mapped.stdout == ''
 
-- name: Ensure artg_rdo_packages is defined
-  set_fact:
-    artg_rdo_packages: []
-  when: artg_rdo_packages is not defined
-
 - when: project_name_mapped.stdout != ''
   block:
-    - name: Append project name to package list
-      set_fact:
-        artg_rdo_packages: '{{ artg_rdo_packages }} + {{ [ project_name_mapped.stdout ] }}'
-
     - name: Create data directory if doesn't exist yet
       file: path="{{ build_repo_dir }}/DLRN/data/" state=directory
 
@@ -104,5 +95,4 @@
       args:
           chdir: '{{ build_repo_dir }}/DLRN'
       register: repo_built
-      when: artg_build_one|bool
 

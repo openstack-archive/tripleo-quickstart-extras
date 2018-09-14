@@ -32,9 +32,6 @@ Role Variables
   to skip projects that DLRN cannot build.
 * `artg_repos_dir` -- Root directory which contains project directories with
    sources for build.
-* `artg_build_one` -- Boolean to indicate if dlrn should build one package at a
-   time. If set to false, dlrn will be run to build all the required packages
-   in one invocation of dlrn.
 * `dlrn_target` -- Target for the DLRN build Can be something like centos or
    fedora. Defaults to centos.
 * `dlrn_baseurl` -- URL used by DLRN to get the repo definitions when building
