@@ -287,6 +287,12 @@ docker_registry_mirror = {{undercloud_docker_registry_mirror}}
 # docker_registry_mirror =
 {% endif %}
 
+{% if undercloud_docker_insecure_registries is defined and undercloud_docker_insecure_registries %}
+docker_insecure_registries= {{undercloud_docker_insecure_registries}}
+{% else %}
+#docker_insecure_registries=
+{% endif %}
+
 # additional env files for undercloud, used with containers
 
 {% if undercloud_container_images_file is defined and containerized_undercloud|bool %}
