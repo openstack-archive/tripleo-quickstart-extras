@@ -15,8 +15,13 @@ sudo rm -rf {{ tempest_dir }}
 # Remove tempest_data directory created before running tempest container
 sudo rm -rf {{ working_dir }}/tempest_data
 
-# Source rc file
+
+# Cloud Credentials
+{% if tempest_os_cloud is defined and tempest_os_cloud != '' %}
+export OS_CLOUD={{ tempest_os_cloud }}
+{% else %}
 source {{ rc_file }}
+{% endif %}
 
 ## Create Tempest resources
 ## ------------------------
@@ -90,8 +95,9 @@ popd
 ## ::
 export TEMPESTCONF="{{ tempestconf }}"
 
-# Source rc file for tempestconf generation
+{% if not tempest_os_cloud != '' %}
 source {{ rc_file }}
+{% endif %}
 
 {% if tempest_overcloud|bool %}
 # Get public net id
@@ -104,7 +110,11 @@ public_net_id=$(openstack network show {{ public_net_name }} -f value -c id)
 {% endif %}
 
 {% if not tempest_overcloud|bool %}
+# query the endpoint if not set (e.g. clouds.yaml)
+export OS_AUTH_URL=${OS_AUTH_URL:-$(openstack endpoint list --service=identity --interface=public -c URL -f value)}
 {% if release not in ['newton', 'ocata'] %}
+# set the itentity api version if not set (e.g. clouds.yaml)
+export OS_IDENTITY_API_VERSION=${OS_IDENTITY_API_VERSION:-3}
 # OS_AUTH_URL does not contains identity api version in stackrc from
 # Pike onwards.
 export OS_AUTH_URL="$OS_AUTH_URL/v$OS_IDENTITY_API_VERSION"
@@ -120,6 +130,9 @@ $TEMPESTCONF --out etc/tempest.conf \
   {% if tempest_overcloud|bool %}
   --deployer-input {{ working_dir }}/{{ tempest_deployer_input_file }} \
   --network-id $public_net_id \
+  {% endif %}
+  {% if tempest_os_cloud %}
+  --os-cloud {{ tempest_os_cloud }} \
   {% endif %}
   --image {{ tempest_test_image_path }} \
   --debug \

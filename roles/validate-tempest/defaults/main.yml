@@ -69,3 +69,4 @@ tempest_test_image_path: http://download.cirros-cloud.net/{{ tempest_test_image_
 # A dict containing values to be removed from tempest.conf
 tempest_conf_removal:
   network-feature-enabled.api_extensions: dvr
+tempest_os_cloud: ""
