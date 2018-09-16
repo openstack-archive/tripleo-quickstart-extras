@@ -67,6 +67,18 @@ tempest_test_image_version: 0.3.5
 tempest_test_image_name: cirros-{{ tempest_test_image_version }}-x86_64-disk.img
 tempest_test_image_path: http://download.cirros-cloud.net/{{ tempest_test_image_version }}/{{ tempest_test_image_name }}
 # A dict containing values to be removed from tempest.conf
-tempest_conf_removal:
+tempest_conf_removal: >-
+  {% if release is in ['queens'] -%}
+  {{ tempest_conf_removal_queens }}
+  {%- else -%}
+  {{ tempest_conf_removal_all }}
+  {%- endif -%}
+
+tempest_conf_removal_all:
+  network-feature-enabled.api_extensions: dvr
+
+tempest_conf_removal_queens:
+  volume.min_microversion: 3.0
+  volume.max_microversion: 3.50
   network-feature-enabled.api_extensions: dvr
 tempest_os_cloud: ""
