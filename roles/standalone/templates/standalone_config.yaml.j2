@@ -1,17 +1,6 @@
 parameter_defaults:
   CertmongerCA: local
   CloudName: {{ standalone_ip }}
-  ContainerImagePrepare:
-  - set:
-      ceph_image: daemon
-      ceph_namespace: docker.io/ceph
-      ceph_tag: v3.1.0-stable-3.1-luminous-centos-7-x86_64
-      name_prefix: centos-binary-
-      name_suffix: ''
-      namespace: docker.io/{{ docker_registry_namespace }}
-      neutron_driver: null
-      tag: {{ dlrn_hash_tag }}
-    tag_from_label: rdo_version
   ControlPlaneStaticRoutes: []
   Debug: true
   DeploymentUser: {{ undercloud_user }}

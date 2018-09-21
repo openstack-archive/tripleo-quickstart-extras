@@ -18,6 +18,10 @@ Role Variables
 - standalone_ip: <'192.168.24.1'> --  The IP address of the standalone deployment
 - standalone_interface: <'br-ex'> --  The interface for the standalone deployment
 
+- standalone_container_prep_options: <''> -- additional parameters for the container prep command
+- standalone_container_prep_script: <'standalone-container-prep.sh.j2'> -- The script name use to perform container prep actions
+- standalone_container_prep_log: <'standalone_container_prep.log'> --  The log of the container prepa ctions
+
 - standalone_deploy_script: <'standalone.sh.j2'> -- The script name use to deploy the standalone server
 - standalone_deploy_log: <'standalone_deploy.log'> --  The log of the deployment
 

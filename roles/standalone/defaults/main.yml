@@ -5,6 +5,11 @@ standalone_network_prefix: 24
 standalone_ip: 192.168.24.1
 standalone_interface: br-ex
 
+# container prep script
+standalone_container_prep_options: ''
+standalone_container_prep_script: standalone-container-prep.sh.j2
+standalone_container_prep_log: standalone_container_prep.log
+
 # deploy script
 standalone_deploy_script: standalone.sh.j2
 standalone_deploy_log: standalone_deploy.log
