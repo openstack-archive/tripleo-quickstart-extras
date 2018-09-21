@@ -154,6 +154,31 @@
     - item.project not in artg_skipped_projects
     - release in item.branch
 
+- name: Run DLRN
+  shell: >
+    set +e;
+    source {{ build_repo_dir }}/dlrn-venv/bin/activate;
+    while true; do
+        dlrn --config-file projects.ini --head-only --package-name {{ artg_rdo_packages|join(' --package-name ') }} --local --info-repo rdoinfo --dev --order;
+        if [ $? -eq 0 ]; then
+            # SUCCESS
+            break;
+        elif [ $? -eq 1 ]; then
+            # FAILED
+            exit 1;
+        elif [ $? -eq 2 ]; then
+            # RETRY
+            continue;
+        fi;
+        # Unexpected DLRN return code
+        exit $?;
+    done;
+  args:
+      chdir: '{{ build_repo_dir }}/DLRN'
+  register: repo_built_multi
+  when: not artg_build_one|bool
+
+
 - block:
     - name: Create a directory to hold the rpms
       file:
@@ -175,9 +200,9 @@
       shell: 'tar czf {{ artg_compressed_gating_repo }} gating_repo'
       args:
         chdir: '{{ build_repo_dir }}'
-  when:
-    - repo_built is defined
-    - repo_built.skipped is not defined
+  when: >
+    (repo_built is defined and repo_built.skipped is not defined) or
+    (repo_built_multi is defined and repo_built_multi.skipped is not defined)
 
 - name: Clean up
   file:
