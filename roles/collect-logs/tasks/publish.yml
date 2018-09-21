@@ -32,6 +32,17 @@
     {% if artcl_gzip_only|bool %}gzip --best --recursive {{ artcl_collect_dir }}/ara_oooq_root;{% endif %}
   ignore_errors: yes
 
+- name: Generate and retrieve the ARA static playbook report for OC deploy
+  become: yes
+  shell: >
+    {{ local_working_dir }}/bin/ara generate html {{ local_working_dir }}/ara_oooq_oc;
+    {{ local_working_dir }}/bin/ara task list --all -f json > {{ artcl_collect_dir }}/ara.oooq.oc.json;
+    cp -r {{ local_working_dir }}/ara_oooq_oc {{ artcl_collect_dir }}/;
+    {% if artcl_gzip_only|bool %}gzip --best --recursive {{ artcl_collect_dir }}/ara_oooq_oc;{% endif %}
+  ignore_errors: yes
+  environment:
+    ARA_DATABASE: 'sqlite:///{{ ara_overcloud_db_path }}'
+
 - include: ara_graphite.yml
   when: ara_graphite_server is defined
   ignore_errors: yes

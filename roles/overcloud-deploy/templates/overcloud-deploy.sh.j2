@@ -30,7 +30,7 @@ done
 
 ## * Deploy the overcloud!
 ## ::
-openstack overcloud deploy \
+openstack overcloud deploy {% if release is not in ['newton', 'ocata', 'pike', 'queens', 'rocky'] %}--override-ansible-cfg {{ working_dir }}/custom_ansible.cfg{% endif %} \
     --templates {{overcloud_templates_path}} \
     {{ deploy_args | regex_replace("\n", " ") }} \
     "$@" && status_code=0 || status_code=$?

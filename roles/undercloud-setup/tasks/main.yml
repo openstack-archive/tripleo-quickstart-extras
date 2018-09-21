@@ -30,5 +30,3 @@
   include: ansible_cfg.yml
   when:
     - undercloud_ansible_cfg|bool
-    - containerized_undercloud|bool
-

@@ -160,6 +160,9 @@ overcloud_services:
     services:
     - OS::TripleO::Services::Kernel
 
+ara_overcloud_db_path: "/var/lib/mistral/overcloud/ara_overcloud.sqlite"
+override_ansiblecfg: true
+
 # Use to populate the resource registry for nic configs
 resource_registry_args:
   OS::TripleO::BlockStorage::Net::SoftwareConfig: nic-configs/cinder-storage.yaml
