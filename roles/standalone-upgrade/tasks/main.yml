@@ -1,0 +1,32 @@
+---
+# tasks file for all_in_one upgrade
+
+# standalone params
+- name: Create the standalone params for upgrade
+  template:
+    src: "{{ standalone_config }}"
+    dest: "{{ working_dir}}/standalone_parameters_upgrade.yaml"
+    mode: 0755
+
+- name: Create container parameters script for upgrade
+  template:
+    src: "{{ standalone_container_prep_script }}"
+    dest: "{{ working_dir }}/standalone-container-prep-upgrade.sh"
+    mode: "0755"
+
+- name: Run container prepare for upgrade
+  shell: >
+    set -o pipefail &&
+    {{ working_dir }}/standalone-container-prep-upgrade.sh 2>&1 {{ timestamper_cmd }} > {{ working_dir }}/{{ standalone_container_prep_log }}
+
+- name: Create the upgrade command for standalone
+  template:
+    src: "{{ standalone_upgrade_script }}"
+    dest: "{{ working_dir}}/standalone-upgrade.sh"
+    mode: 0755
+
+- name: Upgrade the standalone
+  shell: >
+    set -o pipefail &&
+    {{ working_dir }}/standalone-upgrade.sh 2>&1 {{ timestamper_cmd }} > {{ working_dir }}/{{ standalone_upgrade_log }}
+

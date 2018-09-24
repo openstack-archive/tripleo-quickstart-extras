@@ -1,0 +1,63 @@
+---
+# Opening up repo-setup as cached variables can cause issue, see
+# https://bugs.launchpad.net/tripleo/+bug/1795367
+- name: Standalone upgrade repos setup and host upgrade
+  hosts: undercloud
+  tasks:
+    - name: Standalone upgrade get new dlrn hash.
+      include_role:
+        name: repo-setup
+        tasks_from: get-dlrn-hash
+
+    - name: Standalone upgrade get new dlrn hash.
+      include_role:
+        name: repo-setup
+        tasks_from: get-dlrn-hash-newest
+
+    - name: Standalone upgrade generate new dlrn repo-setup script.
+      include_role:
+        name: repo-setup
+        tasks_from: create-repo-script
+      vars:
+        repo_setup_script: repo_setup_upgrade.sh
+    # The next task triggers the yum upgrade command in as
+    # repo_setup_run_update is true in release files by default.
+    - name: Standalone upgrade setup new repos
+      include_role:
+        name: repo-setup
+        tasks_from: setup_repos
+      vars:
+        repo_setup_log: repo_setup_upgrade.log
+        repo_setup_script: repo_setup_upgrade.sh
+
+  tags:
+    - standalone-upgrade
+
+# This is what is gating the patch in the N version in a N-1->N
+# upgrade.
+- name: Standalone upgrade runs DLRN gate role and install repo
+  hosts: undercloud
+  vars:
+    artg_compressed_gating_repo: "${HOME}/gating_repo.tar.gz"
+  roles:
+    - build-test-packages
+    - { role: install-built-repo, when: compressed_gating_repo is defined }
+  tags:
+    - standalone-upgrade
+
+- name: Standalone Upgrade
+  hosts: undercloud
+  vars:
+    standalone_libvirt_type: "{{ virt_type|default('qemu') }}"
+  roles:
+    - standalone-upgrade
+  tags:
+    - standalone-upgrade
+
+- name: Validate the Standalone upgrade
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - { role: validate-tempest, when: run_tempest|bool }
+  tags:
+    - standalone-upgrade

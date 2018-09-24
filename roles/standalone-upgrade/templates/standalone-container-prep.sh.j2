@@ -1,0 +1,14 @@
+# generate the default container prepare statement
+openstack tripleo container image prepare default \
+  --output-env-file {{ working_dir }}/containers-prepare-parameters-upgrade.yaml {{ standalone_container_prep_options }}
+
+{% if docker_registry_namespace != '' %}
+# Make CI specific namespce change to the container parameters
+sed -Ei 's/^([\t ]+)namespace: [a-z./]*/\1namespace: docker.io\/{{ docker_registry_namespace }}/' \
+  "{{ working_dir }}/containers-prepare-parameters-upgrade.yaml"
+{% endif %}
+{% if dlrn_hash_tag != '' %}
+# Make CI specific tag change to the container params
+sed -Ei 's/^([\t ]+)tag: [a-z-]+/\1tag: {{ dlrn_hash_tag }}/' \
+  "{{ working_dir }}/containers-prepare-parameters-upgrade.yaml"
+{% endif %}

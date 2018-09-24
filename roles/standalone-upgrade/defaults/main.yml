@@ -1,0 +1,22 @@
+---
+standalone_config: standalone_config.yaml.j2
+standalone_network: 192.168.24
+standalone_network_prefix: 24
+standalone_ip: 192.168.24.1
+standalone_interface: br-ex
+
+# container prep script
+standalone_container_prep_options: ''
+standalone_container_prep_script: standalone-container-prep.sh.j2
+standalone_container_prep_log: standalone_container_prep_upgrade.log
+
+# Upgrade script
+standalone_upgrade_script: standalone.sh.j2
+standalone_upgrade_log: standalone_upgrade.log
+
+# deployment role
+standalone_role: Standalone.yaml
+
+standalone_libvirt_type: kvm
+
+standalone_selinux_mode: permissive
