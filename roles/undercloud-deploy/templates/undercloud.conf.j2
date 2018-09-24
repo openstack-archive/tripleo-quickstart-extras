@@ -24,10 +24,12 @@ undercloud_hostname = {{undercloud_undercloud_hostname}}
 #undercloud_hostname = <None>
 {% endif %}
 
+{% if release in ['mitaka', 'newton', 'ocata', 'pike'] %}
 # Network CIDR for the Neutron-managed network for Overcloud
 # instances. This should be the subnet used for PXE booting. (string
 # value)
 network_cidr = {{undercloud_network_cidr}}
+{% endif %}
 
 # IP information for the interface on the Undercloud that will be
 # handling the PXE boots and DHCP for Overcloud instances.  The IP
@@ -38,11 +40,13 @@ local_ip = {{undercloud_local_ip|default(
     '%s/%s' % (undercloud_network_cidr|nthhost(1),
     undercloud_network_cidr.split('/').1))}}
 
+{% if release in ['mitaka', 'newton', 'ocata', 'pike'] %}
 # Network gateway for the Neutron-managed network for Overcloud
 # instances. This should match the local_ip above when using
 # masquerading. (string value)
 network_gateway = {{undercloud_network_gateway|default(
     undercloud_network_cidr|nthhost(1))}}
+{% endif %}
 
 # MTU, set neutron on the undercloud to match mtu of the nics
 # (string value)
@@ -145,11 +149,14 @@ local_interface = {{undercloud_local_interface}}
 #local_interface = eth1
 {% endif %}
 
+{% if release in ['mitaka', 'newton', 'ocata', 'pike'] %}
 # Network that will be masqueraded for external access, if required.
 # This should be the subnet used for PXE booting. (string value)
 masquerade_network = {{undercloud_masquerade_network|default(
     undercloud_network_cidr)}}
+{% endif %}
 
+{% if release in ['mitaka', 'newton', 'ocata', 'pike'] %}
 # Start of DHCP allocation range for PXE and DHCP of Overcloud
 # instances. (string value)
 dhcp_start = {{undercloud_dhcp_start|default(
@@ -159,6 +166,7 @@ dhcp_start = {{undercloud_dhcp_start|default(
 # instances. (string value)
 dhcp_end = {{undercloud_dhcp_end|default(
     undercloud_network_cidr|nthhost(30))}}
+{% endif %}
 
 # Path to hieradata override file. If set, the file will be copied
 # under /etc/puppet/hieradata and set as the first file in the hiera
@@ -175,6 +183,7 @@ inspection_interface = {{undercloud_inspection_interface}}
 #inspection_interface = br-ctlplane
 {% endif %}
 
+{% if release in ['mitaka', 'newton', 'ocata', 'pike'] %}
 # Temporary IP range that will be given to nodes during the inspection
 # process.  Should not overlap with the range defined by dhcp_start
 # and dhcp_end, but should be in the same network. (string value)
@@ -182,6 +191,7 @@ inspection_interface = {{undercloud_inspection_interface}}
 inspection_iprange = {{undercloud_inspection_iprange|default(
     '%s,%s' % (undercloud_network_cidr|nthhost(100),
     undercloud_network_cidr|nthhost(120)))}}
+{% endif %}
 
 # Whether to enable extra hardware collection during the inspection
 # process.
@@ -345,6 +355,8 @@ roles_file = {{undercloud_roles_data}}
 clean_nodes = {{undercloud_clean_nodes}}
 {% endif %}
 
+
+{% if release in ['mitaka', 'newton', 'ocata', 'pike'] %}
 [auth]
 
 #
@@ -526,8 +538,58 @@ undercloud_swift_hash_suffix = {{undercloud_undercloud_swift_hash_suffix}}
 {% else %}
 #undercloud_swift_hash_suffix = <None>
 {% endif %}
+{% endif %}
 
-{% if ctlplane_masquerade|default(false)|bool %}
+{% if release not in ['mitaka', 'newton', 'ocata', 'pike'] %}
+# List of routed network subnets for provisioning and introspection.
+# Comma separated list of names/tags. For each network a section/group
+# needs to be added to the configuration file with these parameters
+# set: cidr, dhcp_start, dhcp_end, inspection_iprange, gateway and
+# masquerade_network. Note: The section/group must be placed before or
+# after any other section. (See the example section [ctlplane-subnet]
+# in the sample configuration file.) (list value)
+subnets = ctlplane-subnet
+
+# Name of the local subnet, where the PXE boot and DHCP interfaces for
+# overcloud instances is located. The IP address of the
+# local_ip/local_interface should reside in this subnet. (string
+# value)
+local_subnet = ctlplane-subnet
+
 [ctlplane-subnet]
-masquerade={{ ctlplane_masquerade }}
+
+# Network CIDR for the Neutron-managed subnet for Overcloud instances.
+# (string value)
+# Deprecated group/name - [DEFAULT]/network_cidr
+cidr = {{undercloud_network_cidr}}
+
+# Start of DHCP allocation range for PXE and DHCP of Overcloud
+# instances on this network. (string value)
+# Deprecated group/name - [DEFAULT]/dhcp_start
+dhcp_start = {{undercloud_dhcp_start|default(
+    undercloud_network_cidr|nthhost(5))}}
+
+# End of DHCP allocation range for PXE and DHCP of Overcloud instances
+# on this network. (string value)
+# Deprecated group/name - [DEFAULT]/dhcp_end
+dhcp_end = {{undercloud_dhcp_end|default(
+    undercloud_network_cidr|nthhost(30))}}
+
+# Network gateway for the Neutron-managed network for Overcloud
+# instances on this network. (string value)
+# Deprecated group/name - [DEFAULT]/network_gateway
+gateway = {{undercloud_network_gateway|default(
+    undercloud_network_cidr|nthhost(1))}}
+
+# Temporary IP range that will be given to nodes on this network
+# during the inspection process. Should not overlap with the range
+# defined by dhcp_start and dhcp_end, but should be in the same ip
+# subnet. (string value)
+# Deprecated group/name - [DEFAULT]/inspection_iprange
+inspection_iprange = {{undercloud_inspection_iprange|default(
+    '%s,%s' % (undercloud_network_cidr|nthhost(100),
+    undercloud_network_cidr|nthhost(120)))}}
+
+# The network will be masqueraded for external access. (boolean value)
+masquerade={{ ctlplane_masquerade|default(false) }}
 {% endif %}
