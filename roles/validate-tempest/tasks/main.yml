@@ -24,6 +24,11 @@
   tags:
     - run-tempest
 
+- include: tempest-results.yml
+  when: run_tempest|bool
+  tags:
+    - tempest-results
+
 - include: stackviz.yml
   when: run_tempest|bool
   tags:

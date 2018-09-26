@@ -82,3 +82,4 @@ tempest_conf_removal_queens:
   volume.max_microversion: 3.50
   network-feature-enabled.api_extensions: dvr
 tempest_os_cloud: ""
+stackviz_tarball: "https://tarballs.openstack.org/package-stackviz-element/stackviz-latest.tar.gz"

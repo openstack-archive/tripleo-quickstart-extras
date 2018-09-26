@@ -1,44 +1,8 @@
 ---
-- name: Check for .stestr directory
-  stat:
-    path: "{{ working_dir }}/tempest/.stestr"
-  register: testr_dir
-
-- name: Define testr facts
-  set_fact:
-    testr_command: testr
-    testr_dir: .testrepository
-  when: not testr_dir.stat.exists
-
-- name: Define stestr facts
-  set_fact:
-    testr_command: stestr
-    testr_dir: .stestr
-  when: testr_dir.stat.exists
-
-- name: Cloning stackviz from openstack
-  git:
-    repo: git://git.openstack.org/openstack/stackviz
-    dest: "{{ working_dir }}/stackviz"
-    version: master
-
-- name: Copying stackviz static files
-  synchronize:
-      src: stackviz/
-      dest: "{{ working_dir }}/stackviz_static"
-      use_ssh_args: true
-
-- name: Install pip
-  easy_install:
-    name: pip
-    state: present
-  become: true
-
 - name: Install stackviz
   pip:
-    name: "."
-    chdir: "{{ working_dir }}/stackviz"
-  become: true
+    name: "{{ stackviz_tarball }}"
+    virtualenv: "{{ working_dir }}/tempest/.stackviz"
 
 - name: Check if dstats file exists
   stat: path=/var/log/extra/dstat-csv.log
@@ -57,14 +21,18 @@
     recurse: yes
   become: true
 
-- name: Collecting data from tempest
+- name: Copy stackviz static file to home directory
   shell: >
-    set -o pipefail &&
-    {% if tempest_format == 'venv' %}source {{ working_dir }}/tempest_git/.venv/bin/activate; {% endif %}
-    {{ testr_command }} last --subunit | subunit-1to2 | stackviz-export {{ tempest_dstat_opt | default('') }} --env --stdin {{ working_dir }}/stackviz_static/data
+    cp -r "{{ working_dir }}/tempest/.stackviz/share/stackviz-html" "{{ working_dir }}/stackviz"
+
+- name: Collecting data from tempest
+  shell: |
+    set -o pipefail
+    source "{{ working_dir }}/tempest/.stackviz/bin/activate"
+    stackviz-export {{ tempest_dstat_opt | default('') }} --env -f {{ working_dir }}/tempest/testrepository.subunit {{ working_dir }}/stackviz/data
   args:
       chdir: "{{ working_dir }}/tempest"
 
 - name: Moving stackviz to /var/log/extra
-  shell: mv {{ working_dir }}/stackviz_static/ /var/log/extra/stackviz
+  shell: mv {{ working_dir }}/stackviz/ /var/log/extra/stackviz
   become: true

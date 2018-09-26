@@ -52,6 +52,12 @@
   package: name=python-stestr state=present
   when: tempest_format in ['container', 'packages'] and release not in ['newton', 'ocata']
 
+- name: Install pip
+  easy_install:
+    name: pip
+    state: present
+  become: true
+
 - ignore_errors: true
   block:
     - name: Copying bugcheck files
