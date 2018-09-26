@@ -58,6 +58,21 @@ options:
       - Whether to send only successful tasks, ignoring skipped and failed,
         by default True.
     required: True
+  mapped_fields:
+    description:
+      - Whether to use configured static map of fields and tasks,
+        by default True.
+    required: False
+  standard_fields:
+    description:
+      - Whether to send standard fields of each job, i.e. times,
+        by default True.
+    required: False
+  longest_tasks:
+    description:
+      - Whether to to print only longest tasks and how many,
+        by default 0.
+    required: False
 '''
 
 EXAMPLES = '''
@@ -76,55 +91,24 @@ EXAMPLES = '''
     measurement: test
     data_file: /tmp/test_data
     only_successful_tasks: true
+    mapped_fields: false
+    standard_fields: false
+    longest_tasks: 15
+  when: ara_data.stdout != "[]"
 '''
-import ast
-import datetime
-import os
-import requests
 
-from requests.auth import HTTPBasicAuth
+import ast  # noqa pylint: disable=C0413
+import datetime  # noqa pylint: disable=C0413
+import os  # noqa pylint: disable=C0413
+import re  # noqa pylint: disable=C0413
+import requests  # noqa pylint: disable=C0413
+
+from requests.auth import HTTPBasicAuth  # noqa pylint: disable=C0413
 
 
-SCHEME = (
-    # measurement
-    '{measure},'
-    # tags
-    'branch={branch},'
-    'cloud={cloud},'
-    'pipeline={pipeline},'
-    'toci_jobtype={toci_jobtype} '
-    # fields
-    'job_duration={job_duration},'
-    'logs_size={logs_size},'
-    'testenv_prepare={testenv_prepare},'
-    'zuul_host_prepare={zuul_host_prepare},'
-    'quickstart_prepare={quickstart_prepare},'
-    'undercloud_install={undercloud_install},'
-    'prepare_images={prepare_images},'
-    'images_update={images_update},'
-    'images_build={images_build},'
-    'containers_prepare={containers_prepare},'
-    'overcloud_deploy={overcloud_deploy},'
-    'pingtest={pingtest},'
-    'tempest_run={tempest_run},'
-    'undercloud_reinstall={undercloud_reinstall},'
-    'overcloud_delete={overcloud_delete} '
-    '{timestamp}'
-)
+SCHEME = '{measure},{tags} {fields} {timestamp}'
 
-DATA = {
-    'measure': '',
-    # tags
-    'branch': os.environ.get('STABLE_RELEASE') or 'master',
-    'cloud': os.environ.get('NODEPOOL_PROVIDER', 'N/A'),
-    'pipeline': 'N/A',  # implemented in function
-    'toci_jobtype': os.environ.get('TOCI_JOBTYPE', 'N/A'),
-    # fields
-    'job_duration': 0,  # implemented in function
-    'logs_size': 0,  # not implemented
-    'testenv_prepare': os.environ.get('STATS_TESTENV', 0),
-    'zuul_host_prepare': 0,  # implemented in function
-    'quickstart_prepare': os.environ.get('STATS_OOOQ', 0),
+CUSTOM_MAP = {
     'undercloud_install': ["undercloud-deploy : Install the undercloud"],
     'prepare_images': [
         "overcloud-prep-images : Prepare the overcloud images for deploy"],
@@ -144,55 +128,195 @@ DATA = {
         "validate-undercloud : Reinstall the undercloud to check idempotency"],
     'overcloud_delete': [
         "overcloud-delete : check for delete command to complete or fail"],
-    'timestamp': int(datetime.datetime.utcnow().strftime("%s")),
+    'overcloud_upgrade': ["overcloud-upgrade : Upgrade the overcloud",
+                          "tripleo-upgrade : run docker upgrade converge step",
+                          "tripleo-upgrade : run docker upgrade composable "
+                          "step"],
+    'undercloud_upgrade': ["tripleo-upgrade : upgrade undercloud"],
 }
 
 
-def task_length(x):
-    '''Calculate task length in seconds from "%H:%M:%S" format
+class InfluxStandardTags(object):
 
-    :param x: datetime string
-    :return: number of seconds spent for task
-    '''
-    t = datetime.datetime.strptime(x, "%H:%M:%S")
-    return datetime.timedelta(hours=t.hour, minutes=t.minute,
-                              seconds=t.second).total_seconds()
+    '''InfluxStandardTags contains:
 
+        calculation of standard job describing parameters as:
+         * release
+         * nodepool provider cloud
+         * zuul pipeline name
+         * toci_jobtype
+       and rendering them in tags template
 
-def translate(measure, json_data, only_ok):
-    '''Create data to send to InfluxDB server in format SCHEME
-
-    Fields keys are taken from ARA data according to task names.
-
-    :param measure: name of InfluxDB measurement
-    :param json_data: JSON data with tasks and times
-    :param: only_ok: boolean, where to count only successful tasks
-    :return: full InfluxDB scheme
     '''
 
-    DATA['measure'] = measure
-    if os.environ.get('START_JOB_TIME'):
-        DATA['job_duration'] = int(
-            datetime.datetime.utcnow().strftime("%s")) - int(
-            os.environ.get('START_JOB_TIME'))
-    if os.environ.get('ZUUL_PIPELINE'):
-        if 'check' in os.environ['ZUUL_PIPELINE']:
-            DATA['pipeline'] = 'check'
-        elif 'gate' in os.environ['ZUUL_PIPELINE']:
-            DATA['pipeline'] = 'gate'
-        elif 'periodic' in os.environ['ZUUL_PIPELINE']:
-            DATA['pipeline'] = 'periodic'
-    if (os.environ.get('DEVSTACK_GATE_TIMEOUT') and
-            os.environ.get('REMAINING_TIME')):
-        DATA['zuul_host_prepare'] = (int(
-            os.environ['DEVSTACK_GATE_TIMEOUT']) - int(
-            os.environ['REMAINING_TIME'])) * 60
+    def branch(self):
+        return os.environ.get('STABLE_RELEASE') or 'master'
 
-    data = ast.literal_eval(json_data)
-    # create a dictionary with durations for each task
-    # every task could run multiple times
+    def cloud(self):
+        return os.environ.get('NODEPOOL_PROVIDER', 'null')
+
+    def pipeline(self):
+        if os.environ.get('ZUUL_PIPELINE'):
+            if 'check' in os.environ['ZUUL_PIPELINE']:
+                return 'check'
+            elif 'gate' in os.environ['ZUUL_PIPELINE']:
+                return 'gate'
+            elif 'periodic' in os.environ['ZUUL_PIPELINE']:
+                return 'periodic'
+        return 'null'
+
+    def toci_jobtype(self):
+        return os.environ.get('TOCI_JOBTYPE', 'null')
+
+    def render(self):
+        return ('branch=%s,'
+                'cloud=%s,'
+                'pipeline=%s,'
+                'toci_jobtype=%s') % (
+                    self.branch(),
+                    self.cloud(),
+                    self.pipeline(),
+                    self.toci_jobtype(),
+        )
+
+
+class InfluxStandardFields(object):
+    '''InfluxStandardFields contains:
+
+        calculation of time of job steps as:
+         * whole job duration
+         * testing environment preparement
+         * quickstart files and environment preparement
+         * zuul host preparement
+       and rendering them in template
+
+    '''
+
+    def job_duration(self):
+        if os.environ.get('START_JOB_TIME'):
+            return int(
+                datetime.datetime.utcnow().strftime("%s")) - int(
+                os.environ.get('START_JOB_TIME'))
+        return 0
+
+    def logs_size(self):
+        # not implemented
+        return 0
+
+    def timestamp(self):
+        return datetime.datetime.utcnow().strftime("%s")
+
+    def testenv_prepare(self):
+        return os.environ.get('STATS_TESTENV', 0)
+
+    def quickstart_prepare(self):
+        return os.environ.get('STATS_OOOQ', 0)
+
+    def zuul_host_prepare(self):
+        if (os.environ.get('DEVSTACK_GATE_TIMEOUT') and
+                os.environ.get('REMAINING_TIME')):
+            return (int(
+                os.environ['DEVSTACK_GATE_TIMEOUT']) - int(
+                os.environ['REMAINING_TIME'])) * 60
+        return 0
+
+    def render(self):
+        return ('job_duration=%d,'
+                'logs_size=%d,'
+                'testenv_prepare=%s,'
+                'quickstart_prepare=%s,'
+                'zuul_host_prepare=%d,'
+                ) % (
+                    self.job_duration(),
+                    self.logs_size(),
+                    self.testenv_prepare(),
+                    self.quickstart_prepare(),
+                    self.zuul_host_prepare()
+        )
+
+
+class InfluxConfiguredFields(object):
+    '''InfluxConfiguredFields contains calculation:
+
+         * whole job duration
+         * testing environment preparement
+         * quickstart files and environment preparement
+         * zuul host preparement
+       and rendering them in template
+    '''
+    def __init__(self, match_map, json_data, only_ok=True):
+        """Set up data for configured field
+
+            :param match_map {dict} -- Map of tasks from ansible playbook to
+                                        names of data fields in influxDB.
+            :param json_data: {dict} -- JSON data generated by ARA
+            :param only_ok=True: {bool} -- to count only passed tasks
+        """
+        self.map = match_map
+        self.only_ok = only_ok
+        self.data = json_data
+
+    def task_maps(self):
+        times_dict = tasks_times_dict(self.data, self.only_ok)
+        tasks = {}
+        for i in self.map:
+            tasks[i] = sum([int(times_dict.get(k, 0)) for k in self.map[i]])
+        return tasks
+
+    def render(self):
+        tasks = self.task_maps()
+        result = ''
+        for task, timest in tasks.items():
+            result += "%s=%d," % (task, timest)
+        return result
+
+
+class InfluxLongestFields(object):
+    '''InfluxLongestFields runs calculation of:
+
+        tasks that took the longest time.
+        The tasks could be from undercloud or overcloud playbooks.
+
+    '''
+
+    def __init__(self, json_data, only_ok=True, top=15):
+        """Constructor for InfluxLongestFields
+
+            :param json_data: {dict} -- JSON data generated by ARA
+            :param only_ok=True: {bool} -- to count only passed tasks
+            :param top=15: {int} -- how many tasks to send to DB
+        """
+        self.top = top
+        self.only_ok = only_ok
+        self.data = json_data
+
+    def collect_tasks(self):
+        tasks_dict = tasks_times_dict(self.data, self.only_ok)
+        return sorted(
+            [[k, v] for k, v in tasks_dict.items()],
+            key=lambda x: x[1],
+            reverse=True
+        )[:self.top]
+
+    def translate_names(self, names):
+        for i in names:
+            i[0] = re.sub(
+                r'[^0-9A-z\-_]+',
+                '',
+                i[0].replace(":", "__").replace(" ", "_"))
+            i[1] = int(i[1])
+        return names
+
+    def render(self):
+        result = ''
+        for i in self.translate_names(self.collect_tasks()):
+            result += "{0}={1},".format(*i)
+        return result
+
+
+def tasks_times_dict(tasks, only_ok=True):
     times_dict = {}
-    for task in data:
+    for task in tasks:
         if not only_ok or task['Status'] in ['changed', 'ok']:
             name = task['Name']
             if name in times_dict:
@@ -203,11 +327,61 @@ def translate(measure, json_data, only_ok):
     # all of them and make summary of all durations
     for i in times_dict:
         times_dict[i] = sum([task_length(t) for t in times_dict[i]])
-    # replace tasks lists in DATA with tasks durations
-    for i in DATA:
-        if isinstance(DATA[i], list):
-            DATA[i] = sum([int(times_dict.get(k, 0)) for k in DATA[i]])
-    return SCHEME.format(**DATA)
+    return times_dict
+
+
+def task_length(x):
+    '''Calculate task length in seconds from "%H:%M:%S" format
+
+    Arguments:
+        x {string} -- a timestamp
+
+    Returns:
+        int -- total seconds for the task
+    '''
+
+    t = datetime.datetime.strptime(x, "%H:%M:%S")
+    return datetime.timedelta(hours=t.hour, minutes=t.minute,
+                              seconds=t.second).total_seconds()
+
+
+def translate(measure, json_data, only_ok,
+              mapped_fields=True,
+              standard_fields=True,
+              longest_tasks=0):
+    '''Create data to send to InfluxDB server in format SCHEME
+
+    Fields keys are taken from ARA data according to task names.
+
+    :param measure: name of InfluxDB measurement
+    :param json_data: JSON data with tasks and times
+    :param: only_ok: boolean, where to count only successful tasks
+    :return: full InfluxDB scheme
+    '''
+    data = ast.literal_eval(json_data)
+    tags = InfluxStandardTags()
+    std_fields = InfluxStandardFields()
+    map_fields = InfluxConfiguredFields(
+        match_map=CUSTOM_MAP, json_data=data, only_ok=only_ok)
+    longest_fields = InfluxLongestFields(json_data=data,
+                                         top=longest_tasks,
+                                         only_ok=only_ok)
+    fields = ''
+    if standard_fields:
+        fields += std_fields.render()
+    if mapped_fields:
+        fields += map_fields.render()
+    if longest_tasks:
+        fields += longest_fields.render()
+    fields = fields.rstrip(",")
+    result = SCHEME.format(
+        measure=measure,
+        tags=tags.render(),
+        fields=fields,
+        timestamp=std_fields.timestamp()
+    )
+
+    return result
 
 
 def create_file_with_data(data, path):
@@ -217,7 +391,7 @@ def create_file_with_data(data, path):
     :param path: path of the file
     :return:
     '''
-    with open(path, "w") as f:
+    with open(path, "a") as f:
         f.write(data + "\n")
 
 
@@ -256,7 +430,8 @@ def send(file_path, in_url, in_port, in_user, in_pass, in_db):
 
 
 def send_stats(in_url, in_port, in_user, in_pass, in_db, json_data,
-               measure, data_file, only_ok):
+               measure, data_file, only_ok, mapped_fields=True,
+               standard_fields=True, longest_tasks=0):
     '''Send ARA statistics to InfluxDB server
 
     :param in_url: InfluxDB URL
@@ -268,9 +443,13 @@ def send_stats(in_url, in_port, in_user, in_pass, in_db, json_data,
     :param measure: InfluxDB measurement name
     :param data_file: path to file with data to send
     :param: only_ok: boolean, where to count only successful tasks
+    :param: mapped_fields: if to use configured map of fields and tasks
+    :param: standard_fields: if to send standard fields of each job, i.e. times
+    :param: longest_tasks: if to print only longest tasks and how many
     :return: JSON ansible result
     '''
-    data2send = translate(measure, json_data, only_ok)
+    data2send = translate(measure, json_data, only_ok, mapped_fields,
+                          standard_fields, longest_tasks)
     create_file_with_data(data2send, data_file)
     if in_url:
         response, reason = send(data_file, in_url, in_port, in_user, in_pass,
@@ -307,6 +486,9 @@ def main():
             measurement=dict(required=True, type='str'),
             data_file=dict(required=True, type='str'),
             only_successful_tasks=dict(required=True, type='bool'),
+            mapped_fields=dict(default=True, type='bool'),
+            standard_fields=dict(default=True, type='bool'),
+            longest_tasks=dict(default=0, type='int'),
         )
     )
     result = send_stats(module.params['influxdb_url'],
@@ -318,10 +500,14 @@ def main():
                         module.params['measurement'],
                         module.params['data_file'],
                         module.params['only_successful_tasks'],
+                        module.params['mapped_fields'],
+                        module.params['standard_fields'],
+                        module.params['longest_tasks'],
                         )
     module.exit_json(**result)
 
 
+# pylint: disable=W0621,W0622,W0614,W0401,C0413
 from ansible.module_utils.basic import *  # noqa
 
 if __name__ == "__main__":
