@@ -48,7 +48,7 @@ openssl rsa -in {{ working_dir }}/server-key.pem \
 ##   the certificate
 ## ::
 
-openssl x509 -req -in server-req.pem -days 365 \
+openssl x509 -req -in {{ working_dir }}/server-req.pem -days 365 \
     -CA {{ working_dir }}/overcloud-cacert.pem \
     -CAkey {{ working_dir }}/overcloud-ca-privkey.pem \
     -set_serial 01 -out {{ working_dir }}/server-cert.pem \

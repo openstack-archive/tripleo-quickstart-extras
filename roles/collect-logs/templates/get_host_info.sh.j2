@@ -27,9 +27,9 @@ find ~jenkins -iname tripleo-overcloud-passwords -execdir cat '{}' ';'
 sudo systemctl list-units --full --all
 
 
-if [ -e /home/{{ undercloud_user }}/stackrc ] ; then
+if [ -e {{ working_dir }}/stackrc ] ; then
 bash <<-EOF &>/var/log/postci.txt
-    source /home/{{ undercloud_user }}/stackrc
+    source {{ working_dir }}/stackrc
     openstack <<-EOC
     server list -f yaml
     workflow list -f yaml

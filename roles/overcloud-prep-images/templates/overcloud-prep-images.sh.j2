@@ -187,7 +187,7 @@ introspect()
     done
 
     set +e
-    timeout $1 bash -c -- 'source $HOME/stackrc; \
+    timeout $1 bash -c -- 'source {{ working_dir }}/stackrc; \
                             on_count=$(openstack baremetal node list -f json|jq -r ".[]| select(.[\"Power State\"] == \"power on\")| .[\"UUID\"]" | wc -l) ; \
                             while [ $on_count -gt 0 ]; do \
                                 sleep 30s; \
