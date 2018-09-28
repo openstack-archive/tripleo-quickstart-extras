@@ -144,7 +144,7 @@
   retries: 100
   delay: 5
   with_items:
-    - "{{ hostvars.keys() }}"
+    - "{{ groups['subnodes'] }}"
 
 # In case of blank centos image we need to create CI user and update inventory
 - block:
@@ -157,7 +157,7 @@
     become: true
     delegate_to: "{{ item}}"
     with_items:
-      - "{{ hostvars.keys() }}"
+      - "{{ groups['subnodes'] }}"
 
   - name: Setup keys
     authorized_key:
@@ -168,7 +168,7 @@
     become_user: "{{ nodepool_user }}"
     delegate_to: "{{ item}}"
     with_items:
-      - "{{ hostvars.keys() }}"
+      - "{{ groups['subnodes'] }}"
 
   - name: Allow user to have passwordless sudo
     lineinfile:
@@ -179,7 +179,7 @@
     become: true
     delegate_to: "{{ item}}"
     with_items:
-      - "{{ hostvars.keys() }}"
+      - "{{ groups['subnodes'] }}"
 
   - name: Add hosts
     add_host:
