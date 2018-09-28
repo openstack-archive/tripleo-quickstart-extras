@@ -270,7 +270,7 @@ if [[ "$LIBVIRT" == "1" ]]; then
 
     # Run from the Virthost
     export VIRTHOST=127.0.0.2
-    echo -e "[virthost]\n$VIRTHOST" > $WORKSPACE/virthost
+    echo -e "[virthost]\n$VIRTHOST ansible_connection=local" > $WORKSPACE/virthost
 
     ansible-playbook $WORKSPACE/tripleo-quickstart/playbooks/libvirt-nodepool.yml \
         -i $WORKSPACE/virthost \
