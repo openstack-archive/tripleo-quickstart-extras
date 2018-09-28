@@ -30,3 +30,8 @@ custom_nameserver:
 # is in extras-common
 
 undercloud_ansible_cfg: true
+
+# NOTE(aschultz): 0.16.0 requires ansible 2.4.5 which we may not have in older
+# versions. Once we have 2.5+ everywhere we can likely remove this version and
+# specify latest
+undercloud_ara_version: 0.15.0
