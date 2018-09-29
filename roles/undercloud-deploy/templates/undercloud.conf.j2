@@ -202,8 +202,8 @@ inspection_runbench = {{undercloud_inspection_runbench}}
 undercloud_debug = {{undercloud_undercloud_debug}}
 
 # Enable or disable SELinux during the deployment. (boolean value)
-{% if undercloud_enable_selinux is defined %}
-undercloud_enable_selinux = {{undercloud_enable_selinux}}
+{% if undercloud_selinux_enabled is defined %}
+undercloud_enable_selinux = {{undercloud_selinux_enabled}}
 {% else %}
 # undercloud_enable_selinux = true
 {% endif %}
