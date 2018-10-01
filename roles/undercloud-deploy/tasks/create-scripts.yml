@@ -93,11 +93,6 @@
      - undercloud_templates_path is defined
   static: no
 
-- name: Noop resource_registry when using net_config_override
-  set_fact:
-    undercloud_resource_registry_args: {}
-  when: undercloud_net_config_override is defined
-
 - name: Create the undercloud parameter defaults file.
   template:
     src: undercloud-parameter-defaults.yaml.j2

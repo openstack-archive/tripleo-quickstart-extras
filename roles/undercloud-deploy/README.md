@@ -131,13 +131,13 @@ the ``undercloud deploy --local_ip`` (and `local_ip` in the undercloud.conf)
 may not be used. Enable this variable instead. Doing so changes the heat endpoint
 type from the default internal to public and changes the signaling method to use
 TempURLs from OpenStack Object Storage (swift).
-- `undercloud_resource_registry_args`: Sets up network config for Undercloud
-  (resource_registry for heat templates). Defaults to Noop. Mutual exclusive
-  with ``undercloud_net_config_override``.
+- `undercloud_resource_registry_args`: Complements 'resource_registry' for undercloud
+  heat templates. Defaults to nothing.
 - `undercloud_network_environment_args`: Complements Undercloud networking
   setup with the default parameters for heat templates (parameter_defaults).
 - `undercloud_net_config_override`: <null> -- a j2 template for os-net-config
-  used to override network configuration. Accepts instack tags like LOCAL_IP et al.
+  used to override network configuration, which is normally defined via
+  'OS::TripleO::Undercloud::Net::SoftwareConfig'. Accepts instack tags like LOCAL_IP et al.
   When it is defined, the ``undercloud_resource_registry_args`` value will be discarded.
 
 Undercloud deployment methods
