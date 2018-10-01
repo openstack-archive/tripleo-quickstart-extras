@@ -12,3 +12,5 @@ standalone_deploy_log: standalone_deploy.log
 # deployment role
 standalone_role: Standalone.yaml
 
+standalone_libvirt_type: kvm
+

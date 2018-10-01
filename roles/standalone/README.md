@@ -23,6 +23,8 @@ Role Variables
 
 - standalone_role: <'Standalone.yaml'> -- The TripleO Heat Template role definition of the deployment
 
+- standalone_libvirt_type: <'kvm'> -- The type of libvirt to run on the standalone (qemu|kvm)
+
 Dependencies
 ------------
 
