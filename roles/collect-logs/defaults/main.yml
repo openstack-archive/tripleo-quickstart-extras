@@ -4,6 +4,7 @@ artcl_collect: true
 artcl_collect_list:
   - /var/lib/heat-config/
   - /var/lib/kolla/config_files
+  - /var/lib/mistral/
   - /var/lib/oooq-images/*/*.log
   - /var/lib/oooq-images/*/*.sh
   - /var/lib/pacemaker/cib/cib*
