@@ -73,6 +73,13 @@ export CONTAINER_BINARY='docker'
 
 sudo $CONTAINER_BINARY pull {{ tempest_container_registry }}/{{ tempest_container_namespace }}:{{ tempest_container_tag }}
 
+{% if tempest_use_headless_chrome|bool %}
+docker pull selenium/standalone-chrome
+docker run -d \
+  -p {{ tempest_headless_chrome_port }}:{{ tempest_headless_chrome_port }} \
+  -v /dev/shm:/dev/shm selenium/standalone-chrome
+{% endif %}
+
 # Run tempest container using docker mouting required files
 sudo $CONTAINER_BINARY run --net=host -i -v $TEMPEST_HOST_DATA:{{ tempest_data }} \
     -e PYTHONWARNINGS="${PYTHONWARNINGS:-}" \
