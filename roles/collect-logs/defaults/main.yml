@@ -153,6 +153,7 @@ artcl_logstash_files:
   - /home/*/hostname.sh.log
   - /home/*/install_built_repo.log
   - /home/*/install_packages.sh.log
+  - /home/*/install-undercloud.log
   - /home/*/ironic-python-agent.log
   - /home/*/nova_actions_check.log
   - /home/*/overcloud_create_ssl_cert.log
