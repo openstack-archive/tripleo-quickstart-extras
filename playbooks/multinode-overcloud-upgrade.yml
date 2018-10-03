@@ -6,7 +6,7 @@
   gather_facts: false
   vars:
     repo_run_live: false
-    repo_setup_script: "repo-setup-{{ target_upgrade_version }}.sh"
+    repo_setup_script: "repo-setup-{{ release }}.sh"
     # Avoid running yum update, only set up repos
     repo_setup_run_update: false
     artg_compressed_gating_repo: "${HOME}/gating_repo.tar.gz"
@@ -44,7 +44,7 @@
   tags:
     - overcloud-upgrade
   vars:
-    repo_setup_script: "{{ working_dir }}/repo-setup-{{ target_upgrade_version }}.sh"
+    repo_setup_script: "{{ working_dir }}/repo-setup-{{ release }}.sh"
   roles:
     - role: tripleo-upgrade
       upgrade_init_command: "{{ (repo_setup_script|exists) | ternary(lookup('file', repo_setup_script), false) }}"
