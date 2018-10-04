@@ -70,8 +70,7 @@ undercloud_undercloud_debug: true
 undercloud_templates_path: /usr/share/openstack-tripleo-heat-templates
 
 # Use to populate the resource registry for nic configs and networking setup
-undercloud_resource_registry_args:
-  OS::TripleO::Undercloud::Net::SoftwareConfig: "{{ undercloud_templates_path }}/net-config-noop.yaml"
+undercloud_resource_registry_args: {}
 undercloud_network_environment_args: {}
 
 ctlplane_masquerade: false
