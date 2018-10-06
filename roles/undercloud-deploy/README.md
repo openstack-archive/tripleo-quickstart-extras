@@ -39,6 +39,7 @@ user sessions to provide greater flexixiblity to our users. ** additional docume
 https://docs.openstack.org/tripleo-quickstart/latest/accessing-libvirt.html
 - `undercloud_conf_extra`: <''> -- extra options to be added to ~/undercloud.conf
 - `undercloud_extra_args`: <''> -- extra options for undercloud deploy command.
+- `undercloud_install_cmd`: <'openstack undercloud install'> -- command used to install the undercloud
 - `undercloud_install_cli_options`: <''> -- extra options for undercloud install command.
 - `undercloud_enable_mistral`: <'true'> -- sets up the 'enable_mistral' option
   in undercloud.conf.

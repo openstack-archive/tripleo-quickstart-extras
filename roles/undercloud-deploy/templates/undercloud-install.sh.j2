@@ -11,6 +11,6 @@ set -eux
 export {{ var }}
 {% endfor %}
 
-openstack undercloud install {{ undercloud_install_cli_options }}
+{{ undercloud_install_cmd }} {{ undercloud_install_cli_options }}
 
 ### --stop_docs

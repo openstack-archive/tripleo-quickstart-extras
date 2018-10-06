@@ -1,6 +1,7 @@
 ---
 
 undercloud_config_file: undercloud.conf.j2
+undercloud_install_cmd: openstack undercloud install
 undercloud_install_cli_options: ""
 undercloud_post_install_script: undercloud-install-post.sh.j2
 undercloud_install_log: "{{ working_dir }}/undercloud_install.log"
