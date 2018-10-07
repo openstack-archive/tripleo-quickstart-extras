@@ -122,7 +122,7 @@
   set_fact:
     ssl_overcloud_args: >-
       -e {{ working_dir }}/enable-tls.yaml
-      -e {{ overcloud_templates_path }}/environments/tls-endpoints-public-ip.yaml
+      -e {{ overcloud_templates_path }}/environments/ssl/tls-endpoints-public-ip.yaml
   when:
     - ssl_overcloud|bool
     - release not in ['mitaka', 'liberty']
@@ -152,8 +152,8 @@
   set_fact:
       tls_everywhere_args: >-
           -e {{ overcloud_templates_path }}/environments/services/haproxy-public-tls-certmonger.yaml
-          -e {{ overcloud_templates_path }}/environments/enable-internal-tls.yaml
-          -e {{ overcloud_templates_path }}/environments/tls-everywhere-endpoints-dns.yaml
+          -e {{ overcloud_templates_path }}/environments/ssl/enable-internal-tls.yaml
+          -e {{ overcloud_templates_path }}/environments/ssl/tls-everywhere-endpoints-dns.yaml
   when:
     - enable_tls_everywhere|bool
     - release not in ['mitaka', 'liberty', 'newton']
