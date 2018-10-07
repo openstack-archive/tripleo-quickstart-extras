@@ -91,7 +91,12 @@ undercloud_selinux_enabled: >-
    true
    {%- endif -%}
 
-undercloud_container_cli: docker
+undercloud_container_cli: >-
+   {% if release not in ['newton', 'ocata', 'pike', 'queens', 'rocky'] -%}
+   podman
+   {% else %}
+   docker
+   {% endif %}
 
 # Define a custom t-h-t installation for UC
 undercloud_custom_tht_script: custom-tht-script.sh.j2
