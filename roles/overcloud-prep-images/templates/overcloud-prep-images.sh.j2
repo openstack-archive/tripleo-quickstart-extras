@@ -223,10 +223,11 @@ sudo kill $pidof_tcpdump
 {% endif %}
 
 {% if release not in ['newton', 'ocata', 'pike', 'queens'] %}
-cont=$(docker ps | grep executor | awk {'print $1'})
-docker exec --user root $cont bash -c "easy_install pip && pip install ara"
+container_cli="{{ undercloud_container_cli | default('docker') }}"
+cont=$(sudo $container_cli ps | grep executor | awk {'print $1'})
+sudo $container_cli exec --user root $cont bash -c "easy_install pip && pip install ara"
 # check it
-docker exec --user root $cont ls /usr/lib/python2.7/site-packages/ | grep ara
+sudo $container_cli exec --user root $cont ls /usr/lib/python2.7/site-packages/ | grep ara
 {% endif %}
 
 ### --stop_docs
