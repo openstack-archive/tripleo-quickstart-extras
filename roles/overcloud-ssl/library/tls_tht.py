@@ -74,7 +74,11 @@ def _open_yaml(filename):
 
 
 def create_enable_file(certpem, keypem, source_dir, dest_dir, tht_release):
-    output_dict = _open_yaml("{}environments/ssl/enable-tls.yaml".format(source_dir))
+    # environments/ssl/* is preferred starting with pike
+    if tht_release in ['mitaka', 'newton', 'ocata']:
+        output_dict = _open_yaml("{}environments/enable-tls.yaml".format(source_dir))
+    else:
+        output_dict = _open_yaml("{}environments/ssl/enable-tls.yaml".format(source_dir))
 
     if tht_release == 'mitaka':
         for key in output_dict["parameter_defaults"]["EndpointMap"]:
@@ -84,8 +88,10 @@ def create_enable_file(certpem, keypem, source_dir, dest_dir, tht_release):
     output_dict["parameter_defaults"]["SSLCertificate"] = certpem
     output_dict["parameter_defaults"]["SSLKey"] = keypem
 
-    output_dict["resource_registry"]["OS::TripleO::NodeTLSData"] = \
-        "{}/puppet/extraconfig/tls/tls-cert-inject.yaml".format(source_dir)
+    # NoteTLSData has been deprecated/removed in rocky and onwards
+    if tht_release in ['mitaka', 'newton', 'ocata', 'pike', 'queens']:
+        output_dict["resource_registry"]["OS::TripleO::NodeTLSData"] = \
+            "{}/puppet/extraconfig/tls/tls-cert-inject.yaml".format(source_dir)
 
     with open("{}enable-tls.yaml".format(dest_dir), "w") as stream:
         yaml.safe_dump(output_dict, stream, default_style='|')
