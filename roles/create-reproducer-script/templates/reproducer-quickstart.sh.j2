@@ -161,7 +161,7 @@ function check_installed {
         exit 1
     fi
 }
-BOOTSTRAP_DEPENDENCIES=("virtualenv" "ansible" "pip" "openstack")
+BOOTSTRAP_DEPENDENCIES=("virtualenv" "ansible" "pip" "openstack" "heat")
 function check_bootstrap_dependencies {
     for dependency in ${BOOTSTRAP_DEPENDENCIES[@]} ; do
         check_installed $dependency
