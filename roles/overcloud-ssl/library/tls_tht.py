@@ -69,7 +69,7 @@ from ansible.module_utils.basic import *  # noqa
 
 def _open_yaml(filename):
     with open(filename, "r") as stream:
-        tmp_dict = yaml.load(stream)
+        tmp_dict = yaml.safe_load(stream)
     return tmp_dict
 
 

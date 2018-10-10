@@ -320,10 +320,12 @@ class TempestMailCmd(object):
     def load_skip_file(self, skipfile):
         known_failures = []
         try:
-            skip = yaml.load(open(self.args.skip_file))
+            skip = yaml.safe_load(open(self.args.skip_file))
             for t in skip.get('known_failures'):
                 known_failures.append({'test': t.get('test'),
                                        'reason': t.get('reason')})
+        except yaml.constructor.ConstructorError:
+            self.log.error('Invalid yaml file {}'.format(self.args.skip_file))
         except Exception:
             pass
         finally:
@@ -355,7 +357,10 @@ class TempestMailCmd(object):
 
     def setupConfig(self):
         self.log.debug("Loading configuration")
-        config = yaml.load(open(self.args.config))
+        try:
+            config = yaml.safe_load(open(self.args.config))
+        except yaml.constructor.ConstructorError:
+            self.log.error('Invalid yaml file {}'.format(self.args.config))
 
         newconfig = Config()
         known_failures = []
