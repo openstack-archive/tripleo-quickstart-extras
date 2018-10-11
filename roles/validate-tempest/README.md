@@ -46,6 +46,7 @@ Role Variables
 * `tempest_container_namespace`: <string> The name of tempest container image to use (default: centos-binary-tempest)
 * `tempest_container_tag`: <string> The tag of the tempest container image to use (default: current-tripleo)
 * `tempest_dir`: <string> The path to tempest workspace directory (default: /home/stack/tempest)
+* `tempest_data`: <string> The path to keep tempest related files used for running tempest (default: /home/stack)
 * `test_black_regex`: <list> A set of tempest tests to skip (default: [])
 * `tempest_version_dict`: <dict> A dict with release name as key and tempest tag version for that release as value
 * `tempest_version`: <string> The tempest version to use for running tempest

@@ -10,6 +10,7 @@ export OSTESTR='{{ working_dir }}/tempest_git/tools/with_venv.sh ostestr'
 export OSTESTR='ostestr'
 export TEMPESTCLI='/usr/bin/tempest'
 {% endif %}
+export TEMPESTDATA={{ tempest_data }}
 
 ## List tempest plugins
 
@@ -26,9 +27,9 @@ $TEMPESTCLI cleanup --init-saved-state
 {% endif %}
 
 {% if release in ["newton", "ocata", "pike"] %} $OSTESTR {% else %} $TEMPESTCLI run {% endif %}{% if test_white_regex != '' %} --regex '({{ test_white_regex }})' {% endif %}
-{% if tempest_whitelist|length > 0 %} --whitelist_file={{ working_dir }}/{{ tempest_whitelist_file }} {% endif %}
-{% if release not in ["newton", "ocata", "pike"] %} {% if test_black_regex|length > 0 %} --black-regex='{{ test_black_regex|join('|') }}' {% endif %} {% endif %}
-{% if skip_file_src != '' %} --blacklist_file={{ working_dir }}/{{ skip_file }} {% endif %}
+{% if tempest_whitelist|length > 0 %} --whitelist_file=$TEMPESTDATA/{{ tempest_whitelist_file }} {% endif %}
+{% if release not in ["newton", "ocata", "pike"] %} {% if test_black_regex|length > 0 %} --black-regex='{{ test_black_regex|join('|') }}'{% endif %} {% endif %}
+{% if skip_file_src != '' %} --blacklist_file=$TEMPESTDATA/{{ skip_file }} {% endif %}
 {% if tempest_workers is defined %} --concurrency {{ tempest_workers }} {% endif %}
 {% if tempest_until_failure|bool %} --until-failure {% endif %}
 
@@ -44,9 +45,14 @@ $TEMPESTCLI cleanup --dry-run
 EOF
 chmod +x {{ working_dir }}/tempest_container.sh
 # Copy all the required files in a temprory directory
-mkdir {{ working_dir }}/tempest_data
+export TEMPEST_HOST_DATA='/var/lib/tempestdata'
 
-cp $RCFILE \
+if [ ! -d $TEMPEST_HOST_DATA ]
+then
+    mkdir -p $TEMPEST_HOST_DATA
+fi
+
+sudo cp $RCFILE \
     {% if skip_file_src != '' %}
     {{ working_dir }}/{{ skip_file }} \
     {% endif %}
@@ -57,46 +63,33 @@ cp $RCFILE \
     {{ working_dir }}/{{ tempest_deployer_input_file }} \
     {% endif %}
     {{ working_dir }}/tempest_container.sh \
-    {{ working_dir }}/tempest_data
+    $TEMPEST_HOST_DATA
 
-# TODO(chkumar246): https://review.openstack.org/#/c/583940/ added tempest user to
-# tempest container, The file getting mounted from host to tempest container have
-# different permission as tempest user does not own those folders which will give
-# permission denied So first check whether tempest user is there or not if present
-# run the docker command to change the dir permission and if not found the usual
-# command, Once new container image is available after promotion, we will the add
-# the volume in THT itself and fix other stuffs. Also pull docker image locally
-# as docker inspect needs the image to exist.
-sudo docker pull {{ tempest_container_registry }}/{{ tempest_container_namespace }}:{{ tempest_container_tag }}
-if [ x$(sudo docker inspect --format "{{ '{{' }} .Config.User {{ '}}' }}" {{ tempest_container_registry }}/{{ tempest_container_namespace }}:{{ tempest_container_tag }}) == 'xtempest' ]; then
-    sudo docker run --net=host -u root -v {{ working_dir }}/tempest_data:{{ working_dir }} \
-    {% if not 'http' in tempest_test_image_path %}
-        -v {{ tempest_test_image_path }}:{{ tempest_test_image_path }} \
-    {% endif %}
-        {{ tempest_container_registry }}/{{ tempest_container_namespace }}:{{ tempest_container_tag }} \
-        chown -R tempest:tempest \
-        {% if not 'http' in tempest_test_image_path %}
-        {{ tempest_test_image_path }} \
-        {% endif %}
-        {{ working_dir }}
-fi
+{% if undercloud_container_cli is defined %}
+export CONTAINER_BINARY={{ undercloud_container_cli }}
+{% else %}
+export CONTAINER_BINARY='docker'
+{% endif %}
+
+sudo $CONTAINER_BINARY pull {{ tempest_container_registry }}/{{ tempest_container_namespace }}:{{ tempest_container_tag }}
 
 # Run tempest container using docker mouting required files
-sudo docker run --net=host -i -v {{ working_dir }}/tempest_data/:{{ working_dir }} \
+sudo $CONTAINER_BINARY run --net=host -i -v $TEMPEST_HOST_DATA:{{ tempest_data }} \
     -e PYTHONWARNINGS="${PYTHONWARNINGS:-}" \
     -e CURL_CA_BUNDLE="" \
+    --user=root \
     -v /var/log/containers/tempest:{{ tempest_log_dir }} \
     {% if not 'http' in tempest_test_image_path %}
     -v {{ tempest_test_image_path }}:{{ tempest_test_image_path }} \
     {% endif %}
     {{ tempest_container_registry }}/{{ tempest_container_namespace }}:{{ tempest_container_tag }} \
-    /usr/bin/bash -c 'set -e; {{ working_dir }}/tempest_container.sh'
+    /usr/bin/bash -c 'set -e; {{ tempest_data }}/tempest_container.sh'
 
 # Change permission of tempest workspace directory
-sudo chmod -R 777 {{ working_dir }}/tempest_data
+sudo chmod -R 777 $TEMPEST_HOST_DATA
 
 # Copy tempest related data to tempest folder so that stackviz can use it
-cp -R {{ working_dir }}/tempest_data/tempest {{ working_dir }}
+cp -R $TEMPEST_HOST_DATA/tempest {{ working_dir }}
 
 {% endif %}
 ### --stop_docs

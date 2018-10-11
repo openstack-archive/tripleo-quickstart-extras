@@ -10,10 +10,10 @@
 # to create tempest directory.
 # We are doing this as sudo because tempest in containers create the files as
 # root.
+{% if tempest_format in ["venv", "packages"] %}
 sudo rm -rf {{ working_dir }}/.tempest
 sudo rm -rf {{ tempest_dir }}
-# Remove tempest_data directory created before running tempest container
-sudo rm -rf {{ working_dir }}/tempest_data
+{% endif %}
 
 
 # Cloud Credentials
@@ -75,11 +75,16 @@ set -e
 
 rpm -qa | grep tempest
 
+# Remove the existing tempest workspace
+if [ -d {{ tempest_dir }}/etc ]; then
+tempest workspace remove --name {{ tempest_dir | basename }} --rmdir
+fi
 {% endif %}
 
 ## Create Tempest Workspace
 ## ------------------------
 ## ::
+
 
 # Create Tempest directory
 
@@ -95,7 +100,9 @@ popd
 ## ::
 export TEMPESTCONF="{{ tempestconf }}"
 
-{% if tempest_os_cloud == '' %}
+{% if tempest_format == 'container' %}
+source {{ rc_file_container }}
+{% elif tempest_os_cloud == '' %}
 source {{ rc_file }}
 {% endif %}
 
@@ -128,7 +135,7 @@ export OS_AUTH_URL="$OS_AUTH_URL/v2.0"
 cd {{ tempest_dir }}
 $TEMPESTCONF --out etc/tempest.conf \
   {% if tempest_overcloud|bool %}
-  --deployer-input {{ working_dir }}/{{ tempest_deployer_input_file }} \
+  --deployer-input {{ tempest_dir }}/{{ tempest_deployer_input_file }} \
   --network-id $public_net_id \
   {% endif %}
   {% if tempest_os_cloud != '' %}
