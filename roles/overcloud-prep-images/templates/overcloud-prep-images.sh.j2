@@ -137,7 +137,7 @@ done
 {% if step_introspect_debug|bool %}
 
 sudo yum -y install tcpdump
-sudo tcpdump -i any port 67 or port 68 or port 69 -w {{ step_introspect_debug_tcpdump_log }} &
+sudo tcpdump -i any port {{ step_introspect_debug_tcpdump_ports | join(' or port ') }} -w {{ step_introspect_debug_tcpdump_log }} &
 sleep 1
 pidof_tcpdump=$(ps --ppid $! -o pid=)
 
