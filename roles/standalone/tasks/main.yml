@@ -8,6 +8,17 @@
     dest: "{{ working_dir}}/standalone_parameters.yaml"
     mode: 0755
 
+- name: Create container parameters script
+  template:
+    src: "{{ standalone_container_prep_script }}"
+    dest: "{{ working_dir }}/standalone-container-prep.sh"
+    mode: "0755"
+
+- name: Run container prepare
+  shell: >
+    set -o pipefail &&
+    {{ working_dir }}/standalone-container-prep.sh 2>&1 {{ timestamper_cmd }} > {{ working_dir }}/{{ standalone_container_prep_log }}
+
 - name: Create the deploy command for standalone
   template:
     src: "{{ standalone_deploy_script }}"
