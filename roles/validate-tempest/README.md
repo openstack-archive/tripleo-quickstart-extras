@@ -62,6 +62,7 @@ Role Variables
 * `tempest_deployer_input_file`: <file path> The path to tripleo deployer input file which contains the pre configured
                                  configuration for the deployed cloud using TripleO.
 * `tempest_os_cloud`: <string> String name of the cloud to export as OS_CLOUD when using clouds.yaml rather than stackrc
+* `stackviz_tarball`: <string> Stackviz tarball url to be installed via pip
 
 
 Skip tests file
