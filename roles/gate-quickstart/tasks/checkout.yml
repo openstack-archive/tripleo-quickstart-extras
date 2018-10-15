@@ -15,7 +15,7 @@
     path: '{{ lookup("env", "WORKSPACE") }}/{{ gated_project_name }}'
     state: absent
   # do not remove the repo if it was cloned by the jenkins job
-  when: gated_change.project != "{{ lookup('env', 'GERRIT_PROJECT') }}"
+  when: gated_change.project != lookup('env', 'GERRIT_PROJECT')
 
 - name: Check out the gated change
   git:
@@ -24,7 +24,7 @@
     refspec: '{{ gated_change.refspec }}'
     version: 'FETCH_HEAD'
   # do not check out the gated change if it was already cloned by the jenkins job
-  when: gated_change.project != "{{ lookup('env', 'GERRIT_PROJECT') }}"
+  when: gated_change.project != lookup('env', 'GERRIT_PROJECT')
 
 # do this only for the roles
 - when: gated_change.project != "openstack/tripleo-quickstart"

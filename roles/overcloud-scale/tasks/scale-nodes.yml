@@ -24,7 +24,8 @@
   register: post_scale_nova_list
 
 - name: Display post-scale nova list
-  debug: msg={{ post_scale_nova_list.stdout_lines }}
+  debug:
+    msg: "{{ post_scale_nova_list.stdout_lines }}"
   when: post_scale_nova_list is defined
 
 # Verify the scale
@@ -35,5 +36,6 @@
   register: post_scale_node_count
 
 - name: Check that post scale node count is correct
-  fail: msg="Overcloud nova list does not show expected number of {{ node_to_scale }} services"
-  when: post_scale_node_count.stdout|int != {{ final_scale_value|int }}
+  fail:
+    msg: "Overcloud nova list does not show expected number of {{ node_to_scale }} services"
+  when: post_scale_node_count.stdout|int != (final_scale_value|int)

@@ -4,7 +4,7 @@
     path: "{{ images_working_dir }}"
     state: absent
   become: true
-  when: "{{ images_destroy_working_dir }}|bool"
+  when: images_destroy_working_dir | bool
 
 - name: Create the working directory
   file:

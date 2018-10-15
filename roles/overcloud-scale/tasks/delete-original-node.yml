@@ -61,5 +61,6 @@
   delegate_to: localhost
 
 - name: Check that post delete node count is correct
-  fail: msg="Overcloud nova list does not show expected number of {{ node_to_scale }} services"
-  when: post_scale_node_count.stdout|int != {{ initial_scale_value | int }}
+  fail:
+    msg: "Overcloud nova list does not show expected number of {{ node_to_scale }} services"
+  when: post_scale_node_count.stdout|int != (initial_scale_value | int)

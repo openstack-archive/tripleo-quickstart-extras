@@ -48,4 +48,4 @@
       set_fact:
         to_build: true
         cacheable: true
-      when: "{{ lookup('env', 'PERIODIC')|default('0')|int == 1 }}"
+      when: lookup('env', 'PERIODIC')|default('0')|int == 1
