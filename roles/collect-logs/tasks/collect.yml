@@ -3,11 +3,12 @@
   ignore_errors: true
   block:
     - name: Ensure required rpms for logging are installed
-      yum: name={{ item }} state=present
-      with_items:
-        - gzip
-        - rsync
-        - tar
+      package:
+        state: present
+        name:
+          - gzip
+          - rsync
+          - tar
 
     - name: Prepare directory with extra logs
       file: dest=/var/log/extra state=directory
@@ -15,8 +16,8 @@
     - name: rpm -qa
       shell: rpm -qa | sort -f >/var/log/extra/rpm-list.txt
 
-    - name: yum list installed
-      shell: yum list installed >/var/log/extra/yum-list-installed.txt
+    - name: package list installed
+      shell: "{{ ansible_pkg_mgr }} list installed >/var/log/extra/package-list-installed.txt"
 
     - name: Collecting /proc/cpuinfo|meminfo|swaps
       shell: "cat /proc/{{item}} &> /var/log/extra/{{item}}.txt"
@@ -177,7 +178,9 @@
         grep -v ansible-command /var/log/messages | grep oom-killer > /var/log/extra/oom-killers.txt
 
     - name: Ensure sos package is installed when collect sosreport(s)
-      yum: name=sos state=present
+      package:
+        name: sos
+        state: present
       when: artcl_collect_sosreport|bool
 
     - name: Collect sosreport
@@ -233,7 +236,7 @@
                 CONTAINER_CONT_INFO_CMDS=(
                     "${engine} top $cont auxw"
                     "${engine} exec $cont top -bwn1"
-                    "${engine} exec $cont yum list installed"
+                    "${engine} exec $cont bash -c \"\$(command -v dnf || command -v yum) list installed\""
                     "${engine} inspect $cont"
                 );
                 for cmd in "${CONTAINER_CONT_INFO_CMDS[@]}"; do

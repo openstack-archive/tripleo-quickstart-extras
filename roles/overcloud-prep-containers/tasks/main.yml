@@ -1,5 +1,18 @@
 ---
 # tasks file for ansible-role-tripleo-overcloud-prep-containers
+- name: gather facts needed by role
+  setup:
+    gather_subset: "!min,user_dir,python"
+  when: >
+    ansible_user_dir is not defined or
+    ansible_python is not defined
+
+- name: set python_cmd
+  set_fact:
+    python_cmd: "python{{ ansible_python.version.major }}"
+    cacheable: true
+  when: python_cmd is not defined
+
 - include: create-scripts.yml
   tags:
     - undercloud-scripts

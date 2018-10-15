@@ -1,3 +1,8 @@
+- name: gather facts used by role
+  setup:
+    gather_subset: "!min,pkg_mgr"
+  when: ansible_pkg_mgr is not defined
+
 - name: Reinstall the undercloud to check idempotency
   shell: >
     set -o pipefail &&

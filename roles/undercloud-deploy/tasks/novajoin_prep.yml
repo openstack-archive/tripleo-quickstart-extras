@@ -19,8 +19,8 @@
   when: undercloud_undercloud_hostname is not defined or ( undercloud_undercloud_hostname is defined and undercloud_undercloud_hostname == "" )
 
 - name: Install novajoin package installation script
-  copy:
-    src: install_novajoin.sh
+  template:
+    src: install_novajoin.sh.j2
     dest: "{{ working_dir }}/install_novajoin.sh"
     mode: 0755
 

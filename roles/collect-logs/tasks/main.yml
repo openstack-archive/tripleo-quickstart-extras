@@ -1,4 +1,9 @@
 ---
+- name: gather facts used by role
+  setup:
+    gather_subset: "!min,pkg_mgr"
+  when: ansible_pkg_mgr is not defined
+
 - name: Collect logs
   include: collect.yml
   when: artcl_collect|bool

@@ -1,35 +1,64 @@
 ---
 
+# needed to avoid potential failure when role is used without gather
+- name: gather facts used by role
+  setup:
+    gather_subset: "!min,user_dir,python,processor"
+  when: >
+    ansible_user_dir is not defined or
+    ansible_python is not defined or
+    ansible_processor_vcpus is not defined
+
+- name: set python_cmd
+  set_fact:
+    python_cmd: "python{{ ansible_python.version.major }}"
+    cacheable: true
+  when: python_cmd is not defined
+
 - name: Ensure DLRN package dependencies
   become: yes
-  package: name={{ item }} state=present
-  with_items:
-    - createrepo
-    - gcc
-    - git
-    - libffi-devel
-    - mock
-    - openssl-devel
-    - rpm-build
-    - sqlite
-    - redhat-rpm-config
-    - rpmdevtools
-    - libselinux-python
+  package:
+    state: present
+    name:
+        - createrepo
+        - gcc
+        - git
+        - libffi-devel
+        - mock
+        - openssl-devel
+        - redhat-rpm-config
+        - rpm-build
+        - rpmdevtools
+        - sqlite
+        - >
+            {% if ansible_python.version.major == 3 %}
+            python3-libselinux
+            {% else %}
+            libselinux-python
+            {% endif %}
 
 - name: Check if virtualenv is in the system
-  shell: command -v virtualenv >/dev/null 2>&1
+  shell: "{{ python_cmd }} -m virtualenv --version"
   register: virtualenv_exist
-  ignore_errors: yes
+  changed_when: false
+  failed_when: false
 
-- when: virtualenv_exist.rc == 1
+- when: virtualenv_exist.rc != 0
   name: Install virtualenv
   package:
-    name: python-virtualenv
     state: present
+    name: >
+        {% if ansible_python.version.major == 3 %}
+        python3-virtualenv
+        {% else %}
+        python-virtualenv
+        {% endif %}
 
 - name: Create mock group
   become: yes
-  group: name=mock state=present
+  group:
+    name: mock
+    state: present
 
 - name: Add user to mock group
   become: yes

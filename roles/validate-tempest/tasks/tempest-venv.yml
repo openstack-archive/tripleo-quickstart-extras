@@ -20,24 +20,30 @@
     version: '{{ tempest_conf_version }}'
   when: release != 'newton'
 
-
 - name: Check if virtualenv is in the system
-  shell: command -v virtualenv >/dev/null 2>&1
+  shell: "{{ python_cmd }} -m virtualenv --version"
   register: virtualenv_exist
-  ignore_errors: yes
+  failed_when: false
+  changed_when: false
 
-- when: virtualenv_exist.rc == 1
+- when: virtualenv_exist.rc != 0
   name: Install virtualenv
   package:
-    name: python-virtualenv
     state: present
+    name: >
+        {% if ansible_python.version.major == 3 %}
+        python3-virtualenv
+        {% else %}
+        python-virtualenv
+        {% endif %}
 
 - name: Install packages required for create venv
-  package: name={{ item }} state=present
-  with_items:
-    - libffi-devel
-    - openssl-devel
-    - gcc
+  package:
+    state: present
+    name:
+      - gcc
+      - libffi-devel
+      - openssl-devel
 
 - name: Set tempest init command
   set_fact:
