@@ -77,7 +77,7 @@ while [ "x$1" != "x" ]; do
 
     case "$1" in
         --workspace|-w)
-            # realpath fails if /some/path doesn't exist. It is created l8r
+            # realpath fails if /some/path doesn't exist. It is created later
             WORKSPACE=$(realpath $2 || echo -n $2)
             shift
             ;;
@@ -354,7 +354,7 @@ else
 
     # Instruct the user to execute toci_gate_test.sh on the undercloud
     echo "
-        # Now complete the test excution on the undercloud:
+        # Now complete the test execution on the undercloud:
         # ssh to the undercloud:
         ssh ${SSH_OPTS} zuul@$ansible_host
         # Source the environment settings file and run the toci gate script
