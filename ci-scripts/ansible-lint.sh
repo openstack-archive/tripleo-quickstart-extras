@@ -10,7 +10,8 @@
 # ANSIBLE0013: Use Shell only when shell functionality is required
 # ANSIBLE0016: Tasks that run when changed should likely be handlers
 #   this requires refactoring roles, skipping for now
-SKIPLIST="ANSIBLE0006,ANSIBLE0007,ANSIBLE0010,ANSIBLE0012,ANSIBLE0013,ANSIBLE0016"
+# ANSIBLE0019: This is task ID 102 with '"when" lines should not include Jinja2 variables'
+SKIPLIST="ANSIBLE0006,ANSIBLE0007,ANSIBLE0010,ANSIBLE0012,ANSIBLE0013,ANSIBLE0016,ANSIBLE0019"
 
 # lint the playbooks separately to avoid linting the roles multiple times
 pushd playbooks
