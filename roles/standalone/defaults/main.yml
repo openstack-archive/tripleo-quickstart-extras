@@ -19,3 +19,4 @@ standalone_role: Standalone.yaml
 
 standalone_libvirt_type: kvm
 
+standalone_selinux_mode: permissive
