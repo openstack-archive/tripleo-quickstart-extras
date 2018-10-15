@@ -5,6 +5,11 @@ parameter_defaults:
     # the value of libvirt_uri into /etc/ironic/ironic.conf.
     ironic::drivers::ssh::libvirt_uri: '{{libvirt_uri}}'
 
+    {% if ctlplane_masquerade|default(false) %}
+    # Override masquerading, OVB need's to masquerade the External (10.0.0.0/24) net as well.
+    tripleo::masquerade_networks::masquerade_networks: {'192.168.24.0/24': ['192.168.24.0/24'], '10.0.0.0/24': ['10.0.0.0/24']}
+    {% endif %}
+
     # The following are configurations for the different workers for the undercloud
     # services.
     {% if undercloud_workers is defined -%}
