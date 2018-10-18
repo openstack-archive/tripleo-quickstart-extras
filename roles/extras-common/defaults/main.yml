@@ -1,9 +1,24 @@
 ---
 
 overcloud_ipv6: false
-containerized_overcloud: false
-containerized_undercloud: false
-containerized_overcloud_upgrade: false
+containerized_overcloud: >-
+  {% if release in ['newton', 'ocata', 'pike'] -%}
+  false
+  {%- else -%}
+  true
+  {%- endif -%}
+containerized_undercloud: >-
+  {% if release not in ['newton','ocata','pike','queens'] -%}
+  true
+  {%- else -%}
+  false
+  {%- endif -%}
+containerized_overcloud_upgrade: >-
+  {% if release in ['newton', 'ocata'] -%}
+  false
+  {%- else -%}
+  true
+  {%- endif -%}
 local_docker_registry_host: "{{undercloud_network_gateway|default(undercloud_network_cidr|nthhost(1))}}"
 docker_registry_host: docker.io
 docker_registry_namespace: "tripleo{{ release }}"
