@@ -1,10 +1,10 @@
 ---
 
-- when: release not in ['mitaka', 'liberty']
+- name: tripleo-validation block
+  when: release not in ['mitaka', 'liberty']
   block:
     - name: Installing configuration requirements
-      include: config.yml
-      static: no
+      include_tasks: config.yml
       tags:
         - tripleo-validations
       when: run_tripleo_validations_setup|bool

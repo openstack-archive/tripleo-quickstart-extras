@@ -91,7 +91,6 @@
      - undercloud_templates_branch is defined or undercloud_templates_refspec is defined
      - undercloud_templates_repo is defined
      - undercloud_templates_path is defined
-  static: no
 
 - name: Create the undercloud parameter defaults file.
   template:
