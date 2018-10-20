@@ -10,6 +10,8 @@
   become: yes
   shell: >
     "{{ working_dir }}"/allow-traffic-for-controller.sh
-  when: network_isolation|bool and undercloud_type == "baremetal"
-
-
+  when:
+    - network_isolation|bool
+    - undercloud_type == "baremetal"
+    - not overcloud_ipv6|bool
+    - release in ['newton','ocata','pike','queens'] or not containerized_undercloud|bool
