@@ -27,7 +27,7 @@ source {{ rc_file }}
 ## ------------------------
 ## * For overcloud
 
-{% if tempest_overcloud|bool %}
+{% if tempest_overcloud|bool  or tempest_os_cloud != '' %}
 
 ## * Clean up network if it exists from previous run
 ## ::
@@ -99,7 +99,7 @@ export TEMPESTCONF="{{ tempestconf }}"
 source {{ rc_file }}
 {% endif %}
 
-{% if tempest_overcloud|bool %}
+{% if tempest_overcloud|bool or tempest_os_cloud != '' %}
 # Get public net id
 
 {% if release == 'newton' %}
@@ -133,6 +133,7 @@ $TEMPESTCONF --out etc/tempest.conf \
   {% endif %}
   {% if tempest_os_cloud != '' %}
   --os-cloud {{ tempest_os_cloud }} \
+  --network-id $public_net_id \
   {% endif %}
   --image {{ tempest_test_image_path }} \
   --debug \
