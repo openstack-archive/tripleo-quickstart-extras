@@ -58,7 +58,7 @@ tempest_plugins: >-
   {%- else -%}
   [ "python-keystone-tests", "python-neutron-tests" ]
   {%- endif -%}
-
+tempest_plugins_git: []
 tempest_extra_config: {}  # A dict containing values which needs to be overridden in tempest.conf
 skip_file_src: "skip_file.j2"
 skip_file: skip_file

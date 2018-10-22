@@ -35,6 +35,15 @@ Role Variables
 * `check_tempest_bugs`: true/false - Will check every bugzilla and launchpad bug in the yaml skip file
 * `tempest_plugins`: list - List of openstack services tempest plugins to be
                      installed
+* `tempest_plugins_git`: list - (optional) List of URLs for openstack tempest plugins you want to have installed.
+                                (Required) `tempest_format`: venv
+                                For example:
+                                ```
+                                tempest_format: venv
+                                tempest_plugins_git: [https://git.openstack.org/openstack/tempest-tripleo-ui,
+                                                      https://git.openstack.org/openstack/keystone-tempest-plugin,
+                                                      https://git.openstack.org/openstack/cinder-tempest-plugin]
+                                ```
 * `tempest_extra_config`: dict - A dict of tempest configuration which needs to be overridden in tempest.conf,
                           It should be like section.key: value.
 * `tempest_conf_removal`: dict - A dict of tempest configuration which will be
