@@ -29,6 +29,8 @@ Role Variables
 
 - standalone_libvirt_type: <'kvm'> -- The type of libvirt to run on the standalone (qemu|kvm)
 
+- standalone_selinux_mode: <'permissive'> -- The selinux mode to use.
+
 Dependencies
 ------------
 
