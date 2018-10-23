@@ -1,8 +1,14 @@
 ---
 - when: update_containers|bool
   block:
-    - name: Install python-setuptools
-      yum:
+    - name: check if python setup tool is installed
+      shell: command -v easy-install >/dev/null 2>&1
+      register: easy_install_exists
+      ignore_errors: yes
+
+    - when: easy_install_exists.rc == 1
+      name: Install python setuptools
+      package:
         name: python-setuptools
         state: latest
       become: true
