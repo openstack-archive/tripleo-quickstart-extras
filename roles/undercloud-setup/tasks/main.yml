@@ -29,4 +29,4 @@
 - name: Include ansible.cfg configuration for the undercloud / node
   include: ansible_cfg.yml
   when:
-    - undercloud_ansible_cfg|bool
+    - undercloud_ansible_cfg|bool and undercloud_ara|bool

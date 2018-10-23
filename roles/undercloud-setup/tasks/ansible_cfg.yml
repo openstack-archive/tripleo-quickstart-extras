@@ -18,6 +18,7 @@
     name: ara
     state: present
     version: "{{ undercloud_ara_version }}"
+  ignore_errors: True
 
 - name: Update the default ansible callback setting in /etc/ansible/ansible.cfg
   become: true

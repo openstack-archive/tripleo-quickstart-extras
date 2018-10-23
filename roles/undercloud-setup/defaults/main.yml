@@ -35,3 +35,7 @@ undercloud_ansible_cfg: true
 # versions. Once we have 2.5+ everywhere we can likely remove this version and
 # specify latest
 undercloud_ara_version: 0.15.0
+
+# NOTE(rfolco): do not configure ara on undercloud until we pin ara deps to
+# each branch - https://bugs.launchpad.net/tripleo/+bug/1792622
+undercloud_ara: false

@@ -40,6 +40,7 @@ Role Variables
 - package_installs: <true> -- Switch to install required OpenStack packages for an undercloud (requires repos to already be setup)
 - custom_nameserver: <['8.8.8.8']> -- A list, added to /etc/resolv.conf for access in custom environments
 - ovb_setup_connectivity: <false> -- Setup external network, custom nameserver and set MTUS valuse for OVB environments
+- undercloud_ara: <false> -- Install ara on undercloud
 
 - `undercloud_ansible_cfg`: <'true'> -- Configure ara on the host
 - `undercloud_ara_version`: <'0.15.0'> -- Default version of ara to install
