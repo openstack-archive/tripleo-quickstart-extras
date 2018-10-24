@@ -18,7 +18,7 @@ key_location: "{{ private_key_location }}.pub"
 
 stack_name: "{{ prefix }}multinode_stack"
 public_net_name: 38.145.32.0/22
-private_net_name: private_net
+private_net_name: "{{ prefix }}private_net"
 private_net_base: 192.168.54
 private_net_cidr: "{{ private_net_base }}.0/24"
 private_net_gateway: "{{ private_net_base }}.1"
