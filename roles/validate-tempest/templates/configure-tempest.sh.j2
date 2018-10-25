@@ -107,6 +107,7 @@ public_net_id=$(neutron net-show {{ public_net_name }} -f value -c id)
 {% else %}
 public_net_id=$(openstack network show {{ public_net_name }} -f value -c id)
 {% endif %}
+region_name=${OS_REGION_NAME:-'regionOne'}
 {% endif %}
 
 {% if not tempest_overcloud|bool %}
@@ -146,6 +147,9 @@ $TEMPESTCONF --out etc/tempest.conf \
   {% if tempest_format == 'container' %}
   DEFAULT.log_dir {{ tempest_log_dir }} \
   DEFAULT.log_file {{ tempest_log_file }} \
+  {% endif %}
+  {% if tempest_os_cloud != '' %}
+  identity.region $region_name \
   {% endif %}
   {% if release in ['newton', 'ocata', 'pike'] %}
   identity.uri $OS_AUTH_URL \
