@@ -55,10 +55,12 @@ parameter_defaults:
     nova::api::metadata_workers: {{undercloud_nova_workers}}
     nova::api::osapi_compute_workers: {{undercloud_nova_workers}}
     nova::conductor::workers: {{undercloud_nova_workers}}
+    nova::scheduler::workers: {{undercloud_nova_workers}}
     {% elif undercloud_workers is defined -%}
     nova::api::metadata_workers: "%{hiera('undercloud_workers')}"
     nova::api::osapi_compute_workers: "%{hiera('undercloud_workers')}"
     nova::conductor::workers: "%{hiera('undercloud_workers')}"
+    nova::scheduler::workers: "%{hiera('undercloud_workers')}"
     {%- endif %}
 
     {% if undercloud_nova_max_concurrent_builds is defined -%}
