@@ -7,80 +7,80 @@ parameter_defaults:
 
     # The following are configurations for the different workers for the undercloud
     # services.
-    {% if undercloud_workers is defined %}
+    {% if undercloud_workers is defined -%}
     undercloud_workers: {{undercloud_workers}}
-    {% endif %}
+    {%- endif %}
 
-    {% if undercloud_glance_workers is defined %}
+    {% if undercloud_glance_workers is defined -%}
     glance::api::workers: {{undercloud_glance_workers}}
     glance::registry::workers: {{undercloud_glance_workers}}
-    {% elif undercloud_workers is defined %}
+    {% elif undercloud_workers is defined -%}
     glance::api::workers: "%{hiera('undercloud_workers')}"
     glance::registry::workers: "%{hiera('undercloud_workers')}"
-    {% endif %}
+    {%- endif %}
 
-    {% if undercloud_heat_workers is defined %}
+    {% if undercloud_heat_workers is defined -%}
     heat::api::workers: {{undercloud_heat_workers}}
     heat::api_cfn::workers: {{undercloud_heat_workers}}
     heat::engine::num_engine_workers: {{undercloud_heat_workers}}
-    {% elif undercloud_workers is defined %}
+    {% elif undercloud_workers is defined -%}
     heat::api::workers: "%{hiera('undercloud_workers')}"
     heat::api_cfn::workers: "%{hiera('undercloud_workers')}"
     heat::engine::num_engine_workers: "%{hiera('undercloud_workers')}"
-    {% endif %}
+    {%- endif %}
 
-    {% if undercloud_ironic_workers is defined %}
+    {% if undercloud_ironic_workers is defined -%}
     ironic::api::workers: {{undercloud_ironic_workers}}
     ironic::wsgi::apache::workers: {{undercloud_ironic_workers}}
-    {% elif undercloud_workers is defined %}
+    {% elif undercloud_workers is defined -%}
     ironic::api::workers: "%{hiera('undercloud_workers')}"
     ironic::wsgi::apache::workers: "%{hiera('undercloud_workers')}"
-    {% endif %}
+    {%- endif %}
 
-    {% if undercloud_keystone_workers is defined %}
+    {% if undercloud_keystone_workers is defined -%}
     keystone::wsgi::apache::workers: {{undercloud_keystone_workers}}
-    {% elif undercloud_workers is defined %}
+    {% elif undercloud_workers is defined -%}
     keystone::wsgi::apache::workers: "%{hiera('undercloud_workers')}"
-    {% endif %}
+    {%- endif %}
 
-    {% if undercloud_neutron_workers is defined %}
+    {% if undercloud_neutron_workers is defined -%}
     neutron::agents::metadata::metadata_workers: {{undercloud_neutron_workers}}
     neutron::server::api_workers: {{undercloud_neutron_workers}}
-    {% elif undercloud_workers is defined %}
+    {% elif undercloud_workers is defined -%}
     neutron::agents::metadata::metadata_workers: "%{hiera('undercloud_workers')}"
     neutron::server::api_workers: "%{hiera('undercloud_workers')}"
-    {% endif %}
+    {%- endif %}
 
-    {% if undercloud_nova_workers is defined %}
+    {% if undercloud_nova_workers is defined -%}
     nova::api::metadata_workers: {{undercloud_nova_workers}}
     nova::api::osapi_compute_workers: {{undercloud_nova_workers}}
     nova::conductor::workers: {{undercloud_nova_workers}}
-    {% elif undercloud_workers is defined %}
+    {% elif undercloud_workers is defined -%}
     nova::api::metadata_workers: "%{hiera('undercloud_workers')}"
     nova::api::osapi_compute_workers: "%{hiera('undercloud_workers')}"
     nova::conductor::workers: "%{hiera('undercloud_workers')}"
-    {% endif %}
+    {%- endif %}
 
-    {% if undercloud_nova_max_concurrent_builds is defined %}
+    {% if undercloud_nova_max_concurrent_builds is defined -%}
     nova::compute::ironic::max_concurrent_builds: {{undercloud_nova_max_concurrent_builds}}
-    {% endif %}
+    {%- endif %}
 
-    {% if undercloud_nova_rpc_response_timeout is defined %}
+    {% if undercloud_nova_rpc_response_timeout is defined -%}
     nova::rpc_response_timeout: {{undercloud_nova_rpc_response_timeout}}
-    {% endif %}
+    {%- endif %}
 
-    {% if undercloud_ironic_rpc_response_timeout is defined %}
+    {% if undercloud_ironic_rpc_response_timeout is defined -%}
     ironic::rpc_response_timeout: {{undercloud_ironic_rpc_response_timeout}}
-    {% endif %}
+    {%- endif %}
 
 
-    {% if undercloud_swift_workers is defined %}
+    {% if undercloud_swift_workers is defined -%}
     swift::proxy::workers: {{undercloud_swift_workers}}
-    {% elif undercloud_workers is defined %}
+    {% elif undercloud_workers is defined -%}
     swift::proxy::workers: "%{hiera('undercloud_workers')}"
-    {% endif %}
+    {%- endif %}
 
-    {% if undercloud_heat_convergence is defined %}
+    {% if undercloud_heat_convergence is defined -%}
     # The following is configuration for heat convergence feature:
     heat::engine::convergence_engine: {{undercloud_heat_convergence}}
-    {% endif %}
+    {%- endif %}
