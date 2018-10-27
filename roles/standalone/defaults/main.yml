@@ -13,10 +13,14 @@ standalone_container_prep_log: standalone_container_prep.log
 # deploy script
 standalone_deploy_script: standalone.sh.j2
 standalone_deploy_log: standalone_deploy.log
+standalone_ansible_lint_log: standalone_ansible_lint.log
 
 # deployment role
 standalone_role: Standalone.yaml
 
-standalone_libvirt_type: kvm
+# Extra action on the deployment
+standalone_ansible_lint: false
 
 standalone_selinux_mode: permissive
+
+standalone_libvirt_type: kvm

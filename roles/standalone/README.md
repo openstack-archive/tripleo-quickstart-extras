@@ -24,12 +24,15 @@ Role Variables
 
 - standalone_deploy_script: <'standalone.sh.j2'> -- The script name use to deploy the standalone server
 - standalone_deploy_log: <'standalone_deploy.log'> --  The log of the deployment
+- standalone_ansible_lint_log: <'standalone_ansible_lint.log'> -- The ansible lint output
 
 - standalone_role: <'Standalone.yaml'> -- The TripleO Heat Template role definition of the deployment
 
 - standalone_libvirt_type: <'kvm'> -- The type of libvirt to run on the standalone (qemu|kvm)
 
 - standalone_selinux_mode: <'permissive'> -- The selinux mode to use.
+
+- standalone_ansible_lint: <'false'> -- Perform ansible lint on the generated ansible playbooks
 
 Dependencies
 ------------
