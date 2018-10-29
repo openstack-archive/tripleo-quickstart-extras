@@ -30,9 +30,20 @@
     set -o pipefail
     source "{{ working_dir }}/tempest/.stackviz/bin/activate"
     stackviz-export {{ tempest_dstat_opt | default('') }} --env -f {{ working_dir }}/tempest/testrepository.subunit {{ working_dir }}/stackviz/data
+  register: stackviz_result
   args:
       chdir: "{{ working_dir }}/tempest"
 
-- name: Moving stackviz to /var/log/extra
-  shell: mv {{ working_dir }}/stackviz/ /var/log/extra/stackviz
+- name: Ensure /var/log/extra exists
+  file:
+    path: /var/log/extra
+    state: directory
+    mode: 0755
   become: true
+
+- name: Moving stackviz to /var/log/extra
+  shell: |
+    set -o pipefail
+    mv {{ working_dir }}/stackviz/ /var/log/extra
+  become: true
+  when: stackviz_result.rc == 0
