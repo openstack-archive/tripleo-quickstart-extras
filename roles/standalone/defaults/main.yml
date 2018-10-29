@@ -24,3 +24,5 @@ standalone_ansible_lint: false
 standalone_selinux_mode: permissive
 
 standalone_libvirt_type: kvm
+
+standalone_container_cli: docker
