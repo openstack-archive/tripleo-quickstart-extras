@@ -20,12 +20,23 @@
     version: '{{ tempest_conf_version }}'
   when: release != 'newton'
 
+
+- name: Check if virtualenv is in the system
+  shell: command -v virtualenv >/dev/null 2>&1
+  register: virtualenv_exist
+  ignore_errors: yes
+
+- when: virtualenv_exist.rc == 1
+  name: Install virtualenv
+  package:
+    name: python-virtualenv
+    state: present
+
 - name: Install packages required for create venv
   package: name={{ item }} state=present
   with_items:
     - libffi-devel
     - openssl-devel
-    - python-virtualenv
     - gcc
 
 - name: Set tempest init command
