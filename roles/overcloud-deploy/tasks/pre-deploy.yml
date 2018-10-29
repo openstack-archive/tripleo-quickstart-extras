@@ -183,7 +183,9 @@
 - name: set container_args fact
   set_fact:
     container_args: >-
+      {% if release in ['pike', 'queens', 'rocky'] %}
       -e {{ overcloud_templates_path }}/environments/docker.yaml
+      {% endif %}
       {% if enable_pacemaker|bool or osp_release is defined%}
       -e {{ overcloud_templates_path }}/environments/docker-ha.yaml
       {% endif %}
