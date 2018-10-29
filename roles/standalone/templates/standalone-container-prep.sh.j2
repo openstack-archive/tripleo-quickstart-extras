@@ -7,8 +7,8 @@ openstack tripleo container image prepare default \
 sed -Ei 's/^([\t ]+)namespace: [a-z./]*/\1namespace: docker.io\/{{ docker_registry_namespace }}/' \
   "{{ working_dir }}/containers-prepare-parameters.yaml"
 {% endif %}
-{% if dlrn_hash_tag != '' %}
+{% if container_build_id != '' %}
 # Make CI specific tag change to the container params
-sed -Ei 's/^([\t ]+)tag: [a-z-]+/\1tag: {{ dlrn_hash_tag }}/' \
+sed -Ei 's/^([\t ]+)tag: [a-z-]+/\1tag: {{ container_build_id }}/' \
   "{{ working_dir }}/containers-prepare-parameters.yaml"
 {% endif %}
