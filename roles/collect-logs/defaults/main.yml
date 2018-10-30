@@ -65,6 +65,7 @@ artcl_collect_list:
   - /var/log/tacker/
   - /var/log/tempest/
   - /var/log/trove/
+  - /var/log/tripleo-container-image-prepare.log
   - /var/log/vitrage/
   - /var/log/watcher/
   - /var/log/zaqar/
@@ -183,6 +184,7 @@ artcl_logstash_files:
   - /home/*/yum_mirror.log
   - /home/*/tempest_output.log
   - /var/log/bootstrap-subnodes.log
+  - /var/log/tripleo-container-image-prepare.log
 #ara_graphite_server: graphite.tripleo.org
 ara_graphite_prefix: "tripleo.{{ lookup('env', 'STABLE_RELEASE')|default('master', true) }}.{{ lookup('env', 'TOCI_JOBTYPE') }}."
 ara_only_successful_tasks: true
