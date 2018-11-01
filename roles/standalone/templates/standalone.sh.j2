@@ -5,5 +5,8 @@ sudo openstack tripleo deploy \
   -r {{ overcloud_templates_path }}/roles/{{ standalone_role }} \
   -e "{{ working_dir }}/containers-prepare-parameters.yaml" \
   -e "{{ working_dir }}/standalone_parameters.yaml" \
+{% if standalone_custom_env_files %}
+  -e {{ standalone_custom_env_files | join(' -e ') }} \
+{% endif %}
   --output-dir {{ working_dir }} \
   --standalone

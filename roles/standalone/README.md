@@ -34,6 +34,8 @@ Role Variables
 
 - standalone_ansible_lint: <'false'> -- Perform ansible lint on the generated ansible playbooks
 
+- standalone_custom_env_files: <'[]'> -- list of additional environment files to be added to the deployment command (do not include the -e)
+
 Dependencies
 ------------
 
