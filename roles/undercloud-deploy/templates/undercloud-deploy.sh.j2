@@ -67,7 +67,9 @@ sudo openstack undercloud deploy \
     -e {{ undercloud_templates_path }}/environments/{{ env_files_path }}/undercloud-panko.yaml \
     -e {{ undercloud_templates_path }}/environments/{{ env_files_path }}/undercloud-ceilometer.yaml \
 {% endif %}
+{% if release in ['pike', 'queens', 'rocky'] %}
     -e {{ undercloud_templates_path }}/environments/docker.yaml \
+{% endif %}
     -e {{ working_dir }}/undercloud-containers-default-parameters.yaml \
     -e {{ working_dir }}/undercloud-parameter-defaults.yaml \
 {% endif %}
