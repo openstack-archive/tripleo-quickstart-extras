@@ -13,7 +13,7 @@
 
 - name: Setup the undercloud
   hosts: undercloud
-  gather_facts: no
+  gather_facts: yes
   vars:
     ansible_user: root
   roles:

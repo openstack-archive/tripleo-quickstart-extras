@@ -8,6 +8,7 @@ artcl_collect_list:
   - /var/lib/oooq-images/*/*.sh
   - /var/lib/pacemaker/cib/cib*
   - /var/lib/pacemaker/pengine/pe-input*
+  - /var/log/atop*
   - /var/log/dmesg.txt
   - /var/log/host_info.txt
   - /var/log/journal.txt

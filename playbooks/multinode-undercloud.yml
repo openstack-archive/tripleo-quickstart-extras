@@ -25,6 +25,12 @@
           127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4
           ::1        localhost localhost.localdomain localhost6 localhost6.localdomain6
       become: true
+
+    - name: Run atop on overcloud node if configured
+      include_role:
+        name: undercloud-setup
+        tasks_from: atop
+
   tags:
     - undercloud-setup
 
