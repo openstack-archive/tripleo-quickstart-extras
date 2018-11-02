@@ -27,7 +27,7 @@ Parameters required to access the stack:
 - node_name: 'undercloud'
 - existing_key_location: <local_working_dir> -- required to access the undercloud node
 - ssh_extra_args: <'-F "{{ local_working_dir }}/ssh.config.ansible"'>
-- undercoud_key: <"{{ local_working_dir }}/id_rsa_undercloud">
+- undercloud_key: <"{{ local_working_dir }}/id_rsa_undercloud">
 
 Parameters required for shade (See defaults/main.yml for default values):
 - heat_template

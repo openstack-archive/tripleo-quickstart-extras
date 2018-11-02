@@ -288,7 +288,7 @@ parameter_defaults:
 Note, this template complements the default t-h-t's `environments/docker.yaml`
 setup that deploys everything in containers. The default template for
 the ``undercloud-install.sh`` also provides an additional set of required
-services used for underlcoud to deploy overclouds (Ironic, Zaqar, MongoDB,
+services used for undercloud to deploy overclouds (Ironic, Zaqar, MongoDB,
 Mistral). If you need a lightweight undercloud, make sure your custom
 undercloud installation script template omits those services and the
 `environments/docker.yaml` defaults.
