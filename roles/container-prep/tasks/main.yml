@@ -5,13 +5,20 @@
   tags:
     - undercloud-install
 
-- name: set container_build_id from get_build_command
-  set_fact:
-    container_build_id: "{{ get_build_command }}"
-    cacheable: true
-  when: get_build_command is defined
-  tags:
-    - undercloud-install
+- when: get_build_command is defined
+  block:
+    - name: execute build_command
+      shell: "echo {{ get_build_command }}"
+      register: build_command_output
+      tags:
+        - undercloud-install
+
+    - name: set container_build_id from get_build_command
+      set_fact:
+        container_build_id: "{{ build_command_output.stdout }}"
+        cacheable: true
+      tags:
+        - undercloud-install
 
 - name: set mixed upgrade container_build_id
   set_fact:
