@@ -10,6 +10,39 @@
     state: directory
   when: not collect_dir.stat.exists
 
+- name: Create the reproducer-quickstart directory
+  file:
+    path: "{{ artcl_collect_dir }}/reproducer-quickstart"
+    state: directory
+
+- name: Create the reproducer-quickstart/scripts directory
+  file:
+    path: "{{ artcl_collect_dir }}/reproducer-quickstart/scripts"
+    state: directory
+
+- name: Copy the generate toci templates and files
+  copy:
+    src: "/home/{{ undercloud_user }}/src/git.openstack.org/openstack/tripleo-ci/{{ item }}"
+    dest: "{{ artcl_collect_dir }}/reproducer-quickstart/{{ item }}"
+    mode: 0755
+  with_items:
+    - "toci_gate_test.sh"
+    - "toci_quickstart.sh"
+    - "scripts/common_vars.bash"
+    - "scripts/oooq_common_functions.sh"
+
+- name: Check if featureset-override exists
+  stat:
+    path: "/home/{{ undercloud_user }}/src/git.openstack.org/openstack/tripleo-ci/featureset-override.yaml"
+  register: featureset_override_file
+
+- name: Add the featureset-override if it exists
+  copy:
+    src: "/home/{{ undercloud_user }}/src/git.openstack.org/openstack/tripleo-ci/featureset-override.yaml"
+    dest: "{{ artcl_collect_dir }}/reproducer-quickstart/featureset-override.yaml"
+    mode: 0755
+  when: featureset_override_file.stat.exists
+
 - name: Create the reproducer file from template
   template:
     src: "{{ reproducer_quickstart_script }}"
