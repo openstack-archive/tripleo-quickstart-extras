@@ -3,11 +3,13 @@
 # needed to avoid potential failure when role is used without gather
 - name: gather facts used by role
   setup:
-    gather_subset: "!min,user_dir,python,processor"
+    gather_subset: "!min,user_dir,python,processor,pkg_mgr,distribution"
   when: >
     ansible_user_dir is not defined or
     ansible_python is not defined or
-    ansible_processor_vcpus is not defined
+    ansible_processor_vcpus is not defined or
+    ansible_pkg_mgr is not defined or
+    ansible_distribution is not defined
 
 - name: set python_cmd
   set_fact:
@@ -122,14 +124,15 @@
     dest: '{{ build_repo_dir }}/DLRN/rdoinfo'
     version: 'master'
 
-- name: Use local CentOS mirror if available
+- name: Use local {{ ansible_distribution }} mirror if available
   shell: >
-    gawk '{ print $0 }; /^# repos$/ { exit }' {{ build_repo_dir }}/DLRN/scripts/centos.cfg
-    > {{ build_repo_dir }}/DLRN/scripts/centos-local.cfg;
-    cat /etc/yum.repos.d/quickstart-centos-*.repo >> {{ build_repo_dir }}/DLRN/scripts/centos-local.cfg;
-    find /etc/yum.repos.d -name "delorean*repo" ! -name "delorean*build-deps.repo" -exec cat {} \; >> {{ build_repo_dir }}/DLRN/scripts/centos-local.cfg;
-    find /etc/yum.repos.d -name "delorean*build-deps.repo" -exec sed 's/enabled=.*/enabled=1/g' {} \; >> {{ build_repo_dir }}/DLRN/scripts/centos-local.cfg;
-    echo '"""' >> {{ build_repo_dir }}/DLRN/scripts/centos-local.cfg;
+    set -o pipefail ;
+    gawk '{ print $0 }; /^# repos$/ { exit }' {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}.cfg
+    > {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
+    cat /etc/yum.repos.d/quickstart-{{ ansible_distribution | lower }}-*.repo >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
+    find /etc/yum.repos.d -name "delorean*repo" ! -name "delorean*build-deps.repo" -exec cat {} \; >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
+    find /etc/yum.repos.d -name "delorean*build-deps.repo" -exec sed 's/enabled=.*/enabled=1/g' {} \; >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
+    echo '"""' >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
     mkdir -p /tmp/fake-dlrn-repos/current;
     touch /tmp/fake-dlrn-repos/delorean-deps.repo;
     touch /tmp/fake-dlrn-repos/current/delorean.repo;
@@ -139,7 +142,7 @@
   lineinfile:
     dest: '{{ build_repo_dir }}/DLRN/projects.ini'
     regexp: 'target=.*'
-    line: 'target=centos-local'
+    line: 'target={{ ansible_distribution | lower }}-local'
   when: dlrn_use_local_mirrors|bool
 
 # FIXME(jpena): once DLRN 0.8.0 is released, we can remove this

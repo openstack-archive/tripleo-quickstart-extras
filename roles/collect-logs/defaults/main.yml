@@ -17,7 +17,7 @@ artcl_collect_list:
   - /var/log/secure
   - /var/log/bootstrap-subnodes.log
   - /var/log/unbound.log
-  - /var/log/yum.log
+  - /var/log/{{ ansible_pkg_mgr }}.log
   - /var/log/aodh/
   - /var/log/audit/
   - /var/log/barbican/
@@ -182,8 +182,8 @@ artcl_logstash_files:
   - /home/*/validate-overcloud-ipmi-connection.log
   - /home/*/vxlan_networking.sh.log
   - /home/*/workload_launch.log
-  - /home/*/yum_mirror_error.log
-  - /home/*/yum_mirror.log
+  - /home/*/pkg_mgr_mirror_error.log
+  - /home/*/pkg_mgr_mirror.log
   - /home/*/tempest_output.log
   - /var/log/bootstrap-subnodes.log
   - /var/log/tripleo-container-image-prepare.log
