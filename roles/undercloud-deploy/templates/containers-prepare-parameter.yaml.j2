@@ -48,3 +48,24 @@ parameter_defaults:
 {% if docker_openshift_etcd_tag is defined %}
       openshift_etcd_tag: "{{ docker_openshift_etcd_tag }}"
 {% endif %}
+{% if docker_openshift_gluster_namespace is defined %}
+    openshift_gluster_namespace: "{{ docker_openshift_gluster_namespace }}"
+{% endif %}
+{% if docker_openshift_gluster_image is defined %}
+    openshift_gluster_image: "{{ docker_openshift_gluster_image }}"
+{% endif %}
+{% if docker_openshift_gluster_block_image is defined %}
+    openshift_gluster_block_image: "{{ docker_openshift_gluster_block_image }}"
+{% endif %}
+{% if docker_openshift_gluster_tag is defined %}
+    openshift_gluster_tag: "{{ docker_openshift_gluster_tag }}"
+{% endif %}
+{% if docker_openshift_heketi_namespace is defined %}
+    openshift_heketi_namespace: "{{ docker_openshift_heketi_namespace }}"
+{% endif %}
+{% if docker_openshift_heketi_image is defined %}
+    openshift_heketi_image: "{{ docker_openshift_heketi_image }}"
+{% endif %}
+{% if docker_openshift_heketi_tag is defined %}
+    openshift_heketi_tag: "{{ docker_openshift_heketi_tag }}"
+{% endif %}
