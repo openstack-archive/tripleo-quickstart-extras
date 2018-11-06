@@ -5,6 +5,6 @@ delete_script: overcloud_delete.sh.j2
 delete_log: "{{ working_dir }}/overcloud_delete.log"
 
 # 30 retries * 10 seconds delay = 5 minutes delete timeout
-delete_check_retries: 30
+delete_check_retries: 60
 delete_check_delay: 10
 step_delete_overcloud: false
