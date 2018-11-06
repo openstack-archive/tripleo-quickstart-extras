@@ -1,3 +1,8 @@
+- name: gather facts used by role
+  setup:
+    gather_subset: "!min,distribution"
+  when: ansible_distribution is not defined
+
 - include: novajoin_prep.yml
   when: enable_tls_everywhere|bool and prepare_novajoin|bool
   tags:

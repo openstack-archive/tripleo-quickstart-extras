@@ -1,4 +1,24 @@
 ---
+- name: gather facts used by role
+  setup:
+    gather_subset: "!min,python,processor"
+  when: >
+    python_version is not defined or
+    ansible_processor_vcpus is not defined
+
+- name: gather ansible_python_version
+  setup:
+    gather_subset: "!min,python_version,python"
+  when: >
+    ansible_python_version is not defined or
+    ansible_python is not defined
+
+- name: set python_cmd
+  set_fact:
+    python_cmd: "python{{ ansible_python.version.major }}"
+    cacheable: true
+  when: python_cmd is not defined
+
 - include: tempest-venv.yml
   when: tempest_config|bool and tempest_format == 'venv'
   tags:

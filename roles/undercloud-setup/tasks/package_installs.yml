@@ -1,5 +1,10 @@
 ---
 
+- name: gather ansible_pkg_mgr
+  setup:
+    gather_subset: "!min,pkg_mgr"
+  when: ansible_pkg_mgr is not defined
+
 - name: Install package installation script
   template:
     src: install_packages.sh.j2

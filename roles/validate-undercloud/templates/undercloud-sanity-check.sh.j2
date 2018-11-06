@@ -5,7 +5,7 @@
 script_return_value=0
 
 ## * Install deps for subunit results
-sudo yum install -y python-os-testr
+sudo {{ ansible_pkg_mgr }} install -y python-os-testr
 
 ## * Set the uri of TripleO UI based on SSL usage
 ## ::

@@ -8,6 +8,6 @@
 ## * Install python-tripleoclient
 ## ::
 
-sudo yum install -y {{ undercloud_rpm_dependencies }}
+sudo $(command -v dnf || command -v yum) install -y {{ undercloud_rpm_dependencies }}
 
 ### --stop_docs
