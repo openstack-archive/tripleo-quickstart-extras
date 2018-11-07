@@ -84,6 +84,9 @@
 - name: Create the reproducer script
   include_role:
     name: create-reproducer-script
+  vars:
+    zuul_variables: "{{ (lookup('file', artcl_collect_dir + '/zuul-variables.yaml') | from_yaml)['zuul'] }}"
+    zuul_console: "{{ (lookup('file', artcl_collect_dir + '/zuul_console.json') | from_json) }}"
   when: ansible_env.TOCI_JOBTYPE is defined
 
 - name: upload to the artifact server using pubkey auth
