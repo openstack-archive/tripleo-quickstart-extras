@@ -21,12 +21,29 @@
   when:
     - not release in ['newton','ocata','pike','queens']
     - containerized_undercloud|bool
+    - undercloud_undercloud_hostname is not defined
   block:
-    - name: Get the hostname info
-      command: hostnamectl --static
-      register: hostnamectl_result
+    - name: set fact for undercloud_fqdn override when undercloud_cloud_domain was provided
+      set_fact:
+        undercloud_fqdn: "{{ ansible_hostname }}.{{ undercloud_cloud_domain }}"
+      when:
+      - undercloud_cloud_domain is defined
+
+    - name: set fact for undercloud_fqdn override when we have a domain
+      set_fact:
+        undercloud_fqdn: "{{ ansible_fqdn }}"
+      when:
+      - ansible_domain|default("") != ""
+      - undercloud_cloud_domain is not defined
+
+    - name: set fact for undercloud_fqdn override when we don't have a domain
+      set_fact:
+        undercloud_fqdn: "{{ ansible_hostname }}.tripleodomain.example.com"
+      when:
+      - ansible_domain|default("") == ""
+      - undercloud_cloud_domain is not defined
 
     - name: Set fact for undercloud_hostname override
       set_fact:
         cacheable: true
-        undercloud_undercloud_hostname: "{{ hostnamectl_result.stdout }}"
+        undercloud_undercloud_hostname: "{{ undercloud_fqdn }}"
