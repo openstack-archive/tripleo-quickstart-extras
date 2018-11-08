@@ -8,6 +8,11 @@
   set_fact:
       rc_file: "{{ working_dir }}/{% if tempest_undercloud %}stackrc{% else %}overcloudrc{% endif %}"
 
+- name: Set rc file to be sourced to run tempest with in container
+  set_fact:
+      rc_file_container: "{{ tempest_data }}/{% if tempest_undercloud %}stackrc{% else %}overcloudrc{% endif %}"
+  when: tempest_format == 'container'
+
 - name: Create overcloud tempest setup script
   template:
     src: tempest-setup.j2

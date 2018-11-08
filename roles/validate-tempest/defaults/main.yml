@@ -36,7 +36,18 @@ tempest_container_tag: >-
   {%- else -%}
   {{ docker_image_tag }}
   {%- endif %}
-tempest_dir: "{{ working_dir }}/tempest"
+tempest_dir: >-
+  {% if tempest_format in ['container'] -%}
+  /var/lib/tempest/tempest
+  {%- else -%}
+  {{ working_dir }}/tempest
+  {%- endif %}
+tempest_data: >-
+  {% if tempest_format in ['container'] -%}
+  /var/lib/tempest
+  {%- else -%}
+  {{ working_dir }}
+  {%- endif %}
 tempest_whitelist_file_src: "whitelist_file.j2"
 tempest_whitelist_file: "whitelist_file.conf"
 tempest_whitelist: []
