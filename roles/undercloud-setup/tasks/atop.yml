@@ -1,0 +1,16 @@
+
+- when: install_atop|bool
+  ignore_errors: true
+  become: true
+  block:
+# Run atop in background
+    - name: Install atop if configured so
+      shell: |
+        source /etc/ci/mirror_info.sh
+        atop_location=$(repoquery --repoid=osepel --repofrompath=osepel,$NODEPOOL_EPEL_MIRROR/7/x86_64/ --location atop)
+        {{ ansible_pkg_mgr }} install -y $atop_location
+
+    - name: Run atop
+      shell: atop -R -w /var/log/atop.bin &
+      async: 0
+      poll: 0

@@ -39,3 +39,4 @@ undercloud_ara_version: 0.15.0
 # NOTE(rfolco): do not configure ara on undercloud until we pin ara deps to
 # each branch - https://bugs.launchpad.net/tripleo/+bug/1792622
 undercloud_ara: false
+install_atop: true
