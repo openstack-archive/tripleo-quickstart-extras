@@ -38,6 +38,7 @@
     rdopkg findpkg -s $PROJECT_NAME -l rdoinfo | grep ^name | awk '{print $2}'
   args:
       chdir: '{{ build_repo_dir }}/DLRN'
+  changed_when: false
 
 - debug:
     msg: "WARNING: Unable to build {{ artg_change.project }}. No pkg found."

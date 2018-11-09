@@ -14,13 +14,12 @@
 - name: Setup the undercloud
   hosts: undercloud
   gather_facts: yes
-  vars:
-    ansible_user: root
   roles:
     - undercloud-setup
   tasks:
     - name: Add eth2 interface from eth2.conf
       command: os-net-config -c {{ working_dir }}/eth2.conf -v
+      become: yes
       when:
         - network_isolation|bool
         - use_testenv_broker|default(false)|bool
