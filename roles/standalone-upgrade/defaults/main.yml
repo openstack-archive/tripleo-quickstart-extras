@@ -17,6 +17,10 @@ standalone_upgrade_log: standalone_upgrade.log
 # deployment role
 standalone_role: Standalone.yaml
 
+standalone_selinux_mode: permissive
+
 standalone_libvirt_type: kvm
 
-standalone_selinux_mode: permissive
+standalone_container_cli: docker
+
+standalone_custom_env_files: []

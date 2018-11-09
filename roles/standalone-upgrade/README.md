@@ -30,6 +30,8 @@ Role Variables
 
 - standalone_selinux_mode: <'permissive'> -- The selinux mode to use.
 
+- standalone_custom_env_files: <'[]'> -- list of additional environment files to be added to the deployment command (do not include the -e)
+
 Dependencies
 ------------
 
