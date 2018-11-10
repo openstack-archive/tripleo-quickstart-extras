@@ -11,7 +11,7 @@ latest_guest_image:
     queens: CentOS-7-x86_64-GenericCloud-1708
     master: CentOS-7-x86_64-GenericCloud-1708
 
-bmc_flavor: m1.small
+bmc_flavor: m1.medium
 baremetal_flavor: m1.large
 undercloud_flavor: m1.large2
 provision_net_cidr: 192.168.24.0/24
