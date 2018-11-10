@@ -49,7 +49,7 @@ export TEMPEST_HOST_DATA='/var/lib/tempestdata'
 
 if [ ! -d $TEMPEST_HOST_DATA ]
 then
-    mkdir -p $TEMPEST_HOST_DATA
+    sudo mkdir -p $TEMPEST_HOST_DATA
 fi
 
 sudo cp $RCFILE \
