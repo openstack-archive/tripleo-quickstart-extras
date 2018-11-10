@@ -9,6 +9,11 @@ step_register: true
 step_introspect: false
 step_introspect_debug: false
 step_introspect_debug_tcpdump_log: "{{ working_dir }}/overcloud_prep_images_introspection_debug.pcap.log"
+step_introspect_debug_tcpdump_ports:
+  - 67
+  - 68
+  - 69
+  - 623
 step_introspect_with_retry: false
 bash_deploy_ramdisk: false
 step_install_undercloud: true
