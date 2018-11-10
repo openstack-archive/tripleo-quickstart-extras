@@ -5,7 +5,7 @@ parameter_defaults:
   ControlPlaneStaticRoutes: []
   Debug: true
   DeploymentUser: {{ undercloud_user }}
-  DnsServers: {{ undercloud_undercloud_nameservers }}
+  DnsServers: {{ undercloud_undercloud_nameservers | to_json }}
   DockerInsecureRegistryAddress:
   - {{ standalone_ip }}:8787
   MasqueradeNetworks:
