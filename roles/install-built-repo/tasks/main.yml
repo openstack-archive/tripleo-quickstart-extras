@@ -1,3 +1,9 @@
+- name: gather facts used by role
+  setup:
+    gather_subset: "!min,pkg_mgr"
+  when: >
+    ansible_pkg_mgr is not defined
+
 - name: Create repo setup script
   template:
     src: "{{ ib_repo_install_script }}"
