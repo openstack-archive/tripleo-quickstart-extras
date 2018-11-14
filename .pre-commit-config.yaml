@@ -1,5 +1,25 @@
 ---
 repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v1.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: mixed-line-ending
+      - id: check-byte-order-marker
+      - id: check-executables-have-shebangs
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: check-yaml
+        files: .*\.(yaml|yml)$
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.12.1
+    hooks:
+      - id: yamllint
+        files: \.(yaml|yml)$
+        types: [file, yaml]
+        # uncommend once a new yamllint release is made:
+        # entry: yamllint --strict
+
   - repo: https://github.com/openstack-dev/bashate.git
     rev: 0.6.0
     hooks:

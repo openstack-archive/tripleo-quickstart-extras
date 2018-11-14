@@ -1,3 +1,4 @@
+---
 os_username: "{{ lookup('env','OS_USERNAME') }}"
 os_password: "{{ lookup('env','OS_PASSWORD') }}"
 os_tenant_name: "{{ lookup('env','OS_TENANT_NAME') }}"
@@ -39,9 +40,8 @@ mtu_interface:
 undercloud_local_mtu: "{{ mtu }}"
 overcloud_neutron_global_physnet_mtu: "{{ mtu }}"
 
-run_tripleo_validations: True
+run_tripleo_validations: true
 
 # Browbeat settings
-cloud_name: rdocloud
 elastic_host: browbeat.test.com
 grafana_host: browbeat.test.com
