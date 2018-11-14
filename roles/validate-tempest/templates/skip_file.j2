@@ -1,5 +1,8 @@
+{% if tempest_undercloud and tempest_os_cloud != 'standalone' %}
+# skip list for running tempest against the undercloud
 {% for skip_test in known_failures %}
-{% if (tempest_undercloud and skip_test.undercloud is defined and skip_test.undercloud) or (not tempest_undercloud and skip_test.undercloud is not defined) %}
+{% if (skip_test.undercloud is defined and skip_test.undercloud ) %}
+
 # {{ skip_test.reason }}
 {% if skip_test.bz is defined %}
 # {{ skip_test.bz }}
@@ -10,3 +13,39 @@
 {{ skip_test.test }}
 {% endif %}
 {% endfor %}
+{% endif %}
+
+{% if tempest_undercloud and tempest_os_cloud == 'standalone' %}
+# skip list for running tempest against the standalone deployment
+{% for skip_test in known_failures %}
+{% if (skip_test.undercloud is not defined ) %}
+
+# {{ skip_test.reason }}
+{% if skip_test.bz is defined %}
+# {{ skip_test.bz }}
+{% endif %}
+{% if skip_test.lp is defined %}
+# {{ skip_test.lp }}
+{% endif %}
+{{ skip_test.test }}
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if not tempest_undercloud  %}
+# skip list for running tempest against the overcloud deployment
+{% for skip_test in known_failures %}
+{% if (skip_test.undercloud is not defined ) %}
+
+# {{ skip_test.reason }}
+{% if skip_test.bz is defined %}
+# {{ skip_test.bz }}
+{% endif %}
+{% if skip_test.lp is defined %}
+# {{ skip_test.lp }}
+{% endif %}
+{{ skip_test.test }}
+{% endif %}
+{% endfor %}
+{% endif %}
+
