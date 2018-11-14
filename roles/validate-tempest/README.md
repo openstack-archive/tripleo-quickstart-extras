@@ -17,7 +17,6 @@ Role Variables
 * `tempest_format`: venv/packages/container - Which tempest installation to use - either install python virtual environment
                     with installed there python modules from requirements file, or to use installed with RDO RPM packages
                     or to use Kolla provided tempest container image (default: packages)
-* `tempest_log_file` - name of log file for tempest run (default: tempest_output.log)
 * `test_white_regex` - tests regular expression for tempest run, i.e. smoke or tempest.api.object_storage|keystone_tempest_plugin.
 * `run_tempest`: false/true - to run tempest or not (default: false)
 * `post_tempest`: false/true - to run post processing of tempest results after tempest run
