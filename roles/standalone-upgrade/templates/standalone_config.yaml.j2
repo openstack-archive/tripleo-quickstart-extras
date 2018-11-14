@@ -7,6 +7,9 @@ parameter_defaults:
   DnsServers: {{ undercloud_undercloud_nameservers }}
   DockerInsecureRegistryAddress:
   - {{ standalone_ip }}:8787
+{% if undercloud_docker_registry_mirror is defined and undercloud_docker_registry_mirror %}
+  DockerRegistryMirror: {{undercloud_docker_registry_mirror}}
+{% endif %}
   MasqueradeNetworks:
     {{ standalone_network }}.0/{{ standalone_network_prefix }}:
     - {{ standalone_network }}.0/{{ standalone_network_prefix }}
