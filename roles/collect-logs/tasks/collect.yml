@@ -219,6 +219,7 @@
                 "${engine} ps --all --size"
                 "${engine} images"
                 "${engine} stats --all --no-stream"
+                "${engine} version"
                 "${engine} info"
             );
             if [ $engine = 'docker' ]; then
@@ -227,6 +228,7 @@
             for cmd in "${CONTAINER_INFO_CMDS[@]}"; do
                 echo "+ $cmd" >> $ALL_FILE;
                 $cmd >> $ALL_FILE;
+                echo "\n\n" >> $ALL_FILE;
             done;
 
             for cont in $(docker ps | awk {'print $NF'} | grep -v NAMES); do
