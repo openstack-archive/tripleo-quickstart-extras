@@ -1,7 +1,7 @@
 ---
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v1.4.0
+    rev: v2.0.0
     hooks:
       - id: trailing-whitespace
       - id: mixed-line-ending
@@ -20,7 +20,13 @@ repos:
       - id: yamllint
         files: \.(yaml|yml)$
         types: [file, yaml]
-        entry: yamllint --strict
+        entry: yamllint --strict -f parsable
+  - repo: https://github.com/ansible/ansible-lint
+    rev: v3.5.1
+    hooks:
+      - id: ansible-lint
+        files: \.(yaml|yml)$
+        entry: ansible-lint --force-color -v
   - repo: https://github.com/openstack-dev/bashate.git
     rev: 0.6.0
     hooks:
