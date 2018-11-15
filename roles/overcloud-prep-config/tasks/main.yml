@@ -69,8 +69,8 @@
     download_templates_rpm: "{{ download_overcloud_templates_rpm|default('') }}"
     prep_post_hook_script: "{{ overcloud_prep_post_hook_script|default('') }}"
   when:
-     - overcloud_templates_refspec is defined or overcloud_templates_branch is defined
-     - overcloud_templates_repo is defined
+    - overcloud_templates_refspec is defined or overcloud_templates_branch is defined
+    - overcloud_templates_repo is defined
 
 - name: Copy extra THT config files on the undercloud
   copy:

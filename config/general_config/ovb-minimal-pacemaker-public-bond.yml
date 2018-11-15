@@ -1,3 +1,4 @@
+---
 # baremetal settings
 step_introspect: true
 network_isolation_type: public-bond
@@ -22,9 +23,9 @@ extra_args: " --control-flavor baremetal --compute-flavor baremetal "
 # in order to reduce the overall memory footprint
 # This is not required in newton
 telemetry_args: >-
-   {% if release not in ['newton', 'ocata'] %}
-   -e {{ overcloud_templates_path }}/environments/disable-telemetry.yaml
-   {% endif %}
+  {% if release not in ['newton', 'ocata'] %}
+  -e {{ overcloud_templates_path }}/environments/disable-telemetry.yaml
+  {% endif %}
 
 run_tempest: false
 tempest_config: false

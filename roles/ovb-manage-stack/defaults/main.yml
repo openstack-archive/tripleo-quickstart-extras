@@ -3,7 +3,7 @@ release: master
 ovb_repo_version: a3786bca1604d6048562af80eca3bcad119e5065
 
 tmp:
-    idnum: "{{ 100000 |random }}"
+  idnum: "{{ 100000 |random }}"
 
 os_username: admin
 os_password: password
@@ -19,40 +19,40 @@ ssh_extra_args: '-F "{{ local_working_dir }}/ssh.config.ansible"'
 undercloud_key: "{{ local_working_dir }}/id_rsa_undercloud"
 nodepool_user: 'zuul'
 node_groups:
-    - 'undercloud'
-    - 'tester'
+  - 'undercloud'
+  - 'tester'
 templates_dir: "{{ local_working_dir }}/openstack-virtual-baremetal/templates"
 ovb_dir: "{{ local_working_dir }}/openstack-virtual-baremetal"
 heat_template: "{{ templates_dir }}/quintupleo.yaml"
 environment_list:
-    - "{{ templates_dir }}/resource-registry.yaml"
-    - "{{ local_working_dir }}/env-{{ idnum }}.yaml"
+  - "{{ templates_dir }}/resource-registry.yaml"
+  - "{{ local_working_dir }}/env-{{ idnum }}.yaml"
 boot_from_volume: false
 baremetal_boot_from_volume_size: 50
 undercloud_boot_from_volume_size: 50
 
 latest_guest_image:
-    newton: CentOS-7-x86_64-GenericCloud-released-latest
-    ocata: CentOS-7-x86_64-GenericCloud-released-latest
-    pike: CentOS-7-x86_64-GenericCloud-released-latest
-    queens: CentOS-7-x86_64-GenericCloud-released-latest
-    master: CentOS-7-x86_64-GenericCloud-released-latest
-    rhos-11: rhel-7.4-server-x86_64-latest
-    rhos-12: rhel-7.4-server-x86_64-latest
-    rhos-13: rhel-7.4-server-x86_64-latest
+  newton: CentOS-7-x86_64-GenericCloud-released-latest
+  ocata: CentOS-7-x86_64-GenericCloud-released-latest
+  pike: CentOS-7-x86_64-GenericCloud-released-latest
+  queens: CentOS-7-x86_64-GenericCloud-released-latest
+  master: CentOS-7-x86_64-GenericCloud-released-latest
+  rhos-11: rhel-7.4-server-x86_64-latest
+  rhos-12: rhel-7.4-server-x86_64-latest
+  rhos-13: rhel-7.4-server-x86_64-latest
 
 port_security: true
 
 baremetal_ports_template:
-    multiple-nics: baremetal-ports-all.yaml
-    multi-nic: baremetal-ports-all.yaml
-    public-bond: baremetal-ports-public-bond.yaml
+  multiple-nics: baremetal-ports-all.yaml
+  multi-nic: baremetal-ports-all.yaml
+  public-bond: baremetal-ports-public-bond.yaml
 
 baremetal_port_security_template:
-    none: baremetal-ports-default-port-security.yaml
-    multiple-nics: baremetal-ports-all-port-security.yaml
-    multi-nic: baremetal-ports-all-port-security.yaml
-    public-bond: baremetal-ports-public-bond-port-security.yaml
+  none: baremetal-ports-default-port-security.yaml
+  multiple-nics: baremetal-ports-all-port-security.yaml
+  multi-nic: baremetal-ports-all-port-security.yaml
+  public-bond: baremetal-ports-public-bond-port-security.yaml
 
 existing_key_location: '~/.ssh/id_rsa'
 remove_image_from_host_cloud: false
@@ -76,7 +76,7 @@ provision_net_cidr: 192.0.2.0/24
 undercloud_name: 'undercloud-{{ idnum }}'
 undercloud_image: 'undercloud-{{ idnum }}.qcow2'
 undercloud_flavor: m1.xlarge
-external_net:  '10.2.1.0/22'
+external_net: '10.2.1.0/22'
 
 network_isolation_type: multiple-nics
 
@@ -90,11 +90,11 @@ registered_releases:
   - rhos-13
 
 baremetal_driver: >-
-    {% if release not in ['newton', 'ocata', 'pike'] -%}
-    "ipmi"
-    {%- else -%}
-    "pxe_ipmitool"
-    {%- endif -%}
+  {% if release not in ['newton', 'ocata', 'pike'] -%}
+  "ipmi"
+  {%- else -%}
+  "pxe_ipmitool"
+  {%- endif -%}
 
 # OVB environment clean up
 cleanup_stacks_keypairs: false

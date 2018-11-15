@@ -1,3 +1,4 @@
+---
 # Create the scripts that will be used to setup the overcloud images
 
 - name: set the service environments for container image prepare

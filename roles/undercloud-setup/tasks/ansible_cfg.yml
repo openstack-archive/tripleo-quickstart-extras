@@ -10,7 +10,7 @@
     - pip
     - setuptools
   # TODO(sshnaidm): https://bugs.launchpad.net/tripleo/+bug/1792622
-  ignore_errors: True
+  ignore_errors: true
 
 - name: Install ara
   become: true
@@ -18,7 +18,7 @@
     name: ara
     state: present
     version: "{{ undercloud_ara_version }}"
-  ignore_errors: True
+  ignore_errors: true
 
 - name: Update the default ansible callback setting in /etc/ansible/ansible.cfg
   become: true
@@ -43,6 +43,3 @@
     regexp: '^#library'
     line: |
       library=/usr/lib/python2.7/site-packages/ara/plugins/modules
-
-
-

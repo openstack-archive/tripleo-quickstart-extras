@@ -1,3 +1,4 @@
+---
 - name: gather facts used by role
   setup:
     gather_subset: "!min,pkg_mgr"

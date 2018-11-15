@@ -1,3 +1,4 @@
+---
 known_failures:
   - test: 'tempest.scenario.test_volume_boot_pattern'
     reason: 'rdo-manager tempest smoke test failing on "floating ip pool not found"'

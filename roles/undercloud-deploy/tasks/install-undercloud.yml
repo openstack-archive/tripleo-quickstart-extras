@@ -1,3 +1,4 @@
+---
 - name: Run dstat on the undercloud prior to undercloud install
   include_role:
     name: validate-perf

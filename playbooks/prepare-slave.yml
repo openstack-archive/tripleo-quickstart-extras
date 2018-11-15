@@ -1,3 +1,4 @@
+---
 # Playbook included in OVB setups that use a testenv broker to create the
 # OVB stack.
 
@@ -40,9 +41,8 @@
               addresses:
                 - ip_netmask: 10.0.0.1/24
                 - ip_netmask: 2001:db8:fd00:1000::1/64
-        create: yes
+        create: true
 
     - name: Install ipmitool if not installed
       yum: name=ipmitool state=latest
       become: true
-

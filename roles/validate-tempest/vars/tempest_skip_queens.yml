@@ -1,3 +1,4 @@
+---
 ## PLEASE READ ##
 ## Do not add tests to the skip list that are in    ##
 ## featureset016 - featureset019 w/o permission from ##
@@ -10,7 +11,7 @@ known_failures:
   - test: 'neutron_tempest_plugin.scenario'
     reason: 'Neutron Tempest plugin scenario tests are not yet stable.'
     lp: 'https://launchpad.net/bugs/1737940'
- # skip list for undercloud
+  # skip list for undercloud
   - test: 'tempest.api.network.test_networks.NetworksTest.test_external_network_visibility'
     reason: 'Running on undercloud'
     undercloud: true

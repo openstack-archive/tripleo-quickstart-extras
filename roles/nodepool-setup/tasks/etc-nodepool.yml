@@ -9,7 +9,7 @@
 
 - name: Create /etc/nodepool/node_private
   lineinfile:
-    create: yes
+    create: true
     state: present
     name: /etc/nodepool/node_private
     owner: "{{ ansible_user }}"
@@ -18,7 +18,7 @@
 
 - name: Create /etc/nodepool/primary_node_private
   lineinfile:
-    create: yes
+    create: true
     state: present
     name: /etc/nodepool/primary_node_private
     owner: "{{ ansible_user }}"
@@ -46,7 +46,7 @@
 
 - name: Create /etc/nodepool/sub_nodes
   lineinfile:
-    create: yes
+    create: true
     state: present
     name: /etc/nodepool/sub_nodes
     line: "{{ hostvars[item].subnode_public_ip }}"
@@ -61,7 +61,7 @@
 
 - name: Create /etc/nodepool/sub_nodes_private
   lineinfile:
-    create: yes
+    create: true
     state: present
     name: /etc/nodepool/sub_nodes_private
     line: "{{ hostvars[item].subnode_private_ip }}"

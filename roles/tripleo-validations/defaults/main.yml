@@ -1,10 +1,10 @@
 ---
 val_working_dir: "{{ working_dir }}"
 
-run_tripleo_validations: False
-run_tripleo_validations_negative_tests: False
-run_tripleo_validations_setup: False
-exit_on_validations_failure: False
+run_tripleo_validations: false
+run_tripleo_validations_negative_tests: false
+run_tripleo_validations_setup: false
+exit_on_validations_failure: false
 
 # Tripleo-validations group name of tests, should be either pre-introspection,
 # pre-deployment or post-deployment.

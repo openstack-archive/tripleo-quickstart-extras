@@ -10,5 +10,3 @@
   shell: >
     "{{ working_dir }}"/install-upstream-ipxe.sh
   when: step_install_upstream_ipxe|bool
-
-

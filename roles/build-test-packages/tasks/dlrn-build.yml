@@ -24,11 +24,11 @@
     regexp: '{{ project_item.regexp }}'
     line: '{{ project_item.line }}'
   with_items:
-    - { regexp: 'baseurl=.*', line: 'baseurl={{ dlrn_baseurl }}' }
-    - { regexp: 'distro=.*', line: 'distro={{ artg_distro }}' }
-    - { regexp: 'source=.*', line: 'source={{ artg_change.branch }}' }
+    - {regexp: 'baseurl=.*', line: 'baseurl={{ dlrn_baseurl }}'}
+    - {regexp: 'distro=.*', line: 'distro={{ artg_distro }}'}
+    - {regexp: 'source=.*', line: 'source={{ artg_change.branch }}'}
   loop_control:
-      loop_var: project_item
+    loop_var: project_item
 
 - name: Map project name to DLRN project name
   register: project_name_mapped
@@ -37,7 +37,7 @@
     export PROJECT_NAME=$(echo {{ artg_change.project }} | sed "s|openstack/||");
     rdopkg findpkg -s $PROJECT_NAME -l rdoinfo | grep ^name | awk '{print $2}'
   args:
-      chdir: '{{ build_repo_dir }}/DLRN'
+    chdir: '{{ build_repo_dir }}/DLRN'
   changed_when: false
 
 - debug:
@@ -80,7 +80,7 @@
         dest: '{{ build_repo_dir }}/DLRN/data/{{ project_name_mapped.stdout }}_distro'
         refspec: '{{ artg_change.distgit.refspec }}'
         version: 'FETCH_HEAD'
-        accept_hostkey: yes
+        accept_hostkey: true
       when: artg_change.distgit is defined and (artg_repos_dir is not defined or copy_dir is failed)
 
     - name: Run DLRN
@@ -103,7 +103,6 @@
             exit $?;
         done;
       args:
-          chdir: '{{ build_repo_dir }}/DLRN'
+        chdir: '{{ build_repo_dir }}/DLRN'
       register: repo_built
       when: artg_build_one|bool
-

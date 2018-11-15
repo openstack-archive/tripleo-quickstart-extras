@@ -40,47 +40,47 @@
 - become: true
   block:
 
-  - name: Upload files to image
-    shell: >
-      cp {{ item.src }} {{ mount_tempdir }}/{{ item.dest }};
-    with_items: "{{ modify_image_upload_files }}"
+    - name: Upload files to image
+      shell: >
+        cp {{ item.src }} {{ mount_tempdir }}/{{ item.dest }};
+      with_items: "{{ modify_image_upload_files }}"
 
-  - name: Run script on image
-    shell: >
-      chmod 775 {{ mount_tempdir }};
-      mount -o bind /dev {{ mount_tempdir }}/dev/;
-      mv {{ mount_tempdir }}/etc/resolv.conf{,_};
-      echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" > {{ mount_tempdir }}/etc/resolv.conf;
-      cp {{ modify_script }} {{ mount_tempdir }}/tmp/{{ modify_script|basename }};
-      {% if initramfs_image|bool %}sed -i "s/sudo //g" {{ mount_tempdir }}/tmp/{{ modify_script|basename }};{% endif %}
-      set -o pipefail && chroot {{ mount_tempdir }} /bin/bash /tmp/{{ modify_script|basename }} 2>&1
-      {{ timestamper_cmd }} > {{ working_dir }}/{{ modify_script|basename }}.$(date +%s).log;
-      mv -f {{ mount_tempdir }}/etc/resolv.conf{_,};
+    - name: Run script on image
+      shell: >
+        chmod 775 {{ mount_tempdir }};
+        mount -o bind /dev {{ mount_tempdir }}/dev/;
+        mv {{ mount_tempdir }}/etc/resolv.conf{,_};
+        echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" > {{ mount_tempdir }}/etc/resolv.conf;
+        cp {{ modify_script }} {{ mount_tempdir }}/tmp/{{ modify_script|basename }};
+        {% if initramfs_image|bool %}sed -i "s/sudo //g" {{ mount_tempdir }}/tmp/{{ modify_script|basename }};{% endif %}
+        set -o pipefail && chroot {{ mount_tempdir }} /bin/bash /tmp/{{ modify_script|basename }} 2>&1
+        {{ timestamper_cmd }} > {{ working_dir }}/{{ modify_script|basename }}.$(date +%s).log;
+        mv -f {{ mount_tempdir }}/etc/resolv.conf{_,};
 
-  - name: Extract files from image
-    shell: cp {{ mount_tempdir }}/{{ item }} {{ modify_image_working_dir }}/;
-    with_items: "{{ modify_image_extract_list }}"
-    ignore_errors: true
+    - name: Extract files from image
+      shell: cp {{ mount_tempdir }}/{{ item }} {{ modify_image_working_dir }}/;
+      with_items: "{{ modify_image_extract_list }}"
+      ignore_errors: true
 
-  - name: Close initramfs image
-    shell: >
-      set -o pipefail &&
-      umount {{ mount_tempdir }}/dev/;
-      pushd {{ mount_tempdir }};
-      find . -print | cpio -o -H newc | gzip > {{ image_to_modify_abs_path.stdout }};
-      popd;
-      rm -rf "{{ mount_tempdir }}";
-    when: initramfs_image|bool
+    - name: Close initramfs image
+      shell: >
+        set -o pipefail &&
+        umount {{ mount_tempdir }}/dev/;
+        pushd {{ mount_tempdir }};
+        find . -print | cpio -o -H newc | gzip > {{ image_to_modify_abs_path.stdout }};
+        popd;
+        rm -rf "{{ mount_tempdir }}";
+      when: initramfs_image|bool
 
-  - name: Close qcow2 image
-    shell: >
-      chroot {{ mount_tempdir }} setfiles /etc/selinux/targeted/contexts/files/file_contexts / ;
-      umount {{ mount_tempdir }}/dev/;
-      umount {{ mount_tempdir }};
-      kpartx -dv {{ image_to_modify_raw }};
-      qemu-img convert -c -f raw -O qcow2 {{ image_to_modify_raw }} {{ image_to_modify_qcow }};
-      rm -rf "{{ image_to_modify_raw }}";
-      losetup -d /dev/loop0;
-      rm -rf "{{ mount_tempdir }}";
-      chown -R {{ undercloud_user }}: /home/{{ undercloud_user }}/;
-    when: not initramfs_image|bool
+    - name: Close qcow2 image
+      shell: >
+        chroot {{ mount_tempdir }} setfiles /etc/selinux/targeted/contexts/files/file_contexts / ;
+        umount {{ mount_tempdir }}/dev/;
+        umount {{ mount_tempdir }};
+        kpartx -dv {{ image_to_modify_raw }};
+        qemu-img convert -c -f raw -O qcow2 {{ image_to_modify_raw }} {{ image_to_modify_qcow }};
+        rm -rf "{{ image_to_modify_raw }}";
+        losetup -d /dev/loop0;
+        rm -rf "{{ mount_tempdir }}";
+        chown -R {{ undercloud_user }}: /home/{{ undercloud_user }}/;
+      when: not initramfs_image|bool

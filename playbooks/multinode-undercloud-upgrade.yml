@@ -1,3 +1,4 @@
+---
 - name: Configure next release repository in the undercloud
   hosts: undercloud
   tags:
@@ -12,7 +13,7 @@
   roles:
     - role: repo-setup
     - role: build-test-packages
-    - { role: install-built-repo, when: compressed_gating_repo is defined }
+    - {role: install-built-repo, when: compressed_gating_repo is defined}
 
 - name: Run tripleo-upgrade role to upgrade undercloud
   hosts: undercloud
@@ -20,4 +21,3 @@
     - undercloud-upgrade
   roles:
     - role: tripleo-upgrade
-

@@ -1,3 +1,4 @@
+---
 # Creat the scripts that will be used to setup flavors for the overcloud
 
 - name: Create overcloud-prep-flavors script

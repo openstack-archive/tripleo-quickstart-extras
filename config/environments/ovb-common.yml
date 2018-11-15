@@ -1,3 +1,4 @@
+---
 environment_type: ovb_host_cloud
 
 # undercloud.conf
@@ -37,12 +38,12 @@ external_interface_netmask: 255.255.255.0
 
 # images to copy to the undercloud
 images:
-    - name: overcloud-full
-      url: "{{ overcloud_image_url }}"
-      type: tar
-    - name: ipa_images
-      url: "{{ ipa_image_url }}"
-      type: tar
+  - name: overcloud-full
+    url: "{{ overcloud_image_url }}"
+    type: tar
+  - name: ipa_images
+    url: "{{ ipa_image_url }}"
+    type: tar
 
 network_environment_args:
   ExternalNetCidr: "{{ undercloud_external_network_cidr }}"
@@ -63,7 +64,7 @@ network_environment_args:
   TenantNetCidr: 172.16.0.0/24
   TenantAllocationPools: [{"start": "172.16.0.10", "end": "172.16.0.250"}]
   DnsServers: "{{ overcloud_dns_servers }}"
-  PublicVirtualFixedIPs: [{ "ip_address": "{{ undercloud_external_network_cidr|nthhost(5) }}" }]
+  PublicVirtualFixedIPs: [{"ip_address": "{{ undercloud_external_network_cidr|nthhost(5) }}"}]
   NeutronGlobalPhysnetMtu: 1350
   BondInterfaceOvsOptions: bond_mode=balance-slb
 

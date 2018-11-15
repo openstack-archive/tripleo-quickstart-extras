@@ -1,3 +1,4 @@
+---
 # EXPERIMENTAL FEATURE
 # set the working_dir on the undercloud
 working_dir: /home/stack
@@ -44,12 +45,12 @@ run_tempest: false
 tempest_workers: 4
 
 # Config for custom tripleo-heat-templates
-#overcloud_templates_path: /home/stack/tripleo-heat-templates
-#overcloud_templates_repo: https://git.openstack.org/openstack/tripleo-heat-templates
-## use templates_branch when not testing with an unmerged review
-#overcloud_templates_branch: master
-## use templates_refspec when testing with an unmerged review
-#overcloud_templates_refspec:
+# overcloud_templates_path: /home/stack/tripleo-heat-templates
+# overcloud_templates_repo: https://git.openstack.org/openstack/tripleo-heat-templates
+# # use templates_branch when not testing with an unmerged review
+# overcloud_templates_branch: master
+# # use templates_refspec when testing with an unmerged review
+# overcloud_templates_refspec:
 
 # options below direct automatic doc generation by tripleo-collect-logs
 artcl_gen_docs: true

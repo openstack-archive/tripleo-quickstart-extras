@@ -1,3 +1,4 @@
+---
 - name: Prepare the scripts for overcloud flavors
   shell: >
     set -o pipefail &&

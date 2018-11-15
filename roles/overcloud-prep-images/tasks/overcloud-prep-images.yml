@@ -1,3 +1,4 @@
+---
 - name: Prepare the overcloud images for deploy
   shell: >
     set -o pipefail &&

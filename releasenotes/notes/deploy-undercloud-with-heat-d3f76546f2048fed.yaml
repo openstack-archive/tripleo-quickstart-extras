@@ -10,11 +10,9 @@ features:
     config/general_config/containers_undercloud_minimal.yml
     e.g. ./quickstart.sh -c $working_dir/config/general_config/containers_undercloud_minimal.yml --tags all -R master-tripleo-ci -w $working_dir $VIRTHOST
 
-
 deprecations:
   - |
     The variable "undercloud_hieradata_override_file" which was the hieradata
       override file for the undercloud, was deprecated in favor of the
       variables "hieradata_override_file_classic_undercloud" and
       "hieradata_override_file_t_h_t_undercloud".
-

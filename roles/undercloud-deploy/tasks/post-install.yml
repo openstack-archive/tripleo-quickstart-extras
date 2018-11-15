@@ -1,3 +1,4 @@
+---
 # Extract the undercloud admin password from
 # `undercloud-passwords.conf`.
 - when: not containerized_undercloud|bool
@@ -34,7 +35,7 @@
     src: /home/{{ undercloud_user }}/stackrc
     dest: "{{ working_dir }}/stackrc"
     owner: "{{ undercloud_user }}"
-    remote_src: yes
+    remote_src: true
     mode: 0640
   become: true
   when: containerized_undercloud|bool

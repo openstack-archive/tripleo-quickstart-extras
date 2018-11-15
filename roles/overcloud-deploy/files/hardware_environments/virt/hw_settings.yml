@@ -1,3 +1,4 @@
+---
 hw_env:
   env_type: virt
   libvirt_type: qemu

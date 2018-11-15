@@ -1,3 +1,4 @@
+---
 dependencies:
   - tripleo
   - extras-common

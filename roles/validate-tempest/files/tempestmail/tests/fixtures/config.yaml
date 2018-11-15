@@ -1,9 +1,10 @@
-require_auth: True
+---
+require_auth: true
 mail_from: tripleoresults@gmail.com
 templates_path: template/
 log_url: 'http://logs.openstack.org/periodic/'
 api_server: 'http://tempest-tripleoci.rhcloud.com/api/v1.0/sendmail'
-use_api_server: True
+use_api_server: true
 default_log_url: 'http://logs.openstack.org'
 emails:
   - mail: 'arxcruz@redhat.com'
@@ -17,4 +18,3 @@ emails:
   - mail: 'myoung@redhat.com'
     name: 'Matt Young'
 template: template.html
-

@@ -1,3 +1,4 @@
+---
 # Note.. the order of heat templates and args is very important.  The last environment that sets a variable takes precedent.
 
 - name: Deprecation message for network isolation types
@@ -103,14 +104,14 @@
 
 - name: Set cloud-name variables
   set_fact:
-      cloud_name_args: >-
-          -e {{ working_dir }}/cloud-names.yaml
+    cloud_name_args: >-
+        -e {{ working_dir }}/cloud-names.yaml
   when: release not in ['mitaka', 'liberty']
 
 - name: Set the hostname_map config if defined
   set_fact:
-      hostnamemap_args: >-
-          -e {{ working_dir }}/hostnamemap.yaml
+    hostnamemap_args: >-
+        -e {{ working_dir }}/hostnamemap.yaml
   when:
     - groups['overcloud'] is defined
     - groups['overcloud'][0] is defined
@@ -150,10 +151,10 @@
 
 - name: set novajoin/TLS everywhere fact
   set_fact:
-      tls_everywhere_args: >-
-          -e {{ overcloud_templates_path }}/environments/services/haproxy-public-tls-certmonger.yaml
-          -e {{ overcloud_templates_path }}/environments/ssl/enable-internal-tls.yaml
-          -e {{ overcloud_templates_path }}/environments/ssl/tls-everywhere-endpoints-dns.yaml
+    tls_everywhere_args: >-
+        -e {{ overcloud_templates_path }}/environments/services/haproxy-public-tls-certmonger.yaml
+        -e {{ overcloud_templates_path }}/environments/ssl/enable-internal-tls.yaml
+        -e {{ overcloud_templates_path }}/environments/ssl/tls-everywhere-endpoints-dns.yaml
   when:
     - enable_tls_everywhere|bool
     - release not in ['mitaka', 'liberty', 'newton']
@@ -273,4 +274,3 @@
   when:
     - ci_job_end_time is defined
     - '"ovb" not in lookup("env", "TOCI_JOBTYPE")'
-

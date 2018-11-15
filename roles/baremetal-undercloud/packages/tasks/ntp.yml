@@ -1,20 +1,21 @@
+---
 # Ensure ntp packages are installed
 - name: Install ntp packages
   package:
-    name: [ 'ntp', 'ntpdate' ]
+    name: ['ntp', 'ntpdate']
     state: present
 
 # Enable ntpd service
 - name: Enable ntpd service
   service:
     name: 'ntpd'
-    enabled: yes
+    enabled: true
 
 # Enable ntpdate service
 - name: Enable ntpdate service
   service:
     name: 'ntpdate'
-    enabled: yes
+    enabled: true
 
 # Stop ntpd service
 - name: Ensure ntp service is stopped to be able to launch ntpdate
@@ -42,7 +43,7 @@
   lineinfile:
     destfile: /etc/ntp/step-tickers
     line: '{{ item }}'
-    create: yes
+    create: true
   with_items: '{{ undercloud_custom_ntps|default([]) }}'
 
 # Configure ntpdate hardware synchronization
@@ -54,7 +55,9 @@
 
 # Sync time now
 - name: Synchronize time immediately with ntpdate
-  shell: ntpdate $(grep ^server /etc/ntp.conf | tail -1 | awk '{print $2}')
+  shell: |
+    set -euxo pipefail
+    ntpdate $(grep ^server /etc/ntp.conf | tail -1 | awk '{print $2}')
   changed_when: false
 
 # Start ntpd

@@ -10,7 +10,7 @@
 
 - name: Set dstat fact
   set_fact:
-      tempest_dstat_opt: '--dstat /var/log/extra/dstat-csv.log'
+    tempest_dstat_opt: '--dstat /var/log/extra/dstat-csv.log'
   when: dstat_result.stat.exists
 
 - name: Set the proper permission for tempest directory and files
@@ -18,7 +18,7 @@
     dest: "{{ working_dir }}/tempest"
     owner: "{{ undercloud_user }}"
     group: "{{ undercloud_user }}"
-    recurse: yes
+    recurse: true
   become: true
 
 - name: Copy stackviz static file to home directory
@@ -32,7 +32,7 @@
     stackviz-export {{ tempest_dstat_opt | default('') }} --env -f {{ working_dir }}/tempest/testrepository.subunit {{ working_dir }}/stackviz/data
   register: stackviz_result
   args:
-      chdir: "{{ working_dir }}/tempest"
+    chdir: "{{ working_dir }}/tempest"
 
 - name: Ensure /var/log/extra exists
   file:

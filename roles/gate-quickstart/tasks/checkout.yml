@@ -38,4 +38,3 @@
       pip:
         name: '{{ gated_project_name }}'
         state: absent
-
