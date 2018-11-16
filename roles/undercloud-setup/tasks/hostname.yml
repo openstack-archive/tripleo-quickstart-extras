@@ -27,21 +27,21 @@
       set_fact:
         undercloud_fqdn: "{{ ansible_hostname }}.{{ undercloud_cloud_domain }}"
       when:
-      - undercloud_cloud_domain is defined
+        - undercloud_cloud_domain is defined
 
     - name: set fact for undercloud_fqdn override when we have a domain
       set_fact:
         undercloud_fqdn: "{{ ansible_fqdn }}"
       when:
-      - ansible_domain|default("") != ""
-      - undercloud_cloud_domain is not defined
+        - ansible_domain|default("") != ""
+        - undercloud_cloud_domain is not defined
 
     - name: set fact for undercloud_fqdn override when we don't have a domain
       set_fact:
-        undercloud_fqdn: "{{ ansible_hostname }}.tripleodomain.example.com"
+        undercloud_fqdn: "{{ ansible_hostname }}.ooo.test"
       when:
-      - ansible_domain|default("") == ""
-      - undercloud_cloud_domain is not defined
+        - ansible_domain|default("") == ""
+        - undercloud_cloud_domain is not defined
 
     - name: Set fact for undercloud_hostname override
       set_fact:
