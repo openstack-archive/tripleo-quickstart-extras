@@ -318,15 +318,14 @@ class TempestMailCmd(object):
         known_failures = []
         try:
             skip = yaml.safe_load(open(self.args.skip_file))
+        except yaml.constructor.ConstructorError:
+            self.log.error('Invalid yaml file {}'.format(self.args.skip_file))
+        else:
             for t in skip.get('known_failures'):
                 known_failures.append({'test': t.get('test'),
                                        'reason': t.get('reason')})
-        except yaml.constructor.ConstructorError:
-            self.log.error('Invalid yaml file {}'.format(self.args.skip_file))
-        except Exception:
-            pass
-        finally:
-            return known_failures
+
+        return known_failures
 
     def checkJobs(self):
         data = []
@@ -388,8 +387,8 @@ class TempestMailCmd(object):
                                    'reason': t.get('reason')})
 
         if self.args.skip_file:
-            known_failures = \
-                (known_failures + self.load_skip_file(self.args.skip_file))
+            known_failures = (
+                known_failures + self.load_skip_file(self.args.skip_file))
 
         newconfig.known_failures = known_failures
         newconfig.api_server = config.get('api_server')
