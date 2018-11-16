@@ -19,7 +19,7 @@
 - name: Install openstack services tempest plugins
   yum: state=latest name={{ item }}
   with_items: "{{ tempest_plugins }}"
-  become: yes
+  become: true
   when: tempest_plugins|length > 0
 
 - name: Install openstack tempest
@@ -38,8 +38,8 @@
 
 - name: Set tempest init command
   set_fact:
-      tempest_init: "{% if release == 'newton' %}/usr/share/openstack-tempest-*/tools/configure-tempest-directory{% else %}tempest init {{ tempest_dir }}{% endif %}"
+    tempest_init: "{% if release == 'newton' %}/usr/share/openstack-tempest-*/tools/configure-tempest-directory{% else %}tempest init {{ tempest_dir }}{% endif %}"
 
 - name: Set tempestconf call
   set_fact:
-      tempestconf: "{% if release == 'newton' %}{{ tempest_dir }}/tools/config_tempest.py{% else %}/usr/bin/discover-tempest-config{% endif %}"
+    tempestconf: "{% if release == 'newton' %}{{ tempest_dir }}/tools/config_tempest.py{% else %}/usr/bin/discover-tempest-config{% endif %}"

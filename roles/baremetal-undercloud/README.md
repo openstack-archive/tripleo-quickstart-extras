@@ -219,7 +219,7 @@ others coming from various related to tripleo-quickstart:
 # Machine at this point is provided
 - name: Add the undercloud node to the generated inventory
   hosts: localhost
-  gather_facts: yes
+  gather_facts: true
   roles:
     - tripleo-inventory
   tags:
@@ -228,7 +228,7 @@ others coming from various related to tripleo-quickstart:
 # Deploy the undercloud
 - name: Install undercloud
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   roles:
     - tripleo/undercloud
   tags:
@@ -245,7 +245,7 @@ others coming from various related to tripleo-quickstart:
 # Prepare any additional configuration files required by the overcloud
 - name: Prepare configuration files for the overcloud deployment
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   roles:
     - overcloud-prep-config
   tags:
@@ -254,7 +254,7 @@ others coming from various related to tripleo-quickstart:
 # Prepare the overcloud images for deployment
 - name: Prepare the overcloud images for deployment
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   roles:
     - overcloud-prep-images
   tags:
@@ -263,7 +263,7 @@ others coming from various related to tripleo-quickstart:
 # Prepare the overcloud flavor configuration
 - name: Prepare overcloud flavors
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   roles:
     - overcloud-prep-flavors
   tags:
@@ -272,7 +272,7 @@ others coming from various related to tripleo-quickstart:
 # Prepare the undercloud networks for the overcloud deployment
 - name: Prepare the undercloud networks for the overcloud deployment
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   roles:
     - overcloud-prep-network
   tags:
@@ -281,7 +281,7 @@ others coming from various related to tripleo-quickstart:
 # Deploy the overcloud
 - name: Deploy the overcloud
   hosts: undercloud
-  gather_facts: yes
+  gather_facts: true
   roles:
     - overcloud-deploy
   tags:
@@ -289,7 +289,7 @@ others coming from various related to tripleo-quickstart:
 
 - name: Add the overcloud nodes to the generated inventory
   hosts: undercloud
-  gather_facts: yes
+  gather_facts: true
   vars:
       inventory: all
   roles:

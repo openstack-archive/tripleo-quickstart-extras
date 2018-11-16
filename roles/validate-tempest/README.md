@@ -145,7 +145,7 @@ Example Playbook
     ---
     - name:  Run tempest
       hosts: undercloud
-      gather_facts: no
+      gather_facts: false
       roles:
         - validate-tempest
 

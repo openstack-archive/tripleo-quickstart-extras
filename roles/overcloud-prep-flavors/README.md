@@ -30,7 +30,7 @@ Example Playbook
 
     - name: Copy configuration files
       hosts: virthost
-      gather_facts: no
+      gather_facts: false
       roles:
         - ansible-role-tripleo-overcloud-prep-config
 

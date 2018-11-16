@@ -6,14 +6,14 @@
 
 - name: Ensure the overcloud nodes are added to the generated inventory
   hosts: undercloud
-  gather_facts: yes
+  gather_facts: true
   tags:
     - collect-logs
   vars:
-      inventory: all
+    inventory: all
   roles:
     - tripleo-inventory
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: Collect logs
   hosts: all:!localhost:!127.0.0.2
@@ -23,4 +23,4 @@
 - name: Create docs, publish logs
   hosts: localhost
   roles:
-    - {role: collect-logs, artcl_collect: false }
+    - {role: collect-logs, artcl_collect: false}

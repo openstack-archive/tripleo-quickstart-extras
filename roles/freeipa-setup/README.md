@@ -30,7 +30,7 @@ Sample playbook to call the role
 # Deploy the FreeIPA Server
 - name:  Deploy FreeIPA
   hosts: freeipa_host
-  gather_facts: no
+  gather_facts: false
   roles:
     - freeipa-setup
 ```

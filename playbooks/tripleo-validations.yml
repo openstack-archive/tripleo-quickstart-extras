@@ -2,23 +2,22 @@
 
 - name: Configure tripleo-validations
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   tags:
     - tripleo-validations
   vars:
-    run_tripleo_validations_setup: True
+    run_tripleo_validations_setup: true
   roles:
-    - { role: tripleo-validations,
-        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
+    - {role: tripleo-validations,
+       when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
 
 - name: Run tripleo-validations pre-introspection tests
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   tags:
     - tripleo-validations
   vars:
     validations_group: ['pre-introspection']
   roles:
-    - { role: tripleo-validations,
-        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
-
+    - {role: tripleo-validations,
+       when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}

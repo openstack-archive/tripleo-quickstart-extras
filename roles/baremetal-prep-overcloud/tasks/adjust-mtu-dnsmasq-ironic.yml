@@ -7,9 +7,7 @@
     mode: 0755
 
 - name: Adjust MTU values and modify dnsmasq-ironic.conf
-  become: yes
+  become: true
   shell: >
     "{{ working_dir }}"/adjust-interface-mtus.sh
   when: step_adjust_mtu|bool
-
-

@@ -16,7 +16,7 @@
     only_successful_tasks: "{{ influxdb_only_successful_tasks }}"
 
 - name: Get ARA json data for undercloud
-  become: yes
+  become: true
   shell: "{{ local_working_dir }}/bin/ara result list --all -f json"
   register: ara_root_data
 

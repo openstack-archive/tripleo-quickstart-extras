@@ -1,24 +1,24 @@
 ---
-- name:  Deploy the overcloud
+- name: Deploy the overcloud
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   roles:
     - overcloud-deploy
   tags:
     - overcloud-deploy
 
 # Add the overcloud nodes to the generated inventory.
-- name:  Inventory the overcloud
+- name: Inventory the overcloud
   hosts: undercloud
-  gather_facts: yes
+  gather_facts: true
   tags:
     - overcloud-deploy
   vars:
-      inventory: all
+    inventory: all
   roles:
     - tripleo-inventory
 
-- name:  Check the result of the deployment
+- name: Check the result of the deployment
   hosts: localhost
   tags:
     - overcloud-deploy
@@ -33,12 +33,11 @@
 
 - name: Run tripleo-validations post-deployment tests
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   tags:
     - tripleo-validations
   vars:
     validations_group: ['post-deployment']
   roles:
-    - { role: tripleo-validations,
-        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
-
+    - {role: tripleo-validations,
+       when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}

@@ -1,27 +1,28 @@
+---
 # Deploy the FreeIPA server
 - name: Deploy the FreeIPA server
   hosts: supplemental
-  gather_facts: no
+  gather_facts: false
   tags:
     - freeipa-setup
   roles:
-    - { role: freeipa-setup, when: deploy_supplemental_node|bool and enable_tls_everywhere|bool }
+    - {role: freeipa-setup, when: deploy_supplemental_node|bool and enable_tls_everywhere|bool}
 
 # setup for the undercloud
 - name: Setup the undercloud
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   vars:
     ansible_user: root
   tags:
     - undercloud-setup
   roles:
-    - { role: undercloud-setup, when: undercloud_setup|bool }
+    - {role: undercloud-setup, when: undercloud_setup|bool}
 
 # Deploy the undercloud
-- name:  Deploy the undercloud
+- name: Deploy the undercloud
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   tags:
     - undercloud-deploy
   roles:
@@ -29,12 +30,11 @@
 
 - name: Configure tripleo-validations
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   tags:
     - tripleo-validations
   vars:
-    run_tripleo_validations_setup: True
+    run_tripleo_validations_setup: true
   roles:
-    - { role: tripleo-validations,
-        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
-
+    - {role: tripleo-validations,
+       when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}

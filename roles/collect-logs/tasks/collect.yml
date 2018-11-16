@@ -306,7 +306,7 @@
     dest: "/tmp/{{ inventory_hostname }}-rsync-filter"
 
 - name: Gather the logs to /tmp
-  become: yes
+  become: true
   shell: >
     set -o pipefail &&
     rsync --quiet --recursive --copy-links --prune-empty-dirs
@@ -333,16 +333,16 @@
   fetch:
     src: "/tmp/{{ inventory_hostname }}.tar.gz"
     dest: "{{ artcl_collect_dir }}/{{ inventory_hostname }}.tar.gz"
-    flat: yes
-    validate_checksum: no
+    flat: true
+    validate_checksum: false
   when: artcl_tar_gz|bool
 
 - name: Fetch log archive (tar)
   fetch:
     src: "/tmp/{{ inventory_hostname }}.tar"
     dest: "{{ artcl_collect_dir }}/{{ inventory_hostname }}.tar"
-    flat: yes
-    validate_checksum: no
+    flat: true
+    validate_checksum: false
   when: artcl_gzip_only|bool
 
 - name: Delete temporary log directory after collection

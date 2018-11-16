@@ -21,35 +21,35 @@
     {{ local_working_dir }}/bin/ara task list --all -f json > {{ artcl_collect_dir }}/ara.json;
     cp -r {{ local_working_dir }}/ara_oooq {{ artcl_collect_dir }}/;
     {% if artcl_gzip_only|bool %}gzip --best --recursive {{ artcl_collect_dir }}/ara_oooq;{% endif %}
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: Generate and retrieve root the ARA static playbook report
-  become: yes
+  become: true
   shell: >
     {{ local_working_dir }}/bin/ara generate html {{ local_working_dir }}/ara_oooq_root;
     {{ local_working_dir }}/bin/ara task list --all -f json > {{ artcl_collect_dir }}/ara.oooq.root.json;
     cp -r {{ local_working_dir }}/ara_oooq_root {{ artcl_collect_dir }}/;
     {% if artcl_gzip_only|bool %}gzip --best --recursive {{ artcl_collect_dir }}/ara_oooq_root;{% endif %}
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: Generate and retrieve the ARA static playbook report for OC deploy
-  become: yes
+  become: true
   shell: >
     {{ local_working_dir }}/bin/ara generate html {{ local_working_dir }}/ara_oooq_oc;
     {{ local_working_dir }}/bin/ara task list --all -f json > {{ artcl_collect_dir }}/ara.oooq.oc.json;
     cp -r {{ local_working_dir }}/ara_oooq_oc {{ artcl_collect_dir }}/;
     {% if artcl_gzip_only|bool %}gzip --best --recursive {{ artcl_collect_dir }}/ara_oooq_oc;{% endif %}
-  ignore_errors: yes
+  ignore_errors: true
   environment:
     ARA_DATABASE: 'sqlite:///{{ ara_overcloud_db_path }}'
 
 - include: ara_graphite.yml
   when: ara_graphite_server is defined
-  ignore_errors: yes
+  ignore_errors: true
 
 - include: ara_influxdb.yml
   when: influxdb_url is defined or influxdb_create_data_file|bool
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: fetch stackviz results to the root of the collect_dir
   shell: >

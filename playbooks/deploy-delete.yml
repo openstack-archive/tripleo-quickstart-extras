@@ -1,15 +1,16 @@
+---
 # This is the playbook used by the `quickstart.sh` script.
 
 - include: quickstart-extras.yml
 
 - name: Collect logs, create docs, publish
   hosts: all:!localhost
-  gather_facts: no
+  gather_facts: false
   roles:
-    - { role: tripleo-collect-logs, artcl_collect: true }
+    - {role: tripleo-collect-logs, artcl_collect: true}
 
 - name: test overcloud deletion
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   roles:
-    - { role: overcloud-delete }
+    - {role: overcloud-delete}

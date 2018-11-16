@@ -4,17 +4,17 @@
   tags:
     - overcloud-validate
   roles:
-    - { role: validate-perf,
-        when: validate_performance|bool and run_tempest|bool }
+    - {role: validate-perf,
+       when: validate_performance|bool and run_tempest|bool}
   ignore_errors: true
 
 # Validate the deployment
-- name:  validate the overcloud
+- name: validate the overcloud
   hosts: undercloud
   tags:
     - overcloud-validate
     - undercloud-validate
-  gather_facts: no
+  gather_facts: false
   roles:
-    - { role: validate-simple, when: test_ping|bool }
-    - { role: validate-tempest, when: run_tempest|bool }
+    - {role: validate-simple, when: test_ping|bool}
+    - {role: validate-tempest, when: run_tempest|bool}

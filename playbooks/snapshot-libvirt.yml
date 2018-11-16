@@ -1,13 +1,12 @@
 ---
-- name:  Snapshot virts
+- name: Snapshot virts
   hosts: virthost
-  gather_facts: yes
+  gather_facts: true
   vars:
     - libvirt_uri: qemu:///system
     - overcloud_nodes:
-      - name: subnode-0
-      - name: subnode-1
+        - name: subnode-0
+        - name: subnode-1
   roles:
     - snapshot-libvirt
   become: true
-

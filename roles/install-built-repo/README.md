@@ -36,13 +36,13 @@ Including an example of how to use this role
     ---
     - name:  Run repo install
       hosts: undercloud
-      gather_facts: no
+      gather_facts: false
       roles:
         - install-built-repo
 
     - name:  Run repo install
       hosts: undercloud
-      gather_facts: no
+      gather_facts: false
       vars:
         ib_repo_image_inject: true
         ib_repo_image_path: "{{ working_dir }}/overcloud-full.qcow2"

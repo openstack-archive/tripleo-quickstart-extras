@@ -1,7 +1,7 @@
 ---
 - name: Add the overcloud nodes to the generated inventory
   hosts: undercloud
-  gather_facts: yes
+  gather_facts: true
   tags:
     - overcloud-deploy
   vars:
@@ -47,7 +47,7 @@
     artg_compressed_gating_repo: "${HOME}/gating_repo.tar.gz"
   roles:
     - build-test-packages
-    - { role: install-built-repo, when: compressed_gating_repo is defined }
+    - {role: install-built-repo, when: compressed_gating_repo is defined}
   tags:
     - build
 
@@ -71,14 +71,14 @@
 
 - name: Configure tripleo-validations
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   tags:
     - tripleo-validations
   vars:
-    run_tripleo_validations_setup: True
+    run_tripleo_validations_setup: true
   roles:
-    - { role: tripleo-validations,
-        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
+    - {role: tripleo-validations,
+       when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
 
 - name: Validate the undercloud
   hosts: undercloud

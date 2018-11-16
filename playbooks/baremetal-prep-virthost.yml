@@ -34,25 +34,24 @@
   roles:
     - environment/setup
 
-- name:  Setup undercloud and baremetal vms and networks in libvirt
+- name: Setup undercloud and baremetal vms and networks in libvirt
   hosts: virthost
-  gather_facts: yes
+  gather_facts: true
   roles:
     - libvirt/setup
 
 # Add the undercloud node to the generated
 # inventory.
-- name:  Inventory the undercloud
+- name: Inventory the undercloud
   hosts: localhost
-  gather_facts: yes
+  gather_facts: true
   vars:
-      inventory: undercloud
+    inventory: undercloud
   roles:
     - tripleo-inventory
 
 - name: Prepare the host for PXE forwarding
   hosts: virthost
-  gather_facts: no
+  gather_facts: false
   roles:
     - baremetal-prep-virthost
-

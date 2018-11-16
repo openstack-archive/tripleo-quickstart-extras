@@ -39,7 +39,7 @@ Example Usage
 ---
 - name:  Create a snapshot (or update a snapshot)
   hosts: virthost
-  gather_facts: yes
+  gather_facts: true
   vars:
     - snapshot_create: true
     - libvirt_volume_path: /opt/vm_images
@@ -53,7 +53,7 @@ Example Usage
 
 - name:  Restore a snapshot
   hosts: virthost
-  gather_facts: yes
+  gather_facts: true
   vars:
     - snapshot_restore: true
     - libvirt_volume_path: /opt/vm_images

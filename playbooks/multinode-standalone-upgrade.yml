@@ -41,7 +41,7 @@
     artg_compressed_gating_repo: "${HOME}/gating_repo.tar.gz"
   roles:
     - build-test-packages
-    - { role: install-built-repo, when: compressed_gating_repo is defined }
+    - {role: install-built-repo, when: compressed_gating_repo is defined}
   tags:
     - standalone-upgrade
 
@@ -56,8 +56,8 @@
 
 - name: Validate the Standalone upgrade
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   roles:
-    - { role: validate-tempest, when: run_tempest|bool }
+    - {role: validate-tempest, when: run_tempest|bool}
   tags:
     - standalone-upgrade

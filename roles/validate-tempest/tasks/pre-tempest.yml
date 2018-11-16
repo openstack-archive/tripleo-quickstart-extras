@@ -1,16 +1,16 @@
 ---
 - name: Set the number of workers in tempest
   set_fact:
-      tempest_workers: "{{ ansible_processor_vcpus|int // 2 }}"
+    tempest_workers: "{{ ansible_processor_vcpus|int // 2 }}"
   when: tempest_workers is not defined
 
 - name: Set rc file to be sourced to run tempest
   set_fact:
-      rc_file: "{{ working_dir }}/{% if tempest_undercloud %}stackrc{% else %}overcloudrc{% endif %}"
+    rc_file: "{{ working_dir }}/{% if tempest_undercloud %}stackrc{% else %}overcloudrc{% endif %}"
 
 - name: Set rc file to be sourced to run tempest with in container
   set_fact:
-      rc_file_container: "{{ tempest_data }}/{% if tempest_undercloud %}stackrc{% else %}overcloudrc{% endif %}"
+    rc_file_container: "{{ tempest_data }}/{% if tempest_undercloud %}stackrc{% else %}overcloudrc{% endif %}"
   when: tempest_format == 'container'
 
 - name: Create overcloud tempest setup script
@@ -44,17 +44,20 @@
   when: tempest_whitelist|length > 0
 
 - name: Install packages to generate subunit results
-  become: yes
-  package: name={{ item }} state=present
-  with_items:
-    - python-subunit
-    - subunit-filters
-    - python-os-testr
+  become: true
+  package:
+    name:
+      - python-subunit
+      - subunit-filters
+      - python-os-testr
+    state: present
   when: tempest_format in ['container', 'packages']
 
 - name: Install stestr
-  become: yes
-  package: name=python-stestr state=present
+  become: true
+  package:
+    name: python-stestr
+    state: present
   when: tempest_format in ['container', 'packages'] and release not in ['newton', 'ocata']
 
 - ignore_errors: true
@@ -87,5 +90,5 @@
         --to-file "{{ working_dir }}/{{ skip_file }}" --format txt
       args:
         chdir: "{{ working_dir }}/bugcheck"
-      ignore_errors: yes
+      ignore_errors: true
   when: check_tempest_bugs|bool

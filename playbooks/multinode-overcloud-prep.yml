@@ -1,7 +1,7 @@
 ---
 - name: Run overcloud prep config
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   roles:
     - role: overcloud-prep-config
       # only run when we know we have to, save time otherwise
@@ -11,24 +11,27 @@
 
 - name: Run overcloud prep roles
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   roles:
-    - { role: overcloud-prep-images, step_overcloud_image: false, step_glance_upload: true, step_register: false }
+    - {role: overcloud-prep-images,
+       step_overcloud_image: false,
+       step_glance_upload: true,
+       step_register: false}
 
 - name: Run tripleo-validations pre-introspection tests
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   tags:
     - tripleo-validations
   vars:
     validations_group: ['pre-introspection']
   roles:
-    - { role: tripleo-validations,
-        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
+    - {role: tripleo-validations,
+       when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
 
 - name: Prepare for containerized deployment
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   tags:
     - overcloud-prep-containers
   roles:
@@ -38,11 +41,11 @@
 
 - name: Run tripleo-validations pre-deployment tests
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   tags:
     - tripleo-validations
   vars:
     validations_group: ['pre-deployment']
   roles:
-    - { role: tripleo-validations,
-        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
+    - {role: tripleo-validations,
+       when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}

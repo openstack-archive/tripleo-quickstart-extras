@@ -53,7 +53,7 @@
   when: run_tempest|bool
   tags:
     - run-stackviz
-  ignore_errors: yes
+  ignore_errors: true
 
 - include: post-tempest.yml
   when: post_tempest|bool and run_tempest|bool

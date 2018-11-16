@@ -1,6 +1,6 @@
 ---
-- name:  Setup repositories
+- name: Setup repositories
   hosts: undercloud
-  gather_facts: yes
+  gather_facts: true
   roles:
     - repo-setup
