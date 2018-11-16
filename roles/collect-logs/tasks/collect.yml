@@ -284,28 +284,6 @@
         cat $i; done | grep "^20.*|" | sort -sk1,2 |
         sed "s/\(20[0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]\.*[0-9]*\)\(.*\)/\1 INFO \2/g" > /var/log/extra/logstash.txt
 
-    # Collect host info as done presently in TripleO-CI.
-    # Will be deprecated.
-    - name: Create get_host_info script
-      template:
-        src: "get_host_info.sh.j2"
-        dest: "/tmp/get_host_info.sh"
-        mode: 0755
-
-    - name: Copy heat-deploy-times.py to host
-      copy:
-        src: heat-deploy-times.py
-        dest: "/tmp/heat-deploy-times.py"
-        mode: 0755
-
-    - name: Call get_host_info script
-      shell: /tmp/get_host_info.sh &>/var/log/host_info.txt
-
-    - name: Erase temporary log directory if exists
-      file:
-        path: "/tmp/{{ inventory_hostname }}"
-        state: absent
-
 - name: Set default collect list
   set_fact:
     collect_list: "{{ artcl_collect_list }} + {{ artcl_collect_list_append|default([]) }}"
