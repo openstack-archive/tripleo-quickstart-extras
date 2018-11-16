@@ -40,29 +40,36 @@ emails:
       - 'tempest.scenario.test_security_groups_basic_ops'
   - mail: 'rhos-storage-tests@redhat.com'
     name: 'RHOSP Storage - Cinder'
+    topics: cinder
     fail_only: true
     regex:
       - '^tempest\.api\.volume\.'
       - '^cinder\.tests\.tempest\.'
+      - '^cinder_tempest_plugin\.'
       - '^tempest\.scenario\.test_encrypted_cinder_volumes'
+      - '^tempest\.scenario\.test_volume_boot_pattern'
       - '^tempest\.scenario\.test_volume_migrate_attached'
   - mail: 'rhos-storage-tests@redhat.com'
     name: 'RHOSP Storage - Glance'
+    topics: glance
     fail_only: true
     regex:
       - '^tempest\.api\.image\.'
   - mail: 'rhos-storage-tests@redhat.com'
     name: 'RHOSP Storage - Manila'
+    topics: manila
     fail_only: true
     regex:
       - '^manila_tempest_tests\.tests\.'
   - mail: 'rhos-storage-tests@redhat.com'
     name: 'RHOSP Storage - Sahara'
+    topics: sahara
     fail_only: true
     regex:
       - '^sahara_tempest_plugin\.tests\.'
   - mail: 'rhos-storage-tests@redhat.com'
     name: 'RHOSP Storage - Swift'
+    topics: swift
     fail_only: true
     regex:
       - '^tempest\.api\.object_storage\.'
