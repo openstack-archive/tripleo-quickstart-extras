@@ -1,8 +1,26 @@
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# flake8: noqa
+
+# If extensions (or modules to document with autodoc) are in another directory,
+# add these directories to sys.path here. If the directory is relative to the
+# documentation root, use os.path.abspath to make it absolute, like shown here.
 import datetime
 import mock
+import re
 import tempfile
 import unittest
-import re
 
 from tempestmail import Config
 from tempestmail import Mail
@@ -81,32 +99,32 @@ class MailTest(unittest.TestCase):
     def test_render_template(self):
         mail = Mail(self.config)
         content = mail.render_template(self.data)
-        self.assertEquals(self.render_output, content)
+        self.assertEqual(self.render_output, content)
 
     def test_filter_emails(self):
         mail = Mail(self.config)
-        self.assertEquals(self.data.get('has_errors'), None)
+        self.assertEqual(self.data.get('has_errors'), None)
         addresses = mail.filter_emails(
             'periodic-tripleo-ci-centos-7-ovb-ha-tempest', self.data)
-        self.assertEquals({'' : ['email1@example.com', 'email2@example.com']},
-                          addresses)
+        self.assertEqual({'': ['email1@example.com', 'email2@example.com']},
+                         addresses)
         mail.config.emails[0]['jobs'].append('another-job')
         addresses = mail.filter_emails(
             'periodic-tripleo-ci-centos-7-ovb-ha-tempest', self.data)
-        self.assertEquals({'' : ['email2@example.com']}, addresses)
-        self.assertEquals(self.data['has_errors'], True)
+        self.assertEqual({'': ['email2@example.com']}, addresses)
+        self.assertEqual(self.data['has_errors'], True)
         mail.config.emails[0]['jobs'] = []
         mail.config.emails[0]['regex'].append(re.compile(
             'tempest.some.regex'))
-        self.assertEquals({'' : ['email2@example.com']}, addresses)
+        self.assertEqual({'': ['email2@example.com']}, addresses)
 
     def test_filter_emails_topics(self):
         mail = Mail(self.config)
         addresses = mail.filter_emails(
             'periodic-tripleo-ci-centos-7-ovb-ha-tempest', self.data)
-        self.assertEquals({'' : ['email1@example.com',
-                                 'email2@example.com']},
-                          addresses)
+        self.assertEqual({'': ['email1@example.com',
+                         'email2@example.com']},
+                         addresses)
         mail.config.emails[0]['jobs'].append(
             'periodic-tripleo-ci-centos-7-ovb-ha-tempest')
         mail.config.emails[0]['regex'].append(re.compile(
@@ -122,11 +140,10 @@ class MailTest(unittest.TestCase):
         mail.config.emails.append(new)
         addresses = mail.filter_emails(
             'periodic-tripleo-ci-centos-7-ovb-ha-tempest', self.data)
-        bookaddr = {'[many_objects]' : ['email1@example.com'],
-                    '[valid_object]' : ['email2@example.com'],
-                    '[valid_object][object_storage]' : ['email2@example.com']
-                   }
-        self.assertEquals(bookaddr, addresses)
+        bookaddr = {'[many_objects]': ['email1@example.com'],
+                    '[valid_object]': ['email2@example.com'],
+                    '[valid_object][object_storage]': ['email2@example.com']}
+        self.assertEqual(bookaddr, addresses)
 
     @mock.patch('tempestmail.Mail._send_mail_api')
     @mock.patch('tempestmail.Mail._send_mail_local')
@@ -196,26 +213,27 @@ class TestTempestMailCmd(unittest.TestCase):
 
         html_mock.return_value.content.decode.return_value = self.content_job.decode()
         index = tmc.get_index()
-        self.assertEquals(index, [(u'http://logs.openstack.org/periodic/perio'
-                                   'dic-tripleo-ci-centos-7-ovb-nonha-tempest-'
-                                   'oooq-master/613de4e/')])
+        self.assertEqual(
+            index,
+            [(u'http://logs.openstack.org/periodic/periodic-tripleo-ci'
+             '-centos-7-ovb-nonha-tempest-oooq-master/613de4e/')])
 
         html_mock.return_value.content.decode.return_value = 'No links'
         index = tmc.get_index()
-        self.assertEquals(index, [])
+        self.assertEqual(index, [])
 
         html_mock.return_value = None
         index = tmc.get_index()
-        self.assertEquals(index, [])
+        self.assertEqual(index, [])
 
         html_mock.ok.return_value = None
         index = tmc.get_index()
-        self.assertEquals(index, [])
+        self.assertEqual(index, [])
 
         html_mock.ok.return_value = True
         html_mock.content.return_value = None
         index = tmc.get_index()
-        self.assertEquals(index, [])
+        self.assertEqual(index, [])
 
     @mock.patch('tempestmail.get_html')
     def test_get_console(self, html_mock):
@@ -228,30 +246,30 @@ class TestTempestMailCmd(unittest.TestCase):
         tmc.setupConfig()
 
         console, date, log_path = tmc.get_console()
-        self.assertEquals(console, self.console_ok)
-        self.assertEquals(log_path, None)
+        self.assertEqual(console, self.console_ok)
+        self.assertEqual(log_path, None)
 
         tmc.parse_arguments(['-c', 'tests/fixtures/config.yaml', '--job',
                              'periodic-tripleo-ci-centos-7-ovb-nonha-tempest-'
                              'oooq-master', '--file',
                              'tests/fixtures/not_found.log'])
-        self.assertEquals(tmc.get_console(), (None, None, None))
+        self.assertEqual(tmc.get_console(), (None, None, None))
 
         html_mock.return_value.status_code = '300'
         result = tmc.get_console(job_url='http://logs.openstack.org')
-        self.assertEquals(result, (None, None, None))
+        self.assertEqual(result, (None, None, None))
 
         html_mock.return_value.status_code = '200'
         html_mock.return_value.content = self.console_ok
         console, date, url = tmc.get_console(
             job_url='http://logs.openstack.org')
 
-        self.assertEquals(console, self.console_ok.decode('utf-8'))
-        self.assertEquals(url, 'http://logs.openstack.org/console.html.gz')
+        self.assertEqual(console, self.console_ok.decode('utf-8'))
+        self.assertEqual(url, 'http://logs.openstack.org/console.html.gz')
 
         html_mock.return_value = None
         result = tmc.get_console(job_url='http://logs.openstack.org')
-        self.assertEquals(result, (None, None, None))
+        self.assertEqual(result, (None, None, None))
 
     def test_get_data(self):
         tmc = TempestMailCmd()
@@ -264,24 +282,24 @@ class TestTempestMailCmd(unittest.TestCase):
 
         data = tmc.get_data(self.console_ok, None, 'http://logs.openstack.org')
 
-        self.assertEquals(
+        self.assertEqual(
             data['job'],
             'periodic-tripleo-ci-centos-7-ovb-nonha-tempest-oooq-master')
-        self.assertEquals(data['date'], None)
-        self.assertEquals(data['run'], True)
-        self.assertEquals(data['link'], 'http://logs.openstack.org')
-        self.assertEquals(len(data['ok']), 2)
-        self.assertEquals(data.get('failed'), None)
-        self.assertEquals(data.get('covered'), None)
-        self.assertEquals(data.get('new'), None)
-        self.assertEquals(data.get('errors'), None)
+        self.assertEqual(data['date'], None)
+        self.assertEqual(data['run'], True)
+        self.assertEqual(data['link'], 'http://logs.openstack.org')
+        self.assertEqual(len(data['ok']), 2)
+        self.assertEqual(data.get('failed'), None)
+        self.assertEqual(data.get('covered'), None)
+        self.assertEqual(data.get('new'), None)
+        self.assertEqual(data.get('errors'), None)
 
         data = tmc.get_data('some content', None, 'http://logs.openstack.org')
-        self.assertEquals(data['run'], False)
+        self.assertEqual(data['run'], False)
 
         data = tmc.get_data(self.console_fail, None,
                             'http://logs.openstack.org')
-        self.assertNotEquals(data['failed'], None)
+        self.assertNotEqual(data['failed'], None)
 
     def test_load_skip_file(self):
         tmc = TempestMailCmd()
@@ -303,14 +321,14 @@ class TestTempestMailCmd(unittest.TestCase):
             {'test': 'neutron.tests.tempest.api.test_revisions.TestRevisions',
              'reason': 'New test, need investigation'}
         ]
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
         tmc.parse_arguments(['-c', 'tests/fixtures/config.yaml', '--job',
                              'periodic-tripleo-ci-centos-7-ovb-nonha-tempest-'
                              'oooq-master', '--file',
                              'tests/fixtures/not_found.log', '--skip-file',
                              'non_exist_file.txt'])
         result = tmc.load_skip_file(self.tmp_file)
-        self.assertEquals(result, [])
+        self.assertEqual(result, [])
 
     def test_setup_config(self):
         tmc = TempestMailCmd()
@@ -323,14 +341,14 @@ class TestTempestMailCmd(unittest.TestCase):
         tmc.setupConfig()
         config = tmc.config
 
-        self.assertEquals(config.require_auth, True)
-        self.assertEquals(config.mail_from, 'tripleoresults@gmail.com')
-        self.assertEquals(config.templates_path, 'template/')
-        self.assertEquals(
+        self.assertEqual(config.require_auth, True)
+        self.assertEqual(config.mail_from, 'tripleoresults@gmail.com')
+        self.assertEqual(config.templates_path, 'template/')
+        self.assertEqual(
             config.log_url,
             'http://logs.openstack.org/periodic/')
-        self.assertEquals(
+        self.assertEqual(
             config.api_server,
             'http://tempest-tripleoci.rhcloud.com/api/v1.0/sendmail')
-        self.assertEquals(config.use_api_server, True)
-        self.assertEquals(config.default_log_url, 'http://logs.openstack.org')
+        self.assertEqual(config.use_api_server, True)
+        self.assertEqual(config.default_log_url, 'http://logs.openstack.org')

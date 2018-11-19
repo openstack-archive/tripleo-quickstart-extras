@@ -49,6 +49,7 @@ def process_events(all_events, events):
             elapsed = times[name]['elapsed']
         print('%s %s') % (name, elapsed)
 
+
 if __name__ == '__main__':
     stdin = sys.stdin.read()
     all_events = json.loads(stdin)

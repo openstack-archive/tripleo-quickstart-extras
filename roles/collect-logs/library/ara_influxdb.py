@@ -213,7 +213,8 @@ class InfluxStandardFields(object):
         return os.environ.get('STATS_OOOQ', 0)
 
     def zuul_host_prepare(self):
-        if (os.environ.get('DEVSTACK_GATE_TIMEOUT') and
+
+        if (os.environ.get('DEVSTACK_GATE_TIMEOUT') and  # noqa: W504
                 os.environ.get('REMAINING_TIME')):
             return (int(
                 os.environ['DEVSTACK_GATE_TIMEOUT']) - int(
