@@ -1,5 +1,5 @@
 ---
-- name: Install openstack services tempest plugin
+- name: Install openstack services tempest plugin for newton
   package:
     name:
       - python-ceilometer-tests
@@ -15,29 +15,27 @@
       - python-cinder-tests
     state: present
   become: true
-
   when: release == 'newton'
 
 - name: Install openstack services tempest plugins
   package:
     state: latest
-    name: "{{ item }}"
+    name: "{{ item | regex_replace( '^python[0-9]*-(.*)$', python_package_prefix + '-\\1' ) }}"
   with_items: "{{ tempest_plugins }}"
   become: true
   when: tempest_plugins|length > 0
 
 - name: Install openstack tempest
   package:
-    name: "{{ item }}"
+    name:
+      - openstack-tempest
+      - "{{ python_package_prefix }}-junitxml"
     state: present
   become: true
-  with_items:
-    - openstack-tempest
-    - python-junitxml
 
 - name: Install python-tempestconf
   package:
-    name: python-tempestconf
+    name: "{{ python_package_prefix }}-tempestconf"
     state: present
   become: true
   when: release != 'newton'
