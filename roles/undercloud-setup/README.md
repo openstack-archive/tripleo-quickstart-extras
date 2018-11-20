@@ -58,7 +58,7 @@ Example Playbook
 
     - name: Set up CentOS undercloud node to run TripleO Quickstart
       hosts: undercloud
-      gather_facts: no
+      gather_facts: false
       roles:
         - undercloud-setup
 

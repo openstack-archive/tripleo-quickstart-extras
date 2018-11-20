@@ -7,7 +7,7 @@
     mode: 0755
 
 - name: Allow traffic for the controller
-  become: yes
+  become: true
   shell: >
     "{{ working_dir }}"/allow-traffic-for-controller.sh
   when:

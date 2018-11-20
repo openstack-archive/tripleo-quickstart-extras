@@ -13,9 +13,9 @@
   tags:
     - provision
 
-- name:  Inventory the virthost
+- name: Inventory the virthost
   hosts: localhost
-  gather_facts: yes
+  gather_facts: true
   roles:
     - tripleo-inventory
   tags:

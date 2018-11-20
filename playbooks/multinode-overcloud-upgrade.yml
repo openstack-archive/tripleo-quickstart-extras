@@ -1,8 +1,9 @@
+---
 - name: Generate repo-setup script for overcloud upgrade
   hosts: undercloud
   tags:
     - overcloud-upgrade
-  gather_facts: no
+  gather_facts: false
   vars:
     repo_run_live: false
     repo_setup_script: "repo-setup-{{ target_upgrade_version }}.sh"
@@ -18,7 +19,7 @@
 
 - name: Prepare containers for Upgrade
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   tags:
     - overcloud-prep-containers
   roles:
@@ -35,7 +36,7 @@
 
 - name: Run tripleo-upgrade role to upgrade overcloud
   hosts: undercloud
-  gather_facts: yes
+  gather_facts: true
   tags:
     - overcloud-upgrade
   vars:

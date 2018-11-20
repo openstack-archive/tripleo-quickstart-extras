@@ -32,7 +32,7 @@ Example Playbook
 
     - name: Prepare the host for PXE forwarding
       hosts: virthost
-      gather_facts: no
+      gather_facts: false
       roles:
         - ansible-role-tripleo-baremetal-prep-virthost
 

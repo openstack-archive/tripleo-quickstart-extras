@@ -1,35 +1,36 @@
+---
 # Validate the deployment
 - name: setup dstat performance monitoring
   hosts: overcloud
   tags:
     - overcloud-validate
   roles:
-    - { role: validate-perf,
-        when: validate_performance|bool and run_tempest|bool }
+    - {role: validate-perf,
+       when: validate_performance|bool and run_tempest|bool}
   ignore_errors: true
 
-- name:  validate the overcloud
+- name: validate the overcloud
   hosts: undercloud
   tags:
     - overcloud-validate
-  gather_facts: no
+  gather_facts: false
   roles:
-    - { role: validate-simple, when: test_ping|bool }
+    - {role: validate-simple, when: test_ping|bool}
 
 # Execute tempest against the overcloud deployment
-- name:  Execute tempest against the overcloud
+- name: Execute tempest against the overcloud
   hosts: undercloud
   tags:
     - overcloud-validate
-  gather_facts: no
+  gather_facts: false
   roles:
-    - { role: validate-tempest, when: tempest_config|bool or run_tempest|bool }
+    - {role: validate-tempest, when: tempest_config|bool or run_tempest|bool}
 
 # Execute simple TripleO-UI validations
-- name:  Execute simple TripleO-UI validations
+- name: Execute simple TripleO-UI validations
   hosts: localhost
   tags:
     - tripleoui-validate
-  gather_facts: yes
+  gather_facts: true
   roles:
-    - { role: validate-ui, when: validate_ui_simple|bool and undercloud_enable_ui|default(true)|bool }
+    - {role: validate-ui, when: validate_ui_simple|bool and undercloud_enable_ui|default(true)|bool}

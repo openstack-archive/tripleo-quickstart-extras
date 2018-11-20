@@ -41,13 +41,13 @@
       fetch:
         src: "{{ working_dir }}/tempest/tempest.html"
         dest: "{{ local_working_dir }}/tempest.html"
-        flat: yes
+        flat: true
 
     - name: Fetch nosetests results
       fetch:
         src: "{{ working_dir }}/tempest/tempest.xml"
         dest: "{{ local_working_dir }}/nosetests.xml"
-        flat: yes
+        flat: true
 
     - name: Copying tempestmail files
       synchronize:
@@ -71,5 +71,4 @@
           --skip-file "{{ working_dir }}/tempestmail/tempest_skip_{{ release }}.yml"
       args:
         chdir: "{{ working_dir }}/tempestmail"
-      ignore_errors: yes
-
+      ignore_errors: true

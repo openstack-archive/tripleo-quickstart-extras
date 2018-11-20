@@ -52,7 +52,7 @@ Example Playbook
     ---
     - name: Multinode
       hosts: localhost
-      gather_facts: no
+      gather_facts: false
       roles:
         - role: multinodes
 

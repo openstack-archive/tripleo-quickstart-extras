@@ -10,8 +10,8 @@
         ansible_user: "root"
         ansible_host: "{{ virthost }}"
 
-- name:  Clean up tripleo packages and libvirt
+- name: Clean up tripleo packages and libvirt
   hosts: virthost
-  gather_facts: no
+  gather_facts: false
   roles:
     - virthost-full-cleanup

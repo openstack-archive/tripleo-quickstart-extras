@@ -25,7 +25,7 @@
       with_items: "{{ vms.list_vms }}"
 
     - name: destroy any remaining vms
-      virt : command=destroy name={{ item }}
+      virt: command=destroy name={{ item }}
       with_items: "{{ vms.list_vms }}"
 
     - name: remove images from /var/lib/libvirt/images
@@ -51,11 +51,11 @@
       command: virsh net-destroy default
 
     - name: destroy default pool
-      become: yes
+      become: true
       command: virsh pool-destroy default
 
     - name: destroy local libvirt storage, networks and config
-      become: yes
+      become: true
       shell: "rm -rf {{ working_dir }}/.config/libvirt"
 
     - name: get user_id for stack user
@@ -118,7 +118,7 @@
 
     - name: kill all the network managers processes
       shell: kill -9 $(ps aux | grep NetworkManager | awk '{print $2}')
-      ignore_errors: yes    # When no NM running, killall exits with 1
+      ignore_errors: true  # When no NM running, killall exits with 1
 
     - name: ensure the network service is enabled
       service: name=network enabled=yes
@@ -130,32 +130,33 @@
         - /usr/bin/instack-setup-host
 
     - name: remove any instack rpms from the host
-      yum: name={{item}} state=absent
-      ignore_errors: yes
-      with_items:
-        - instack-*
-        - rdo-release
-        - rhos-release
-        - libvirt
-        - libvirt-daemon
-        - openvswitch
-        - NetworkManager
-        - qemu-*
-        - openstack-*
-        - python-qpid-*
-        - pexpect
-        - python-pexpect
-        - python-tuskarclient*
-        - python-keystone*
-        - python-openstackclient
-        - python-oslo*
-        - python-qpid
-        - python-ironic*
-        - python-eventlet
-        - tripleo-*
-        - python-rdomanager-*
-        - jq
-        - python-tripleo*
+      yum:
+        name:
+          - instack-*
+          - rdo-release
+          - rhos-release
+          - libvirt
+          - libvirt-daemon
+          - openvswitch
+          - NetworkManager
+          - qemu-*
+          - openstack-*
+          - python-qpid-*
+          - pexpect
+          - python-pexpect
+          - python-tuskarclient*
+          - python-keystone*
+          - python-openstackclient
+          - python-oslo*
+          - python-qpid
+          - python-ironic*
+          - python-eventlet
+          - tripleo-*
+          - python-rdomanager-*
+          - jq
+          - python-tripleo*
+        state: absent
+      ignore_errors: true
 
     - name: find any remaining rpms from director repos
       shell: "yumdb search from_repo rhelosp-*-director* | egrep -v from_repo | grep -v '^$' | tail -n +2 "
@@ -170,7 +171,7 @@
       register: delorean_rpms
 
     # BUG: when this task encounters an rpm of the form "1:somerpm" it fails
-    #- name: debug
+    # - name: debug
     #  debug: var={{ item }}
     #  with_flattened:
     #    - director_rpms.stdout_lines
@@ -179,7 +180,7 @@
 
     - name: remove any openstack rpms from the host
       yum: name={{item}} state=absent
-      ignore_errors: yes
+      ignore_errors: true
       with_flattened:
         - "{{ director_rpms.stdout_lines }}"
         - "{{ rhos_rpms.stdout_lines }}"

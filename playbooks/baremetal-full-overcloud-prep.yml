@@ -1,79 +1,79 @@
 ---
-- name:  Prepare the undercloud networks for the overcloud deployment
+- name: Prepare the undercloud networks for the overcloud deployment
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   roles:
     - overcloud-prep-network
   tags:
     - overcloud-prep-network
 
-- name:  copy over config files
+- name: copy over config files
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   roles:
     - overcloud-prep-config
   tags:
     - overcloud-prep-config
 
-- name:  Perpare the baremetal overcloud
+- name: Perpare the baremetal overcloud
   hosts: undercloud
-  gather_facts: yes
+  gather_facts: true
   roles:
     - baremetal-prep-overcloud
   tags:
     - baremetal-prep-overcloud
 
-- name:  Prepare overcloud containers
+- name: Prepare overcloud containers
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   roles:
-    - { role: overcloud-prep-containers, when: containerized_overcloud|bool }
+    - {role: overcloud-prep-containers, when: containerized_overcloud|bool}
   tags:
     - overcloud-prep-containers
 
 - name: Run tripleo-validations pre-introspection tests
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   tags:
     - tripleo-validations
   vars:
     validations_group: ['pre-introspection']
   roles:
-    - { role: tripleo-validations,
-        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
+    - {role: tripleo-validations,
+       when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
 
-- name:  Prepare the overcloud images for deployment
+- name: Prepare the overcloud images for deployment
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   roles:
     - overcloud-prep-images
   tags:
     - overcloud-prep-images
 
-- name:  Prepare overcloud flavors
+- name: Prepare overcloud flavors
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   roles:
-    - { role: overcloud-prep-flavors,
-        when: step_overcloud_prep_flavors|default(true)|bool }
+    - {role: overcloud-prep-flavors,
+       when: step_overcloud_prep_flavors|default(true)|bool}
   tags:
     - overcloud-prep-flavors
 
 - name: Prepare the SSL Configuration for the overcloud deployment
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   roles:
-    - { role: overcloud-ssl }
+    - {role: overcloud-ssl}
   tags:
     - overcloud-ssl
 
 - name: Run tripleo-validations pre-deployment tests
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   tags:
     - tripleo-validations
   vars:
     validations_group: ['pre-deployment']
   roles:
-    - { role: tripleo-validations,
-        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
+    - {role: tripleo-validations,
+       when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}

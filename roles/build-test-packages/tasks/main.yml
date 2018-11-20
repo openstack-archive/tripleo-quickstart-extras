@@ -18,32 +18,32 @@
   when: python_cmd is not defined
 
 - name: Ensure DLRN package dependencies
-  become: yes
+  become: true
   package:
     state: present
     name:
-        - createrepo
-        - gcc
-        - git
-        - libffi-devel
-        - mock
-        - openssl-devel
-        - redhat-rpm-config
-        - rsync
-        - rpm-build
-        - rpmdevtools
-        - sqlite
-        - >
-            {% if ansible_python.version.major == 3 %}
-            python3-libselinux
-            {% else %}
-            libselinux-python
-            {% endif %}
+      - createrepo
+      - gcc
+      - git
+      - libffi-devel
+      - mock
+      - openssl-devel
+      - redhat-rpm-config
+      - rsync
+      - rpm-build
+      - rpmdevtools
+      - sqlite
+      - >
+        {% if ansible_python.version.major == 3 %}
+        python3-libselinux
+        {% else %}
+        libselinux-python
+        {% endif %}
 
 - name: Check if virtualenv is in the system
   shell: "{{ python_cmd }} -m virtualenv --version"
   args:
-    warn: no
+    warn: false
   register: virtualenv_exist
   changed_when: false
   failed_when: false
@@ -60,17 +60,17 @@
         {% endif %}
 
 - name: Create mock group
-  become: yes
+  become: true
   group:
     name: mock
     state: present
 
 - name: Add user to mock group
-  become: yes
+  become: true
   user:
     name: '{{ ansible_user_id }}'
     groups: mock
-    append: yes
+    append: true
 
 - name: Ensure DLRN dir is present
   file:
@@ -81,7 +81,7 @@
   shell:
     rm -rf '{{ build_repo_dir }}/DLRN/*'
   args:
-    warn: no
+    warn: false
   register: result
   changed_when: result.stdout or result.stderr
 
@@ -117,7 +117,7 @@
     pip install -r requirements.txt;
     python setup.py install;
   args:
-      chdir: '{{ build_repo_dir }}/DLRN'
+    chdir: '{{ build_repo_dir }}/DLRN'
   when: dlrn_pre_installed|bool
 
 - name: copy the DLRN scripts in the virtualenv to the scripts dir
@@ -138,8 +138,10 @@
     gawk '{ print $0 }; /^# repos$/ { exit }' {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}.cfg
     > {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
     cat /etc/yum.repos.d/quickstart-{{ ansible_distribution | lower }}-*.repo >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
-    find /etc/yum.repos.d -name "delorean*repo" ! -name "delorean*build-deps.repo" -exec cat {} \; >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
-    find /etc/yum.repos.d -name "delorean*build-deps.repo" -exec sed 's/enabled=.*/enabled=1/g' {} \; >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
+    find /etc/yum.repos.d -name "delorean*repo" ! -name "delorean*build-deps.repo" -exec cat {} \;
+    >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
+    find /etc/yum.repos.d -name "delorean*build-deps.repo" -exec sed 's/enabled=.*/enabled=1/g' {} \;
+    >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
     echo '"""' >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
     mkdir -p /tmp/fake-dlrn-repos/current;
     touch /tmp/fake-dlrn-repos/delorean-deps.repo;
@@ -224,7 +226,7 @@
         exit $?;
     done;
   args:
-      chdir: '{{ build_repo_dir }}/DLRN'
+    chdir: '{{ build_repo_dir }}/DLRN'
   register: repo_built_multi
   when: not artg_build_one|bool
 

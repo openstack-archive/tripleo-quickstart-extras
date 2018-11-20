@@ -34,7 +34,7 @@ Example Playbook
 
     - name: Prepare for deployment on baremetal overcloud
       hosts: virthost
-      gather_facts: no
+      gather_facts: false
       roles:
         - ansible-role-tripleo-overcloud-prep-baremetal
 

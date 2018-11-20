@@ -196,7 +196,7 @@ Sample playbook to call the role
 # Deploy the undercloud
 - name:  Install undercloud
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   roles:
     - undercloud-deploy
 ```
@@ -319,7 +319,7 @@ And an example playbook to call the role is:
 # Deploy the undercloud
 - name:  Deploy undercloud (experimental)
   hosts: undercloud
-  gather_facts: no
+  gather_facts: false
   vars:
     containerized_undercloud: true
     undercloud_install_script: undercloud-deploy.sh.j2
