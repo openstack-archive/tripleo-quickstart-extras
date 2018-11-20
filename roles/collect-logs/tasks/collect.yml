@@ -205,10 +205,22 @@
 
             if [ $engine = 'docker' ]; then
                 (command -v docker && systemctl is-active docker) || continue
+                # container_cp CONTAINER SRC DEST
+                container_cp() {
+                  docker cp ${1}:${2} $3
+                }
             fi
 
             if [ $engine = 'podman' ]; then
                 command -v podman || continue
+                # NOTE(cjeanner): podman has no "cp" subcommand, we hence have to mount the container, copy,
+                # umount it. More info: https://www.mankier.com/1/podman-cp
+                # See also: https://github.com/containers/libpod/issues/613
+                container_cp() {
+                  mnt=$(podman mount $1)
+                  cp -r ${mnt}${2} $3
+                  podman umount $1
+                }
             fi
 
             BASE_CONTAINER_EXTRA=/var/log/extra/${engine};
@@ -228,7 +240,8 @@
             for cmd in "${CONTAINER_INFO_CMDS[@]}"; do
                 echo "+ $cmd" >> $ALL_FILE;
                 $cmd >> $ALL_FILE;
-                echo "\n\n" >> $ALL_FILE;
+                echo "" >> $ALL_FILE;
+                echo "" >> $ALL_FILE;
             done;
 
             for cont in $(${engine} ps | awk {'print $NF'} | grep -v NAMES); do
@@ -236,22 +249,32 @@
                 mkdir -p $INFO_DIR;
                 INFO_FILE=${INFO_DIR}/${engine}_info.log;
                 CONTAINER_CONT_INFO_CMDS=(
-                    "${engine} top $cont auxw"
                     "${engine} exec $cont top -bwn1"
                     "${engine} exec $cont bash -c \"\$(command -v dnf || command -v yum) list installed\""
                     "${engine} inspect $cont"
                 );
+                if [ $engine = 'docker' ]; then
+                    CONTAINER_CONT_INFO_CMDS+=("${engine} top $cont auxw");
+                fi
+                # NOTE(cjeanner): `podman top` does not support `ps` options.
+                if [ $engine = 'podman' ]; then
+                    CONTAINER_CONT_INFO_CMDS+=("${engine} top $cont");
+                fi
                 for cmd in "${CONTAINER_CONT_INFO_CMDS[@]}"; do
                     echo "+ $cmd" >> $INFO_FILE;
                     $cmd >> $INFO_FILE;
+                    echo "" >> $ALL_FILE;
+                    echo "" >> $ALL_FILE;
                 done;
                 ${engine} logs $cont &> $INFO_DIR/stdout.log;
-                ${engine} cp $cont:/var/lib/kolla/config_files/config.json $INFO_DIR/config.json;
+
+                container_cp $cont /var/lib/kolla/config_files/config.json $INFO_DIR/config.json;
+
                 # NOTE(flaper87): This should go away. Services should be
                 # using a `logs` volume
                 # NOTE(mandre) Do not copy logs if the containers is bind mounting /var/log directory
                 if ! ${engine} exec $cont stat $BASE_CONTAINER_EXTRA 2>1 > /dev/null; then
-                  ${engine} cp $cont:/var/log $INFO_DIR/log;
+                      container_cp $cont /var/log $INFO_DIR/log;
                 fi;
 
                 # Delete symlinks because they break log collection and are generally
@@ -261,7 +284,9 @@
 
           # NOTE(flaper87) Copy contents from the logs volume. We can expect this
           # volume to exist in a containerized environment.
-          if [ $engine = 'docker' ]; then
+          # NOTE(cjeanner): Rather test the eXistenZ of the volume, as podman does not
+          # have such thing
+          if [ -d /var/lib/docker/volumes/logs/_data ]; then
               cp -r /var/lib/docker/volumes/logs/_data $BASE_CONTAINER_EXTRA/logs;
           fi
         done
