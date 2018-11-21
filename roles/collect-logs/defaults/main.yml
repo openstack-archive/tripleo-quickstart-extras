@@ -140,12 +140,12 @@ artcl_zuul_swift_upload_path: /usr/local/bin
 artcl_collect_sosreport: false
 artcl_sosreport_options: "--batch"
 
-## Doc generation specific vars
+# Doc generation specific vars
 artcl_gen_docs: false
 artcl_create_docs_payload:
-    included_deployment_scripts: []
-    included_static_docs: []
-    table_of_contents: []
+  included_deployment_scripts: []
+  included_static_docs: []
+  table_of_contents: []
 artcl_docs_source_dir: "{{ local_working_dir }}/usr/local/share/ansible/roles/collect-logs/docs/source"
 artcl_docs_build_dir: "{{ artcl_collect_dir }}/docs/build"
 artcl_verify_sphinx_build: false
@@ -184,10 +184,10 @@ artcl_logstash_files:
   - /home/*/workload_launch.log
   - /home/*/pkg_mgr_mirror_error.log
   - /home/*/pkg_mgr_mirror.log
-  - /home/*/tempest_output.log
+  - /home/*/tempest.log
   - /var/log/bootstrap-subnodes.log
   - /var/log/tripleo-container-image-prepare.log
-#ara_graphite_server: graphite.tripleo.org
+# ara_graphite_server: graphite.tripleo.org
 ara_graphite_prefix: "tripleo.{{ lookup('env', 'STABLE_RELEASE')|default('master', true) }}.{{ lookup('env', 'TOCI_JOBTYPE') }}."
 ara_only_successful_tasks: true
 ara_tasks_map:
