@@ -1,3 +1,21 @@
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# flake8: noqa
+
+# If extensions (or modules to document with autodoc) are in another directory,
+# add these directories to sys.path here. If the directory is relative to the
+# documentation root, use os.path.abspath to make it absolute, like shown here.
 import argparse
 import bugzilla
 import logging
@@ -157,13 +175,13 @@ class BugVerifyCmd(object):
         return output
 
     def print_output(self, known_failures, output_format):
-        print self.get_output(known_failures, output_format)
+        print(self.get_output(known_failures, output_format))
 
     def show_report(self):
-        print 'Here\'s the original list:'
+        print('Here\'s the original list:')
         self.print_output(self.original_failures, self.args.output_format)
-        print '\n\n'
-        print 'Here\'s the skipped list:'
+        print('\n\n')
+        print('Here\'s the skipped list:')
         self.print_output(self.skipped_failures, self.args.output_format)
 
     def save_output(self, known_failures, output_format):
@@ -201,6 +219,7 @@ def main():
     bvc.parse_arguments(sys.argv[1:])
     bvc.setup_logging()
     bvc.run()
+
 
 if __name__ == '__main__':
     sys.exit(main())

@@ -31,8 +31,8 @@ from six.moves.urllib.parse import urljoin
 
 HREF = re.compile('href="([^"]+)"')
 JOBRE = re.compile('[a-z0-9]{7}/')
-TESTRE = re.compile('(tempest[^ \(\)]+|\w+\.tests\.[^ \(\)]+)')
-TIMEST = re.compile('(\d{4}-\d{2}-\d{2} \d{2}:\d{2}):\d{2}\.\d+ \|')
+TESTRE = re.compile(r'(tempest[^ \(\)]+|\w+\.tests\.[^ \(\)]+)')
+TIMEST = re.compile(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}):\d{2}\.\d+ \|')
 TITLE = re.compile('<title>(.*?)</title>')
 
 FAILED = "... FAILED"
@@ -386,8 +386,8 @@ class TempestMailCmd(object):
                                    'reason': t.get('reason')})
 
         if self.args.skip_file:
-            known_failures = (known_failures +
-                              self.load_skip_file(self.args.skip_file))
+            known_failures = \
+                (known_failures + self.load_skip_file(self.args.skip_file))
 
         newconfig.known_failures = known_failures
         newconfig.api_server = config.get('api_server')

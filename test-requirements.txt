@@ -1,5 +1,4 @@
 openstackdocstheme>=1.11.0  # Apache-2.0
-hacking<0.11,>=0.10
 
 pre-commit>=1.10 # MIT License
 ansible-lint>=3.5.0
