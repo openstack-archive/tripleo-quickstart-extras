@@ -2,7 +2,6 @@
 - project:
     templates:
       - tripleo-undercloud-jobs
-      - tripleo-multinode-baremetal-full
       - tripleo-multinode-container-full
       - tripleo-multinode-experimental
       - tripleo-multinode-branchful
