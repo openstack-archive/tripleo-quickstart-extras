@@ -10,6 +10,10 @@
     # Avoid running yum update, only set up repos
     repo_setup_run_update: false
     artg_compressed_gating_repo: "${HOME}/gating_repo.tar.gz"
+    # This should not be enabled because the updating of the packages occurs
+    # durring the upgrade process. For general installation it's ok to have
+    # this enabled, but this needs to be disabled for upgrades
+    ib_gating_repo_update: false
   roles:
     - role: repo-setup
       when: containerized_overcloud_upgrade|default(false)|bool

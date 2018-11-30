@@ -1,3 +1,4 @@
+---
 - name: Configure next release repository in the undercloud
   hosts: undercloud
   tags:
@@ -9,10 +10,14 @@
     dlrn_hash_path: ''
     dlrn_hash_path_newest: ''
     artg_compressed_gating_repo: "${HOME}/gating_repo.tar.gz"
+    # This should not be enabled because the updating of the packages occurs
+    # durring the upgrade process. For general installation it's ok to have
+    # this enabled, but this needs to be disabled for upgrades
+    ib_gating_repo_update: false
   roles:
     - role: repo-setup
     - role: build-test-packages
-    - { role: install-built-repo, when: compressed_gating_repo is defined }
+    - {role: install-built-repo, when: compressed_gating_repo is defined}
 
 - name: Run tripleo-upgrade role to upgrade undercloud
   hosts: undercloud
@@ -20,4 +25,3 @@
     - undercloud-upgrade
   roles:
     - role: tripleo-upgrade
-
