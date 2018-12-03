@@ -23,8 +23,6 @@ Role Variables
   -- location of network-environment file to copy over
 - `undercloud_type`: <virtual> -- can be overwritten with values like
   'baremetal' or 'ovb'
-- `extra_tht_configs`: -- a list of files to copy to the overcloud and add as
-  extra config to the overcloud-deployment command
 - `network_isolation_type`: single-nic-vlans, multiple-nics, bond-with-vlans, public-bond -
   type of network isolation to use (default: single-nic-vlans) [1]
   deprecated types - single_nic_vlans, bond_with_vlans, multi-nic
