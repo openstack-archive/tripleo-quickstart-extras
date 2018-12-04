@@ -1,31 +1,25 @@
 ---
-- name: Enable kvm nested virtualization
-  block:
-    - name: Check cpu vendor
-      set_fact:
-        cpu_vendor: "{{ item }}"
-      when: ansible_processor[1]|lower is search(item)
-      with_items:
-        - intel
-        - amd
-    - name: Fail if cpu vendor is undefined
-      fail:
-        msg: 'WARNING: Unknown/unsupported CPU vendor'
-      when: cpu_vendor is not defined
-    - name: Make sure the kvm module is present
-      modprobe:
-        name: kvm-{{ cpu_vendor }}
-        state: present
-        params: 'nested=1'
-      become: true
-    - name: Set kvm as virt type
-      set_fact:
-        virt_type: kvm
-    - debug:
-        msg: 'KVM nested virtualization Enabled.'
-  rescue:
-    - name: Set qemu as virt type
-      set_fact:
-        virt_type: qemu
-    - debug:
-        msg: 'WARNING: Running QEMU full emulation.'
+- name: Check cpu vendor
+  set_fact:
+    cpu_vendor: "{{ item }}"
+  when: ansible_processor[1]|lower is search(item)
+  with_items:
+    - intel
+    - amd
+- name: Check virt extensions on cpu flags
+  shell: egrep 'vmx|svm' /proc/cpuinfo
+  register: cpuflags
+  failed_when: false
+  no_log: true
+  when: cpu_vendor is defined
+- name: Set qemu as virt type
+  set_fact:
+    virt_type: qemu
+  when: cpu_vendor is not defined or cpuflags.stdout == ""
+- name: Set kvm as virt type
+  set_fact:
+    virt_type: kvm
+  when: cpu_vendor is defined and cpuflags.stdout != ""
+- name: Print virtualization type
+  debug:
+    var: virt_type
