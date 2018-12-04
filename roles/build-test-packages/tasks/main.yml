@@ -138,7 +138,7 @@
     gawk '{ print $0 }; /^# repos$/ { exit }' {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}.cfg
     > {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
     cat /etc/yum.repos.d/quickstart-{{ ansible_distribution | lower }}-*.repo >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
-    find /etc/yum.repos.d -name "delorean*repo" ! -name "delorean*build-deps.repo" -exec cat {} \;
+    find /etc/yum.repos.d -name "delorean*repo" ! -name "delorean*build-deps.repo" -exec cat {} \; -exec echo ""  \;
     >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
     find /etc/yum.repos.d -name "delorean*build-deps.repo" -exec sed 's/enabled=.*/enabled=1/g' {} \;
     >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
