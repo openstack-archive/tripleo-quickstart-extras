@@ -1,3 +1,4 @@
+---
 os_region: "{{ lookup('env', 'OS_REGION_NAME')|default('regionOne') }}"
 os_tenant: "{{ lookup('env', 'OS_TENANT_ID') }}"
 os_identity_api_version: "{{ lookup('env', 'OS_IDENTITY_API_VERSION')|default(2) }}"

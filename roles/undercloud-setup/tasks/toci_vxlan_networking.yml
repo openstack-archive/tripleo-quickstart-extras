@@ -25,4 +25,3 @@
     set -o pipefail &&
     {{ working_dir }}/toci_vxlan_networking.sh
     2>&1 {{ timestamper_cmd }} > {{ working_dir }}/toci_vxlan_networking.sh.log
-

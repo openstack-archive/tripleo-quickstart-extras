@@ -11,53 +11,52 @@
 
     - when: run_tripleo_validations|bool
       block:
-      - name: Clean failed_validations_log file if exists
-        file:
-          path: "{{ failed_validations_log }}"
-          state: absent
-        tags:
-          - tripleo-validations
+        - name: Clean failed_validations_log file if exists
+          file:
+            path: "{{ failed_validations_log }}"
+            state: absent
+          tags:
+            - tripleo-validations
 
-      - name: Run validations tests through Mistral
-        shell: >
-          {{ val_working_dir }}/run-tripleo-validations.sh {{ item }} >
-          {{ val_working_dir }}/validations_{{ item }}.log 2>&1
-        with_items:
-          - "{{ validations_group|default([]) }}"
-        tags:
-          - tripleo-validations
+        - name: Run validations tests through Mistral
+          shell: >
+            {{ val_working_dir }}/run-tripleo-validations.sh {{ item }} >
+            {{ val_working_dir }}/validations_{{ item }}.log 2>&1
+          with_items:
+            - "{{ validations_group|default([]) }}"
+          tags:
+            - tripleo-validations
 
-      - name: Check for failed validations log file
-        stat:
-          path: "{{ failed_validations_log }}"
-        register: failed_validations_log_file
-        tags:
-          - tripleo-validations
+        - name: Check for failed validations log file
+          stat:
+            path: "{{ failed_validations_log }}"
+          register: failed_validations_log_file
+          tags:
+            - tripleo-validations
 
-      - name: Get content of failed validations log file
-        command: cat {{ failed_validations_log }}
-        register: failed_validations_content
-        when: failed_validations_log_file.stat.exists|bool
-        tags:
-          - tripleo-validations
+        - name: Get content of failed validations log file
+          command: cat {{ failed_validations_log }}
+          register: failed_validations_content
+          when: failed_validations_log_file.stat.exists|bool
+          tags:
+            - tripleo-validations
 
-      - name: Display failed validations tests
-        fail:
-          msg:
-            "{{ failed_validations_content.stdout_lines }}"
-        ignore_errors: "{{ not (exit_on_validations_failure|bool) }}"
-        when: failed_validations_log_file.stat.exists|bool
-        tags:
-          - tripleo-validations
+        - name: Display failed validations tests
+          fail:
+            msg:
+              "{{ failed_validations_content.stdout_lines }}"
+          ignore_errors: "{{ not (exit_on_validations_failure|bool) }}"
+          when: failed_validations_log_file.stat.exists|bool
+          tags:
+            - tripleo-validations
 
     - when: run_tripleo_validations_negative_tests|bool
       block:
-      - name: Run negative tests for pre-introspection group
-        shell: >
-          set -o pipefail &&
-          {{ val_working_dir }}/run-preintro-validations-negative-tests.sh 2>&1 {{ timestamper_cmd }} >
-          {{ run_preintro_val_log }}
-        when: '"pre-introspection" in validations_group'
-        tags:
-          - tripleo-validations
-
+        - name: Run negative tests for pre-introspection group
+          shell: >
+            set -o pipefail &&
+            {{ val_working_dir }}/run-preintro-validations-negative-tests.sh 2>&1 {{ timestamper_cmd }} >
+            {{ run_preintro_val_log }}
+          when: '"pre-introspection" in validations_group'
+          tags:
+            - tripleo-validations

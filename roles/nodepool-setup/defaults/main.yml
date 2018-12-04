@@ -1,3 +1,4 @@
+---
 nodepool_cirros_url: http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
 nodepool_cirros_dest: /opt/cache/files/cirros-0.3.5-x86_64-disk.img
 nodepool_cirros_checksum: md5:f8ab98ff5e73ebab884d80c9dc9c7290
@@ -11,7 +12,7 @@ repos:
   - https://git.openstack.org/openstack-dev/devstack
   - https://git.openstack.org/openstack-infra/devstack-gate
 zuul_changes: "{{ lookup('env', 'ZUUL_CHANGES') }}"
-subnode_swap_size: 8388608 # 8GB
+subnode_swap_size: 8388608  # 8GB
 update_subnodes: true
 rdo_cloud_provider: true
 packages_list:

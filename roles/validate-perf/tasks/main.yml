@@ -1,5 +1,6 @@
 ---
 - name: Validate performance (dstat) on overcloud
+  become: true
   block:
   - name: Install the latest version of dstat on overcloud
     package:
@@ -24,6 +25,5 @@
     executable: /bin/bash
     changed_when: false
   rescue:
-  - debug:
-      msg: "Warning: Performance cannot be validated."
-  become: true
+    - debug:
+        msg: "Warning: Performance cannot be validated."

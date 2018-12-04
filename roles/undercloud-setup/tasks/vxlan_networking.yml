@@ -32,4 +32,3 @@
   shell: "ping -c 6 -W 3 {{ vxlan_networking_addr_prefix }}.2 || (sudo systemctl restart openvswitch && ping -c 6 -W 3 {{ vxlan_networking_addr_prefix }}.2)"
   delegate_to: "{{ item }}"
   with_items: "{{ groups['overcloud'] | default([]) }}"
-

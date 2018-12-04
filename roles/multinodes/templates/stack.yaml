@@ -1,3 +1,4 @@
+---
 heat_template_version: newton
 
 description: >
@@ -40,29 +41,29 @@ resources:
   private_net:
     type: OS::Neutron::Net
     properties:
-      name: { get_param: private_net_name }
+      name: {get_param: private_net_name}
 
   private_subnet:
     type: OS::Neutron::Subnet
     properties:
-      network_id: { get_resource: private_net }
-      cidr: { get_param: private_net_cidr }
-      gateway_ip: { get_param: private_net_gateway }
+      network_id: {get_resource: private_net}
+      cidr: {get_param: private_net_cidr}
+      gateway_ip: {get_param: private_net_gateway}
       allocation_pools:
-        - start: { get_param: private_net_pool_start }
-          end: { get_param: private_net_pool_end }
+        - start: {get_param: private_net_pool_start}
+          end: {get_param: private_net_pool_end}
 
   router:
     type: OS::Neutron::Router
     properties:
       external_gateway_info:
-        network: { get_param: public_net_name }
+        network: {get_param: public_net_name}
 
   router_interface:
     type: OS::Neutron::RouterInterface
     properties:
-      router_id: { get_resource: router }
-      subnet_id: { get_resource: private_subnet }
+      router_id: {get_resource: router}
+      subnet_id: {get_resource: private_subnet}
 
 
   server_security_group:
@@ -86,19 +87,19 @@ resources:
     type: OS::Heat::ResourceGroup
     depends_on: router_interface
     properties:
-      count: { get_param: subnode_count }
+      count: {get_param: subnode_count}
       resource_def:
         type: "{{ local_working_dir }}/subnode.yaml"
         properties:
           name: "{{ prefix }}subnode-%index%"
-          private_net: { get_resource: private_net }
-          private_subnet: { get_resource: private_subnet }
+          private_net: {get_resource: private_net}
+          private_subnet: {get_resource: private_subnet}
           server_security_group: {get_resource: server_security_group}
-          subnode_flavor: { get_param: subnode_flavor }
-          public_net_name: { get_param: public_net_name }
-          key_name: { get_param: key_name }
-          image: { get_param: image }
+          subnode_flavor: {get_param: subnode_flavor}
+          public_net_name: {get_param: public_net_name}
+          key_name: {get_param: key_name}
+          image: {get_param: image}
 
 outputs:
   subnode_ip_pairs:
-    value: { get_attr: [subnodes, subnode_ip_pair] }
+    value: {get_attr: [subnodes, subnode_ip_pair]}

@@ -13,5 +13,4 @@
 - name: Create the OVB stack
   hosts: localhost
   roles:
-    - { role: ovb-manage-stack, ovb_manage_stack_mode: 'create' }
-
+    - {role: ovb-manage-stack, ovb_manage_stack_mode: 'create'}

@@ -1,3 +1,4 @@
+---
 known_failures:
   - test: 'tempest.api.telemetry.test_telemetry_notification_api'
     reason: 'ospd-8 poodle 2016-02-04.1 tempest.api.telemetry.test_telemetry_notification_api failing'

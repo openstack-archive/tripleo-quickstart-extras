@@ -1,3 +1,4 @@
+---
 - name: Check that virthost/undercloud is set
   fail:
     msg: "You need to set virthost/undercloud before running these playbooks."

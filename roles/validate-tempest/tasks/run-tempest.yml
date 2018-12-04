@@ -4,4 +4,4 @@
     set -o pipefail &&
     {{ working_dir }}/tempest-setup.sh 2>&1 {{ timestamper_cmd }} > {{ tempest_log_file }}
   register: tempest_result
-  ignore_errors: True
+  ignore_errors: true

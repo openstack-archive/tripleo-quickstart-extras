@@ -1,3 +1,4 @@
+---
 - name: Fail if no auth is provided
   fail:
     msg: 'Please source credential rc file from your tenant on cloud'
@@ -147,54 +148,54 @@
     - "{{ groups['subnodes'] }}"
 
 # In case of blank centos image we need to create CI user and update inventory
-- block:
+- when: hostvars['subnode-0'].ansible_user != "{{ nodepool_user }}"
+  block:
 
-  - name: Setup user
-    user:
-      name: "{{ nodepool_user }}"
-      groups: wheel
-      append: yes
-    become: true
-    delegate_to: "{{ item}}"
-    with_items:
-      - "{{ groups['subnodes'] }}"
+    - name: Setup user
+      user:
+        name: "{{ nodepool_user }}"
+        groups: wheel
+        append: true
+      become: true
+      delegate_to: "{{ item}}"
+      with_items:
+        - "{{ groups['subnodes'] }}"
 
-  - name: Setup keys
-    authorized_key:
-      user: "{{ nodepool_user }}"
-      state: present
-      key: "{{ lookup('file', '{{ key_location }}') }}"
-    become: true
-    become_user: "{{ nodepool_user }}"
-    delegate_to: "{{ item}}"
-    with_items:
-      - "{{ groups['subnodes'] }}"
+    - name: Setup keys
+      authorized_key:
+        user: "{{ nodepool_user }}"
+        state: present
+        key: "{{ lookup('file', '{{ key_location }}') }}"
+      become: true
+      become_user: "{{ nodepool_user }}"
+      delegate_to: "{{ item}}"
+      with_items:
+        - "{{ groups['subnodes'] }}"
 
-  - name: Allow user to have passwordless sudo
-    lineinfile:
-      dest: /etc/sudoers
-      state: present
-      line: '{{ nodepool_user }} ALL=(ALL) NOPASSWD:ALL'
-      validate: 'visudo -cf %s'
-    become: true
-    delegate_to: "{{ item}}"
-    with_items:
-      - "{{ groups['subnodes'] }}"
+    - name: Allow user to have passwordless sudo
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        line: '{{ nodepool_user }} ALL=(ALL) NOPASSWD:ALL'
+        validate: 'visudo -cf %s'
+      become: true
+      delegate_to: "{{ item}}"
+      with_items:
+        - "{{ groups['subnodes'] }}"
 
-  - name: Add hosts
-    add_host:
-      name: "subnode-{{ item.0 }}"
-      hostname: "{{ item.1.1 }}"
-      groups: "{{ subnode_groups| join(',') }}"
-      ansible_user: "{{ nodepool_user }}"
-      ansible_host: "{{ item.1.1 }}"
-      ansible_fqdn: "subnode-{{ item.0 }}"
-      ansible_private_key_file: "{{ private_key_location }}"
-      subnode_public_ip: "{{ item.1.1 }}"
-      subnode_private_ip: "{{ item.1.0 }}"
-    with_indexed_items:
-      - "{{ subnode_ips.stdout }}"
-  when: hostvars['subnode-0'].ansible_user != "{{ nodepool_user }}"
+    - name: Add hosts
+      add_host:
+        name: "subnode-{{ item.0 }}"
+        hostname: "{{ item.1.1 }}"
+        groups: "{{ subnode_groups| join(',') }}"
+        ansible_user: "{{ nodepool_user }}"
+        ansible_host: "{{ item.1.1 }}"
+        ansible_fqdn: "subnode-{{ item.0 }}"
+        ansible_private_key_file: "{{ private_key_location }}"
+        subnode_public_ip: "{{ item.1.1 }}"
+        subnode_private_ip: "{{ item.1.0 }}"
+      with_indexed_items:
+        - "{{ subnode_ips.stdout }}"
 
 - name: Dump hosts to file
   template:

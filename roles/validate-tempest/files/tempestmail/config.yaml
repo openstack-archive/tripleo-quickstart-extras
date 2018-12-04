@@ -1,22 +1,23 @@
-require_auth: True
+---
+require_auth: true
 mail_from: tripleoresults@gmail.com
 templates_path: template/
 log_url: 'http://logs.openstack.org/periodic/'
 api_server: 'http://tempest-sendmail.tripleo.org:8080/api/v1.0/sendmail'
-use_api_server: True
+use_api_server: true
 default_log_url: 'http://logs.openstack.org'
 emails:
   - mail: 'arxcruz@redhat.com'
     name: 'Arx Cruz'
   - mail: 'gcerami@redhat.com'
     name: 'Gabriele'
-    fail_only: True
+    fail_only: true
   - mail: 'sshnaidm@redhat.com'
     name: 'Sagi Shnaidman'
-    fail_only: True
+    fail_only: true
   - mail: 'rhos-telemetry@redhat.com'
     name: 'Rhos Telemetry'
-    fail_only: True
+    fail_only: true
     jobs:
       - 'gate-tripleo-ci-centos-7-scenario001-multinode-oooq-puppet'
       - 'gate-tripleo-ci-centos-7-scenario001-multinode-oooq-container'
@@ -26,7 +27,7 @@ emails:
       - 'telemetry_tempest_plugin.scenario.test_telemetry_integration.TestTelemetryIntegration'
   - mail: 'abregman@redhat.com'
     name: 'RHOS Networking'
-    fail_only: True
+    fail_only: true
     jobs:
       - 'periodic-tripleo-ci-centos-7-ovb-1ctlr_1comp-featureset020-master'
       - 'periodic-tripleo-ci-centos-7-ovb-1ctlr_1comp-featureset020-pike'
@@ -39,7 +40,7 @@ emails:
       - 'tempest.scenario.test_security_groups_basic_ops'
   - mail: 'rhos-storage-tests@redhat.com'
     name: 'RHOSP Storage - Cinder'
-    fail_only: True
+    fail_only: true
     regex:
       - '^tempest\.api\.volume\.'
       - '^cinder\.tests\.tempest\.'
@@ -47,23 +48,23 @@ emails:
       - '^tempest\.scenario\.test_volume_migrate_attached'
   - mail: 'rhos-storage-tests@redhat.com'
     name: 'RHOSP Storage - Glance'
-    fail_only: True
+    fail_only: true
     regex:
       - '^tempest\.api\.image\.'
   - mail: 'rhos-storage-tests@redhat.com'
     name: 'RHOSP Storage - Manila'
-    fail_only: True
+    fail_only: true
     regex:
       - '^manila_tempest_tests\.tests\.'
   - mail: 'rhos-storage-tests@redhat.com'
     name: 'RHOSP Storage - Sahara'
-    fail_only: True
+    fail_only: true
     regex:
       - '^sahara_tempest_plugin\.tests\.'
   - mail: 'rhos-storage-tests@redhat.com'
     name: 'RHOSP Storage - Swift'
-    fail_only: True
+    fail_only: true
     regex:
-       - '^tempest\.api\.object_storage\.'
-       - '^tempest\.scenario\.test_object_storage_basic_ops'
+      - '^tempest\.api\.object_storage\.'
+      - '^tempest\.scenario\.test_object_storage_basic_ops'
 template: template.html

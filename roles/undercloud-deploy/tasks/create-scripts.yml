@@ -1,3 +1,4 @@
+---
 # Creat the scripts that will be used to deploy the undercloud
 # environment.
 - name: Check the dns information provided by the virthost
@@ -88,9 +89,9 @@
     download_templates_rpm: "{{ download_undercloud_templates_rpm }}"
     tht_rpm_url: "{{ undercloud_tht_rpm_url }}"
   when:
-     - undercloud_templates_branch is defined or undercloud_templates_refspec is defined
-     - undercloud_templates_repo is defined
-     - undercloud_templates_path is defined
+    - undercloud_templates_branch is defined or undercloud_templates_refspec is defined
+    - undercloud_templates_repo is defined
+    - undercloud_templates_path is defined
 
 - name: Create the undercloud parameter defaults file.
   template:
@@ -99,10 +100,10 @@
     mode: 0600
 
 - name: Create containers-prepare-parameter.yaml
+  when: containerized_undercloud|bool or containerized_overcloud|bool
   block:
 
-  - name: Write containers-prepare-parameter.yaml
-    template:
-      src: containers-prepare-parameter.yaml.j2
-      dest: "{{ working_dir }}/containers-prepare-parameter.yaml"
-  when: containerized_undercloud|bool or containerized_overcloud|bool
+    - name: Write containers-prepare-parameter.yaml
+      template:
+        src: containers-prepare-parameter.yaml.j2
+        dest: "{{ working_dir }}/containers-prepare-parameter.yaml"

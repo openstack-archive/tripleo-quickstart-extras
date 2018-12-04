@@ -1,3 +1,4 @@
+---
 - name: gather facts used by role
   setup:
     gather_subset: "!min,distribution"
@@ -36,7 +37,7 @@
   become: true
   service:
     name: openstack-ironic-conductor
-    enabled: yes
+    enabled: true
     state: restarted
   tags:
     - undercloud-install
@@ -49,4 +50,3 @@
   tags:
     - undercloud-post-install
   when: (enable_vbmc|bool and undercloud_enable_ui|bool) or enable_libvirt_tripleo_ui|bool
-

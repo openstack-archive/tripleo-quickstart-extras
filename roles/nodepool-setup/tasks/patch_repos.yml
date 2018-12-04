@@ -1,3 +1,4 @@
+---
 - name: Check if repo should be changed
   set_fact:
     proj: "{{ repo_item.replace('.git', '').split('/')[-2:]|join('/') }}:"

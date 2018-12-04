@@ -1,21 +1,21 @@
 ---
 - name: Clone Openstack Virtual Baremetal repo if it does not exist
   git:
-      repo: https://github.com/cybertron/openstack-virtual-baremetal.git
-      dest: "{{ local_working_dir }}/openstack-virtual-baremetal"
-      version: "{{ ovb_repo_version }}"
+    repo: https://github.com/cybertron/openstack-virtual-baremetal.git
+    dest: "{{ local_working_dir }}/openstack-virtual-baremetal"
+    version: "{{ ovb_repo_version }}"
 
 - name: copy clouds.yaml file
   template:
-      src: clouds.yaml.j2
-      dest: "{{ local_working_dir }}/clouds.yaml"
-      mode: 0755
+    src: clouds.yaml.j2
+    dest: "{{ local_working_dir }}/clouds.yaml"
+    mode: 0755
 
 - name: Remove stack
   os_stack:
-      name: "{{ stack_name }}"
-      cloud: "{{ cloud_name }}"
-      state: absent
+    name: "{{ stack_name }}"
+    cloud: "{{ cloud_name }}"
+    state: absent
   environment:
     OS_CLIENT_CONFIG_FILE: "{{ local_working_dir }}/clouds.yaml"
   ignore_errors: true
@@ -32,6 +32,5 @@
 
 - name: remove clouds.yaml file
   file:
-      path: "{{ local_working_dir }}/clouds.yaml"
-      state: absent
-
+    path: "{{ local_working_dir }}/clouds.yaml"
+    state: absent

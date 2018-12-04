@@ -12,9 +12,9 @@
 
 - name: Clone Openstack Virtual Baremetal repo if it does not exist
   git:
-      repo: https://github.com/cybertron/openstack-virtual-baremetal.git
-      dest: "{{ local_working_dir }}/openstack-virtual-baremetal"
-      version: "{{ ovb_repo_version }}"
+    repo: https://github.com/cybertron/openstack-virtual-baremetal.git
+    dest: "{{ local_working_dir }}/openstack-virtual-baremetal"
+    version: "{{ ovb_repo_version }}"
 
 - include: ovb-cleanup-stacks-keypairs.yml
   when: cleanup_stacks_keypairs|bool
@@ -29,18 +29,18 @@
 
 - name: copy key inserted in image to undercloud_key location
   copy:
-      src: "{{ existing_key_location }}{{ item }}"
-      dest: "{{ local_working_dir }}/id_rsa_undercloud{{ item }}"
-      mode: 0600
+    src: "{{ existing_key_location }}{{ item }}"
+    dest: "{{ local_working_dir }}/id_rsa_undercloud{{ item }}"
+    mode: 0600
   with_items:
-      - ""
-      - .pub
+    - ""
+    - .pub
 
 - name: Copy deploy stack parameters template
   template:
-      src: env.yaml.j2
-      dest: "{{ local_working_dir }}/env-{{ idnum }}.yaml"
-      mode: 0755
+    src: env.yaml.j2
+    dest: "{{ local_working_dir }}/env-{{ idnum }}.yaml"
+    mode: 0755
 
 - name: Add keypair
   shell: >
@@ -54,9 +54,9 @@
 
 - name: copy clouds.yaml file
   template:
-      src: clouds.yaml.j2
-      dest: "{{ local_working_dir }}/clouds.yaml"
-      mode: 0755
+    src: clouds.yaml.j2
+    dest: "{{ local_working_dir }}/clouds.yaml"
+    mode: 0755
 
 - name: Deploy stack
   shell: >
@@ -92,19 +92,19 @@
 
 - name: Show stack status
   debug:
-      var: stack_status.stdout_lines
+    var: stack_status.stdout_lines
 
 - block:
-  - name: Get full stack status info in case of failure
-    shell: openstack stack show "{{ stack_name }}"
-    register: failed_stack
+    - name: Get full stack status info in case of failure
+      shell: openstack stack show "{{ stack_name }}"
+      register: failed_stack
 
-  - name: Show stack status in case of failure
-    debug: var="failed_stack.stdout"
+    - name: Show stack status in case of failure
+      debug: var="failed_stack.stdout"
 
-  - name: Fail if stack did not deploy successfully
-    fail:
-       msg: "Stack {{ stack_name }} did not deploy successfully. See the stack status message above."
+    - name: Fail if stack did not deploy successfully
+      fail:
+        msg: "Stack {{ stack_name }} did not deploy successfully. See the stack status message above."
   when: stack_status.stdout.find("CREATE_COMPLETE") == -1
 
 - name: Return floating ip outputs
@@ -124,64 +124,63 @@
 
 - name: Add provisioned undercloud host
   add_host:
-      name: undercloud
-      hostname: "{{ undercloud_ip }}"
-      groups: "{{ node_groups| join(',') }}"
-      ansible_host: "{{ undercloud_ip }}"
-      ansible_user: root
-      ansible_fqdn: undercloud
-      ansible_private_key_file: "{{ undercloud_key }}"
-      ansible_ssh_extra_args: "{{ ssh_extra_args }}"
-      undercloud_ip: "{{ undercloud_ip }}"
+    name: undercloud
+    hostname: "{{ undercloud_ip }}"
+    groups: "{{ node_groups| join(',') }}"
+    ansible_host: "{{ undercloud_ip }}"
+    ansible_user: root
+    ansible_fqdn: undercloud
+    ansible_private_key_file: "{{ undercloud_key }}"
+    ansible_ssh_extra_args: "{{ ssh_extra_args }}"
+    undercloud_ip: "{{ undercloud_ip }}"
 
 - name: Wait for provisioned host to become reachable
-  command:
-      ssh -o BatchMode=yes -o "StrictHostKeyChecking=no" root@{{ undercloud_ip }} -i "{{ undercloud_key }}"
+  command: |
+    ssh -o BatchMode=yes -o "StrictHostKeyChecking=no" root@{{ undercloud_ip }} -i "{{ undercloud_key }}"
   register: result
   until: result is success
   retries: 300
   delay: 5
 
-- block:
+- when: ovb_setup_user|default('false')|bool
+  block:
 
-  - name: Setup user
-    user:
-      name: "{{ nodepool_user }}"
-      groups: wheel
-      append: yes
-    become: true
-    delegate_to: undercloud
+    - name: Setup user
+      user:
+        name: "{{ nodepool_user }}"
+        groups: wheel
+        append: true
+      become: true
+      delegate_to: undercloud
 
-  - name: Setup keys
-    authorized_key:
-      user: "{{ nodepool_user }}"
-      state: present
-      key: "{{ lookup('file', '{{ undercloud_key }}.pub') }}"
-    become: true
-    become_user: "{{ nodepool_user }}"
-    delegate_to: undercloud
+    - name: Setup keys
+      authorized_key:
+        user: "{{ nodepool_user }}"
+        state: present
+        key: "{{ lookup('file', '{{ undercloud_key }}.pub') }}"
+      become: true
+      become_user: "{{ nodepool_user }}"
+      delegate_to: undercloud
 
-  - name: Allow user to have passwordless sudo
-    lineinfile:
-      dest: /etc/sudoers
-      state: present
-      line: '{{ nodepool_user }} ALL=(ALL) NOPASSWD:ALL'
-      validate: 'visudo -cf %s'
-    become: true
-    delegate_to: undercloud
+    - name: Allow user to have passwordless sudo
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        line: '{{ nodepool_user }} ALL=(ALL) NOPASSWD:ALL'
+        validate: 'visudo -cf %s'
+      become: true
+      delegate_to: undercloud
 
-  - name: Add undercloud with non-root user
-    add_host:
-      name: subnode-0
-      hostname: "{{ undercloud_ip }}"
-      groups: subnodes
-      ansible_user: "{{ nodepool_user }}"
-      ansible_host: "{{ undercloud_ip }}"
-      ansible_private_key_file: "{{ undercloud_key }}"
-      subnode_public_ip: "{{ undercloud_ip }}"
-      subnode_private_ip: 192.168.23.23
-
-  when: ovb_setup_user|default('false')|bool
+    - name: Add undercloud with non-root user
+      add_host:
+        name: subnode-0
+        hostname: "{{ undercloud_ip }}"
+        groups: subnodes
+        ansible_user: "{{ nodepool_user }}"
+        ansible_host: "{{ undercloud_ip }}"
+        ansible_private_key_file: "{{ undercloud_key }}"
+        subnode_public_ip: "{{ undercloud_ip }}"
+        subnode_private_ip: 192.168.23.23
 
 - name: Build nodes.json file to be used as instackenv.json
   shell: >
@@ -193,12 +192,11 @@
 
 - name: remove clouds.yaml file
   file:
-      path: "{{ local_working_dir }}/clouds.yaml"
-      state: absent
+    path: "{{ local_working_dir }}/clouds.yaml"
+    state: absent
 
 - name: Dump hosts to file
   template:
     src: ovb_hosts.j2
     dest: '{{ local_working_dir }}/ovb_hosts'
   when: ovb_dump_hosts|default('false')|bool
-

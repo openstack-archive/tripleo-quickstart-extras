@@ -1,3 +1,4 @@
+---
 tenantrc: >-
   overcloudrc
 validate_script: overcloud-validate.sh.j2

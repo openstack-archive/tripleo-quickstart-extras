@@ -158,7 +158,7 @@ hypervisor_wait: true
 overcloud_services:
   - name: 'ControllerServices:'
     services:
-    - OS::TripleO::Services::Kernel
+      - OS::TripleO::Services::Kernel
 
 ara_overcloud_db_path: "/var/lib/mistral/overcloud/ara_overcloud.sqlite"
 override_ansiblecfg: true

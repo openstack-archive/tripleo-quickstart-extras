@@ -152,7 +152,7 @@
         chdir: "{{ images_working_dir }}"
 
 - name: Clean up the images working dir
-  shell:  >-
+  shell: >-
     rm -rf {{ images_working_dir }}/overcloud-full.d {{ images_working_dir }}/ironic-python-agent.d/
     sudo chown $USER: {{ images_working_dir }}/overcloud-full.* {{ images_working_dir }}/ironic-python-agent.*
   when: cleanup_images_working_dir|bool

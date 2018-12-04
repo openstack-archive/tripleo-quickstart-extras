@@ -33,28 +33,28 @@
 - when: not yum_contentdir.stat.exists
   block:
 
-  - name: Discover package architecture
-    command: rpm -q --qf "%{arch}" -f /etc/redhat-release
-    register: rpm_arch
+    - name: Discover package architecture
+      command: rpm -q --qf "%{arch}" -f /etc/redhat-release
+      register: rpm_arch
 
-  - debug:
-      msg: Package architecture is '{{ rpm_arch.stdout }}'
+    - debug:
+        msg: Package architecture is '{{ rpm_arch.stdout }}'
 
-  - name: Set contentdir to altarch
-    set_fact:
-      yum_contentdir_data: altarch
-    when: rpm_arch.stdout in ['aarch64', 'ppc64le']
+    - name: Set contentdir to altarch
+      set_fact:
+        yum_contentdir_data: altarch
+      when: rpm_arch.stdout in ['aarch64', 'ppc64le']
 
-  - name: Set contentdir to default centos arch
-    set_fact:
-      yum_contentdir_data: centos
-    when: rpm_arch.stdout not in ['aarch64', 'ppc64le']
+    - name: Set contentdir to default centos arch
+      set_fact:
+        yum_contentdir_data: centos
+      when: rpm_arch.stdout not in ['aarch64', 'ppc64le']
 
-  - name: Populate /etc/yum/vars/contentdir
-    copy:
-      dest: /etc/yum/vars/contentdir
-      content: "{{ yum_contentdir_data }}"
-    become: true
+    - name: Populate /etc/yum/vars/contentdir
+      copy:
+        dest: /etc/yum/vars/contentdir
+        content: "{{ yum_contentdir_data }}"
+      become: true
 
 - name: Install repos (will be removed by toci_gatetest)
   package:
@@ -98,7 +98,7 @@
   service:
     name: unbound
     state: started
-    enabled: yes
+    enabled: true
   become: true
 
 - name: start iptables service
@@ -131,7 +131,7 @@
   with_items:
     - "WORKSPACE=/tmp"
     - "DEVSTACK_GATE_TIMEOUT=300"
-    - "REMAINING_TIME=180" # 3 hours for quickstart run
+    - "REMAINING_TIME=180"  # 3 hours for quickstart run
     # In case of multinode
     - "EXTRA_VARS=' --extra-vars vxlan_mtu=1400'"
   become: true
@@ -139,26 +139,26 @@
 - when: update_subnodes|bool
   block:
 
-  - name: Update packages
-    yum:
-      name: '*'
-      state: latest
-    become: true
+    - name: Update packages
+      yum:
+        name: '*'
+        state: latest
+      become: true
 
-  - name: Reboot hosts
-    shell: sleep 2 && shutdown -r now
-    async: 1
-    poll: 0
-    ignore_errors: true
-    become: true
+    - name: Reboot hosts
+      shell: sleep 2 && shutdown -r now
+      async: 1
+      poll: 0
+      ignore_errors: true
+      become: true
 
-  - name: Wait for provisioned hosts to become reachable
-    local_action:
-      module: wait_for
-      host: "{{ hostvars[inventory_hostname].subnode_public_ip }}"
-      port: 22
-      delay: 35
-      sleep: 10
-      state: started
-      connect_timeout: 10
-      timeout: 180
+    - name: Wait for provisioned hosts to become reachable
+      local_action:
+        module: wait_for
+        host: "{{ hostvars[inventory_hostname].subnode_public_ip }}"
+        port: 22
+        delay: 35
+        sleep: 10
+        state: started
+        connect_timeout: 10
+        timeout: 180

@@ -26,11 +26,11 @@
 
 - name: fetch template from single remote host
   tls_tht:
-      enable_tls_overcloud: "{{ ssl_overcloud }}"
-      source_dir: "/usr/share/openstack-tripleo-heat-templates/"
-      dest_dir: "{{ working_dir }}/"
-      cert_filename: "{{ working_dir }}/server-cert.pem"
-      cert_ca_filename: "{{ working_dir }}/overcloud-cacert.pem"
-      key_filename: "{{ working_dir }}/server-key.pem"
-      tht_release: '{{ release }}'
+    enable_tls_overcloud: "{{ ssl_overcloud }}"
+    source_dir: "/usr/share/openstack-tripleo-heat-templates/"
+    dest_dir: "{{ working_dir }}/"
+    cert_filename: "{{ working_dir }}/server-cert.pem"
+    cert_ca_filename: "{{ working_dir }}/overcloud-cacert.pem"
+    key_filename: "{{ working_dir }}/server-key.pem"
+    tht_release: '{{ release }}'
   when: ssl_overcloud|bool or undercloud_generate_service_certificate|bool

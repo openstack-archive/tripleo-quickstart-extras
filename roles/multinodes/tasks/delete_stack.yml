@@ -1,3 +1,4 @@
+---
 - name: Delete stack
   shell: >
     echo "Executing 'openstack stack delete {{ stack_name }} --yes'" >>  {{ stack_log }};

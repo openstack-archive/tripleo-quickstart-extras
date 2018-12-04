@@ -1,9 +1,9 @@
-
+---
 - when: install_atop|bool
   ignore_errors: true
   become: true
   block:
-# Run atop in background
+    # Run atop in background
     - name: Install atop if configured so
       shell: |
         source /etc/ci/mirror_info.sh
