@@ -57,5 +57,8 @@
         echo DONE rc=$rc;
         exit $rc
       register: lint_result
+      environment:
+        ANSIBLE_LIBRARY: |
+          /usr/share/ansible-modules/:{{lookup('env', 'ANSIBLE_LIBRARY')}}
       with_items: "{{ playbooks.stdout_lines }}"
       failed_when: lint_result.rc == 1
