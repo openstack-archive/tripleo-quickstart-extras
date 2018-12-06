@@ -26,17 +26,12 @@
   tags:
     - build
 
-- name: Set Virtualization Type
-  hosts: undercloud
-  roles:
-    - set-libvirt-type
-  tags:
-    - standalone
-
+# NOTE(aschultz): nested virt causes problems in CI so we default to qemu
+# and do not do the dynamic virt lookup.
 - name: Deploy Standalone
   hosts: undercloud
   vars:
-    standalone_libvirt_type: "{{ virt_type|default('qemu') }}"
+    standalone_libvirt_type: "{{ standalone_virt_type|default('qemu') }}"
   roles:
     - standalone
   tags:

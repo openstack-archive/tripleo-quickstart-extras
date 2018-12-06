@@ -49,10 +49,12 @@
   tags:
     - standalone-upgrade
 
+# NOTE(aschultz): nested virt causes problems in CI so we default to qemu
+# and do not do the dynamic virt lookup.
 - name: Standalone Upgrade
   hosts: undercloud
   vars:
-    standalone_libvirt_type: "{{ virt_type|default('qemu') }}"
+    standalone_libvirt_type: "{{ standalone_virt_type|default('qemu') }}"
   roles:
     - standalone-upgrade
   tags:
