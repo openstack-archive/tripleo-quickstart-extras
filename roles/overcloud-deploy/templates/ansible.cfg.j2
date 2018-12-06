@@ -1,6 +1,8 @@
 [defaults]
 action_plugins = /usr/lib/python2.7/site-packages/ara/plugins/actions
 callback_plugins = /usr/lib/python2.7/site-packages/ara/plugins/callbacks
+# debug (former name human_log) makes stdout/stdderr lines more readable
+stdout_callback=debug
 
 [ara]
 database=sqlite:///{{ ara_overcloud_db_path }}
