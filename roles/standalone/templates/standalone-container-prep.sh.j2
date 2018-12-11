@@ -2,9 +2,9 @@
 openstack tripleo container image prepare default \
   --output-env-file {{ working_dir }}/containers-prepare-parameters.yaml {{ standalone_container_prep_options }}
 
-{% if docker_registry_namespace != '' %}
-# Make CI specific namespce change to the container parameters
-sed -Ei 's/^([\t ]+)namespace: [a-z./]*/\1namespace: docker.io\/{{ docker_registry_namespace }}/' \
+{% if docker_registry_host != '' and docker_registry_namespace != '' %}
+# Make CI specific namespace change to the container parameters
+sed -Ei 's/^([\t ]+)namespace: [a-z./]*/\1namespace: {{ docker_registry_host }}\/{{ docker_registry_namespace }}/' \
   "{{ working_dir }}/containers-prepare-parameters.yaml"
 {% endif %}
 {% if container_build_id != '' %}
