@@ -77,7 +77,7 @@ while [ "x$1" != "x" ]; do
 
     case "$1" in
         --workspace|-w)
-            # realpath fails if /some/path doesn't exist. It is created l8r
+            # realpath fails if /some/path doesn't exist. It is created later
             WORKSPACE=$(realpath $2 || echo -n $2)
             shift
             ;;
