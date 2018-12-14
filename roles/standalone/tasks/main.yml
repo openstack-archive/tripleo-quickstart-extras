@@ -19,6 +19,37 @@
     set -o pipefail &&
     {{ working_dir }}/standalone-container-prep.sh 2>&1 {{ timestamper_cmd }} > {{ working_dir }}/{{ standalone_container_prep_log }}
 
+- name: Add updates to container-prepare-parameters.yaml
+  when: standalone_container_prep_updates
+  vars:
+    yaml_file: "{{ working_dir }}/containers-prepare-parameters.yaml"
+    container_image_prep_updates:
+      - push_destination: "{{ local_docker_registry_host }}:8787"
+        tag_from_label: null
+        modify_role: tripleo-modify-image
+        modify_append_tag: "{{ update_containers_append_tag }}"
+        modify_only_with_labels:
+          - kolla_version
+        modify_vars:
+          tasks_from: yum_update.yml
+          yum_repos_dir_path: /etc/yum.repos.d
+          update_repo: "{{ standalone_container_prep_update_repo }}"
+    initial_dict: |
+      {{ lookup('file', yaml_file) | from_yaml }}
+    merged_dict:
+      parameter_defaults:
+        DockerInsecureRegistryAddress:
+          - "{{ local_docker_registry_host }}:8787"
+        ContainerImagePrepare:
+          - |
+            {{ initial_dict.parameter_defaults.ContainerImagePrepare |
+               combine(container_image_prep_updates, recursive=true) }}
+  copy:
+    content: "{{ merged_dict | to_nice_yaml }}"
+    dest: "{{ yaml_file }}"
+    backup: true
+
+
 - name: Create the deploy command for standalone
   template:
     src: "{{ standalone_deploy_script }}"

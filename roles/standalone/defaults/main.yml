@@ -10,6 +10,15 @@ standalone_container_prep_options: ''
 standalone_container_prep_script: standalone-container-prep.sh.j2
 standalone_container_prep_log: standalone_container_prep.log
 
+# Don't do container prep if we are not at n release at upgrades
+standalone_container_prep_updates: >-
+  {{ standalone_upgrade | default(false) | bool | ternary(false, true) }}
+
+# Set the repo to update from
+gating_repo_name: gating-repo
+standalone_container_prep_update_repo: >-
+  {{ gating_repo_name }},delorean-current
+
 # deploy script
 standalone_deploy_script: standalone.sh.j2
 standalone_deploy_log: standalone_deploy.log
