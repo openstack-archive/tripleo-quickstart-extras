@@ -222,8 +222,8 @@ sudo kill $pidof_tcpdump
 
 {% endif %}
 
-{% if release not in ['newton', 'ocata', 'pike', 'queens'] %}
-container_cli="{{ undercloud_container_cli | default('docker') }}"
+{% if release not in ['newton', 'ocata', 'pike', 'queens', 'rocky'] %}
+container_cli="{{ undercloud_container_cli | default('podman') }}"
 cont=$(sudo $container_cli ps | grep executor | awk {'print $1'})
 sudo $container_cli exec --user root $cont bash -c "easy_install pip && pip install ara"
 # check it

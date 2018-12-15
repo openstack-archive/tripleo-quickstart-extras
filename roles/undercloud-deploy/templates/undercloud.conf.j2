@@ -211,7 +211,7 @@ inspection_runbench = {{undercloud_inspection_runbench}}
 # services. (boolean value)
 undercloud_debug = {{undercloud_undercloud_debug}}
 
-{% if containerized_undercloud|bool %}
+{% if containerized_undercloud|bool and release != 'rocky' %}
 # Container CLI used for deployment;
 # Can be docker or podman. (string value)
 container_cli = {{undercloud_container_cli}}
