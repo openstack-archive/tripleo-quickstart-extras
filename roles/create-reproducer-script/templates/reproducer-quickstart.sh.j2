@@ -326,12 +326,16 @@ export $(awk '/subnode-0/ {print $2}' $WORKSPACE/$HOSTS_FILE)
 EXTRA_VARS="$EXTRA_VARS --extra-vars dlrn_hash_tag_newest={{ hostvars['undercloud'].dlrn_hash_newest }} "
 {% endif %}
 
+{% if dlrn_hash is defined or ('undercloud' in hostvars and 'dlrn_hash' in hostvars['undercloud']) %}
+EXTRA_VARS="$EXTRA_VARS --extra-vars dlrn_hash_tag={{ hostvars['undercloud'].dlrn_hash }}"
+{% endif %}
+
 # Create the env_vars_to_source file and copy it to the undercloud
 cat >"{{ env_vars_to_source_file }}" <<EOF
 export ZUUL_CHANGES="${ZUUL_CHANGES}"
 export NODES_FILE="${NODES_FILE}"
 export TOCI_JOBTYPE="${TOCI_JOBTYPE}"
-export EXTRA_VARS="\$EXTRA_VARS {% if dlrn_hash is defined or ('undercloud' in hostvars and 'dlrn_hash' in hostvars['undercloud']) %}--extra-vars dlrn_hash_tag={{ hostvars['undercloud'].dlrn_hash }}{% endif %} "
+export EXTRA_VARS="${EXTRA_VARS}"
 export REMAINING_TIME="$TIMEOUT"
 export PLAYBOOKS="$PLAYBOOKS"
 EOF
