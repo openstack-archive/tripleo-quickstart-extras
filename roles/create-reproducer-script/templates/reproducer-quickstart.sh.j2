@@ -167,14 +167,16 @@ function check_installed {
     if ! which $binary >/dev/null ; then
         echo "Error: Could not find required binary $binary. Ensure you have
             it installed before trying again."
-        exit 1
+        return 1
     fi
 }
-BOOTSTRAP_DEPENDENCIES=("virtualenv" "ansible" "pip" "openstack" "heat")
+BOOTSTRAP_DEPENDENCIES=("git" "virtualenv" "ansible" "pip" "openstack" "heat")
 function check_bootstrap_dependencies {
+    status=0
     for dependency in ${BOOTSTRAP_DEPENDENCIES[@]} ; do
-        check_installed $dependency
+        check_installed $dependency || status=1
     done
+    return $status
 }
 
 # Check that tenant credentials have been sourced
