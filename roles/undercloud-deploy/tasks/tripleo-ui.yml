@@ -8,7 +8,7 @@
 - when:
     - enable_port_forward_for_tripleo_ui|bool
     - hostvars[groups['virthost'][0]].ansible_host is defined
-    - tripleo_ui_secure_access|bool == false
+    - tripleo_ui_secure_access|bool
     - ooo_ui_config_file.stat.exists
   block:
     - name: get the heat public url
@@ -26,25 +26,25 @@
     - name: update the keystone config in tripleo_ui_config.js, connect via virthost ip
       lineinfile:
         regexp: "'keystone':"
-        line: "  'keystone': 'http://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}:5000/v3/',"
+        line: "  'keystone': 'https://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}/keystone/v3/',"
         dest: /var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
         backup: true
       become: true
-      when: release in ['master', 'pike']
+      when: release not in ['newton', 'ocata']
 
     - name: update the keystone config in tripleo_ui_config.js, connect via virthost ip
       lineinfile:
         regexp: "'keystone':"
-        line: "  'keystone': 'http://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}:5000/v2/',"
+        line: "  'keystone': 'https://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}/keystone/v2/',"
         dest: /var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
         backup: true
       become: true
-      when: release not in ['master', 'pike']
+      when: release in ['newton', 'ocata']
 
     - name: update the heat config in tripleo_ui_config.js, connect via virthost ip
       lineinfile:
         regexp: "'heat':"
-        line: "  'heat': 'http://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}:8004/v1/{{ heat_public_url.stdout }}',"
+        line: "  'heat': 'https://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}/heat/v1/{{ heat_public_url.stdout }}',"
         dest: /var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
         backup: true
       become: true
@@ -52,7 +52,7 @@
     - name: update the ironic config in tripleo_ui_config.js, connect via virthost ip
       lineinfile:
         regexp: "'ironic':"
-        line: "  'ironic': 'http://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}:6385',"
+        line: "  'ironic': 'https://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}/ironic',"
         dest: /var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
         backup: true
       become: true
@@ -60,7 +60,7 @@
     - name: update the ironic-inspector config in tripleo_ui_config.js, connect via virthost ip
       lineinfile:
         regexp: "'ironic-inspector':"
-        line: "  'ironic-inspector': 'http://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}:5050',"
+        line: "  'ironic-inspector': 'https://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}/ironic-inspector',"
         dest: /var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
         backup: true
       become: true
@@ -68,7 +68,7 @@
     - name: update the mistral config in tripleo_ui_config.js, connect via virthost ip
       lineinfile:
         regexp: "'mistral':"
-        line: "  'mistral': 'http://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}:8989/v2',"
+        line: "  'mistral': 'https://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}/mistral/v2',"
         dest: /var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
         backup: true
       become: true
@@ -76,7 +76,7 @@
     - name: update the swift config in tripleo_ui_config.js, connect via virthost ip
       lineinfile:
         regexp: "'swift':"
-        line: "  'swift': 'http://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}:8080/v1/{{ swift_public_url.stdout }}',"
+        line: "  'swift': 'https://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}/swift/v1/{{ swift_public_url.stdout }}',"
         dest: /var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
         backup: true
       become: true
@@ -84,7 +84,7 @@
     - name: update the zaqar-websocket config in tripleo_ui_config.js, connect via virthost ip
       lineinfile:
         regexp: "'zaqar-websocket':"
-        line: "  'zaqar-websocket': 'ws://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}:9000',"
+        line: "  'zaqar-websocket': 'wss://{{hostvars[groups['virthost'][0]].ansible_default_ipv4.address}}/zaqar',"
         dest: /var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
         backup: true
       become: true
@@ -98,7 +98,7 @@
 - when:
     - enable_port_forward_for_tripleo_ui|bool
     - hostvars[groups['virthost'][0]].ansible_host is defined
-    - tripleo_ui_secure_access|bool
+    - tripleo_ui_secure_access|bool == false
     - ooo_ui_config_file.stat.exists
   block:
     - name: update config in tripleo_ui_config.js, connect via virthost ip with ssl
@@ -116,7 +116,7 @@
         dest: /var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
         backup: true
       become: true
-      when: release in ['master', 'pike']
+      when: release in ['master', 'rocky', 'queens', 'pike']
 
     - name: restart the httpd service
       service:
