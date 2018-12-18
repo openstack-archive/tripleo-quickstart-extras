@@ -11,8 +11,10 @@ parameter_defaults:
     modify_vars:
       tasks_from: yum_update.yml
       yum_repos_dir_path: /etc/yum.repos.d
-      container_build_tool: buildah
       update_repo: "{{ update_containers_repo }}"
+{% if  release not in ['newton', 'ocata', 'pike', 'queens', 'rocky'] %}
+      container_build_tool: buildah
+{% endif %}
 {% endif %}
     set:
       tag: "{{ container_build_id }}"
