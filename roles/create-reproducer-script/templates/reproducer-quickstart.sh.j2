@@ -215,19 +215,6 @@ rm -rf tripleo-quickstart tripleo-quickstart-extras
 git clone https://github.com/openstack/tripleo-quickstart
 git clone https://github.com/openstack/tripleo-quickstart-extras
 
-# Use passed zuul_variables to get projects tripleo-ci-board/task/270
-{% for project in zuul_variables['projects'] %}
-:    git clone "https://{{ project }}"
-{% endfor %}
-
-# Use passed zuul_console to recover playbooks tripleo-ci-board/task/270
-zuul_playbooks=""
-{% for item in zuul_console %}
-{% if item.playbook is defined %}
-zuul_playbooks+="{{ item.playbook }};"
-{% endif %}
-{% endfor %}
-
 # Set up a virtual env if requested
 if [ "$CREATE_VIRTUALENV" = "true" ]; then
     check_installed virtualenv
