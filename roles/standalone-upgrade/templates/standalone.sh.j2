@@ -5,5 +5,8 @@ sudo openstack tripleo upgrade \
   -r {{ overcloud_templates_path }}/roles/{{ standalone_role }} \
   -e "{{ working_dir }}/containers-prepare-parameters-upgrade.yaml" \
   -e "{{ working_dir }}/standalone_parameters_upgrade.yaml" \
+{% if standalone_custom_env_files %}
+  -e {{ standalone_custom_env_files | join(' -e ') }} \
+{% endif %}
   --output-dir {{ working_dir }} \
   --standalone
