@@ -237,6 +237,7 @@ check_bootstrap_dependencies
 export ANSIBLE_ROLES_PATH=$ANSIBLE_ROLES_PATH:$WORKSPACE/tripleo-quickstart/roles:$WORKSPACE/tripleo-quickstart-extras/roles
 export ANSIBLE_HOST_KEY_CHECKING=False
 export ANSIBLE_LIBRARY=$WORKSPACE/tripleo-quickstart/library
+export ANSIBLE_STDOUT_CALLBACK=${ANSIBLE_STDOUT_CALLBACK:-debug}
 
 {% if 'ovb' in toci_jobtype %}
 ansible-playbook $WORKSPACE/tripleo-quickstart-extras/playbooks/ovb-create-stack.yml \
