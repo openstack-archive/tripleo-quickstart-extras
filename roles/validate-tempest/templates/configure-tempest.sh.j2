@@ -56,6 +56,10 @@ virtualenv --system-site-packages {{ working_dir }}/tempest_git/.venv
 {{ working_dir }}/tempest_git/tools/with_venv.sh pip install -U pip
 {{ working_dir }}/tempest_git/tools/with_venv.sh pip install -U setuptools
 {{ working_dir }}/tempest_git/tools/with_venv.sh pip install {{ working_dir }}/tempest_git junitxml
+# Install tempest plugins in tempest .venv
+{% for tempest_plugin in (tempest_plugins_git|default([])) %}
+{{ working_dir }}/tempest_git/tools/with_venv.sh pip install {{ working_dir }}/{{ tempest_plugin.replace('.git', '').split('/')[-1] }}
+{% endfor %}
 
 # Install python-tempestconf
 {% if release != 'newton'%}

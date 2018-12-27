@@ -37,6 +37,15 @@
         python-virtualenv
         {% endif %}
 
+- name: Clone tempest plugins
+  git:
+    repo: "{{ item }}"
+    dest: "{{ working_dir }}/{{ item.split('/')[-1] }}"
+    version: master
+  with_items: "{{ tempest_plugins_git }}"
+  when:
+    - tempest_format == 'venv'
+
 - name: Install packages required for create venv
   package:
     state: present
