@@ -100,6 +100,8 @@ tempest_conf_removal_queens:
 tempest_os_cloud: ""
 stackviz_tarball: "https://tarballs.openstack.org/package-stackviz-element/stackviz-latest.tar.gz"
 
+python_package_prefix: "python"
+
 # Headless Chrome configuration
 tempest_use_headless_chrome: false
 tempest_headless_chrome_port: 9999

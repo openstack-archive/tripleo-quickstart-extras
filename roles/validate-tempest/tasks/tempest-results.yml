@@ -8,7 +8,7 @@
 
     - name: Define testr facts
       set_fact:
-        testr_command: "{{ testr_dir.stat.exists | ternary('stestr', 'testr') }}"
+        testr_command: "{{ testr_dir.stat.exists | ternary(python_cmd + ' -m stestr.cli', 'testr') }}"
 
     - name: Change permission of tempest container log directory
       shell: |
