@@ -4,6 +4,11 @@
     gather_subset: "!min,distribution"
   when: ansible_distribution is not defined
 
+- name: Cache tempest network cidr
+  set_fact:
+    tempest_cidr: "{{ undercloud_network_cidr }}"
+  when: use_os_tempest is defined
+
 # tasks file for all_in_one
 
 # standalone params

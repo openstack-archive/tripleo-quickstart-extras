@@ -25,3 +25,6 @@ artg_skipped_projects:
   - openstack-infra/tripleo-ci
   - openstack-infra/zuul-jobs
   - openstack/openstack-virtual-baremetal
+  - openstack/openstack-ansible-os_tempest
+  - openstack/ansible-role-python_venv_build
+  - openstack/ansible-config_template

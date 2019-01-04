@@ -58,10 +58,24 @@
         gunzip -fr {{ artcl_collect_dir }}/stackviz;
     fi;
 
+- name: fetch stackviz results to the root of the collect_dir for os_tempest
+  shell: >
+    if [ -d {{ artcl_collect_dir }}/undercloud/var/log/tempest/stackviz/data ]; then
+        cp -r {{ artcl_collect_dir }}/undercloud/var/log/tempest/stackviz {{ artcl_collect_dir }};
+        gunzip -fr {{ artcl_collect_dir }}/stackviz;
+    fi;
+  when: use_os_tempest is defined
+
 - name: fetch tempest results to the root of the collect_dir
   shell: >
     cp {{ artcl_collect_dir }}/undercloud/home/stack/tempest/tempest.{xml,html}{,.gz} {{ artcl_collect_dir }} || true;
     gunzip {{ artcl_collect_dir }}/tempest.{xml,html}.gz || true;
+
+- name: fetch tempest results to the root of the collect_dir for os_tempest
+  shell: >
+    cp {{ artcl_collect_dir }}/undercloud/var/log/tempest/stestr_results.html.gz {{ artcl_collect_dir }} || true;
+    gunzip {{ artcl_collect_dir }}/stestr_results.html.gz || true;
+  when: use_os_tempest is defined
 
 - name: Fetch .sh and .log files from local working directory on localhost
   shell: >
