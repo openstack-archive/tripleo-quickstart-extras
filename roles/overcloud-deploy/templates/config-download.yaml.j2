@@ -9,4 +9,7 @@ parameter_defaults:
         - ip_address: 192.168.24.{{ 3 + loop.index0 }}
       subnets:
         - cidr: 192.168.24.0/24
+      network:
+        tags:
+          - 192.168.24.0/24
 {% endfor %}
