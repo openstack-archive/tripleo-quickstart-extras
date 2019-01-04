@@ -68,7 +68,8 @@
           "{{ lookup('env', 'JOB_NAME')|default('Periodic job', true) }}"
           --file "{{ working_dir }}/{{ tempest_log_file }}"
           --log-url "{{ tempestmail_log_server }}"
-          --skip-file "{{ working_dir }}/tempestmail/tempest_skip_{{ release }}.yml"
+          --skip-file "{{ working_dir }}/tempestmail/tempest_skip_{{ release }}.yml" ||
+          { ERR=$?; echo -e "\0127ARNING: Send tempest results by mail failed with code $ERR"; exit $ERR; }
       args:
         chdir: "{{ working_dir }}/tempestmail"
       ignore_errors: true
