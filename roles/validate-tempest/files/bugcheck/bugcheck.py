@@ -138,7 +138,7 @@ class BugVerifyCmd(object):
         known_failures = []
         try:
             with open(self.args.skip_file) as f:
-                skip = yaml.load(f)
+                skip = yaml.safe_load(f)
             for t in skip.get('known_failures'):
                 bug = {'test': t.get('test'), 'reason': t.get('reason')}
                 if t.get('lp'):
@@ -146,6 +146,8 @@ class BugVerifyCmd(object):
                 if t.get('bz'):
                     bug['bz'] = t.get('bz')
                 known_failures.append(bug)
+        except yaml.constructor.ConstructorError:
+            LOG.error('Invalid yaml file {}'.format(self.args.skip_file))
         except IOError:
             LOG.error('File not found {}'.format(self.args.skip_file))
         finally:
