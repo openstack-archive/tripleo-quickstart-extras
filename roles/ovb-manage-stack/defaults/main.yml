@@ -1,6 +1,6 @@
 ---
 release: master
-ovb_repo_version: a3786bca1604d6048562af80eca3bcad119e5065
+ovb_repo_version: stable/1.0
 
 tmp:
   idnum: "{{ 100000 |random }}"
