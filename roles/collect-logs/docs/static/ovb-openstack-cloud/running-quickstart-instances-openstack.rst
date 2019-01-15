@@ -11,13 +11,13 @@ Beginning assumptions
 
 This document details the workflow for running TripleO Quickstart on Openstack
 instances. In particular, the example case is instances created via Heat and
-Openstack Virtual Baremetal <https://github.com/cybertron/openstack-virtual-baremetal>.
+Openstack Virtual Baremetal <https://github.com/openstack/openstack-virtual-baremetal>.
 
 The following are assumed to have been completed before following this document:
 
 * An Openstack cloud exists and has been set up
   (and configured as described in
-  <https://github.com/cybertron/openstack-virtual-baremetal#patching-the-host-cloud>
+  [Patching the Host Cloud](https://openstack-virtual-baremetal.readthedocs.io/en/latest/host-cloud/patches.html).
   if the cloud is pre-Mitaka release). From the Mitaka release the cloud should
   not require patching
 * The undercloud image under test has been uploaded to Glance in the Openstack cloud.

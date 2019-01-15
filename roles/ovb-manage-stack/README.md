@@ -7,7 +7,7 @@ Requirements
 ------------
 
 These roles assume that the host cloud has already been patched as per
-https://github.com/cybertron/openstack-virtual-baremetal/blob/master/README.rst#patching-the-host-cloud.
+[Patching the Host Cloud](https://openstack-virtual-baremetal.readthedocs.io/en/latest/host-cloud/patches.html).
 
 Role Variables
 --------------
@@ -61,7 +61,7 @@ Parameters used the env.yaml file to create the OVB heat stack (See defaults/mai
 Dependencies
 ------------
 
-This playbook depends on the shade library and https://github.com/cybertron/openstack-virtual-baremetal.
+This playbook depends on the shade library and https://github.com/openstack/openstack-virtual-baremetal.
 
 Example Playbook
 ----------------
