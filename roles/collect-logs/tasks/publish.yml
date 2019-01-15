@@ -100,6 +100,11 @@
     name: create-reproducer-script
   when: ansible_env.TOCI_JOBTYPE is defined
 
+
+- name: Create the zuul-based reproducer script
+  include_role:
+    name: create-zuul-based-reproducer
+
 - name: upload to the artifact server using pubkey auth
   shell: rsync -av --quiet -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" {{ artcl_collect_dir }}/ {{ artcl_rsync_path }}/{{ lookup('env', 'BUILD_TAG') }}
   async: "{{ artcl_publish_timeout }}"

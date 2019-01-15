@@ -1,0 +1,82 @@
+# First install Ansible and run the launcher-env-setup-playbook.
+#
+# From the same dir, run:
+# >>  ansible-playbook launcher-playbook.yaml -vv
+#
+# To run the libvirt option (available for non-OVB jobs):
+# Clone https://github.com/openstack/tripleo-quickstart and run:
+# >> export NODEPOOL_MIRROR=mirror.mtl01.inap.openstack.org
+# >> ansible-playbook launcher-playbook.yaml \
+#    -e nodepool_provider=libvirt
+#
+# To run on a different cloud defined in clouds.yaml ( default is rdo-cloud):
+# >> ansible-playbook launcher-playbook.yaml \
+#    -e cloud_name='<custom cloud>'
+#
+# To force the job into failing status in order to hold the nodes (temporary option):
+# >> ansible-playbook launcher-playbook.yaml \
+#    -e force_post_failure=true
+#
+# If your upstream gerrit user or rdo gerit user (and/or keys) are different
+# from your current $USER, there are options to set for each of those values.
+# See the reproducer-zuul-based-quickstart.sh for the options details.
+
+{% raw %}
+- hosts: localhost
+  tasks:
+    - name: Add the localhost to the inventory
+      add_host:
+        name: "localhost"
+        groups: "localhost"
+        ansible_host: 127.0.0.1
+        ansible_connection: local
+
+    - name: Add the primary to the inventory
+      add_host:
+        name: "localhost"
+        groups: "primary"
+        ansible_fqdn: "localhost"
+        ansible_user: "{{ lookup('env', 'USER') }}"
+        ansible_private_key_file: "/home/{{ ansible_user }}/.ssh/{{ user_pri_key | default('id_rsa') }}"
+        ansible_host: "localhost"
+{% endraw %}
+
+- import_playbook: playbooks/tripleo-ci-reproducer/pre.yaml
+
+- hosts: localhost
+  vars:
+    depends_on:
+      - {{ zuul.change_url }}
+    zuul_yaml: >-
+      - project:
+          check:
+            jobs:
+              - {{ zuul.job }}-dlrn-hash-tag
+
+      - job:
+          name: {{ zuul.job }}-dlrn-hash-tag
+          parent: {{ zuul.job }}
+          vars:
+            {% raw -%}
+            mirror_fqdn: {{ lookup('env', 'NODEPOOL_MIRROR') | default('mirror.regionone.rdo-cloud.rdoproject.org', true) }}
+            {% endraw -%}
+            {% if releases_file_output is defined -%}
+            ready_releases_file: |
+              {{ releases_file_output | replace('export', '  export') }}
+            {% endif -%}
+            featureset_override:
+              {% if featureset_override_file_output is defined -%}
+              {{ featureset_override_file_output | indent(14) }}
+              {% endif -%}
+              {% if dlrn_hash is defined or ('undercloud' in hostvars and 'dlrn_hash' in hostvars['undercloud']) -%}
+              dlrn_hash_tag:
+                {{ hostvars['undercloud'].dlrn_hash }}
+              {% endif -%}
+              {% if dlrn_hash_newest is defined or ('undercloud' in hostvars and 'dlrn_hash_newest' in hostvars['undercloud']) -%}
+              dlrn_hash_tag_newest:
+                {{ hostvars['undercloud'].dlrn_hash_newest }}
+              {%- endif %}
+
+  tasks:
+    - include_role:
+        name: ansible-role-tripleo-ci-reproducer

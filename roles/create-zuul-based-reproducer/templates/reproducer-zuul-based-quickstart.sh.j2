@@ -1,0 +1,269 @@
+#!/bin/bash
+
+# See documentation for using the reproducer script:
+# README-reproducer-zuul-based-quickstart.html
+# (in the same top-level logs directory as this reproducer script).
+
+: ${WORKSPACE:=$(mktemp -d -t reproduce-tmp.XXXXX)}
+: ${LIBVIRT:=0}
+: ${CLOUD_NAME:="rdo-cloud"}
+: ${FORCE_POST_FAILURE:=0}
+: ${UPSTREAM_GERRIT_USER:="$USER"}
+: ${RDO_GERRIT_USER:="$USER"}
+: ${USER_SSH_KEY:="id_rsa"}
+: ${USER_SSH_PUB_KEY:="$USER_SSH_KEY.pub"}
+: ${SSH_KEY_PATH:="/home/$USER/.ssh"}
+: ${UPSTREAM_GERRIT_SSH_KEY:="id_rsa"}
+: ${RDO_GERRIT_SSH_KEY:="id_rsa"}
+: ${EXTRA_PARAMS:=""}
+
+usage () {
+    echo "Usage: $0 [options]"
+    echo ""
+    echo "Options:"
+    echo "  -w, --workspace <dir>"
+    echo "                      directory where the repos and directories"
+    echo "                      are created. Defaults to creating a directory in /tmp"
+    echo "  -l, --libvirt"
+    echo "                      Runs a 2-node multinode job or singlenode job on a"
+    echo "                      single virthost using libvirt to create the nodes."
+    echo "                      If a singlenode reproducer is run, two VMs will still be created."
+    echo "  -c, --cloud-name"
+    echo "                      Host cloud, specified in the clouds.yaml, to target"
+    echo "                      Defaults to rdo-cloud"
+    echo "  -f, --force-post-failure"
+    echo "                      Force job to fail so that the nodes will be held."
+    echo "                      Temporary solution"
+    echo "  -ug, --upstream-gerrit-user"
+    echo "                      Set the upstream gerrit user required to clone repos."
+    echo "                      Defaults to the current $USER"
+    echo "  -rg, --rdo-gerrit-user"
+    echo "                      Set the upstream RDO user required to clone RDO-related repos."
+    echo "                      Defaults to the current $USER"
+    echo "  -k, --ssh-key"
+    echo "                      private ssh key used to set up an access nodes."
+    echo "                      Defaults to id_rsa."
+    echo "  -kp, --ssh-key-public"
+    echo "                      public ssh key used to set up an access nodes."
+    echo "                      Defaults to $USER_SSH_KEY.pub"
+    echo "  -skp, --ssh-key-path"
+    echo "                      Path to directory where user ssh keys are stored."
+    echo "                      Defaults to /home/$USER/.ssh"
+    echo "  -ugk, --upstream-gerrit-key"
+    echo "                      Set the upstream gerrit private key."
+    echo "                      Defaults to the $USER_SSH_KEY."
+    echo "  -rgk, --rdo-gerrit-key"
+    echo "                      Set the upstream RDO user key."
+    echo "                      Defaults to the $USER_SSH_KEY."
+    echo "  -e, --extra-params"
+    echo "                      File or/and parameters used to override default"
+    echo "                      parameters for playbooks. Multiple files"
+    echo "                      can be passed [-e @file1.yml -e @file2.yml ...]"
+    echo "                      and arguments [-e var=value -e var2=value2 ...]"
+    echo "  -h, --help          print this help and exit"
+}
+
+set -e
+
+# Input argument assignments
+while [ "x$1" != "x" ]; do
+
+    case "$1" in
+        --workspace|-w)
+            # realpath fails if /some/path doesn't exist. It is created later
+            WORKSPACE=$(realpath $2 || echo -n $2)
+            shift
+            ;;
+
+        --libvirt|-l)
+            LIBVIRT=1
+            ;;
+
+        --cloud-name|-c)
+            CLOUD_NAME=$2
+            shift
+            ;;
+
+        --force-post-failure|-f)
+            FORCE_FAILURE=1
+            ;;
+
+        --upstream-gerrit-user|-ug)
+            UPSTREAM_GERRIT_USER=$2
+            shift
+            ;;
+
+        --rdo-gerrit-user|-rg)
+            RDO_GERRIT_USER=$2
+            shift
+            ;;
+
+        --ssh-key|-k)
+            USER_SSH_KEY=$2
+            shift
+            ;;
+
+        --ssh-key-public|-kp)
+            USER_SSH_PUB_KEY=$2
+            shift
+            ;;
+
+        --ssh-key-path|-skp)
+            SSH_KEY_PATH=$2
+            shift
+            ;;
+
+        --upstream-gerrit-key|-ugk)
+            UPSTREAM_GERRIT_SSH_KEY=$2
+            shift
+            ;;
+
+        --rdo-gerrit-key|-rgk)
+            RDO_GERRIT_SSH_KEY=$2
+            shift
+            ;;
+
+        --extra-params|-e)
+            [[ ${2::1} == "@" ]] && EXTRA_PARAMS+=("-e @$(realpath ${2#@}) ") || EXTRA_PARAMS+=("-e ${2} ")
+            shift
+            ;;
+
+        --help|-h)
+            usage
+            exit
+            ;;
+
+        --) shift
+            break
+            ;;
+
+        -*) echo "ERROR: unknown option: $1" >&2
+            usage >&2
+            exit 2
+            ;;
+
+        *)    break
+            ;;
+    esac
+
+    shift
+done
+
+set -x
+
+# Install rpms and other requirements
+# Currently, only python2 is supported
+export USER_PYTHON_OVERRIDE=python2
+export USER_OVERRIDE_SUDO_CHECK=1
+curl -o bindep.txt https://raw.githubusercontent.com/rdo-infra/ansible-role-tripleo-ci-reproducer/master/bindep.txt
+
+source install-deps.sh
+# install just enough python
+install_deps
+# install bindep
+install_bindep
+# checks the $PWD for a file named
+# bindep.txt and installs
+# dependencies listed in the file.
+install_package_deps_via_bindep
+
+# Start from a clean workspace
+export WORKSPACE
+mkdir -p $WORKSPACE
+rsync -a *-playbook.yaml $WORKSPACE
+cd $WORKSPACE
+
+# Set up docker groups
+if ! groups | grep docker; then
+    echo "$USER is not in the docker group."
+    sudo groupadd docker
+    sudo usermod -aG docker $USER
+    echo "Add user immediately to the docker group."
+    echo "This will exit the script, please re-execute."
+    exec sg docker newgrp `id -gn`
+fi
+
+# Check the Docker config
+if [[ -f /etc/docker/daemon.json ]]; then
+     if cat /etc/docker/daemon.json | grep '"group": "docker"'; then
+         echo "docker group is already added to /etc/docker/daemon.json"
+     elif (( $(cat /etc/docker/daemon.json | wc -m) > 3 )); then
+         echo "/etc/docker/daemon.json is populated.
+               Exit this script and either clear the file or add the docker group."
+         exit 1
+     else
+         echo "The docker group will be added to /etc/docker/daemon.json."
+     fi
+fi
+
+# Check for passwordless sudo on the local system
+sudo -n true && passwordless_sudo="1" || passwordless_sudo="0"
+if [[ "$passwordless_sudo" == "0" ]]; then
+    echo " Passwordless sudo id used in:
+           https://github.com/rdo-infra/ansible-role-tripleo-ci-reproducer/playbooks/tripleo-ci-reproducer/pre.yaml
+           to set up the Docker config and to start and enable Docker.
+           Without passwordless sudo, the playbook will fail.
+
+           There are three options to proceed:
+           1. Enable passwordless sudo and rerun the script to complete the install and job launch
+           2. Edit the launcher.yaml playbook to pass the sudo password
+              >> --extra-vars ansible_sudo_pass='yourPassword'
+           3. Read the pre.yaml playbook and execute the steps manually.
+              When you rerun the script, those steps will be skipped during the playbook execution.
+         "
+fi
+# Run the playbook to set up the launcher env
+ansible-playbook \
+    $WORKSPACE/launcher-env-setup-playbook.yaml \
+    -vv \
+    ${EXTRA_PARAMS[@]}
+
+# Set the options selected into EXTRA_PARAMS
+if [[ "$LIBVIRT" == "1" ]]; then
+    EXTRA_PARAMS="$EXTRA_PARAMS -e nodepool_provider=libvirt "
+    export NODEPOOL_MIRROR=mirror.mtl01.inap.openstack.org
+fi
+
+if [[ "$LIBVIRT" == "0" && "$CLOUD_NAME" != "rdo-cloud" ]]; then
+    EXTRA_PARAMS="$EXTRA_PARAMS -e cloud_name=$CLOUD_NAME "
+fi
+
+if [[ "$FORCE_POST_FAILURE" == "1" ]]; then
+    EXTRA_PARAMS="$EXTRA_PARAMS -e force_post_failure=true "
+fi
+
+if [[ "$UPSTREAM_GERRIT_USER" != "$USER" ]]; then
+    EXTRA_PARAMS="$EXTRA_PARAMS -e upstream_gerrit_user=$UPSTREAM_GERRIT_USER "
+fi
+
+if [[ "$RDO_GERRIT_USER" != "$USER" ]]; then
+    EXTRA_PARAMS="$EXTRA_PARAMS -e rdo_gerrit_user=$RDO_GERRIT_USER "
+fi
+
+if [[ "$USER_SSH_KEY" != "id_rsa" ]]; then
+    EXTRA_PARAMS="$EXTRA_PARAMS -e user_pri_key=$USER_SSH_KEY "
+fi
+
+if [[ "$USER_SSH_PUB_KEY" != "$USER_SSH_KEY.pub" ]]; then
+    EXTRA_PARAMS="$EXTRA_PARAMS -e user_pub_key=$USER_SSH_PUB_KEY "
+fi
+
+if [[ "$SSH_KEY_PATH" != "/home/$USER/.ssh" ]]; then
+    EXTRA_PARAMS="$EXTRA_PARAMS -e ssh_path=$SSH_KEY_PATH "
+fi
+
+if [[ "$UPSTREAM_GERRIT_SSH_KEY" != "$USER_SSH_KEY" ]]; then
+    EXTRA_PARAMS="$EXTRA_PARAMS -e upstream_gerrit_key=$UPSTREAM_GERRIT_SSH_KEY "
+fi
+
+if [[ "$RDO_GERRIT_SSH_KEY" != "$USER_SSH_KEY" ]]; then
+    EXTRA_PARAMS="$EXTRA_PARAMS -e rdo_gerrit_key=$RDO_GERRIT_SSH_KEY "
+fi
+
+
+# Run the launcher playbook
+ansible-playbook \
+    $WORKSPACE/launcher-playbook.yaml \
+    -vv \
+    --tags all \
+    ${EXTRA_PARAMS[@]}

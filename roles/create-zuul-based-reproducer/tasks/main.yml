@@ -1,0 +1,100 @@
+---
+- name: Check if collect directory exists
+  stat:
+    path: "{{ artcl_collect_dir }}"
+  register: collect_dir
+
+- name: Create collect directory
+  file:
+    path: "{{ artcl_collect_dir }}"
+    state: directory
+  when: not collect_dir.stat.exists
+
+- name: Create the reproducer-quickstart directory
+  file:
+    path: "{{ artcl_collect_dir }}/reproducer-quickstart"
+    state: directory
+
+- name: Create the reproducer-quickstart/scripts directory
+  file:
+    path: "{{ artcl_collect_dir }}/reproducer-quickstart/scripts"
+    state: directory
+
+- name: Copy the generated toci templates and files
+  copy:
+    src: "/home/{{ undercloud_user }}/src/git.openstack.org/openstack/tripleo-ci/{{ item }}"
+    dest: "{{ artcl_collect_dir }}/reproducer-quickstart/{{ item }}"
+    mode: 0755
+  with_items:
+    - "toci_gate_test.sh"
+    - "toci_quickstart.sh"
+    - "scripts/common_vars.bash"
+    - "scripts/oooq_common_functions.sh"
+
+- name: Check if featureset-override exists
+  stat:
+    path: "/home/{{ undercloud_user }}/src/git.openstack.org/openstack/tripleo-ci/featureset-override.yaml"
+  register: featureset_override_file
+
+- name: Add the featureset-override if it exists
+  copy:
+    src: "/home/{{ undercloud_user }}/src/git.openstack.org/openstack/tripleo-ci/featureset-override.yaml"
+    dest: "{{ artcl_collect_dir }}/reproducer-quickstart/featureset-override.yaml"
+    mode: 0755
+  when: featureset_override_file.stat.exists
+
+- name: Check if releases.sh file exits
+  stat:
+    path: '/home/{{ undercloud_user}}/workspace/logs/releases.sh'
+  register: releases_file_result
+
+- name: Get releases.sh file output
+  set_fact:
+    releases_file_output: "{{ lookup('file', '/home/{{ undercloud_user}}/workspace/logs/releases.sh') | replace('export' , '            export') }}"
+  when: releases_file_result.stat.exists
+
+- name: Get featureset-override file output
+  set_fact:
+    featureset_override_file_output: "{{ lookup('file', '/home/{{ undercloud_user }}/src/git.openstack.org/openstack/tripleo-ci/featureset-override.yaml') }}"
+  when: featureset_override_file.stat.exists
+
+- name: Create the zuul-based launcher-env-setup-playbook from template
+  template:
+    src: "{{ launcher_env_setup_playbook }}"
+    dest: "{{ artcl_collect_dir }}/launcher-env-setup-playbook.yaml"
+    mode: 0755
+
+- name: Create the zuul-based launcher-playbook from template
+  template:
+    src: "{{ reproducer_zuul_based_launcher_playbook }}"
+    dest: "{{ artcl_collect_dir }}/launcher-playbook.yaml"
+    mode: 0755
+
+- name: Create the zuul-based reproducer file from template
+  template:
+    src: "{{ reproducer_zuul_based_quickstart_script }}"
+    dest: "{{ artcl_collect_dir }}/reproducer-zuul-based-quickstart.sh"
+    mode: 0755
+
+- name: Copy the tripleo-quickstart install-deps script
+  copy:
+    src: "/home/{{ undercloud_user }}/src/git.openstack.org/openstack/tripleo-quickstart/{{ item }}"
+    dest: "{{ artcl_collect_dir }}/{{ item }}"
+    mode: 0755
+  with_items:
+    - "install-deps.sh"
+
+- name: Tar the files needed for the zuul-based reproducer script
+  archive:
+    path:
+      - "{{ artcl_collect_dir }}/launcher-env-setup-playbook.yaml"
+      - "{{ artcl_collect_dir }}/launcher-playbook.yaml"
+      - "{{ artcl_collect_dir }}/reproducer-zuul-based-quickstart.sh"
+      - "{{ artcl_collect_dir }}/install-deps.sh"
+    dest: "{{ artcl_collect_dir }}/reproducer-zuul-based-quickstart.tar"
+    mode: 0755
+
+- name: Create zuul-based reproducer script documentation from template
+  template:
+    src: README-reproducer-zuul-based-quickstart.html.j2
+    dest: "{{ reproducer_zuul_based_quickstart_readme_file }}"

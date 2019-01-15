@@ -1,0 +1,138 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+<title>WARNING - WIP - NOT FOR GENERAL USE - README for Quickstart Job Zuul-based Reproducer Script</title>
+</head>
+<body>
+<h1> WARNING - WIP - NOT FOR GENERAL USE - How to reproduce a job result using the Zuul-based reproducer playbooks and script</h1>
+<p>Check the top-level logs directory for a tar file <b>reproducer-zuul-based-quickstart.tar</b>.
+This tar archive contains three files:
+<ul>
+<li><code>launcher-env-setup-playbook.yaml</code> - a playbook to clone repos and set up
+an Ansible environment to launch jobs</li>
+<li><code>launcher-playbook.yaml - a playbook that installs and starts up Zuul, Gerrit and
+other required services, and also creates and launches a reproducer job using
+the same dlrn hashes as in CI</code></li>
+<li><code>reproducer-zuul-based-quickstart.sh - a Bash script to provide an interface
+to run the above playbooks with various options</code></li>
+</ul>
+Running these playbooks will set up Zuul, Gerrit, and related services in containers
+on the local system, and will then create a reproducer job which can be run on a
+cloud personal tenant or via libvirt on the local system.
+If no <b>reproducer-zuul-based-quickstart.tar</b> file is found, that usually means an
+infra failure before Quickstart could start or a problem in collecting logs.
+Check on IRC Freenode channel <i>#tripleo</i> to see if there's an ongoing infra
+issue.</p>
+
+<h1>Setting up to run the Zuul-based reproducer</h1>
+<p>
+Prior to running the Zuul-based reproducer, the following setup steps are needed -
+( only need to be done once per local system):
+<ul>
+<li>Create a clouds.yaml - for example:
+<pre>
+<code>mkdir -p ~/.config/openstack
+vi ~/.config/openstack/clouds.yaml
+clouds:
+  rdo-cloud:
+        identity_api_version: 3
+        region_name: regionOne
+        auth:
+          auth_url: https://phx2.cloud.rdoproject.org:13000/v3
+          password: xxxxxxx
+          project_name: user_name
+          username:  user_name
+          user_domain_name: Default
+          project_domain_name: Default
+        regions:
+          - name: regionOne
+            values:
+              networks:
+                - name: 38.145.32.0/22
+                  routes_externally: true
+                - name: private
+</code>
+</pre>
+Note that you will need a network named 'private' in the tenant connected to an
+external router.</li>
+<li>Create an ssh key pair without a pass phrase:
+The ssh key pair is configurable - see variables <code>ssh_path</code> and
+<code>user_pri_key</code>. The default key is:<code>~/.ssh/id_rsa[.pub]</code></li>
+<li>Check that you have access to the publicly shared nodepool images:
+There should be one image for CentOS 7, and one for Fedora 28.</li>
+</ul>
+</p>
+
+<h1>Running the Zuul-based reproducer - using the Bash script</h1>
+<p>
+wget the <b>reproducer-zuul-based-quickstart.tar</b> file. Note that
+the <code>launcher-env-setup-playbook.yaml</code> will set up
+clone repos and set up 'roles', 'playbooks', and 'library' directories
+from which the tasks will be executed.
+Once the files are extracted from the archive, you can run the Bash script
+with the various options. Run the script with <code>--help</code> option to
+output a list of available run options.
+</p>
+
+<h1>Running the Zuul-based reproducer - using the playbooks directly</h1>
+<p>
+The Bash script is not required although it is the supported path.
+The playbooks can be run directly using <code>ansible-playbook</code>.
+The Bash script contains some package installation and Docker user/group setup
+that you will need to cover prior to running the playbooks directly.
+Please see the Bash scripts for details, especially if you are running the
+reproducer for the first time on teh local environment.
+The playbooks can be run as follows:
+<ul>
+<li><code>ansible-playbook ./launcher-env-setup-playbook.yaml</code></li>
+<li><code>ansible-playbook ./launcher-playbook.yaml $OPTIONS</code></li>
+</ul>
+The <code>launcher-playbook.yaml</code> includes comments on how to run the playbook
+with the same options listed in the Bash script section above.
+</p>
+
+<h1>Ansible tags and running repeatedly</h1>
+<p>
+The Bash scripts runs with <code>--tags all</code> passed to the
+<code>launcher-playbook.yaml</code>.
+After the initial docker setup has run, it is not necessary to run through
+those setup steps for every reproducer. The <code>launcher-playbook.yaml</code>
+can be run with <code>--skip-tags start</code> after the initial run.
+</p>
+
+<h1>Monitoring the launched job</h1>
+<p>
+The <code>launcher-playbook.yaml</code> will create and push a job
+to a test1 testproject repo in a temp directory. This job will start and the
+related Zuul infrastructure logs can be viewed in:</br>
+<pre>
+<code>cd ~/tripleo-ci-reproducer
+docker-compose logs --tail=10 -f
+# Just view the scheduler and executor logs:
+docker-compose logs --tail=10 -f scheduler executor</code>
+</pre>
+</br>
+To see the job progress, you can access the web consoles of:
+<ul>
+<li>Gerrit: http://localhost:8080</li>
+<li>Zuul: http://localhost:9000</li>
+<li>Logs: http://localhost:8000</li>
+</ul>
+If you are accessing a remote machine, replace <code>localhost</code> with the ip address.
+</p>
+
+<h1>User notes</h1>
+<p>
+<ul>
+<li>Gerrit keys<br/>
+If your ssh keys have being created with a new version of OpenSSH, Zuul will
+fail when running with these keys as there is a Paramiko bug [1].
+It is recommended  that keys be generated as follows:
+<code>ssh-keygen -m PEM -t rsa</code> - accepting the passwordless option.
+Then update the public keys used with Gerrit upstream and RDO Gerrit.</br>
+[1] https://storyboard.openstack.org/#!/story/2004842</li>
+</ul>
+</p>
+
+</body>
+</html>
