@@ -19,6 +19,7 @@
 : ${NODES_FILE:="{{ nodes_config }}"}
 : ${ZUUL_CHANGES:="{{ zuul_changes }}"}
 : ${EXTRA_PARAMS:=""}
+: ${IN_PLACE:=false}
 
 SSH_OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
@@ -29,6 +30,9 @@ usage () {
     echo "  -w, --workspace <dir>"
     echo "                      directory where the virtualenv, inventory files, etc."
     echo "                      are created. Defaults to creating a directory in /tmp"
+    echo "  -i, --in-place"
+    echo "                      Avoid wiping tq[e] repositories if they already exist"
+    echo "                      and just pull --rebase them. [IN_PLACE=true]"
     echo "  -v, --create-virtualenv"
     echo "                      create a virtualenv to install Ansible and dependencies."
     echo "                      Options to pass true/false. Defaults to true for OVB. "
@@ -79,6 +83,11 @@ while [ "x$1" != "x" ]; do
         --workspace|-w)
             # realpath fails if /some/path doesn't exist. It is created later
             WORKSPACE=$(realpath $2 || echo -n $2)
+            shift
+            ;;
+
+        --in-place|-i)
+            IN_PLACE=true
             shift
             ;;
 
@@ -209,11 +218,20 @@ export ZUUL_CHANGES
 # Start from a clean workspace
 mkdir -p $WORKSPACE
 cd $WORKSPACE
-rm -rf tripleo-quickstart tripleo-quickstart-extras
+[ "$IN_PLACE" == "true" ] || \
+    rm -rf tripleo-quickstart tripleo-quickstart-extras
 
 # Clone quickstart and quickstart-extras
-git clone https://github.com/openstack/tripleo-quickstart
-git clone https://github.com/openstack/tripleo-quickstart-extras
+for REPO in tripleo-quickstart tripleo-quickstart-extras
+do
+    if [ -d "$REPO" ]; then
+        pushd $REPO
+        git pull --rebase
+        popd
+    else
+        git clone https://github.com/openstack/$REPO
+    fi
+done
 
 # Set up a virtual env if requested
 if [ "$CREATE_VIRTUALENV" = "true" ]; then
