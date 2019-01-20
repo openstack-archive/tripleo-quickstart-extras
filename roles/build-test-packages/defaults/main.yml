@@ -24,3 +24,4 @@ artg_skipped_projects:
   - openstack-infra/project-config
   - openstack-infra/tripleo-ci
   - openstack-infra/zuul-jobs
+  - openstack/openstack-virtual-baremetal
