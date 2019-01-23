@@ -99,7 +99,7 @@ def create_enable_file(certpem, keypem, source_dir, dest_dir, tht_release):
 
 def create_anchor_file(cert_ca_pem, source_dir, dest_dir, enable_tls_overcloud):
     output_dict = _open_yaml(
-        "{}environments/inject-trust-anchor.yaml".format(source_dir)
+        "{}environments/ssl/inject-trust-anchor.yaml".format(source_dir)
     )
 
     if enable_tls_overcloud:
