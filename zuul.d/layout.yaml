@@ -6,6 +6,7 @@
       - tripleo-multinode-experimental
       - tripleo-multinode-branchful
       - release-notes-jobs-python3
+      - tripleo-standalone-scenarios-full
     check:
       jobs:
         - openstack-tox-linters
