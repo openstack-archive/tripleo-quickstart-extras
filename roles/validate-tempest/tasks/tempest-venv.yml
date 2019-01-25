@@ -56,7 +56,7 @@
 
 - name: Set tempest init command
   set_fact:
-    tempest_init: "{{ working_dir }}/tempest_git/tools/{% if release == 'newton' %}configure-tempest-directory{% else %}with_env.sh tempest init{% endif %}"
+    tempest_init: "{{ working_dir }}/tempest_git/tools/{% if release == 'newton' %}configure-tempest-directory{% else %}with_venv.sh tempest init{% endif %}"
 
 - name: Set tempestconf call
   set_fact:
