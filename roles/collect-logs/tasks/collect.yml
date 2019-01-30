@@ -52,21 +52,37 @@
 
     - name: Collect network status info
       shell: >
-        (ip a; ip r; netstat -i; iptables-save; iptables -nL) &> /var/log/extra/network.txt;
+        echo "netstat" > /var/log/extra/network.txt;
+        netstat -i &> /var/log/extra/network.txt;
+        for ipv in 4 6; do
+          echo "### IPv${ipv} addresses" >> /var/log/extra/network.txt;
+          ip -${ipv} a &>> /var/log/extra/network.txt;
+          echo "### IPv${ipv} routing" >> /var/log/extra/network.txt;
+          ip -${ipv} r &>> /var/log/extra/network.txt;
+          echo "### IPTables (IPv${ipv})" &>> /var/log/extra/network.txt;
+          test $ipv -eq 4 && iptables-save &>> /var/log/extra/network.txt;
+          test $ipv -eq 6 && ip6tables-save &>> /var/log/extra/network.txt;
+        done;
         (for NS in $(ip netns list); do
-        echo "==== $NS ====";
-        ip netns exec $NS ip a;
-        ip netns exec $NS ip r;
-        ip netns exec $NS ip iptables-save;
-        PIDS="$(ip netns pids $NS)";
-        [[ ! -z "$PIDS" ]] && ps --no-headers -f --pids "$PIDS";
-        echo "";
-        done) &> /var/log/extra/network-netns;
+          for ipv in 4 6; do
+            echo "==== $NS (${ipv})====";
+            echo "### IPv${ipv} addresses";
+            ip netns exec $NS ip -${ipv} a;
+            echo "### IPv${ipv} routing";
+            ip netns exec $NS ip -${ipv} r;
+            echo "### IPTables (IPv${ipv})";
+            test $ipv -eq 4 && ip netns exec $NS ip iptables-save;
+            test $ipv -eq 6 && ip netns exec $NS ip ip6tables-save;
+          done
+          PIDS="$(ip netns pids $NS)";
+          [[ ! -z "$PIDS" ]] && ps --no-headers -f --pids "$PIDS";
+          echo "";
+        done) &>> /var/log/extra/network-netns;
         (for NB in $(ovs-vsctl show | grep Bridge |awk '{print $2}'); do
-        echo "==== Bridge name - $NB ====";
-        ovs-ofctl show $NB;
-        ovs-ofctl dump-flows $NB;
-        echo "";
+          echo "==== Bridge name - $NB ====";
+          ovs-ofctl show $NB;
+          ovs-ofctl dump-flows $NB;
+          echo "";
         done;
         ovsdb-client dump) &> /var/log/extra/network-bridges;
 
