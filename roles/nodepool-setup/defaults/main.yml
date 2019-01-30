@@ -1,7 +1,7 @@
 ---
 nodepool_cirros_url: http://download.cirros-cloud.net/0.3.6/cirros-0.3.6-x86_64-disk.img
 nodepool_cirros_dest: /opt/cache/files/cirros-0.3.6-x86_64-disk.img
-nodepool_cirros_checksum: md5:a30f156a83471adf89ebb70dc96d0c82
+nodepool_cirros_checksum: md5:d56d54f110654dfd29b0e8ed56e6cda8
 repos:
   - https://git.openstack.org/openstack/tripleo-quickstart
   - https://git.openstack.org/openstack/tripleo-quickstart-extras
