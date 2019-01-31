@@ -5,6 +5,9 @@
 ## the TripleO PTL, Thanks                          ##
 
 known_failures:
+  - test: 'tempest.scenario.test_network_basic_ops.TestNetworkBasicOps.test_port_security_macspoofing_port'
+    reason: 'It can be removed when bug for OVN is repaired'
+    lp: 'https://bugs.launchpad.net/tempest/+bug/1728886'
   - test: 'tempest.scenario.test_network_basic_ops.TestNetworkBasicOps.test_hotplug_nic'
     reason: 'workaround skip for not to not block job pending proper fix'
     lp: 'https://bugs.launchpad.net/tripleo/+bug/1806075'
