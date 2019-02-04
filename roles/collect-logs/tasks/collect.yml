@@ -284,8 +284,6 @@
                   ${engine} inspect $cont;
                 ) &> $INFO_DIR/${engine}_info.log;
 
-                ${engine} logs $cont &> $INFO_DIR/stdout.log;
-
                 container_cp $cont /var/lib/kolla/config_files/config.json $INFO_DIR/config.json;
 
                 # NOTE(flaper87): This should go away. Services should be
@@ -298,6 +296,17 @@
                 # Delete symlinks because they break log collection and are generally
                 # not useful
                 find $INFO_DIR -type l -delete;
+            done;
+
+            # NOTE(cjeanner) previous loop cannot have the "-a" flag because of the
+            # "exec" calls. So we just loop a second time, over ALL containers,
+            # in order to get all the logs we can. For instance, the previous loop
+            # would not allow to know why a container is "Exited (1)", preventing
+            # efficient debugging.
+            for cont in $(${engine} ps -a | awk {'print $NF'} | grep -v NAMES); do
+                INFO_DIR=$BASE_CONTAINER_EXTRA/containers/${cont};
+                mkdir -p $INFO_DIR;
+                ${engine} logs $cont &> $INFO_DIR/stdout.log;
             done;
 
           # NOTE(flaper87) Copy contents from the logs volume. We can expect this
