@@ -116,7 +116,11 @@ source {{ rc_file }}
 {% if release == 'newton' %}
 public_net_id=$(neutron net-show {{ public_net_name }} -f value -c id)
 {% else %}
+{% if ironic_overcloud|default(false)|bool %}
+public_net_id=$(openstack network show provisioning -f value -c id)
+{% else %}
 public_net_id=$(openstack network show {{ public_net_name }} -f value -c id)
+{% endif %}
 {% endif %}
 region_name=${OS_REGION_NAME:-'regionOne'}
 {% endif %}
@@ -191,5 +195,13 @@ $TEMPESTCONF --out etc/tempest.conf \
   {% endfor %}
   {% endif %}
   orchestration.stack_owner_role Member
+
+{% if ironic_overcloud|default(false)|bool %}
+# tempest is using the m1.nano flavor, set it up for using a resource class if testing ironic
+openstack flavor set m1.nano --property resources:VCPU=0 \
+                             --property resources:MEMORY_MB=0 \
+                             --property resources:CUSTOM_BAREMETAL=1 \
+                             --property resources:DISK_GB=0
+{% endif %}
 
 ### --stop_docs

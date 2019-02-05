@@ -49,8 +49,6 @@ known_failures:
     reason: 'Not supported in TripleO'
   - test: 'kuryr_tempest_plugin'
     reason: 'Not supported in TripleO'
-  - test: 'ironic_tempest_plugin'
-    reason: 'Not supported in TripleO'
   - test: 'heat_tempest_plugin'
     reason: 'Not supported in TripleO'
   - test: 'designate_tempest_plugin'
