@@ -4,6 +4,7 @@ standalone_network: 192.168.24
 standalone_network_prefix: 24
 standalone_ip: 192.168.24.1
 standalone_interface: br-ex
+standalone_hostname: standalone.localdomain
 
 # container prep script
 standalone_container_prep_options: ''
