@@ -1,12 +1,12 @@
 ---
 - name: Generate repo-setup script for overcloud upgrade
-  hosts: undercloud
+  hosts: overcloud
   tags:
     - overcloud-upgrade
   gather_facts: false
   vars:
-    repo_run_live: false
     repo_setup_script: "repo-setup-{{ release }}.sh"
+    repo_setup_log: "repo-setup-{{ release }}.log"
     # Avoid running yum update, only set up repos
     repo_setup_run_update: false
     artg_compressed_gating_repo: "${HOME}/gating_repo.tar.gz"
@@ -43,9 +43,8 @@
   gather_facts: true
   tags:
     - overcloud-upgrade
-  vars:
-    repo_setup_script: "{{ working_dir }}/repo-setup-{{ release }}.sh"
-  roles:
-    - role: tripleo-upgrade
-      upgrade_init_command: "{{ (repo_setup_script|exists) | ternary(lookup('file', repo_setup_script), false) }}"
+  tasks:
+    - name: Include TripleO upgrade role
+      include_role:
+        name: tripleo-upgrade
       when: overcloud_upgrade|default(false)|bool or ffu_overcloud_upgrade|default(false)|bool
