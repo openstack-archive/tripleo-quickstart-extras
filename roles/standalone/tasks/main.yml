@@ -11,6 +11,11 @@
 
 # tasks file for all_in_one
 
+- name: Set hostname
+  hostname:
+    name: "{{ standalone_hostname }}"
+  become: true
+
 # standalone params
 - name: Create the standalone params
   template:
