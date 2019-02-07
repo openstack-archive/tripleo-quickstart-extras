@@ -2,6 +2,33 @@
 <html lang="en-US">
 <head>
 <title>WARNING - WIP - NOT FOR GENERAL USE - README for Quickstart Job Zuul-based Reproducer Script</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+.collapsible {
+  background-color: #777;
+  color: white;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.active, .collapsible:hover {
+  background-color: #555;
+}
+
+.content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+</head>
 </head>
 <body>
 <h1> WARNING - WIP - NOT FOR GENERAL USE - How to reproduce a job result using the Zuul-based reproducer playbooks and script</h1>
@@ -24,7 +51,8 @@ infra failure before Quickstart could start or a problem in collecting logs.
 Check on IRC Freenode channel <i>#tripleo</i> to see if there's an ongoing infra
 issue.</p>
 
-<h1>Setting up to run the Zuul-based reproducer</h1>
+<button class="collapsible">Setting up to run the Zuul-based reproducer</button>
+<div class="content">
 <p>
 Prior to running the Zuul-based reproducer, the following setup steps are needed -
 ( only need to be done once per local system):
@@ -62,8 +90,10 @@ The ssh key pair is configurable - see variables <code>ssh_path</code> and
 There should be one image for CentOS 7, and one for Fedora 28.</li>
 </ul>
 </p>
+</div>
 
-<h1>Running the Zuul-based reproducer - using the Bash script</h1>
+<button class="collapsible">Running the Zuul-based reproducer - using the Bash script</button>
+<div class="content">
 <p>
 wget the <b>reproducer-zuul-based-quickstart.tar</b> file. Note that
 the <code>launcher-env-setup-playbook.yaml</code> will set up
@@ -73,8 +103,10 @@ Once the files are extracted from the archive, you can run the Bash script
 with the various options. Run the script with <code>--help</code> option to
 output a list of available run options.
 </p>
+</div>
 
-<h1>Running the Zuul-based reproducer - using the playbooks directly</h1>
+<button class="collapsible">Running the Zuul-based reproducer - using the playbooks directly</button>
+<div class="content">
 <p>
 The Bash script is not required although it is the supported path.
 The playbooks can be run directly using <code>ansible-playbook</code>.
@@ -90,8 +122,10 @@ The playbooks can be run as follows:
 The <code>launcher-playbook.yaml</code> includes comments on how to run the playbook
 with the same options listed in the Bash script section above.
 </p>
+</div>
 
-<h1>Ansible tags and running repeatedly</h1>
+<button class="collapsible">Ansible tags and running repeatedly</button>
+<div class="content">
 <p>
 The Bash scripts runs with <code>--tags all</code> passed to the
 <code>launcher-playbook.yaml</code>.
@@ -99,8 +133,10 @@ After the initial docker setup has run, it is not necessary to run through
 those setup steps for every reproducer. The <code>launcher-playbook.yaml</code>
 can be run with <code>--skip-tags start</code> after the initial run.
 </p>
+</div>
 
-<h1>Monitoring the launched job</h1>
+<button class="collapsible">Monitoring the launched job</button>
+<div class="content">
 <p>
 The <code>launcher-playbook.yaml</code> will create and push a job
 to a test1 testproject repo in a temp directory. This job will start and the
@@ -120,8 +156,10 @@ To see the job progress, you can access the web consoles of:
 </ul>
 If you are accessing a remote machine, replace <code>localhost</code> with the ip address.
 </p>
+</div>
 
-<h1>User notes</h1>
+<button class="collapsible">Known Issues and FAQ</button>
+<div class="content">
 <p>
 <ul>
 <li>Gerrit keys<br/>
@@ -133,6 +171,24 @@ Then update the public keys used with Gerrit upstream and RDO Gerrit.</br>
 [1] https://storyboard.openstack.org/#!/story/2004842</li>
 </ul>
 </p>
+</div>
+
+<script>
+  var coll = document.getElementsByClassName("collapsible");
+  var i;
+
+  for (i = 0; i < coll.length; i++) {
+    coll[i].addEventListener("click", function() {
+      this.classList.toggle("active");
+      var content = this.nextElementSibling;
+      if (content.style.maxHeight){
+        content.style.maxHeight = null;
+      } else {
+        content.style.maxHeight = content.scrollHeight + "px";
+      }
+    });
+  }
+  </script>
 
 </body>
 </html>
