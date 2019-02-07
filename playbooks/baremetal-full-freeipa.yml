@@ -1,0 +1,20 @@
+---
+- name: Run inventory to add supplemental node
+  hosts: undercloud
+  gather_facts: false
+  tags:
+    - freeipa-setup
+  tasks:
+
+    - include_role:
+        name: tripleo-inventory
+
+- name: Deploy the FreeIPA server
+  hosts: supplemental
+  gather_facts: true
+  tags:
+    - freeipa-setup
+  tasks:
+
+    - include_role:
+        name: freeipa-setup
