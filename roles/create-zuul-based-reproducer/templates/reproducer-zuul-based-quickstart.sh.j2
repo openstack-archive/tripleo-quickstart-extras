@@ -151,11 +151,12 @@ done
 
 set -x
 
+curl -o bindep.txt https://raw.githubusercontent.com/rdo-infra/ansible-role-tripleo-ci-reproducer/master/bindep.txt
+
 # Install rpms and other requirements
 # Currently, only python2 is supported
 export USER_PYTHON_OVERRIDE=python2
 export USER_OVERRIDE_SUDO_CHECK=1
-curl -o bindep.txt https://raw.githubusercontent.com/rdo-infra/ansible-role-tripleo-ci-reproducer/master/bindep.txt
 
 source install-deps.sh
 # install just enough python
@@ -167,51 +168,45 @@ install_bindep
 # dependencies listed in the file.
 install_package_deps_via_bindep
 
+# Fail as early as possible if the docker
+# group is not setup appropriately.
+# This has to be done AFTER package intalls.
+# Set up docker groups
+if ! groups | grep -Eq "docker|dockerroot"; then
+    echo "$USER is not in the docker|dockerroot group."
+    if grep -q docker: /etc/group; then
+        DG=docker
+    elif grep -q dockerroot: /etc/group; then
+        DG=dockerroot
+    fi
+    sudo usermod -aG $DG $USER
+    echo -e "\e[31m WARNING: Add user immediately to the $DG group. \
+Changing the user's groups will exit the script, please re-execute the script. \e[0m"
+    exec sg $DG newgrp `id -gn`
+fi
+
+# This can only be checked after rpms are installed.
+# Check the Docker config
+if [[ -f /etc/docker/daemon.json ]]; then
+     if cat /etc/docker/daemon.json | grep '"group": "docker"'; then
+         echo "docker group is already added to /etc/docker/daemon.json"
+     elif cat /etc/docker/daemon.json | grep '"group": "dockerroot"'; then
+         echo "dockerroot group is already added to /etc/docker/daemon.json"
+     elif (( $(cat /etc/docker/daemon.json | wc -m) > 3 )); then
+         echo -e "\e[31m /etc/docker/daemon.json is populated. \
+               Exit this script and either clear the file or add the docker group. \e[0m" | xargs
+         exit 1
+     else
+         echo "The docker|dockerroot group will be added to /etc/docker/daemon.json."
+     fi
+fi
+
 # Start from a clean workspace
 export WORKSPACE
 mkdir -p $WORKSPACE
 rsync -a *-playbook.yaml $WORKSPACE
 cd $WORKSPACE
 
-# Set up docker groups
-if ! groups | grep docker; then
-    echo "$USER is not in the docker group."
-    sudo groupadd docker
-    sudo usermod -aG docker $USER
-    echo "Add user immediately to the docker group."
-    echo "This will exit the script, please re-execute."
-    exec sg docker newgrp `id -gn`
-fi
-
-# Check the Docker config
-if [[ -f /etc/docker/daemon.json ]]; then
-     if cat /etc/docker/daemon.json | grep '"group": "docker"'; then
-         echo "docker group is already added to /etc/docker/daemon.json"
-     elif (( $(cat /etc/docker/daemon.json | wc -m) > 3 )); then
-         echo "/etc/docker/daemon.json is populated.
-               Exit this script and either clear the file or add the docker group."
-         exit 1
-     else
-         echo "The docker group will be added to /etc/docker/daemon.json."
-     fi
-fi
-
-# Check for passwordless sudo on the local system
-sudo -n true && passwordless_sudo="1" || passwordless_sudo="0"
-if [[ "$passwordless_sudo" == "0" ]]; then
-    echo " Passwordless sudo id used in:
-           https://github.com/rdo-infra/ansible-role-tripleo-ci-reproducer/playbooks/tripleo-ci-reproducer/pre.yaml
-           to set up the Docker config and to start and enable Docker.
-           Without passwordless sudo, the playbook will fail.
-
-           There are three options to proceed:
-           1. Enable passwordless sudo and rerun the script to complete the install and job launch
-           2. Edit the launcher.yaml playbook to pass the sudo password
-              >> --extra-vars ansible_sudo_pass='yourPassword'
-           3. Read the pre.yaml playbook and execute the steps manually.
-              When you rerun the script, those steps will be skipped during the playbook execution.
-         "
-fi
 # Run the playbook to set up the launcher env
 ansible-playbook \
     $WORKSPACE/launcher-env-setup-playbook.yaml \
