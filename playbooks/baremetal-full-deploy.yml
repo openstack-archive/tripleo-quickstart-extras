@@ -5,6 +5,9 @@
 - include: ovb-setup.yml
   when: undercloud_type == 'ovb'
 
+- include: baremetal-full-freeipa.yml
+  when: deploy_supplemental_node|default(false)|bool
+
 - include: baremetal-undercloud.yml
   when: undercloud_type == 'baremetal' and environment_type is defined
 
