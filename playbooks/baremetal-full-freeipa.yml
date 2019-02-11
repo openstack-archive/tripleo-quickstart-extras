@@ -8,6 +8,8 @@
 
     - include_role:
         name: tripleo-inventory
+      vars:
+        inventory: extra_node
 
 - name: Deploy the FreeIPA server
   hosts: supplemental
@@ -15,6 +17,11 @@
   tags:
     - freeipa-setup
   tasks:
+
+    - include_role:
+        name: repo-setup
+      vars:
+        repo_setup_dir: /home/{{ supplemental_user|default('centos') }}
 
     - include_role:
         name: freeipa-setup
