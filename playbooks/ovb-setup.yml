@@ -24,6 +24,16 @@
         - network_isolation|bool
         - use_testenv_broker|default(false)|bool
 
+    - name: Set DNS servers for OVB clouds - undercloud
+      set_fact:
+        undercloud_undercloud_nameservers: "{{ custom_nameserver }}"
+        cacheable: true
+
+    - name: Set DNS servers for OVB clouds - overcloud
+      set_fact:
+        overcloud_dns_servers: "{{ custom_nameserver }}"
+        cacheable: true
+
 - name: Inventory the undercloud instance
   hosts: localhost
   gather_facts: true
