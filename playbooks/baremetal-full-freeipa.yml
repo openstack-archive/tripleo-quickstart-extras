@@ -11,6 +11,27 @@
       vars:
         inventory: extra_node
 
+    - name: Add supplemental IP to /etc/hosts
+      lineinfile:
+        line: "{{ supplemental_node_ip }}  {{ freeipa_server_hostname }}"
+        path: /etc/hosts
+      become: true
+
+    - name: set the freeipa_internal_ip
+      set_fact:
+        freeipa_internal_ip: "{{ supplemental_node_ip }}"
+        cacheable: true
+
+    - name: set the undercloud_undercloud_nameservers
+      set_fact:
+        undercloud_undercloud_nameservers: ["{{ freeipa_internal_ip }}"]
+        cacheable: true
+
+    - name: set the overcloud_dns_servers
+      set_fact:
+        overcloud_dns_servers: ["{{ freeipa_internal_ip }}"]
+        cacheable: true
+
 - name: Deploy the FreeIPA server
   hosts: supplemental
   gather_facts: true
