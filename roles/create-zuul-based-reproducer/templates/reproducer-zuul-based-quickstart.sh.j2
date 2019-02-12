@@ -7,6 +7,7 @@
 : ${WORKSPACE:=$(mktemp -d -t reproduce-tmp.XXXXX)}
 : ${LIBVIRT:=0}
 : ${CLOUD_NAME:="rdo-cloud"}
+: ${CLOUDS_YAML_PATH:="/home/$USER/.config/openstack/clouds.yaml"}
 : ${FORCE_POST_FAILURE:=0}
 : ${UPSTREAM_GERRIT_USER:="$USER"}
 : ${RDO_GERRIT_USER:="$USER"}
@@ -31,6 +32,9 @@ usage () {
     echo "  -c, --cloud-name"
     echo "                      Host cloud, specified in the clouds.yaml, to target"
     echo "                      Defaults to rdo-cloud"
+    echo "  -cp, --clouds-yaml-path"
+    echo "                      Full path to the clouds.yaml file"
+    echo "                      Defaults to /home/$USER/.config/openstack/clouds.yaml"
     echo "  -f, --force-post-failure"
     echo "                      Force job to fail so that the nodes will be held."
     echo "                      Temporary solution"
@@ -81,6 +85,11 @@ while [ "x$1" != "x" ]; do
 
         --cloud-name|-c)
             CLOUD_NAME=$2
+            shift
+            ;;
+
+        --clouds-yaml-path|-cp)
+            CLOUDS_YAML_PATH=$2
             shift
             ;;
 
@@ -221,6 +230,10 @@ fi
 
 if [[ "$LIBVIRT" == "0" && "$CLOUD_NAME" != "rdo-cloud" ]]; then
     EXTRA_PARAMS="$EXTRA_PARAMS -e cloud_name=$CLOUD_NAME "
+fi
+
+if [[ "$CLOUDS_YAML_PATH" != "/home/$USER/.config/openstack/clouds.yaml" ]]; then
+    EXTRA_PARAMS="$EXTRA_PARAMS -e clouds_yaml_path=$CLOUDS_YAML_PATH "
 fi
 
 if [[ "$FORCE_POST_FAILURE" == "1" ]]; then
