@@ -195,8 +195,8 @@
       {% else %}
       -e {{ working_dir }}/containers-prepare-parameter.yaml
       {% endif %}
-      {% if release not in ['pike', 'queens', 'rocky'] and overcloud_container_cli == 'podman' %}
-      -e {{ overcloud_templates_path }}/environments/podman.yaml
+      {% if release not in ['pike', 'queens', 'rocky'] %}
+      -e {{ overcloud_templates_path }}/environments/{{ overcloud_container_cli | default('docker') }}.yaml
       {% endif %}
   when:
     - containerized_overcloud|bool
