@@ -5,9 +5,9 @@
 #
 # To run the libvirt option (available for non-OVB jobs):
 # Clone https://github.com/openstack/tripleo-quickstart and run:
-# >> export NODEPOOL_MIRROR=mirror.mtl01.inap.openstack.org
 # >> ansible-playbook launcher-playbook.yaml \
-#    -e nodepool_provider=libvirt
+#    -e nodepool_provider=libvirt \
+#    -e mirror_path=mirror.mtl01.inap.openstack.org
 #
 # To run on a different cloud defined in clouds.yaml ( default is rdo-cloud):
 # >> ansible-playbook launcher-playbook.yaml \
@@ -52,6 +52,8 @@
     {% raw -%}
     clouds_yaml_path: "/home/{{ ansible_user }}/.config/openstack/clouds.yaml"
     {% endraw -%}
+    ovb_key_name: tripleo-ci-team
+    mirror_path: mirror.regionone.rdo-cloud.rdoproject.org
     depends_on:
       - {{ zuul.change_url }}
     zuul_yaml: >-
@@ -76,6 +78,7 @@
                 identity_api_version: 3
                 user_domain_name: Default
                 project_domain_name: Default
+            key_name: {{ ovb_key_name }}
             {% endraw -%}
             cloud_settings:
               rdocloud:
@@ -88,7 +91,7 @@
             remove_ovb_after_job: false
             {% endif -%}
             {% raw -%}
-            mirror_fqdn: {{ lookup('env', 'NODEPOOL_MIRROR') | default('mirror.regionone.rdo-cloud.rdoproject.org', true) }}
+            mirror_fqdn: {{ mirror_path }}
             {% endraw -%}
             {% if releases_file_output is defined -%}
             ready_releases_file: |
