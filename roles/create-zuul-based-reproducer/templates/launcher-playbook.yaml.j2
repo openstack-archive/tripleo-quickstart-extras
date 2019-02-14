@@ -13,6 +13,10 @@
 # >> ansible-playbook launcher-playbook.yaml \
 #    -e cloud_name='<custom cloud>'
 #
+# To run with a different clouds.yaml
+# >> ansible-playbook launcher-playbook.yaml \
+#    -e clouds_yaml_path='<full path to yaml file>'
+#
 # To force the job into failing status in order to hold the nodes (temporary option):
 # >> ansible-playbook launcher-playbook.yaml \
 #    -e force_post_failure=true
@@ -45,6 +49,9 @@
 
 - hosts: localhost
   vars:
+    {% raw -%}
+    clouds_yaml_path: "/home/{{ ansible_user }}/.config/openstack/clouds.yaml"
+    {% endraw -%}
     depends_on:
       - {{ zuul.change_url }}
     zuul_yaml: >-
@@ -57,6 +64,29 @@
           name: {{ zuul.job }}-dlrn-hash-tag
           parent: {{ zuul.job }}
           vars:
+            {% if 'ovb' in zuul.job -%}
+            {% raw -%}
+            cloud_secrets:
+              rdocloud:
+                {{ lookup('file', '{{ clouds_yaml_path }}') | regex_search('username: (.+)') }}
+                {{ lookup('file', '{{ clouds_yaml_path }}') | regex_search('password: (.+)') }}
+                {{ lookup('file', '{{ clouds_yaml_path }}') | regex_search('project_name: (.+)') }}
+                auth_url: https://phx2.cloud.rdoproject.org:13000/v3
+                region_name: regionOne
+                identity_api_version: 3
+                user_domain_name: Default
+                project_domain_name: Default
+            {% endraw -%}
+            cloud_settings:
+              rdocloud:
+                public_ip_net: 38.145.32.0/22
+                undercloud_flavor: m1.large
+                baremetal_flavor: m1.large
+                bmc_flavor: m1.medium
+                extra_node_flavor: m1.small
+                baremetal_image: CentOS-7-x86_64-GenericCloud-1804_02
+            remove_ovb_after_job: false
+            {% endif -%}
             {% raw -%}
             mirror_fqdn: {{ lookup('env', 'NODEPOOL_MIRROR') | default('mirror.regionone.rdo-cloud.rdoproject.org', true) }}
             {% endraw -%}
