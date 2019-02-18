@@ -65,8 +65,8 @@ sudo cp $RCFILE \
     {{ working_dir }}/tempest_container.sh \
     $TEMPEST_HOST_DATA
 
-{% if undercloud_container_cli is defined %}
-export CONTAINER_BINARY={{ undercloud_container_cli }}
+{% if release not in ['newton', 'ocata', 'pike', 'queens', 'rocky'] %}
+export CONTAINER_BINARY='podman'
 {% else %}
 export CONTAINER_BINARY='docker'
 {% endif %}
@@ -74,8 +74,8 @@ export CONTAINER_BINARY='docker'
 sudo $CONTAINER_BINARY pull {{ tempest_container_registry }}/{{ tempest_container_namespace }}:{{ tempest_container_tag }}
 
 {% if tempest_use_headless_chrome|bool %}
-docker pull selenium/standalone-chrome
-docker run -d \
+sudo $CONTAINER_BINARY pull selenium/standalone-chrome
+sudo $CONTAINER_BINARY run -d \
   -p {{ tempest_headless_chrome_port }}:{{ tempest_headless_chrome_port }} \
   -v /dev/shm:/dev/shm selenium/standalone-chrome
 {% endif %}
