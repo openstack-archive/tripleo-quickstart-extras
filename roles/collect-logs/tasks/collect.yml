@@ -242,7 +242,7 @@
                 # See also: https://github.com/containers/libpod/issues/613
                 container_cp() {
                   mnt=$(podman mount $1)
-                  cp -r ${mnt}${2} $3
+                  cp -rT ${mnt}${2} $3
                   podman umount $1
                 }
             fi
