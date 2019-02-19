@@ -1,0 +1,10 @@
+---
+- name: Get failed services from Systemd
+  shell: >
+    systemctl list-units --failed --plain --no-legend --no-pager
+  register: systemd_state
+
+- name: Fails if we find failed systemd units
+  assert:
+    that:
+      - systemd_state.stdout_lines|length == 0

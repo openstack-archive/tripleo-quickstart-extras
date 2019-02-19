@@ -42,6 +42,7 @@
   gather_facts: false
   roles:
     - {role: validate-tempest, when: run_tempest|bool}
+    - {role: validate-services, when: validate_services|bool}
   tags:
     - standalone
 

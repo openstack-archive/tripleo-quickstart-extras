@@ -1,0 +1,44 @@
+---
+- name: Do we have docker
+  stat:
+    path: /usr/bin/docker
+  register: docker_stat
+
+- name: Does docker run
+  systemd:
+    name: docker
+  register: docker_svc
+  when: docker_stat.stat.exists
+
+- name: Do we have podman
+  stat:
+    path: /usr/bin/podman
+  register: podman_stat
+
+# Check both docker and podman, even if we don't have any container.
+# This will help catching failed container in mixed env, for example while
+# migrating from docker to podman or the reverse.
+- name: Get failed containers for podman
+  when: podman_stat.stat.exists
+  shell: >
+    {% raw %}
+    podman ps -a --filter 'status=exited' --format '{{.Names}} {{.Status}}'
+    {% endraw %}
+  register: failed_podman
+
+- name: Get failed containers from docker
+  when: docker_svc.status['SubState'] == 'running'
+  shell: >
+    {% raw %}
+    docker ps -a --filter 'status=exited' --format '{{.Names}} {{.Status}}'
+    {% endraw %}
+  register: failed_docker
+
+- name: Fail if we detect failed container
+  fail:
+    msg: |
+      Failed container detected. Please check the following locations
+      /var/log/extras/failed_containers.log
+      /var/log/extras/
+  when: item is not match(".* Exited \(0\) .* ago")
+  loop: "{{ failed_podman.stdout_lines + failed_docker.stdout_lines}}"

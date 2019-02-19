@@ -268,6 +268,9 @@
                 echo "" >> $ALL_FILE;
             done;
 
+            # Get only failed containers, in a dedicated file
+            ${engine} ps -a | grep -vE ' (IMAGE|Exited \(0\)|Up) ' &>> /var/log/extra/failed_containers.log;
+
             for cont in $(${engine} ps | awk {'print $NF'} | grep -v NAMES); do
                 INFO_DIR=$BASE_CONTAINER_EXTRA/containers/${cont};
                 mkdir -p $INFO_DIR;
