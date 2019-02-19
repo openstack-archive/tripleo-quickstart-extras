@@ -38,6 +38,7 @@
             - type: interface
               name: eth2
               use_dhcp: false
+              mtu: 1450
               addresses:
                 - ip_netmask: 10.0.0.1/24
                 - ip_netmask: 2001:db8:fd00:1000::1/64

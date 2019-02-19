@@ -22,16 +22,6 @@
         freeipa_internal_ip: "{{ supplemental_node_ip }}"
         cacheable: true
 
-    - name: set the undercloud_undercloud_nameservers
-      set_fact:
-        undercloud_undercloud_nameservers: ["{{ freeipa_internal_ip }}"]
-        cacheable: true
-
-    - name: set the overcloud_dns_servers
-      set_fact:
-        overcloud_dns_servers: ["{{ freeipa_internal_ip }}"]
-        cacheable: true
-
 - name: Deploy the FreeIPA server
   hosts: supplemental
   gather_facts: true
@@ -43,6 +33,14 @@
         name: repo-setup
       vars:
         repo_setup_dir: /home/{{ supplemental_user|default('centos') }}
+
+    - name: Set eth2 public IP address
+      shell: |
+        ip a add dev eth2 {{ supplemental_node_ip }}/24;
+        ip l set eth2 up;
+        ip link set dev eth2 mtu 1450;
+        ping 10.0.0.1 -c 4 -q;
+      become: true
 
     - include_role:
         name: freeipa-setup
