@@ -74,6 +74,10 @@
     dest: "{{ working_dir}}/standalone.sh"
     mode: 0755
 
+- name: Run dstat on the standalone prior to standalone deploy
+  include_role:
+    name: validate-perf
+
 - name: Deploy the standalone
   shell: >
     set -o pipefail &&
