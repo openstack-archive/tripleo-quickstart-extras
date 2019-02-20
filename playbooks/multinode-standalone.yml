@@ -67,6 +67,7 @@
         tempest_service_available_nova: true
         keystone_service_internaluri_insecure: false
         tempest_public_net_physical_type: 'datacentre'
+        tempest_private_net_provider_type: 'geneve'
         tempest_public_subnet_cidr: '{{ tempest_cidr }}'
         tempest_public_subnet_gateway_ip: '{{ tempest_cidr|nthhost(1) }}'
         tempest_public_subnet_allocation_pools: '{{ tempest_cidr|nthhost(100) ~ "-" ~ tempest_cidr|nthhost(120) }}'
