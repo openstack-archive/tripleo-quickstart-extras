@@ -171,6 +171,7 @@ artcl_logstash_files:
   - /home/*/overcloud_prep_images.log
   - /home/*/overcloud_prep_network.log
   - /home/*/overcloud_validate.log
+  - /home/*/standalone_deploy.log
   - /home/*/*upgrade*.log
   - /home/*/*update*.log
   - /home/*/repo_setup.log
