@@ -56,6 +56,7 @@ issue.</p>
 <p>
 Prior to running the Zuul-based reproducer, the following setup steps are needed -
 ( only need to be done once per local system):
+
 <ul>
 <li>Create a clouds.yaml - for example:
 <pre>
@@ -63,31 +64,54 @@ Prior to running the Zuul-based reproducer, the following setup steps are needed
 vi ~/.config/openstack/clouds.yaml
 clouds:
   rdo-cloud:
-        identity_api_version: 3
-        region_name: regionOne
-        auth:
-          auth_url: https://phx2.cloud.rdoproject.org:13000/v3
-          password: xxxxxxx
-          project_name: user_name
-          username:  user_name
-          user_domain_name: Default
-          project_domain_name: Default
-        regions:
-          - name: regionOne
-            values:
-              networks:
-                - name: 38.145.32.0/22
-                  routes_externally: true
-                - name: private
+    identity_api_version: 3
+    region_name: regionOne
+    auth:
+      auth_url: https://phx2.cloud.rdoproject.org:13000/v3
+      password: xxxxxxx
+      project_name: user_name
+      username:  user_name
+      user_domain_name: Default
+      project_domain_name: Default
+    regions:
+      - name: regionOne
+        values:
+          networks:
+            - name: 38.145.32.0/22
+              routes_externally: true
+            - name: private
+
 </code>
 </pre>
-Note that you will need a network named 'private' in the tenant connected to an
-external router.</li>
-<li>Create an ssh key pair without a pass phrase:
-The ssh key pair is configurable - see variables <code>ssh_path</code> and
-<code>user_pri_key</code>. The default key is:<code>~/.ssh/id_rsa[.pub]</code></li>
+</ul>
+<ul>
+<li> Test your cloud.yaml by running:
+<pre>
+<code>
+ openstack --os-cloud rdo-cloud image list
+</code>
+</pre>
+</ul>
+<ul>
+<li>Note that you will need a network named 'private' in the tenant connected to an
+router that is connected to the external network.</li>
+<li>Create an ssh key pair without a pass phrase:</li>
+  <ul>
+  <li>The ssh key pair is configurable - see variables <code>ssh_path</code></li>
+  <li><code>user_pri_key</code>. The default key is:<code>~/.ssh/id_rsa[.pub]</code></li>
+  <li> <b>Note:</b> Reference FAQ below when creating ssh keys, some keys fail when used w/ gerrit
+  </ul>
 <li>Check that you have access to the publicly shared nodepool images:
 There should be one image for CentOS 7, and one for Fedora 28.</li>
+</ul>
+<ul>
+Import the nodepool images to your tenant:
+<code>
+<pre>
+openstack --os-cloud rdo-cloud image set --accept 6a6d23d7-65e7-43ea-9307-71b2e17d2ead
+openstack --os-cloud rdo-cloud image set --accept 88006cd1-d089-4bd3-b70a-8cbc7eb32f63
+</code>
+</pre>
 </ul>
 </p>
 </div>
@@ -95,13 +119,15 @@ There should be one image for CentOS 7, and one for Fedora 28.</li>
 <button class="collapsible">Running the Zuul-based reproducer - using the Bash script</button>
 <div class="content">
 <p>
-wget the <b>reproducer-zuul-based-quickstart.tar</b> file. Note that
-the <code>launcher-env-setup-playbook.yaml</code> will set up
+<ul>
+<li> wget the <b>reproducer-zuul-based-quickstart.tar</b> file. </li>
+<li> Note that the <code>launcher-env-setup-playbook.yaml</code> will set up
 clone repos and set up 'roles', 'playbooks', and 'library' directories
-from which the tasks will be executed.
-Once the files are extracted from the archive, you can run the Bash script
+from which the tasks will be executed.</li>
+<li> Once the files are extracted from the archive, you can run the Bash script
 with the various options. Run the script with <code>--help</code> option to
-output a list of available run options.
+output a list of available run options. </li>
+</ul>
 </p>
 </div>
 
@@ -127,11 +153,16 @@ with the same options listed in the Bash script section above.
 <button class="collapsible">Ansible tags and running repeatedly</button>
 <div class="content">
 <p>
-The Bash scripts runs with <code>--tags all</code> passed to the
+
+<ul>
+<li> The Bash scripts runs with <code>--tags all</code> passed to the
 <code>launcher-playbook.yaml</code>.
+</li>
+<li>
 After the initial docker setup has run, it is not necessary to run through
 those setup steps for every reproducer. The <code>launcher-playbook.yaml</code>
 can be run with <code>--skip-tags start</code> after the initial run.
+</li>
 </p>
 </div>
 
