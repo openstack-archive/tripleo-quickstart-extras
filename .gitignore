@@ -1,3 +1,6 @@
+# If you want to ignore sour editor temp files, please follow this:
+# - create ~/.gitignore, add your content
+# - git config --global core.excludesfile '~/.gitignore'
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -59,4 +62,3 @@ target/
 
 # Files created by releasenotes build
 releasenotes/build
-
