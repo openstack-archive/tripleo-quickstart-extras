@@ -1,6 +1,55 @@
 ---
-- name: Run tempest
-  hosts: undercloud
-  gather_facts: false
-  roles:
-    - validate-tempest
+- name: Fail the tempest playbook on undefined cloud name and install method
+  fail:
+    msg: |
+      The variable tempest_install_method and tempest_cloud_name is required and
+      has not been set.
+  when:
+    - tempest_install_method is not defined
+    - tempest_cloud_name is not defined
+
+- name: Initialize neutron service for network creation
+  set_fact:
+    tempest_service_available_neutron: true
+
+- name: Set network vars
+  set_fact:
+    tempest_public_net_physical_type: 'datacentre'
+    tempest_private_net_provider_type: 'geneve'
+    tempest_public_subnet_cidr: '{{ tempest_cidr }}'
+    tempest_public_subnet_gateway_ip: '{{ tempest_cidr|nthhost(1) }}'
+    tempest_public_subnet_allocation_pools: '{{ tempest_cidr|nthhost(100) ~ "-" ~ tempest_cidr|nthhost(120) }}'
+  when: tempest_cidr is defined
+
+- name: Set tempest workspace related vars
+  set_fact:
+    keystone_service_internaluri_insecure: false
+    tempest_use_tempestconf: true
+    tempest_service_setup_host: '{{ inventory_hostname }}'
+    tempest_workspace: '/home/zuul/tempest'
+    stackviz_venv_bin: "/home/zuul/stackviz_venv/bin"
+
+- name: set facts while running tempest from source
+  set_fact:
+    tempest_git_repo: https://git.openstack.org/openstack/tempest
+    tempest_tempestconf_git_repo: https://git.openstack.org/openstack/python-tempestconf
+    tempest_developer_mode: true
+    tempest_venv_bin: '/home/zuul/tempest_venv/bin'
+  when: tempest_install_method == 'source'
+
+- name: Default tempest tests to run
+  # Note(chkumar246): Re-use the featureset provided tests
+  set_fact:
+    tempest_test_whitelist:
+      - 'tempest.api.identity.v3'
+      - 'tempest.scenario.test_server_basic_ops'
+      - 'tempest.api.volume.admin.test_multi_backend'
+      - 'tempest.scenario.test_object_storage_basic_ops'
+
+- name: Run os_tempest role
+  vars:
+    ansible_become: true
+    debug: true
+    tempest_run: 'yes'
+  include_role:
+    name: os_tempest

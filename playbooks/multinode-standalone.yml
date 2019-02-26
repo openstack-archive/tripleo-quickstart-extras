@@ -49,31 +49,10 @@
 - name: Validate the deployment
   hosts: undercloud
   tasks:
-    - include_role:
-        name: os_tempest
+    - include_tasks: tempest.yml
       vars:
-        ansible_become: true
-        tempest_run: 'yes'
-        debug: true
         tempest_install_method: distro
-        tempest_use_tempestconf: true
-        tempest_service_setup_host: '{{ inventory_hostname }}'
-        tempest_image_dir: '/home/zuul/images'
         tempest_cloud_name: 'standalone'
-        tempest_service_available_cinder: true
-        tempest_service_available_neutron: true
-        tempest_service_available_swift: true
-        tempest_service_available_glance: true
-        tempest_service_available_horizon: true
-        tempest_service_available_nova: true
-        keystone_service_internaluri_insecure: false
-        tempest_public_net_physical_type: 'datacentre'
-        tempest_private_net_provider_type: 'geneve'
-        tempest_public_subnet_cidr: '{{ tempest_cidr }}'
-        tempest_public_subnet_gateway_ip: '{{ tempest_cidr|nthhost(1) }}'
-        tempest_public_subnet_allocation_pools: '{{ tempest_cidr|nthhost(100) ~ "-" ~ tempest_cidr|nthhost(120) }}'
-        tempest_workspace: '/home/zuul/tempest'
-        stackviz_venv_bin: "/home/zuul/stackviz_venv/bin"
       when:
         - not run_tempest|bool
         - use_os_tempest is defined
