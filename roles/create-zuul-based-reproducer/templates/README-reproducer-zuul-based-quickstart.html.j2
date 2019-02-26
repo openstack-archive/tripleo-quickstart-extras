@@ -201,6 +201,18 @@ It is recommended  that keys be generated as follows:
 Then update the public keys used with Gerrit upstream and RDO Gerrit.</br>
 [1] https://storyboard.openstack.org/#!/story/2004842</li>
 </ul>
+<ul>
+<li>If you currently do not have access to upstream-cloudinit-[centos-7, fedora-28] : </li>
+<code>
+<pre>
+source the openrc from the openstack-nodepool tenant
+openstack image list | grep upstream-cloudinit
+glance member-create ${IMAGE_ID} ${YOUR_TENANT_ID}
+glance member-create ${IMAGE_ID} ${YOUR_TENANT_ID}
+</code>
+</pre>
+</ul>
+</p>
 </p>
 </div>
 
