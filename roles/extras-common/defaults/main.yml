@@ -61,3 +61,6 @@ test_ping: true
 
 # install and execute dstat across nodes
 validate_performance: true
+
+# If `validate_services` is `true`, run the validate-services role
+validate_services: false

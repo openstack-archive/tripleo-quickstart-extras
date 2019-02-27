@@ -34,3 +34,15 @@
   gather_facts: true
   roles:
     - {role: validate-ui, when: validate_ui_simple|bool and undercloud_enable_ui|default(true)|bool}
+
+# Ensure services and containers are OK
+- name: Execute simple service and container validations
+  hosts:
+    - undercloud
+    - overcloud
+  tags:
+    - overcloud-validate
+    - undercloud-validate
+  gather_facts: false
+  roles:
+    - {role: validate-services, when: validate_services|bool}
