@@ -40,3 +40,4 @@ undercloud_ara_version: 0.15.0
 # each branch - https://bugs.launchpad.net/tripleo/+bug/1792622
 undercloud_ara: false
 install_atop: true
+atop_command: atop -R -w /var/log/atop.bin

@@ -11,6 +11,6 @@
         {{ ansible_pkg_mgr }} install -y $atop_location
 
     - name: Run atop
-      shell: atop -R -w /var/log/atop.bin &
+      shell: "{{ atop_command }} &"
       async: 0
       poll: 0
