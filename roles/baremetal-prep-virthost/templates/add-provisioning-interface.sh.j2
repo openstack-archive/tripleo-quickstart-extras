@@ -48,6 +48,8 @@ sudo ifup {{ virthost_provisioning_interface }}
 ## * Add the NIC on the provisioning interface to the "brovc" bridge
 ## ::
 
-sudo brctl addif brovc {{ virthost_provisioning_interface }}
+if ! sudo brctl show brovc | grep {{ virthost_provisioning_interface }}; then
+    sudo brctl addif brovc {{ virthost_provisioning_interface }}
+fi
 
 ### --stop_docs

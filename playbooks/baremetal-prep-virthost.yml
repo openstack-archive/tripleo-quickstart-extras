@@ -6,11 +6,12 @@
   tasks:
     - name: Add virthost
       add_host:
-        name: "{{virthost}}"
+        name: "{{ virthost }}"
         groups: "virthost"
         ansible_fqdn: "{{ virthost }}"
         ansible_user: "root"
         ansible_host: "{{ virthost }}"
+        ansible_private_key_file: "{{ ansible_private_key_file_location | default('') }}"
 
 - include: teardown-provision.yml
 
