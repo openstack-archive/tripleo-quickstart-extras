@@ -68,6 +68,7 @@ virtualenv --system-site-packages {{ working_dir }}/tempest_git/.venv
 {% endif %}
 
 {% if tempest_format == "container" %}
+echo "========= Note: Executing tempest via a container =========="
 export RCFILE="{{ rc_file }}"
 cat <<'EOF' > {{ working_dir }}/tempest_container.sh
 # Set the exit status for the command
