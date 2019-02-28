@@ -20,7 +20,7 @@
       git:
         repo: "{{ item }}"
         dest: "git/{{ item.replace('.git', '').split('/')[-1:]|join('/') }}"
-        update: yes
+        update: no
       with_items:
         - https://git.openstack.org/openstack/tripleo-quickstart.git
         - https://github.com/rdo-infra/ansible-role-tripleo-ci-reproducer.git
