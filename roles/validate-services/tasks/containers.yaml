@@ -15,30 +15,44 @@
     path: /usr/bin/podman
   register: podman_stat
 
-# Check both docker and podman, even if we don't have any container.
-# This will help catching failed container in mixed env, for example while
-# migrating from docker to podman or the reverse.
-- name: Get failed containers for podman
+- name: Podman related block
   when: podman_stat.stat.exists
-  shell: >
-    {% raw %}
-    podman ps -a --filter 'status=exited' --format '{{.Names}} {{.Status}}'
-    {% endraw %}
-  register: failed_podman
+  block:
+    - name: Get failed containers for podman
+      shell: >
+        {% raw %}
+        podman ps -a --filter 'status=exited' --format '{{.Names}} {{.Status}}'
+        {% endraw %}
+      register: failed_podman
 
-- name: Get failed containers from docker
-  when: docker_svc.status['SubState'] == 'running'
-  shell: >
-    {% raw %}
-    docker ps -a --filter 'status=exited' --format '{{.Names}} {{.Status}}'
-    {% endraw %}
-  register: failed_docker
+    - name: Fail if we detect failed podman container
+      fail:
+        msg: |
+          Failed container detected. Please check the following locations
+          /var/log/extras/failed_containers.log
+          /var/log/extras/podman
+      when: item is not match(".* Exited \(0\) .* ago")
+      loop: "{{ failed_podman.stdout_lines }}"
 
-- name: Fail if we detect failed container
-  fail:
-    msg: |
-      Failed container detected. Please check the following locations
-      /var/log/extras/failed_containers.log
-      /var/log/extras/
-  when: item is not match(".* Exited \(0\) .* ago")
-  loop: "{{ failed_podman.stdout_lines + failed_docker.stdout_lines}}"
+- name: Docker related block
+  when:
+    - docker_stat.stat.exists
+    - docker_svc.status['SubState'] == 'running'
+  block:
+    - name: Get failed containers from docker
+      shell: >
+        {% raw %}
+        docker ps -a --filter 'status=exited' --format '{{.Names}} {{.Status}}'
+        {% endraw %}
+      register: failed_docker
+
+    - name: Fail if we detect failed docker container
+      fail:
+        msg: |
+          Failed container detected. Please check the following locations
+          /var/log/extras/failed_containers.log
+          /var/log/extras/docker
+      when:
+        - failed_docker is defined
+        - item is not match(".* Exited \(0\) .* ago")
+      loop: "{{ failed_docker.stdout_lines}}"

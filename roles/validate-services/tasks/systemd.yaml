@@ -1,7 +1,7 @@
 ---
 - name: Get failed services from Systemd
   shell: >
-    systemctl list-units --failed --plain --no-legend --no-pager
+    systemctl list-units --failed --plain --no-legend --no-pager "tripleo_*"
   register: systemd_state
 
 - name: Fails if we find failed systemd units
