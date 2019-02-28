@@ -13,6 +13,18 @@
     rc_file_container: "{{ tempest_data }}/{% if tempest_undercloud %}stackrc{% else %}overcloudrc{% endif %}"
   when: tempest_format == 'container'
 
+- name: copy tls related files to undercloud home directory
+  copy:
+    src: '/etc/novajoin/krb5.keytab'
+    dest: '{{ working_dir }}/krb5.keytab'
+    owner: '{{ undercloud_user }}'
+    group: '{{ undercloud_user }}'
+    remote_src: true
+  become: true
+  when:
+    - enable_tls_everywhere is defined
+    - enable_tls_everywhere|bool
+
 - name: Create overcloud tempest setup script
   template:
     src: tempest-setup.j2
