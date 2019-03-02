@@ -211,3 +211,4 @@ influxdb_create_data_file: true
 odl_extra_log_dir: /var/log/extra/odl
 odl_extra_info_log: "{{ odl_extra_log_dir }}/odl_info.log"
 ara_overcloud_db_path: "/var/lib/mistral/overcloud/ara_overcloud.sqlite"
+ara_generate_html: true
