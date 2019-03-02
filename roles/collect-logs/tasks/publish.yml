@@ -116,9 +116,10 @@
   when: ansible_env.TOCI_JOBTYPE is defined
 
 
-- name: Create the zuul-based reproducer script
+- name: Create the zuul-based reproducer script if we are running on zuul
   include_role:
     name: create-zuul-based-reproducer
+  when: zuul is defined
 
 - name: upload to the artifact server using pubkey auth
   shell: rsync -av --quiet -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" {{ artcl_collect_dir }}/ {{ artcl_rsync_path }}/{{ lookup('env', 'BUILD_TAG') }}
