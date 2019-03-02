@@ -198,6 +198,9 @@ if ! groups | grep -Eq "docker|dockerroot"; then
         DG=docker
     elif grep -q dockerroot: /etc/group; then
         DG=dockerroot
+    elif ! grep -q docker /etc/group; then
+        sudo groupadd docker
+        DG=docker
     fi
     sudo usermod -aG $DG $USER
     echo -e "\e[31m WARNING: Add user immediately to the $DG group. \
@@ -220,6 +223,9 @@ if [[ -f /etc/docker/daemon.json ]]; then
          echo "The docker|dockerroot group will be added to /etc/docker/daemon.json."
      fi
 fi
+
+# Ensure the docker process has been restarted
+sudo systemctl restart docker
 
 # Start from a clean workspace
 export WORKSPACE
