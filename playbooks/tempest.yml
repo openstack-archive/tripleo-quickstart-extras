@@ -26,15 +26,15 @@
     keystone_service_internaluri_insecure: false
     tempest_use_tempestconf: true
     tempest_service_setup_host: '{{ inventory_hostname }}'
-    tempest_workspace: '/home/zuul/tempest'
-    stackviz_venv_bin: "/home/zuul/stackviz_venv/bin"
+    tempest_workspace: "{{ ansible_user_dir }}/tempest"
+    stackviz_venv_bin: "{{ ansible_user_dir }}/stackviz_venv/bin"
 
 - name: set facts while running tempest from source
   set_fact:
     tempest_git_repo: https://git.openstack.org/openstack/tempest
     tempest_tempestconf_git_repo: https://git.openstack.org/openstack/python-tempestconf
     tempest_developer_mode: true
-    tempest_venv_bin: '/home/zuul/tempest_venv/bin'
+    tempest_venv_bin: "{{ ansible_user_dir }}/tempest_venv/bin"
   when: tempest_install_method == 'source'
 
 - name: Default tempest tests to run
