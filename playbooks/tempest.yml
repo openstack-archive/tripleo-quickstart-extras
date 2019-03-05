@@ -46,10 +46,23 @@
       - 'tempest.api.volume.admin.test_multi_backend'
       - 'tempest.scenario.test_object_storage_basic_ops'
 
+- name: Load tempest skiplist file
+  include_vars: "{{ playbook_dir | dirname }}/vars/tempest_skip_{{ release | default('master') }}.yml"
+
+# TODO(arxcruz): For now this is the easiest way to fix this:
+# os_tempest uses the variable tempest_test_blacklist while we use
+# known_failures. Change now, means a lot of changes on other parts of the code
+# (tempestmail, validate-tempest, etc). Once we migrate to os_tempest we can
+# switch that.
+- name: Set tempest_test_blacklist
+  set_fact:
+    tempest_test_blacklist: "{{ known_failures | default([])}}"
+
 - name: Run os_tempest role
   vars:
     ansible_become: true
     debug: true
     tempest_run: 'yes'
+  gather_facts: true
   include_role:
     name: os_tempest
