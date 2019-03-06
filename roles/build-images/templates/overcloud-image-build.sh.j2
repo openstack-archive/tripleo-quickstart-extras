@@ -17,6 +17,10 @@ mount devpts /dev/pts -t devpts ||:
 
 sudo yum -y install python-tripleoclient
 
+# TODO(gcerami): remove after https://bugs.launchpad.net/tripleo/+bug/1818305
+# has a root cause
+export DIB_DEBUG_TRACE=1
+
 export DIB_YUM_REPO_CONF=""
 {% for repo_path in overcloud_repo_paths %}
 export DIB_YUM_REPO_CONF="$DIB_YUM_REPO_CONF {{ repo_path }}"
