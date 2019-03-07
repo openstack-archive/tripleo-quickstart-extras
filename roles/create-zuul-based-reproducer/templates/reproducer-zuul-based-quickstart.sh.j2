@@ -178,6 +178,7 @@ if [[ "$LIBVIRT" == "1" ]]; then
     if [[ ! -z "$LIBVIRT_ERROR" ]]; then
         echo -e "\e[31m ERROR: -l,  libvirt attempted on a machine w/o libvirt capabilities, or on a virtual instance \e[0m"
     fi
+fi
 
 curl -o bindep.txt https://raw.githubusercontent.com/rdo-infra/ansible-role-tripleo-ci-reproducer/master/bindep.txt
 
