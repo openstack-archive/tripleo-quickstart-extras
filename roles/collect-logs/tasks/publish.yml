@@ -81,15 +81,19 @@
     fi;
   when: use_os_tempest is defined
 
-- name: fetch tempest results to the root of the collect_dir
+- name: tempest results to the root of the collect_dir
   shell: >
     cp {{ artcl_collect_dir }}/undercloud/home/stack/tempest/tempest.{xml,html}{,.gz} {{ artcl_collect_dir }} || true;
     gunzip {{ artcl_collect_dir }}/tempest.{xml,html}.gz || true;
 
-- name: fetch tempest results to the root of the collect_dir for os_tempest
+- name: Gunzip tempest results to the root of the collect_dir for os_tempest
   shell: >
-    cp {{ artcl_collect_dir }}/undercloud/var/log/tempest/stestr_results.html.gz {{ artcl_collect_dir }} || true;
-    gunzip {{ artcl_collect_dir }}/stestr_results.html.gz || true;
+    gunzip -c {{ artcl_collect_dir }}/undercloud/var/log/tempest/stestr_results.html.gz > {{ artcl_collect_dir }}/stestr_results.html || true
+  when: use_os_tempest is defined
+
+- name: Copy testrepository.subunit file to the root of collect_dir for os_tempest
+  shell: >
+    cp {{ artcl_collect_dir }}/undercloud/var/log/tempest/testrepository.subunit.gz {{ artcl_collect_dir }}/testrepository.subunit.gz || true
   when: use_os_tempest is defined
 
 - name: Fetch .sh and .log files from local working directory on localhost
