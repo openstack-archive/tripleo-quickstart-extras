@@ -34,11 +34,75 @@
     set -o pipefail &&
     {{ working_dir }}/standalone-container-prep.sh 2>&1 {{ timestamper_cmd }} > {{ working_dir }}/{{ standalone_container_prep_log }}
 
+# update the registry to rdo or docker.io
+- name: update registry if needed in container-prepare-parameters.yaml
+  when:
+    - docker_registry_host != '' and docker_registry_namespace != ''
+  vars:
+    yaml_file: "{{ working_dir }}/containers-prepare-parameters.yaml"
+    container_image_prep_updates:
+      set:
+        namespace: "{{ docker_registry_host }}/{{ docker_registry_namespace }}"
+    initial_dict: |
+      {{ lookup('file', yaml_file) | from_yaml }}
+    merged_dict:
+      parameter_defaults:
+        ContainerImagePrepare:
+          - |
+            {{ initial_dict.parameter_defaults.ContainerImagePrepare |
+               combine(container_image_prep_updates, recursive=true) }}
+  copy:
+    content: "{{ merged_dict | to_nice_yaml }}"
+    dest: "{{ yaml_file }}"
+    backup: true
+
+# update the container tag to match dlrn hash
+- name: update container tag if needed in container-prepare-parameters.yaml
+  when:
+    - container_build_id != ''
+  vars:
+    yaml_file: "{{ working_dir }}/containers-prepare-parameters.yaml"
+    container_image_prep_updates:
+      set:
+        tag: "{{ container_build_id }}"
+    initial_dict: |
+      {{ lookup('file', yaml_file) | from_yaml }}
+    merged_dict:
+      parameter_defaults:
+        ContainerImagePrepare:
+          - |
+            {{ initial_dict.parameter_defaults.ContainerImagePrepare |
+               combine(container_image_prep_updates, recursive=true) }}
+  copy:
+    content: "{{ merged_dict | to_nice_yaml }}"
+    dest: "{{ yaml_file }}"
+    backup: true
+
+# in extra-common/defaults
+# docker_prep_prefix: "{{ ansible_distribution | lower }}-binary-"
+- name: update container name_prefix for the appropriate distro
+  vars:
+    yaml_file: "{{ working_dir }}/containers-prepare-parameters.yaml"
+    container_image_prep_updates:
+      set:
+        name_prefix: "{{ docker_prep_prefix }}"
+    initial_dict: |
+      {{ lookup('file', yaml_file) | from_yaml }}
+    merged_dict:
+      parameter_defaults:
+        ContainerImagePrepare:
+          - |
+            {{ initial_dict.parameter_defaults.ContainerImagePrepare |
+               combine(container_image_prep_updates, recursive=true) }}
+  copy:
+    content: "{{ merged_dict | to_nice_yaml }}"
+    dest: "{{ yaml_file }}"
+    backup: true
+
+# update params for container update
 - name: Add updates to container-prepare-parameters.yaml
   when:
     - standalone_container_prep_updates
-    # We don't want to update 'centos-binary' containers with 'fedora' repos
-    - docker_prep_prefix is search(ansible_distribution|lower)
   vars:
     yaml_file: "{{ working_dir }}/containers-prepare-parameters.yaml"
     container_image_prep_updates:
