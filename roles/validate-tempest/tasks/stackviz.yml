@@ -13,14 +13,6 @@
     tempest_dstat_opt: '--dstat /var/log/extra/dstat-csv.log'
   when: dstat_result.stat.exists
 
-- name: Set the proper permission for tempest directory and files
-  file:
-    dest: "{{ working_dir }}/tempest"
-    owner: "{{ undercloud_user }}"
-    group: "{{ undercloud_user }}"
-    recurse: true
-  become: true
-
 - name: Copy stackviz static file to home directory
   shell: >
     cp -r "{{ working_dir }}/tempest/.stackviz/share/stackviz-html" "{{ working_dir }}/stackviz"

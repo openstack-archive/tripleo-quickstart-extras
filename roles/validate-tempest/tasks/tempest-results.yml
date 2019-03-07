@@ -1,6 +1,21 @@
 ---
 - ignore_errors: true
+  when: tempest_format == 'container'
   block:
+    - name: Set the proper permission for tempest directory and files
+      file:
+        dest: "/var/lib/tempestdata"
+        owner: "{{ undercloud_user }}"
+        group: "{{ undercloud_user }}"
+        recurse: true
+      become: true
+
+    - name: copy files from tempest container to home directory
+      copy:
+        src: "/var/lib/tempestdata/tempest"
+        dest: "{{ working_dir }}"
+
+- block:
     - name: Check for .stestr directory
       stat:
         path: "{{ working_dir }}/tempest/.stestr"

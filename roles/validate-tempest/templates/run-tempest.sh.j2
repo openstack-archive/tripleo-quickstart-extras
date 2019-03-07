@@ -97,11 +97,5 @@ sudo $CONTAINER_BINARY run --net=host -i -v $TEMPEST_HOST_DATA:{{ tempest_data }
     {{ tempest_container_registry }}/{{ tempest_container_namespace }}:{{ tempest_container_tag }} \
     /usr/bin/bash -c 'set -e; {{ tempest_data }}/tempest_container.sh'
 
-# Change permission of tempest workspace directory
-sudo chmod -R 777 $TEMPEST_HOST_DATA
-
-# Copy tempest related data to tempest folder so that stackviz can use it
-cp -R $TEMPEST_HOST_DATA/tempest {{ working_dir }}
-
 {% endif %}
 ### --stop_docs
