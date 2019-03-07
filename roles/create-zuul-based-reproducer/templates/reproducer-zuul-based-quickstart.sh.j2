@@ -169,6 +169,16 @@ done
 
 set -x
 
+if [[ "$LIBVIRT" == "1" ]]; then
+    echo "check if virt flags are enabled on the cpu"
+    grep -q 'vmx\|smx' /proc/cpuinfo || LIBVIRT_ERROR=true
+    # grep hypervisor returns true on virt
+    echo "check if linux is running in a hypervisor"
+    grep -q 'hypervisor' /proc/cpuinfo && LIBVIRT_ERROR=true || true
+    if [[ ! -z "$LIBVIRT_ERROR" ]]; then
+        echo -e "\e[31m ERROR: -l,  libvirt attempted on a machine w/o libvirt capabilities, or on a virtual instance \e[0m"
+    fi
+
 curl -o bindep.txt https://raw.githubusercontent.com/rdo-infra/ansible-role-tripleo-ci-reproducer/master/bindep.txt
 
 # Install rpms and other requirements
