@@ -18,4 +18,4 @@
   roles:
     - {role: validate-simple, when: test_ping|bool}
     - {role: validate-tempest, when: run_tempest|bool}
-    - {role: validate-services, when: validate_services|bool}
+    - {role: validate-services, when: validate_services|bool|default(false)}
