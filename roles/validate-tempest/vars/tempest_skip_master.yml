@@ -59,8 +59,6 @@ known_failures:
     reason: 'Not supported in TripleO'
   - test: 'congress_tempest_plugin'
     reason: 'Not supported in TripleO'
-  - test: 'barbican_tempest_plugin'
-    reason: 'Not supported in TripleO'
   - test: 'ec2api_tempest_plugin'
     reason: 'Not supported in TripleO/tempestconf'
   - test: 'telemetry_tempest_plugin.scenario.test_telemetry_integration.TestTelemetryIntegration'
