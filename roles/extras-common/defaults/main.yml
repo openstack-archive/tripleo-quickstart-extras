@@ -19,11 +19,13 @@ containerized_overcloud_upgrade: >-
   {%- else -%}
   true
   {%- endif -%}
-local_docker_registry_host: "{{undercloud_network_gateway|default(undercloud_network_cidr|nthhost(1))}}"
+local_docker_registry_host: "{{ undercloud_network_gateway|default(undercloud_network_cidr|nthhost(1)) }}"
 docker_registry_host: docker.io
 docker_registry_namespace: "tripleo{{ release }}"
 docker_image_tag: current-tripleo
-docker_prep_prefix: centos-binary-
+# docker prefix
+docker_prep_prefix: "{{ ansible_distribution | lower }}-binary-"
+# docker suffix
 docker_prep_suffix: ""
 docker_ceph_namespace: docker.io/ceph
 docker_ceph_image: daemon
