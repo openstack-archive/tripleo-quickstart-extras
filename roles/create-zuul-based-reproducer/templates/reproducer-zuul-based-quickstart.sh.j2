@@ -175,6 +175,7 @@ if [[ "$LIBVIRT" == "1" ]]; then
     # grep hypervisor returns true on virt
     echo "check if linux is running in a hypervisor"
     grep -q 'hypervisor' /proc/cpuinfo && LIBVIRT_ERROR=true || true
+    dmesg | grep kvm | grep -i disabled && LIBVIRT_ERROR=true || true
     if [[ ! -z "$LIBVIRT_ERROR" ]]; then
         echo -e "\e[31m ERROR: -l,  libvirt attempted on a machine w/o libvirt capabilities, or on a virtual instance \e[0m"
     fi
