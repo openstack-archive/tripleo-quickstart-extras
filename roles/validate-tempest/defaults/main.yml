@@ -21,7 +21,10 @@ tempest_config: true
 tempest_overcloud: true
 run_tempest: false
 post_tempest: true
-tempest_format: packages  # venv or packages or container
+
+# venv or packages or container
+tempest_format: packages
+
 tempest_container_registry: >-
   {% if (undercloud_enable_tempest is defined) and undercloud_enable_tempest|bool -%}
   {{ local_docker_registry_host }}:8787/{{ docker_registry_namespace }}

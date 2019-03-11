@@ -1,8 +1,20 @@
 ---
 - name: Set tempest init command
   set_fact:
-      tempest_init: "tempest init {{ tempest_dir }}"
+     tempest_init: "tempest init {{ tempest_dir }}"
 
 - name: Set tempestconf call
   set_fact:
-      tempestconf: "/usr/bin/discover-tempest-config"
+     tempestconf: "/usr/bin/discover-tempest-config"
+
+- name: Create /var/log/containers/tempest
+  file:
+     path: /var/log/containers/tempest
+     state: directory
+  become: true
+
+- name: Create /var/lib/tempestdata
+  file:
+     path: /var/lib/tempestdata
+     state: directory
+  become: true

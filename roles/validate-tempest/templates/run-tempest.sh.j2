@@ -52,7 +52,10 @@ then
     sudo mkdir -p $TEMPEST_HOST_DATA
 fi
 
-sudo cp $RCFILE \
+sudo cp \
+    {% if tempest_os_cloud == '' %}
+    {{ rc_file }} \
+    {% endif %}
     {% if skip_file_src != '' %}
     {{ working_dir }}/{{ skip_file }} \
     {% endif %}
@@ -64,6 +67,10 @@ sudo cp $RCFILE \
     {% endif %}
     {{ working_dir }}/tempest_container.sh \
     $TEMPEST_HOST_DATA
+
+{% if tempest_os_cloud != '' %}
+sudo cp -Rf {{ working_dir }}/.config $TEMPEST_HOST_DATA
+{% endif %}
 
 {% if release not in ['newton', 'ocata', 'pike', 'queens', 'rocky'] %}
 export CONTAINER_BINARY='podman'

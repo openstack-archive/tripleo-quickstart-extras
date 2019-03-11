@@ -69,10 +69,19 @@ virtualenv --system-site-packages {{ working_dir }}/tempest_git/.venv
 
 {% if tempest_format == "container" %}
 echo "========= Note: Executing tempest via a container =========="
-export RCFILE="{{ rc_file }}"
+
 cat <<'EOF' > {{ working_dir }}/tempest_container.sh
 # Set the exit status for the command
 set -e
+
+# Load rc file or os_cloud file
+
+{% if tempest_os_cloud == '' %}
+source {{ rc_file_container }}
+{% else %}
+export OS_CLOUD="standalone"
+cp -Rf /var/lib/tempest/.config ~/
+{% endif %}
 
 # Get the list of tempest/-plugins rpms installed within a tempest container
 # It will be useful for debugging and making sure at what commit
@@ -104,12 +113,6 @@ popd
 ## -------------------------------------------------------
 ## ::
 export TEMPESTCONF="{{ tempestconf }}"
-
-{% if tempest_format == 'container' %}
-source {{ rc_file_container }}
-{% elif tempest_os_cloud == '' %}
-source {{ rc_file }}
-{% endif %}
 
 {% if tempest_overcloud|bool or tempest_os_cloud != '' %}
 # Get public net id
