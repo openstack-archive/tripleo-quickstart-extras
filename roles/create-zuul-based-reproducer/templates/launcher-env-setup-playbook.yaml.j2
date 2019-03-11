@@ -18,12 +18,21 @@
 
     - name: Clone repos needed for reproducer
       git:
-        repo: "{{ item }}"
-        dest: "git/{{ item.replace('.git', '').split('/')[-1:]|join('/') }}"
+        repo: https://git.openstack.org/openstack/tripleo-quickstart.git
+        dest: "git/tripleo-quickstart"
+        version: 'FETCH_HEAD'
+        accept_hostkey: true
         update: no
-      with_items:
-        - https://git.openstack.org/openstack/tripleo-quickstart.git
-        - https://github.com/rdo-infra/ansible-role-tripleo-ci-reproducer.git
+        refspec: "{{ ooo_quickstart_refspec | default('HEAD') }}"
+
+    - name: Clone ansible role for reproducer
+      git:
+        repo: https://github.com/rdo-infra/ansible-role-tripleo-ci-reproducer.git
+        dest: "git/ansible-role-tripleo-ci-reproducer"
+        version: 'FETCH_HEAD'
+        accept_hostkey: true
+        update: no
+        refspec: "{{ reproducer_role_refspec | default('HEAD') }}"
 
     - name: Copy roles and libraries for tripleo-quickstart
       synchronize:
