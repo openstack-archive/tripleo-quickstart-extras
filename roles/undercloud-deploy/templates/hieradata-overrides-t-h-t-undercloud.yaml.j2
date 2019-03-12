@@ -7,7 +7,7 @@ parameter_defaults:
 
     {% if ctlplane_masquerade|default(false) %}
     # Override masquerading, OVB need's to masquerade the External (10.0.0.0/24) net as well.
-    tripleo::masquerade_networks::masquerade_networks: {'192.168.24.0/24': ['192.168.24.0/24'], '10.0.0.0/24': ['10.0.0.0/24']}
+    tripleo::masquerade_networks::masquerade_networks: {% if overcloud_ipv6|bool %}{'{{ undercloud_network_cidr }}': ['{{ undercloud_network_cidr }}'], '{{ undercloud_external_network_cidr_ipv4 }}': ['{{ undercloud_external_network_cidr_ipv4}}']}{% else %}{'{{ undercloud_network_cidr }}': ['{{ undercloud_network_cidr }}'], '{{ undercloud_external_network_cidr }}': ['{{ undercloud_external_network_cidr}}']}{% endif -%}
     {% endif %}
 
     # The following are configurations for the different workers for the undercloud
