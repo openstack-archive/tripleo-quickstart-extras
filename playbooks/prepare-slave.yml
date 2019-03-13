@@ -45,5 +45,7 @@
         create: true
 
     - name: Install ipmitool if not installed
-      yum: name=ipmitool state=latest
+      package:
+        name: ipmitool
+        state: latest
       become: true
