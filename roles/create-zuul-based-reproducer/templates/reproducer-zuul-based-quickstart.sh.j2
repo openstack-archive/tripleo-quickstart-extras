@@ -215,8 +215,8 @@ if ! groups | grep -Eq "docker|dockerroot"; then
         DG=docker
     fi
     sudo usermod -aG $DG $USER
-    echo -e "\e[31m WARNING: Add user immediately to the $DG group. \
-Changing the user's groups will exit the script, please re-execute the script. \e[0m"
+    echo -e "\e[31m WARNING: The script has exited the current shell in order to setup \
+the user groups via usermod correctly. Please re-execute the script. \e[0m"
     exec sg $DG newgrp `id -gn`
 fi
 
