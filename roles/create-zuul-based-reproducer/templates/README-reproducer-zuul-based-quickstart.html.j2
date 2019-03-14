@@ -128,6 +128,62 @@ from which the tasks will be executed.</li>
 with the various options. Run the script with <code>--help</code> option to
 output a list of available run options. </li>
 </ul>
+<b>Note:</b> the local $USERNAME idealy matches the openstack and rdo gerrit user id's
+If not pay extra attention to the -ug and -rg options.
+<ul>
+<code>
+<pre>
+Options:
+  -w, --workspace dir
+                      directory where the repos and directories
+                      are created. Defaults to creating a directory in /tmp
+  -l, --libvirt
+                      Runs a 2-node multinode job or singlenode job on a
+                      single virthost using libvirt to create the nodes.
+                      If a singlenode reproducer is run, two VMs will still be created.
+  -c, --cloud-name
+                      Host cloud, specified in the clouds.yaml, to target
+                      Defaults to rdo-cloud
+  -cp, --clouds-yaml-path
+                      Full path to the clouds.yaml file
+                      Defaults to /home/$USERNAME/.config/openstack/clouds.yaml
+  -ok, --ovb-key-name
+                      Name of the key to use in the host tenant for OVB deployments
+                      Defaults to tripleo-ci-team
+  -f, --force-post-failure
+                      Force job to fail so that the nodes will be held.
+                      Temporary solution
+  -ug, --upstream-gerrit-user
+                      Set the upstream gerrit user required to clone repos.
+                      Defaults to the current $USERNAME
+  -rg, --rdo-gerrit-user
+                      Set the upstream RDO user required to clone RDO-related repos.
+                      Defaults to the current $USERNAME
+  -k, --ssh-key
+                      private ssh key used to set up an access nodes.
+                      Defaults to id_rsa.
+  -kp, --ssh-key-public
+                      public ssh key used to set up an access nodes.
+                      Defaults to id_rsa.pub
+  -skp, --ssh-key-path
+                      Path to directory where user ssh keys are stored.
+                      Defaults to /home/$USERNAME/.ssh
+  -ugk, --upstream-gerrit-key
+                      Set the upstream gerrit private key.
+                      Defaults to the id_rsa.
+  -rgk, --rdo-gerrit-key
+                      Set the upstream RDO user key.
+                      Defaults to the id_rsa.
+  -e, --extra-params
+                      File or/and parameters used to override default
+                      parameters for playbooks. Multiple files
+                      can be passed [-e @file1.yml -e @file2.yml ...]
+                      and arguments [-e var=value -e var2=value2 ...]
+  -h, --help          print this help and exit
+
+</code>
+</pre>
+</ul>
 </p>
 </div>
 
