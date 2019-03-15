@@ -37,14 +37,13 @@ openstack tripleo container image prepare --verbose \
     -e {{ working_dir }}/containers-prepare-parameter.yaml
 
 {% else %}
-BUILD_ID=${BUILD_ID:-"{{ container_build_id }}"}
 
 openstack overcloud container image prepare \
     --output-images-file {{ working_dir }}/overcloud_containers.yaml \
     --output-env-file {{ working_dir }}/containers-default-parameters.yaml \
     ${PREPARE_ARGS} \
     --namespace {{ docker_registry_host }}/{{ docker_registry_namespace_used }} \
-    --tag $BUILD_ID \
+    --tag {{ container_build_id }} \
 {% if docker_prep_prefix is defined %}
     --prefix "{{ docker_prep_prefix }}" \
 {% endif %}
@@ -208,7 +207,7 @@ openstack overcloud container image upload --debug --config-file {{ working_dir 
     {% if docker_ceph_tag is defined %}
         --set "ceph_tag={{ docker_ceph_tag }}" \
     {% endif %}
-        --tag $BUILD_ID
+        --tag {{ container_build_id }}
 {% endif %}
 
 {% if update_containers|bool and not use_overcloud_mixed_upgrade|default(false)|bool %}
@@ -233,7 +232,7 @@ if [[ -n "$packages_for_update" ]]; then
     {% if docker_prep_suffix is defined %}
         --suffix "{{ docker_prep_suffix }}" \
     {% endif %}
-        --tag $BUILD_ID
+        --tag {{ container_build_id }}
 
     container-check -u \
         -c {{ working_dir }}/containers_update.yaml \
