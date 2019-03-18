@@ -45,4 +45,4 @@
     - undercloud-validate
   gather_facts: false
   roles:
-    - {role: validate-services, when: validate_services|bool|default(false)}
+    - {role: validate-services, when: validate_services|default(false)|bool}
