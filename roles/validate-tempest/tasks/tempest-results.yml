@@ -10,10 +10,13 @@
         recurse: true
       become: true
 
+    # Using cp here because copy module doesn't allow recursive copy with
+    # remote_src set to true and synchronize is too slow
     - name: copy files from tempest container to home directory
-      copy:
-        src: "/var/lib/tempestdata/tempest"
-        dest: "{{ working_dir }}"
+      command: "cp -Rf --reflink=auto /var/lib/tempestdata/tempest {{ working_dir }}"
+      args:
+        warn: false
+      changed_when: true
 
 - block:
     - name: Check for .stestr directory
