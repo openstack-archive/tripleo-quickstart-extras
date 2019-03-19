@@ -96,6 +96,7 @@ sudo $CONTAINER_BINARY run --net=host -i -v $TEMPEST_HOST_DATA:{{ tempest_data }
     -v /etc/novajoin/krb5.keytab:/etc/novajoin/krb5.keytab:ro \
     -v /home/{{ undercloud_user }}/krb5.keytab:/home/{{ undercloud_user }}/krb5.keytab:ro \
     -v /etc/ipa/default.conf:/etc/ipa/default.conf:ro \
+    -v /etc/ipa/ca.crt:/etc/ipa/ca.crt:ro \
 {% endif %}
     -v /var/log/containers/tempest:{{ tempest_log_dir }} \
     {% if not 'http' in tempest_test_image_path %}
