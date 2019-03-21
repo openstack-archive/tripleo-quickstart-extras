@@ -26,15 +26,6 @@
   roles:
     - {role: validate-tempest, when: tempest_config|bool or run_tempest|bool}
 
-# Execute simple TripleO-UI validations
-- name: Execute simple TripleO-UI validations
-  hosts: localhost
-  tags:
-    - tripleoui-validate
-  gather_facts: true
-  roles:
-    - {role: validate-ui, when: validate_ui_simple|bool and undercloud_enable_ui|default(true)|bool}
-
 # Ensure services and containers are OK
 - name: Execute simple service and container validations
   hosts:
