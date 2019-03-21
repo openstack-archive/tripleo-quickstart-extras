@@ -48,7 +48,7 @@
     - name: Collect logs from all failed systemd services
       shell: >
         systemctl -t service --failed --no-legend | awk '{print $1}'
-        | xargs -r -n1 journalctl -u > /var/log/extra/services.txt 2>&1
+        | xargs -r -n1 journalctl -u > /var/log/extra/failed_services.txt 2>&1
 
     - name: Collect network status info
       shell: >
@@ -127,6 +127,11 @@
 
     - name: lvm debug
       shell: "(vgs; pvs; lvs) &> /var/log/extra/lvm.txt"
+
+    - name: Collect services status
+      shell: |
+        systemctl list-units --full --all &> /var/log/extra/services.txt
+        systemctl status "*" &>> /var/log/extra/services.txt
 
     - name: check if ODL is enabled via docker
       shell: docker ps | grep opendaylight_api
