@@ -56,3 +56,31 @@
   gather_facts: false
   roles:
     - baremetal-prep-virthost
+
+- name: Run DLRN gate role and install repo
+  hosts: undercloud
+  gather_facts: true
+  become: true
+  tasks:
+    - include_role:
+        name: build-test-packages
+      vars:
+        artg_compressed_gating_repo: "/home/{{ undercloud_user }}/gating_repo.tar.gz"
+
+    - include_role:
+        name: install-built-repo
+      when: compressed_gating_repo is defined
+
+    - include_role:
+        name: install-built-repo
+      vars:
+        ib_repo_image_path: "/home/{{ undercloud_user }}/overcloud-full.qcow2"
+      when: compressed_gating_repo is defined
+
+    - include_role:
+        name: install-built-repo
+      vars:
+        ib_repo_image_path: "/home/{{ undercloud_user }}/ironic-python-agent.initramfs"
+        initramfs_image: true
+        libguestfs_mode: false
+      when: compressed_gating_repo is defined
