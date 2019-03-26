@@ -23,7 +23,6 @@
 
 - name: Set tempest workspace related vars
   set_fact:
-    keystone_service_internaluri_insecure: false
     tempest_use_tempestconf: true
     tempest_service_setup_host: '{{ inventory_hostname }}'
     tempest_workspace: "{{ ansible_user_dir }}/tempest"
