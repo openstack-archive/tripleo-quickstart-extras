@@ -22,7 +22,7 @@
     - name: check for delete command to complete or fail
       shell: |
           source {{ working_dir }}/stackrc
-          heat stack-show $(cat {{ working_dir }}/overcloud_id)
+          openstack stack show $(cat {{ working_dir }}/overcloud_id) -f yaml
       delay: "{{ delete_check_delay }}"
       retries: "{{ delete_check_retries }}"
       until: heat_stack_show.stdout.find('DELETE_COMPLETE') != -1

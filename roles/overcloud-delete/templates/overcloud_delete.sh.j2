@@ -7,16 +7,12 @@
 
 source {{ working_dir }}/stackrc
 OVERCLOUD_NAME="overcloud"
-OVERCLOUD_ID=$(openstack stack list | grep "$OVERCLOUD_NAME" | awk '{print $2}')
+OVERCLOUD_ID=$(openstack stack list -f value -c ID)
 echo $OVERCLOUD_ID > {{ working_dir }}/overcloud_id
 
-## * select the correct command for the deletion
+## * delete overcloud with confirmation
 ## ::
 
-if heat stack-delete --help | grep -q "\-\-yes"; then
-    heat stack-delete --yes "$OVERCLOUD_NAME"
-else
-    heat stack-delete "$OVERCLOUD_NAME"
-fi
+openstack stack delete --yes "$OVERCLOUD_NAME"
 
 ### --stop_docs
