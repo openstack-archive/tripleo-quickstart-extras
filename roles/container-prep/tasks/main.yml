@@ -37,6 +37,7 @@
   set_fact:
     container_build_id: "{{ docker_image_tag }}"
     cacheable: true
+  when: get_build_command is not defined
   tags:
     - undercloud-install
 
