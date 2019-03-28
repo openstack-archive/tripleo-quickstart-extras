@@ -1,0 +1,9 @@
+parameter_defaults:
+{% for role in topology_map %}
+{% if 'scale' in topology_map[role] %}
+  {{ role }}Count: {{ topology_map[role].scale }}
+{% endif -%}
+{% if 'flavor' in topology_map[role] %}
+  Overcloud{{ role }}Flavor: {{ topology_map[role].flavor }}
+{% endif -%}
+{% endfor %}
