@@ -104,6 +104,7 @@ multinode_args: ""
 ovn_args: ""
 telemetry_args: ""
 config_download_args: ""
+selinux_args: ""
 
 deploy_args: >-
   {{ libvirt_args }}
@@ -130,6 +131,7 @@ deploy_args: >-
   {{ composable_args }}
   {{ topology }}
   {{ config_download_args }}
+  {{ selinux_args }}
   {{ extra_args }}
 
 composable_roles: false
@@ -174,3 +176,10 @@ resource_registry_args:
 # Used to deploy podman on the undercloud instead of docker
 # TODO(emilien) in Stein, we'll switch the default to podman
 overcloud_container_cli: docker
+# We disable selinux when running under CentOS. It's enabled for RHEL
+overcloud_selinux_enabled: >-
+   {% if ansible_distribution == 'CentOS' -%}
+   permissive
+   {%- else -%}
+   enforcing
+   {%- endif -%}

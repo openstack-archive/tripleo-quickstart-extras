@@ -277,3 +277,8 @@
   when:
     - ci_job_end_time is defined
     - '"ovb" not in lookup("env", "TOCI_JOBTYPE")'
+
+- name: Set the selinux args
+  set_fact:
+    selinux_args: >-
+      -e {{ working_dir }}/overcloud-selinux-config.yaml

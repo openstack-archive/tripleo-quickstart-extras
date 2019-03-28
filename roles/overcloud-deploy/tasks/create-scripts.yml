@@ -73,3 +73,8 @@
   template:
     src: "ansible.cfg.j2"
     dest: "{{ working_dir }}/custom_ansible.cfg"
+
+- name: Create selinux configuration for overcloud
+  template:
+    src: "overcloud-selinux-config.yaml.j2"
+    dest: "{{ working_dir }}/overcloud-selinux-config.yaml"
