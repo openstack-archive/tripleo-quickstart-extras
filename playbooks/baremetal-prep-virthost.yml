@@ -35,9 +35,17 @@
   roles:
     - environment/setup
 
+- name: Check whether to build images
+  hosts: virthost
+  gather_facts: true
+  roles:
+    - check-to-build-or-not-to-build
+
 - name: Setup undercloud and baremetal vms and networks in libvirt
   hosts: virthost
   gather_facts: true
+  vars:
+    baseos: true
   roles:
     - libvirt/setup
 
@@ -51,31 +59,104 @@
   roles:
     - tripleo-inventory
 
+- name: Setup the undercloud
+  hosts: undercloud
+  gather_facts: true
+  vars:
+    non_root_user_setup: false
+  roles:
+    - undercloud-setup
+
 - name: Prepare the host for PXE forwarding
   hosts: virthost
   gather_facts: false
   roles:
     - baremetal-prep-virthost
 
+- name: Set to_build on undercloud
+  hosts: undercloud
+  gather_facts: true
+  tasks:
+    - name: set_fact for to_build on undercloud
+      set_fact:
+        to_build: "{{ hostvars[groups['virthost'][0]]['to_build'] }}"
+        cacheable: true
+
+    - name: set_fact for image_cache_dir on undercloud
+      set_fact:
+        image_cache_dir: "{{ working_dir }}/images-cache"
+        cacheable: true
+
+    - name: set_fact for libguestfs_mode on undercloud
+      set_fact:
+        libguestfs_mode: false
+        cacheable: true
+
 - name: Run DLRN gate role and install repo
   hosts: undercloud
   gather_facts: true
   become: true
+  vars:
+    artg_compressed_gating_repo: "/home/{{ undercloud_user }}/gating_repo.tar.gz"
+    artg_repos_dir: "{{ repo_clone_dir|default('/opt/stack/new') }}"
+    ib_create_web_repo: "{{ hostvars[groups['virthost'][0]]['to_build'] }}"
   tasks:
+    # Always build images even if running a periodic-* named job
+    # in a check pipeline for testing
+    - name: Always build images in periodic
+      set_fact:
+        to_build: true
+        cacheable: true
+      when: "'periodic' in zuul.job"
+
     - include_role:
         name: build-test-packages
       vars:
         artg_compressed_gating_repo: "/home/{{ undercloud_user }}/gating_repo.tar.gz"
+        artg_repos_dir: "{{ repo_clone_dir|default('/opt/stack/new') }}"
+      when: build_test_packages|default(false)|bool
 
     - include_role:
         name: install-built-repo
+      vars:
+        ib_create_web_repo: "{{ to_build|bool }}"
       when: compressed_gating_repo is defined
+
+- name: Get images for quickstart
+  hosts: undercloud
+  gather_facts: true
+  vars:
+    ib_repo_image_inject: "{{ not to_build|bool }}"
+    ib_repo_run_live: false
+    modify_image_vc_ram: 4096
+    modify_image_vc_cpu: 4
+    modify_image_vc_verbose: true
+  tasks:
+    - include_role:
+        name: fetch-images
+      when: not to_build|bool
+
+    - include_role:
+        name: repo-setup
+      vars:
+        repo_inject_image_path: "/home/{{ undercloud_user }}/overcloud-full.qcow2"
+        repo_run_live: false
+      when: not to_build|bool
+
+    - include_role:
+        name: repo-setup
+      vars:
+        repo_inject_image_path: "/home/{{ undercloud_user }}/ironic-python-agent.initramfs"
+        repo_run_live: false
+        initramfs_image: true
+        libguestfs_mode: false
+      when: not to_build|bool
 
     - include_role:
         name: install-built-repo
       vars:
         ib_repo_image_path: "/home/{{ undercloud_user }}/overcloud-full.qcow2"
-      when: compressed_gating_repo is defined
+      when: compressed_gating_repo is defined and not to_build|bool
 
     - include_role:
         name: install-built-repo
@@ -83,4 +164,4 @@
         ib_repo_image_path: "/home/{{ undercloud_user }}/ironic-python-agent.initramfs"
         initramfs_image: true
         libguestfs_mode: false
-      when: compressed_gating_repo is defined
+      when: compressed_gating_repo is defined and not to_build|bool
