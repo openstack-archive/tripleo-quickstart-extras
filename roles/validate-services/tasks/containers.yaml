@@ -19,6 +19,7 @@
   when: podman_stat.stat.exists
   block:
     - name: Get failed containers for podman
+      become: true
       shell: >
         {% raw %}
         podman ps -a --filter 'status=exited' --format '{{.Names}} {{.Status}}'
