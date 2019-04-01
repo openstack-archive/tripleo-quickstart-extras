@@ -54,7 +54,7 @@ curl http://tarballs.openstack.org/ironic-python-agent/tinyipa/tinyipa-stable-pi
 IPAKERNEL=$(openstack image create --public --container-format aki --disk-format aki --file ~/tinyipa-stable-pike.vmlinuz deploy-kernel -f value -c id)
 IPARD=$(openstack image create --public --container-format ari --disk-format ari --file ~/tinyipa-stable-pike.gz deploy-ramdisk -f value -c id)
 
-openstack image create --public --container-format bare --disk-format qcow2 --file /opt/cache/files/cirros-0.3.5-x86_64-disk.img cirros
+openstack image create --public --container-format bare --disk-format qcow2 --file {{ tempest_test_image_path }} cirros
 
 openstack network create --share --provider-network-type flat --provider-physical-network datacentre --external provisioning
 openstack subnet create --network provisioning --subnet-range 192.168.24.0/24 --gateway 192.168.24.40 --allocation-pool start=192.168.24.41,end=192.168.24.100 provisioning-subnet
