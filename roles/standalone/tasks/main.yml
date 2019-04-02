@@ -99,6 +99,30 @@
     dest: "{{ yaml_file }}"
     backup: true
 
+# ceph parameters
+- name: update container ceph parameters
+  when:
+    - standalone_container_ceph_updates|default(false)|bool
+  vars:
+    yaml_file: "{{ working_dir }}/containers-prepare-parameters.yaml"
+    container_image_prep_updates:
+      set:
+        ceph_namespace: "{{ docker_ceph_namespace }}"
+        ceph_image: "{{ docker_ceph_image }}"
+        ceph_tag: "{{ docker_ceph_tag }}"
+    initial_dict: |
+      {{ lookup('file', yaml_file) | from_yaml }}
+    merged_dict:
+      parameter_defaults:
+        ContainerImagePrepare:
+          - |
+            {{ initial_dict.parameter_defaults.ContainerImagePrepare |
+               combine(container_image_prep_updates, recursive=true) }}
+  copy:
+    content: "{{ merged_dict | to_nice_yaml }}"
+    dest: "{{ yaml_file }}"
+    backup: true
+
 # update params for container update
 - name: Add updates to container-prepare-parameters.yaml
   when:
