@@ -36,15 +36,6 @@
     tempest_venv_bin: "{{ ansible_user_dir }}/tempest_venv/bin"
   when: tempest_install_method == 'source'
 
-- name: Default tempest tests to run
-  # Note(chkumar246): Re-use the featureset provided tests
-  set_fact:
-    tempest_test_whitelist:
-      - 'tempest.api.identity.v3'
-      - 'tempest.scenario.test_server_basic_ops'
-      - 'tempest.api.volume.admin.test_multi_backend'
-      - 'tempest.scenario.test_object_storage_basic_ops'
-
 - name: Load tempest skiplist file
   include_vars: "{{ playbook_dir | dirname }}/vars/tempest_skip_{{ release | default('master') }}.yml"
 
