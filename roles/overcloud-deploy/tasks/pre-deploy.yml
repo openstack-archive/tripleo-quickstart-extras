@@ -95,6 +95,15 @@
 - name: extract the number of controllers to be deployed
   set_fact:
     number_of_controllers: "{{ deploy_args| regex_replace('^.*--control-scale +([0-9]+).*$', '\\1') | regex_replace('^[^ 0-9]+$', '1') }}"
+  when:
+    - topology_map is not defined
+
+- name: extract the number of controllers to be deployed (from topology_map)
+  set_fact:
+    number_of_controllers: "{{ topology_map.Controller.scale }}"
+  when:
+    - topology_map is defined
+    - topology_map.Controller is defined
 
 - name: Set cinder-backup
   set_fact:
@@ -217,6 +226,12 @@
       {{ composable_args }}
       -e {{ working_dir }}/overcloud_services.yaml
   when: composable_services|bool
+
+- name: set overcloud topology args
+  set_fact:
+    topology_args: >-
+      -e {{ working_dir }}/overcloud-topology-config.yaml
+  when: topology_map is defined
 
 - name: set the multinode args
   set_fact:

@@ -100,6 +100,7 @@ deployed_server_prepare_log: "{{ working_dir }}/deployed_server_prepare.txt"
 
 container_args: ""
 scenario_args: ""
+topology_args: ""
 multinode_args: ""
 ovn_args: ""
 telemetry_args: ""
@@ -130,6 +131,7 @@ deploy_args: >-
   {{ swap_args }}
   {{ composable_args }}
   {{ topology }}
+  {{ topology_args }}
   {{ config_download_args }}
   {{ selinux_args }}
   {{ extra_args }}
