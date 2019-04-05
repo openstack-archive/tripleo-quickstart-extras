@@ -4,6 +4,14 @@
     systemctl list-units --failed --plain --no-legend --no-pager "tripleo_*"
   register: systemd_state
 
+- name: Print out any failed Systemd services for tripleo_*
+  debug:
+    msg: systemd_state.stdout_lines
+
+# once ansible 2.7 is used this task should
+# include the following line
+# fail_msg: "the following services failed {{ systemd_state.stdout_lines }}"#
+# The above debug statement should be removed at that time.
 - name: Fails if we find failed systemd units
   assert:
     that:
