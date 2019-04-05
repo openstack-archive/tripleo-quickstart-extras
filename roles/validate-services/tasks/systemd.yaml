@@ -6,7 +6,7 @@
 
 - name: Print out any failed Systemd services for tripleo_*
   debug:
-    msg: systemd_state.stdout_lines
+    var: systemd_state.stdout_lines
 
 # once ansible 2.7 is used this task should
 # include the following line
