@@ -101,18 +101,6 @@ router that is connected to the external network.</li>
   <li><code>user_pri_key</code>. The default key is:<code>~/.ssh/id_rsa[.pub]</code></li>
   <li> <b>Note:</b> Reference FAQ below when creating ssh keys, some keys fail when used w/ gerrit
   </ul>
-<li>Check that you have access to the publicly shared nodepool images:
-There should be one image for CentOS 7, and one for Fedora 28.</li>
-</ul>
-<ul>
-Import the nodepool images to your tenant:
-<code>
-<pre>
-openstack --os-cloud rdo-cloud image set --accept 6a6d23d7-65e7-43ea-9307-71b2e17d2ead
-openstack --os-cloud rdo-cloud image set --accept 88006cd1-d089-4bd3-b70a-8cbc7eb32f63
-</code>
-</pre>
-</ul>
 </p>
 </div>
 
@@ -203,6 +191,21 @@ The playbooks can be run as follows:
 </ul>
 The <code>launcher-playbook.yaml</code> includes comments on how to run the playbook
 with the same options listed in the Bash script section above.
+</p>
+</div>
+
+<button class="collapsible">Running the Zuul-based reproducer - autohold nodes for debugging</button>
+<div class="content">
+<p>
+The reproducer can be launched such that if there is an error the environment will
+remain up and running available to the developer to debug.
+
+<ul>
+<li>For example:</li>
+
+</ul>
+<li><code> cd ~/tripleo-ci-reproducer </code></li>
+<li><code>docker-compose exec scheduler zuul autohold --tenant tripleo-ci-reproducer --job tripleo-ci-centos-7-standalone --reason debug --project test1</code></li>
 </p>
 </div>
 
