@@ -175,7 +175,7 @@ This is basically what each specific tasks does:
 
 Some notes:
 
-* Even if virthost and undercloud are the same machine, the name “undercloud”
+* Even if virthost and undercloud are the same machine, the name "undercloud"
   will be inventoried in any case
 * Each action is tagged so it is possible to exclude a specific section
 * Some variables can be controlled via configuration settings (look above in
@@ -342,7 +342,7 @@ Basically this command:
   it is dropped, see *--clean*)
 * Get all the extra requirements
 * Select the config file
-* Chooses release (liberty, mitaka, newton, or “master” for ocata)
+* Chooses release (liberty, mitaka, newton, or "master" for ocata)
 * Performs all the tasks in the playbook
 * Starts the installation on virthost
 
