@@ -54,6 +54,7 @@
     {% endraw -%}
     ovb_key_name: tripleo-ci-team
     mirror_path: mirror.regionone.rdo-cloud.rdoproject.org
+    launch_job_branch: {{ zuul.branch }}
     {% if 'periodic' not in zuul.job -%}
     depends_on:
       - {{ zuul.change_url }}
