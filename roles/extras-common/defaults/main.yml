@@ -32,8 +32,10 @@ docker_ceph_image: daemon
 docker_ceph_tag: >-
   {% if release in ['pike'] -%}
   v3.0.3-stable-3.0-jewel-centos-7-x86_64
-  {%- else -%}
+  {%- elif release in ['queens','rocky'] -%}
   v3.2.1-stable-3.2-luminous-centos-7-x86_64
+  {%- else -%}
+  v4.0.0-stable-4.0-nautilus-centos-7-x86_64
   {%- endif -%}
 additional_insecure_registry: false
 deployed_server: false
