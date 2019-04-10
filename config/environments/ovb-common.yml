@@ -13,6 +13,7 @@ undercloud_dhcp_start: 192.168.24.5
 undercloud_dhcp_end: 192.168.24.24
 undercloud_inspection_iprange: 192.168.24.25,192.168.24.39
 undercloud_external_network_cidr: 10.0.0.0/24
+undercloud_undercloud_nameservers: "{{ overcloud_dns_servers }}"
 
 # template copies
 undercloud_instackenv_template: "{{ local_working_dir }}/instackenv.json"
@@ -51,9 +52,6 @@ network_environment_args:
     [{'start': '{{ undercloud_external_network_cidr|nthhost(10) }}',
     'end': '{{ undercloud_external_network_cidr|nthhost(50) }}'}]
   NeutronExternalNetworkBridge: ""
-  ControlPlaneSubnetCidr: "{{ undercloud_network_cidr|ipaddr('prefix') }}"
-  ControlPlaneDefaultRoute: "{{ undercloud_network_cidr|nthhost(1) }}"
-  EC2MetadataIp: "{{ undercloud_network_cidr|nthhost(1) }}"
   ExternalInterfaceDefaultRoute: "{{ undercloud_external_network_cidr|nthhost(1) }}"
   InternalApiNetCidr: 172.20.0.0/24
   InternalApiAllocationPools: [{"start": "172.20.0.10", "end": "172.20.0.250"}]
@@ -63,7 +61,6 @@ network_environment_args:
   StorageMgmtAllocationPools: [{"start": "172.19.0.10", "end": "172.19.0.250"}]
   TenantNetCidr: 172.16.0.0/24
   TenantAllocationPools: [{"start": "172.16.0.10", "end": "172.16.0.250"}]
-  DnsServers: "{{ overcloud_dns_servers }}"
   PublicVirtualFixedIPs: [{"ip_address": "{{ undercloud_external_network_cidr|nthhost(5) }}"}]
   NeutronGlobalPhysnetMtu: 1350
   BondInterfaceOvsOptions: bond_mode=balance-slb
