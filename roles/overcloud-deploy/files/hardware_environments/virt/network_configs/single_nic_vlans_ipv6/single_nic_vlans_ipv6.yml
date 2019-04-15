@@ -32,5 +32,7 @@ parameters:
 
 parameter_defaults:
     DnsServers: ["192.168.122.1"]  # Customize for your env
+    ControlPlaneSubnetCidr: "24"
     EC2MetadataIp: 192.0.2.1  # Default for virt-env, customize if need be
+    ControlPlaneDefaultRoute: 192.0.2.1  # Default for virt-env, customize if need be
     ExternalInterfaceDefaultRoute: 2001:db8:fd00:1000:dead:beef:cafe:f00
