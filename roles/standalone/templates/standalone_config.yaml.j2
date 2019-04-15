@@ -7,8 +7,10 @@ parameter_defaults:
   Debug: true
   DeploymentUser: {{ undercloud_user }}
   DnsServers: {{ undercloud_undercloud_nameservers | to_json }}
+{% if standalone_container_prep_updates is defined and standalone_container_prep_updates %}
   DockerInsecureRegistryAddress:
   - {{ standalone_ip }}:8787
+{% endif %}
 {% if undercloud_docker_registry_mirror is defined and undercloud_docker_registry_mirror %}
   DockerRegistryMirror: {{undercloud_docker_registry_mirror}}
 {% endif %}
