@@ -45,8 +45,15 @@ ipa-server-install -U \
     -a $CA_ADMIN_PASS \
     --hostname `hostname -f ` \
     --ip-address=$IPA_SERVER_IP \
-    --setup-dns --auto-forwarders --auto-reverse {{ ipa_server_install_params|default('') }}
-
+    --setup-dns \
+{% if custom_nameserver is defined -%}
+{% for dns in custom_nameserver %}
+    --forwarder={{ dns }} \
+{% endfor %}
+{% else %}
+    --auto-forwarders \
+{% endif %}
+    --auto-reverse {{ ipa_server_install_params|default('') }}
 ## * Set CA to create CRL on restart
 sed -i "s/ca.crl.MasterCRL.publishOnStart=.*/ca.crl.MasterCRL.publishOnStart=true/" /etc/pki/pki-tomcat/ca/CS.cfg
 systemctl restart pki-tomcatd@pki-tomcat.service
