@@ -28,6 +28,7 @@ artg_skipped_projects:
   - openstack/openstack-ansible-os_tempest
   - openstack/ansible-role-python_venv_build
   - openstack/ansible-config_template
+  - openstack/ansible-role-collect-logs
   - openstack/tripleo-ci-internal-jobs
   - openstack/tripleo-ci-internal-config
   - tripleo-environments
