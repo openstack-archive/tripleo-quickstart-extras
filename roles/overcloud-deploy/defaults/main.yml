@@ -109,7 +109,7 @@ selinux_args: ""
 
 deploy_args: >-
   {{ libvirt_args }}
-  {{ flavor_args }}
+  {% if release in ['newton','ocata','pike','queens','rocky','stein'] -%}{{ flavor_args }}{%- endif -%}
   {{ timeout_args }}
   {{ ntp_args }}
   {{ cloud_name_args }}
