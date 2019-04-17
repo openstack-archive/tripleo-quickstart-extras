@@ -5,9 +5,6 @@
 ## the TripleO PTL, Thanks                          ##
 
 known_failures:
-  - test: 'tempest.api.network.test_ports.PortsIpV6TestJSON.test_update_port_with_two_security_groups_and_extra_attributes'
-    reason: 'Test is failing with SecurityGroupNotFound'
-    lp: 'https://bugs.launchpad.net/tripleo/+bug/1818860'
   - test: 'tempest.scenario.test_network_basic_ops.TestNetworkBasicOps.test_port_security_macspoofing_port'
     reason: 'It can be removed when bug for OVN is repaired'
     lp: 'https://bugs.launchpad.net/tempest/+bug/1728886'
