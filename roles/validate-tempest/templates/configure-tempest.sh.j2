@@ -126,8 +126,9 @@ public_net_id=$(openstack network show provisioning -f value -c id)
 public_net_id=$(openstack network show {{ public_net_name }} -f value -c id)
 {% endif %}
 {% endif %}
-region_name=${OS_REGION_NAME:-'regionOne'}
 {% endif %}
+
+region_name=${OS_REGION_NAME:-'regionOne'}
 
 {% if not tempest_overcloud|bool %}
 # query the endpoint if not set (e.g. clouds.yaml)
@@ -167,9 +168,7 @@ $TEMPESTCONF --out etc/tempest.conf \
   DEFAULT.log_dir {{ tempest_log_dir }} \
   DEFAULT.log_file {{ tempest_log_file }} \
   {% endif %}
-  {% if tempest_os_cloud != '' %}
   identity.region $region_name \
-  {% endif %}
   {% if release in ['newton', 'ocata', 'pike'] %}
   identity.uri $OS_AUTH_URL \
   identity.admin_password $OS_PASSWORD \
