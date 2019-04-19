@@ -4,7 +4,7 @@
 # confirmed variables for deploy and mixed upgrade
 # GOOD
 #   docker_registry_namespace
-#   http://git.openstack.org/cgit/openstack/tripleo-quickstart/tree/config/release/tripleo-ci/CentOS-7/master-undercloud-queens-overcloud.yml
+#   http://opendev.org/cgit/openstack/tripleo-quickstart/tree/config/release/tripleo-ci/CentOS-7/master-undercloud-queens-overcloud.yml
 
 - name: set docker_registry_namespace_used
   set_fact:
@@ -14,7 +14,7 @@
 
 # get_build_command is passing the current hash
 # plus the latest dlrn hash and I'm not sure why
-# http://git.openstack.org/cgit/openstack-infra/tripleo-ci/tree/roles/run-test/templates/oooq_common_functions.sh.j2#n155
+# http://opendev.org/cgit/openstack/tripleo-ci/tree/roles/run-test/templates/oooq_common_functions.sh.j2#n155
 - when: get_build_command is defined
   block:
     - name: execute build_command

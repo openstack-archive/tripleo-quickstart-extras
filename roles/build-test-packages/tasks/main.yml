@@ -189,7 +189,7 @@
 
 - name: Parse Zuul changes
   zuul_deps:
-    host: "{{ lookup('env', 'ZUUL_URL')|default('https://review.openstack.org', true) }}"
+    host: "{{ lookup('env', 'ZUUL_URL')|default('https://review.opendev.org', true) }}"
     changes: "{{ lookup('env', 'ZUUL_CHANGES') }}"
     branch: "{{ lookup('env', 'ZUUL_BRANCH') }}"
   when: zuul_changes != ""

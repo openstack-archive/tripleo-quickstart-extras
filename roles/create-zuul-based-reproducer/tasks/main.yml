@@ -22,7 +22,7 @@
 
 - name: Copy the generated toci templates and files
   copy:
-    src: "/home/{{ undercloud_user }}/src/git.openstack.org/openstack/tripleo-ci/{{ item }}"
+    src: "/home/{{ undercloud_user }}/src/opendev.org/openstack/tripleo-ci/{{ item }}"
     dest: "{{ artcl_collect_dir }}/{{ zuul_reproducer_dir }}/{{ item }}"
     mode: 0755
   with_items:
@@ -33,12 +33,12 @@
 
 - name: Check if featureset-override exists
   stat:
-    path: "/home/{{ undercloud_user }}/src/git.openstack.org/openstack/tripleo-ci/featureset-override.yaml"
+    path: "/home/{{ undercloud_user }}/src/opendev.org/openstack/tripleo-ci/featureset-override.yaml"
   register: featureset_override_file
 
 - name: Add the featureset-override if it exists
   copy:
-    src: "/home/{{ undercloud_user }}/src/git.openstack.org/openstack/tripleo-ci/featureset-override.yaml"
+    src: "/home/{{ undercloud_user }}/src/opendev.org/openstack/tripleo-ci/featureset-override.yaml"
     dest: "{{ artcl_collect_dir }}/{{ zuul_reproducer_dir }}/featureset-override.yaml"
     mode: 0755
   when: featureset_override_file.stat.exists
@@ -55,7 +55,7 @@
 
 - name: Get featureset-override file output
   set_fact:
-    featureset_override_file_output: "{{ lookup('file', '/home/{{ undercloud_user }}/src/git.openstack.org/openstack/tripleo-ci/featureset-override.yaml') }}"
+    featureset_override_file_output: "{{ lookup('file', '/home/{{ undercloud_user }}/src/opendev.org/openstack/tripleo-ci/featureset-override.yaml') }}"
   when: featureset_override_file.stat.exists
 
 - name: Create the zuul-based launcher-env-setup-playbook from template
@@ -78,7 +78,7 @@
 
 - name: Copy the tripleo-quickstart install-deps script
   copy:
-    src: "/home/{{ undercloud_user }}/src/git.openstack.org/openstack/tripleo-quickstart/{{ item }}"
+    src: "/home/{{ undercloud_user }}/src/opendev.org/openstack/tripleo-quickstart/{{ item }}"
     dest: "{{ artcl_collect_dir }}/{{ zuul_reproducer_dir }}/{{ item }}"
     mode: 0755
   with_items:

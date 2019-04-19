@@ -3,17 +3,17 @@ nodepool_cirros_url: http://download.cirros-cloud.net/0.3.6/cirros-0.3.6-x86_64-
 nodepool_cirros_dest: /opt/cache/files/cirros-0.3.6-x86_64-disk.img
 nodepool_cirros_checksum: md5:d56d54f110654dfd29b0e8ed56e6cda8
 repos:
-  - https://git.openstack.org/openstack/tripleo-quickstart
-  - https://git.openstack.org/openstack/tripleo-quickstart-extras
-  - https://git.openstack.org/openstack/tripleo-upgrade
-  - https://git.openstack.org/openstack/browbeat
-  - https://git.openstack.org/openstack/tripleo-ha-utils
-  - https://git.openstack.org/openstack-infra/tripleo-ci
-  - https://git.openstack.org/openstack-dev/devstack
-  - https://git.openstack.org/openstack-infra/devstack-gate
-  - https://git.openstack.org/openstack/openstack-ansible-os_tempest
-  - https://git.openstack.org/openstack/ansible-config_template
-  - https://git.openstack.org/openstack/ansible-role-python_venv_build
+  - https://opendev.org/openstack/tripleo-quickstart
+  - https://opendev.org/openstack/tripleo-quickstart-extras
+  - https://opendev.org/openstack/tripleo-upgrade
+  - https://opendev.org/x/browbeat
+  - https://opendev.org/openstack/tripleo-ha-utils
+  - https://opendev.org/openstack/tripleo-ci
+  - https://opendev.org/openstack/devstack
+  - https://opendev.org/openstack/devstack-gate
+  - https://opendev.org/openstack/openstack-ansible-os_tempest
+  - https://opendev.org/openstack/ansible-config_template
+  - https://opendev.org/openstack/ansible-role-python_venv_build
 zuul_changes: "{{ lookup('env', 'ZUUL_CHANGES') }}"
 subnode_swap_size: 8388608  # 8GB
 update_subnodes: true

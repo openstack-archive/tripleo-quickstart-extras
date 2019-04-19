@@ -37,7 +37,7 @@ function clone {
     if [ ! -d {{ tripleo_root }}/$(basename $repo) ]; then
         echo "$repo not found at {{ tripleo_root }}/$repo, git cloning."
         pushd {{ tripleo_root }}
-        git clone https://git.openstack.org/$repo
+        git clone https://opendev.org/$repo
         popd
     else
         echo "$repo found at {{ tripleo_root }}/$repo, nothing to do."
@@ -161,8 +161,8 @@ function ovs_vxlan_bridge {
 ## * Clone devstack and devstack-gate repositories for network setup scripts
 ## ::
 
-clone openstack-dev/devstack
-clone openstack-infra/devstack-gate
+clone openstack/devstack
+clone openstack/devstack-gate
 
 ## * Source in devstack-gate's common utility functions
 ## ::
