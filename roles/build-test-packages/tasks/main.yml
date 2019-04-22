@@ -253,9 +253,13 @@
       shell: 'tar czf {{ artg_compressed_gating_repo }} gating_repo'
       args:
         chdir: '{{ build_repo_dir }}'
-  when: >
-    (repo_built is defined and repo_built.skipped is not defined) or
-    (repo_built_multi is defined and repo_built_multi.skipped is not defined)
+    - name: Trigger repo injection for quickstart
+      set_fact:
+        compressed_gating_repo: "{{ artg_compressed_gating_repo }}"
+        cacheable: true
+  when:
+    - artg_rdo_packages is defined
+    - artg_rdo_packages|length > 0
 
 - name: Clean up
   file:
@@ -273,11 +277,3 @@
   when:
     - not dlrn_pre_installed|bool
     - dlrn_cleanup|bool
-
-- name: Trigger repo injection for quickstart
-  set_fact:
-    compressed_gating_repo: "{{ artg_compressed_gating_repo }}"
-    cacheable: true
-  when:
-    - repo_built is defined
-    - repo_built.skipped is not defined
