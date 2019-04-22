@@ -44,7 +44,7 @@ options:
 
 EXAMPLES = '''
 - jenkins-deps:
-    host: review.openstack.org
+    host: review.opendev.org
     change_id: I387b6bfd763d2d86cad68a3119b0edd0caa237b0
     patchset_rev: d18f21853e2f3be7382a20d0f42232ff3a78b348
 '''
@@ -55,7 +55,7 @@ import re
 import requests
 
 # we ignore any other host reference
-ALLOWED_HOSTS = ['review.openstack.org',
+ALLOWED_HOSTS = ['review.opendev.org',
                  'review.gerrithub.io',
                  'review.rdoproject.org']
 

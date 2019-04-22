@@ -36,7 +36,7 @@ options:
 
 EXAMPLES = '''
 - zuul_deps:
-    host: https://review.openstack.org
+    host: https://review.opendev.org
     changes: "openstack/tripleo-heat-templates:master:refs/changes/88/296488/1^openstack/instack-undercloud:master:refs/changes/84/315184/5"
 '''
 

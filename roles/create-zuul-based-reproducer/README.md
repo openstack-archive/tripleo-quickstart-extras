@@ -50,7 +50,7 @@ This role generates a launcher-playbook:
 - hosts: localhost
   vars:
     depends_on:
-      - https://review.openstack.org/xxxxxx
+      - https://review.opendev.org/xxxxxx
     zuul_yaml: >-
       - project:
           check:

@@ -93,7 +93,7 @@ class TestVerifyBug(unittest.TestCase):
             'https://bugzilla.redhat.com/show_bug.cgi?id=1380187'),
             BugzillaConnector)
         self.assertRaises(ValueError, self.v_bug._get_connector,
-                          'https://review.openstack.org')
+                          'https://review.opendev.org')
 
     @mock.patch('bugcheck.VerifyBug.check_bug_status')
     def test_is_bug_open(self, bug_status_mock):

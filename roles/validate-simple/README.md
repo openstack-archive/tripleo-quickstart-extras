@@ -2,7 +2,7 @@ validate-simple
 ===============
 
 This role uses heat templates from
-[THT](http://git.openstack.org/cgit/openstack/tripleo-heat-templates/)
+[THT](http://opendev.org/openstack/tripleo-heat-templates/)
 to validate an OpenStack installation. By default it does a ping test between
 two OpenStack instances.
 

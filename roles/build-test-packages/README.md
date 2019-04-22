@@ -46,7 +46,7 @@ Role Variables
 Example artg_change_list for just code changes:
 ```yaml
 artg_change_list:
-    - host: "review.openstack.org"
+    - host: "review.opendev.org"
       project: "openstack/tripleo-heat-templates"
       branch: "master"
       refspec: "refs/changes/1/123456/1"
@@ -56,7 +56,7 @@ artg_change_list:
 Example artg_change_list for code changes and package changes:
 ```yaml
 artg_change_list:
-    - host: "review.openstack.org"
+    - host: "review.opendev.org"
       project: "openstack/tripleo-heat-templates"
       branch: "master"
       refspec: "refs/changes/1/123456/1"

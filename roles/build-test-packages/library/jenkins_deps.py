@@ -44,7 +44,7 @@ options:
 
 EXAMPLES = '''
 - jenkins-deps:
-    host: review.openstack.org
+    host: review.opendev.org
     change_id: I387b6bfd763d2d86cad68a3119b0edd0caa237b0
     patchset_rev: d18f21853e2f3be7382a20d0f42232ff3a78b348
 '''
@@ -55,7 +55,7 @@ import re
 import requests
 
 # we ignore any other host reference
-ALLOWED_HOSTS = ['review.openstack.org',
+ALLOWED_HOSTS = ['review.opendev.org',
                  'review.gerrithub.io',
                  'review.rdoproject.org']
 
@@ -192,9 +192,9 @@ def resolve_dep(host, change_id, branch, revision):
         new_deps = parse_commit_msg(change['host'], details['commit_msg'])
         to_resolve.extend(new_deps)
     for index in range(len(deps)):
-        if deps[index]['host'] == 'review.openstack.org':
-            # redirect change cloning to reduce load on review.openstack.org
-            deps[index]['host'] = 'git.openstack.org'
+        if deps[index]['host'] == 'review.opendev.org':
+            # redirect change cloning to reduce load on review.opendev.org
+            deps[index]['host'] = 'opendev.org'
         # add https:// prefix for cloning the change
         deps[index]['host'] = ''.join(['https://', deps[index]['host']])
     if len(deps) == 0:
