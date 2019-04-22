@@ -105,11 +105,13 @@
               {% if featureset_override_file_output is defined -%}
               {{ featureset_override_file_output | indent(14) }}
               {% endif -%}
+              {% if releases_file_output is not defined -%}
               {% if dlrn_hash is defined or ('undercloud' in hostvars and 'dlrn_hash' in hostvars['undercloud']) -%}
               dlrn_hash_tag: {{ hostvars['undercloud'].dlrn_hash }}
               {% endif -%}
               {% if dlrn_hash_newest is defined or ('undercloud' in hostvars and 'dlrn_hash_newest' in hostvars['undercloud']) -%}
               dlrn_hash_tag_newest: {{ hostvars['undercloud'].dlrn_hash_newest }}
+              {%- endif %}
               {%- endif %}
 
   tasks:
