@@ -242,18 +242,15 @@ class TempestMailCmd(object):
             try:
                 with open(self.args.file) as f:
                     console = f.read()
-                    log_path = os.environ.get('LOG_PATH', None)
-                    if log_path:
-                        if self.args.log_url:
-                            log_path = urljoin(self.args.log_url, log_path)
-                        else:
-                            log_path = urljoin(self.config.default_log_url,
-                                               log_path)
-                    else:
-                        log_path = None
-                    return (console, datetime.datetime.now(), log_path)
             except IOError:
                 return (None, None, None)
+
+        log_path = os.environ.get('LOG_PATH', None)
+        if log_path:
+            log_path = urljoin(getattr(
+                self.args, 'log_url', self.config.default_log_url), log_path)
+
+        return (console, datetime.datetime.now(), log_path)
 
         def _good_result(res):
             if res is None or int(res.status_code) not in (200, 404):
