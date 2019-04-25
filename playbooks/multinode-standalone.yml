@@ -48,6 +48,7 @@
 
 - name: Validate the deployment
   hosts: undercloud
+  gather_facts: false
   tasks:
     - include_tasks: tempest.yml
       vars:
