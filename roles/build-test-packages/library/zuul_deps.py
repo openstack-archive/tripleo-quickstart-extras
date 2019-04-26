@@ -51,9 +51,6 @@ def process(host, changes, branch):
             continue
         if params[0] in [i['project'] for i in output]:
             continue
-        # https://bugs.launchpad.net/tripleo/+bug/1676853
-        if '.opendev.org' in host:
-            host = 'https://opendev.org'
         # add URL prefix if only the bare hostname is given
         if host.find('://') == -1:
             host = ''.join(['https://', host])
