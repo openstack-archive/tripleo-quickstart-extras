@@ -18,7 +18,7 @@ standalone_container_prep_updates: >-
 # Set the repo to update from
 gating_repo_name: gating-repo
 standalone_container_prep_update_repo: >-
-  {{ gating_repo_name }},delorean-current
+  {{ gating_repo_name }},delorean-current,quickstart-centos-ceph-nautilus
 
 # deploy script
 standalone_deploy_script: standalone.sh.j2
@@ -38,3 +38,5 @@ standalone_libvirt_type: kvm
 standalone_container_cli: docker
 
 standalone_custom_env_files: []
+
+standalone_container_ceph_updates: true
