@@ -50,6 +50,7 @@
 
 - when: virtualenv_exist.rc != 0
   name: Install virtualenv
+  become: true
   package:
     state: present
     name: >
