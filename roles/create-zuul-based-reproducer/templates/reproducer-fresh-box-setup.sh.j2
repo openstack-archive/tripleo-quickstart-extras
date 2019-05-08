@@ -1,0 +1,127 @@
+#!/bin/bash
+
+REPRO_USER=${REPRO_USER:=reprozuul}
+REPRO_DEPS="tar wget screen"
+RDO_USER=""
+RDO_PASS=""
+CLOUDS_YAML_PATH=".config/openstack/"
+usage () {
+    echo "Usage: $0 [options]"
+    echo ""
+    echo "Options:"
+    echo "  -u, --rdo-user"
+    echo "                      Username for RDO cloud to be written to"
+    echo "                      $CLOUDS_YAML_PATH/clouds.yaml. REQUIRED."
+    echo "  -p, --rdo-pass"
+    echo "                      Password for RDO cloud to be written to"
+    echo "                      $CLOUDS_YAML_PATH/clouds.yaml. REQUIRED."
+    echo "  -c, --create-user"
+    echo "                      Local user to create for running reproducer."
+    echo "                      Defaults to $REPRO_USER"
+    echo "  -h, --help          print this help and exit"
+}
+
+set -e
+
+# Input argument assignments
+while [ "x$1" != "x" ]; do
+
+    case "$1" in
+        --rdo-user|-u)
+            RDO_USER=$2
+            shift
+            ;;
+
+        --rdo-pass|-p)
+            RDO_PASS=$2
+            shift
+            ;;
+
+        --create-user|-c)
+            REPRO_USER=$2
+            shift
+            ;;
+
+        --help|-h)
+            usage
+            exit
+            ;;
+
+        --) shift
+            break
+            ;;
+
+        -*) echo "ERROR: unknown option: $1" >&2
+            usage >&2
+            exit 2
+            ;;
+
+        *)    break
+            ;;
+    esac
+
+    shift
+done
+
+# check required params - rdo user/pass
+for param in "$RDO_USER" "$RDO_PASS" ; do
+    if [[ $param = "" ]]; then
+      echo "error --rdo-user and --rdo-pass are required parameters"
+      exit 1
+    fi
+done
+
+# create user
+sudo adduser $REPRO_USER
+echo "$REPRO_USER ALL=(root) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/$REPRO_USER
+
+# install packages
+sudo yum -y install $REPRO_DEPS
+
+# write clouds.yaml
+CLOUDS_YAML_PATH="/home/$REPRO_USER/.config/openstack/"
+sudo mkdir -p $CLOUDS_YAML_PATH
+sudo /bin/bash -c "cat <<EOF>>$CLOUDS_YAML_PATH/clouds.yaml
+clouds:
+  rdo-cloud:
+    identity_api_version: 3
+    region_name: regionOne
+    auth:
+      auth_url: https://phx2.cloud.rdoproject.org:13000/v3
+      password: $RDO_PASS
+      project_name: $RDO_USER
+      username: $RDO_USER
+      user_domain_name: Default
+      project_domain_name: Default
+    regions:
+    - name: regionOne
+      values:
+        networks:
+        - name: 38.145.32.0/22
+          routes_externally: true
+        - name: private
+EOF"
+
+sudo chown -R $REPRO_USER:$REPRO_USER /home/$REPRO_USER/.config
+
+# create keys
+mkdir keystemp
+pushd keystemp
+ssh-keygen -m PEM -t rsa -N "" -f id_rsa
+ssh_path=/home/$REPRO_USER/.ssh
+sudo mkdir $ssh_path
+sudo mv id_rsa* $ssh_path
+sudo chmod 700 $ssh_path
+sudo chmod 600 $ssh_path/id_rsa
+sudo chmod 644 $ssh_path/id_rsa.pub
+sudo chown -R $REPRO_USER:$REPRO_USER $ssh_path
+popd
+rm -rf keystemp
+
+echo "Fresh box setup complete - now go upload the public key in"
+echo "$CLOUDS_YAML_PATH to Gerrit - both upstream and rdo. Then you are ready "
+echo "to run the reproducer. Here is the public key you must upload:"
+sudo cat /home/$REPRO_USER/.ssh/id_rsa.pub
+echo "Switching to $REPRO_USER"
+sudo su - $REPRO_USER
+
