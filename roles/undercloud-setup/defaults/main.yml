@@ -41,3 +41,4 @@ undercloud_ara_version: 0.15.0
 undercloud_ara: false
 install_atop: true
 atop_command: atop -R -w /var/log/atop.bin
+tripleo_set_unique_hostname: false

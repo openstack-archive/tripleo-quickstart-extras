@@ -16,6 +16,16 @@
         {{ working_dir }}/hostname.sh 2>&1 {{ timestamper_cmd }} > {{ working_dir }}/hostname.sh.log
       become: true
 
+# https://launchpad.net/bugs/1763776
+- name: Add a unique hostname to /etc/hosts resolved to the first IPv4 available
+  become: true
+  lineinfile:
+    dest: /etc/hosts
+    state: present
+    insertafter: EOF
+    line: "{{ ansible_all_ipv4_addresses | first }} {{ ansible_hostname }}-unique"
+  when: tripleo_set_unique_hostname|default(false)|bool
+
 # for undercloud containers only, starting from Rocky.
 - name: Override containerized undercloud CI hostname for tripleo client
   when:
