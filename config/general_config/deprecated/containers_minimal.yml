@@ -36,7 +36,7 @@ tempest_workers: 4
 
 # Config for custom tripleo-heat-templates, used in overcloud-prep-config
 # overcloud_templates_path: /home/stack/tripleo-heat-templates
-# overcloud_templates_repo: https://git.openstack.org/openstack/tripleo-heat-templates
+# overcloud_templates_repo: https://opendev.org/openstack/tripleo-heat-templates
 # use templates_branch when not testing with an unmerged review
 # overcloud_templates_branch: master
 # use templates_refspec when testing with an unmerged review

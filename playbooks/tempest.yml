@@ -30,8 +30,8 @@
 
 - name: set facts while running tempest from source
   set_fact:
-    tempest_git_repo: https://git.openstack.org/openstack/tempest
-    tempest_tempestconf_git_repo: https://git.openstack.org/openstack/python-tempestconf
+    tempest_git_repo: https://opendev.org/openstack/tempest
+    tempest_tempestconf_git_repo: https://opendev.org/openstack/python-tempestconf
     tempest_tempestconf_venv_bin: "{{ ansible_user_dir }}/tempestconf_venv/bin"
     tempest_venv_bin: "{{ ansible_user_dir }}/tempest_venv/bin"
   when: tempest_install_method == 'source'
