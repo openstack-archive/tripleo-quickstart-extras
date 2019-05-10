@@ -76,6 +76,12 @@
     dest: "{{ artcl_collect_dir }}/{{ zuul_reproducer_dir }}/reproducer-zuul-based-quickstart.sh"
     mode: 0755
 
+- name: Create the reproducer-fresh-box-setup script
+  template:
+    src: "{{ reproducer_fresh_box_setup_script }}"
+    dest: "{{ artcl_collect_dir }}/{{ zuul_reproducer_dir }}/reproducer-fresh-box-setup.sh"
+    mode: 0755
+
 - name: Copy the tripleo-quickstart install-deps script
   copy:
     src: "/home/{{ undercloud_user }}/src/opendev.org/openstack/tripleo-quickstart/{{ item }}"
