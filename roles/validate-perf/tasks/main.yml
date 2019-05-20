@@ -12,17 +12,17 @@
       state: directory
       mode: 0777
   - name: Run dstat for collecting metrics on overcloud
-    shell:
-      cmd: >
+    shell: >
         dstat
         -{{ dstat_options }}
         --nocolor
         --output /var/log/extra/{{ dstat_log_name }}
         {{ dstat_delay }}
         > /dev/null &
+    args:
+      executable: /bin/bash
     async: 1
     poll: 0
-    executable: /bin/bash
     changed_when: false
   rescue:
     - debug:
