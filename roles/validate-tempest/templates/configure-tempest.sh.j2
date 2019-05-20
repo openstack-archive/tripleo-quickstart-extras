@@ -178,7 +178,6 @@ $TEMPESTCONF --out etc/tempest.conf \
   scenario.img_file {{ tempest_test_image_name }} \
   {% else %}
   auth.use_dynamic_credentials true \
-  auth.tempest_roles Member \
   network-feature-enabled.port_security true \
   {% endif %}
   {% if release in ['newton', 'ocata', 'pike', 'queens'] %}
