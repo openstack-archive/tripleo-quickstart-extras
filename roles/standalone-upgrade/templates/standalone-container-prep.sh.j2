@@ -9,6 +9,6 @@ sed -Ei 's/^([\t ]+)namespace: [a-z./]*/\1namespace: {{ docker_registry_host }}\
 {% endif %}
 {% if dlrn_hash_tag != '' %}
 # Make CI specific tag change to the container params
-sed -Ei 's/^([\t ]+)tag: [a-z-]+/\1tag: {{ dlrn_hash_tag }}/' \
+sed -Ei 's/^([\t ]+)tag: [a-z-]+/\1tag: {{ container_build_id }}/' \
   "{{ working_dir }}/containers-prepare-parameters-upgrade.yaml"
 {% endif %}
