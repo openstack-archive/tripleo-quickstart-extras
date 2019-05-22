@@ -97,10 +97,16 @@ def create_enable_file(certpem, keypem, source_dir, dest_dir, tht_release):
         yaml.safe_dump(output_dict, stream, default_style='|')
 
 
-def create_anchor_file(cert_ca_pem, source_dir, dest_dir, enable_tls_overcloud):
-    output_dict = _open_yaml(
-        "{}environments/ssl/inject-trust-anchor.yaml".format(source_dir)
-    )
+def create_anchor_file(cert_ca_pem, source_dir, dest_dir, enable_tls_overcloud, tht_release):
+
+    if tht_release in ['mitaka', 'newton', 'ocata']:
+        output_dict = _open_yaml(
+            "{}environments/inject-trust-anchor.yaml".format(source_dir)
+        )
+    else:
+        output_dict = _open_yaml(
+            "{}environments/ssl/inject-trust-anchor.yaml".format(source_dir)
+        )
 
     if enable_tls_overcloud:
         ca_map = {"overcloud-ca": {"content": cert_ca_pem}}
@@ -154,7 +160,8 @@ def main():
     create_anchor_file(cert_ca_pem,
                        module.params["source_dir"],
                        module.params["dest_dir"],
-                       module.params["enable_tls_overcloud"])
+                       module.params["enable_tls_overcloud"],
+                       module.params["tht_release"])
     module.exit_json(changed=True)
 
 
