@@ -50,6 +50,8 @@ Role Variables
 * `skip_build_images` -- skip building images if there present or cached
    (default: true), setting it to false will add '--no-skip' option to openstack
     image build command.
+* `base_image_url` -- URL of base image
+* `base_image_path` -- path to save base image on host
 
 Example Usage
 -------------
