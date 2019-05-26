@@ -53,6 +53,5 @@
     ansible_become: true
     debug: true
     tempest_run: 'yes'
-  gather_facts: true
   include_role:
     name: os_tempest
