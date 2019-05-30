@@ -1,0 +1,17 @@
+---
+# gather the output post-undercloud installation and register variables with
+# their contents
+- name: Collect undercloud outputs
+  slurp:
+    src: "{{ working_dir }}/tripleo-undercloud-outputs.yaml"
+  register: tmp_undercloud_outputs
+
+- name: Collect undercloud passwords
+  slurp:
+    src: "{{ working_dir }}/tripleo-undercloud-passwords.yaml"
+  register: tmp_undercloud_passwords
+
+- name: Setting undercloud outputs and password facts
+  set_fact:
+    undercloud_outputs: "{{ tmp_undercloud_outputs['content'] | b64decode }}"
+    undercloud_passwords: "{{ tmp_undercloud_passwords['content'] | b64decode }}"

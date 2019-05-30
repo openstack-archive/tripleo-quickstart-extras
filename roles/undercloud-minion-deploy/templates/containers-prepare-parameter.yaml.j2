@@ -1,0 +1,12 @@
+parameter_defaults:
+  DockerInsecureRegistryAddress:
+  - {{ local_docker_registry_host }}:8787
+  ContainerImagePrepare:
+    - set:
+        tag: "{{ container_build_id }}{{ update_containers_append_tag }}"
+        namespace: "{{ local_docker_registry_host }}:8787/{{ docker_registry_namespace_used }}"
+        name_prefix: "{{ docker_prep_prefix }}"
+        name_suffix: "{{ docker_prep_suffix }}"
+        ceph_namespace: "{{ docker_ceph_namespace }}"
+        ceph_image: "{{ docker_ceph_image }}"
+        ceph_tag: "{{ docker_ceph_tag }}"
