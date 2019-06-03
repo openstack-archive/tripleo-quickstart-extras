@@ -4,3 +4,7 @@ extends: default
 rules:
   line-length:
     max: 180
+
+#braces: {min-spaces-inside: 1, max-spaces-inside: 10}
+ignore: |
+  /roles/standalone/tasks/main.yml

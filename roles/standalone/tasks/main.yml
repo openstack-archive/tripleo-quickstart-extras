@@ -38,123 +38,89 @@
 - name: update registry if needed in container-prepare-parameters.yaml
   when:
     - docker_registry_host != '' and docker_registry_namespace != ''
-  vars:
-    yaml_file: "{{ working_dir }}/containers-prepare-parameters.yaml"
-    container_image_prep_updates:
-      set:
-        namespace: "{{ docker_registry_host }}/{{ docker_registry_namespace }}"
-    initial_dict: |
-      {{ lookup('file', yaml_file) | from_yaml }}
-    merged_dict:
-      parameter_defaults:
-        ContainerImagePrepare:
-          - |
-            {{ initial_dict.parameter_defaults.ContainerImagePrepare |
-               combine(container_image_prep_updates, recursive=true) }}
-  copy:
-    content: "{{ merged_dict | to_nice_yaml }}"
-    dest: "{{ yaml_file }}"
+  replace:
+    path: "{{ working_dir }}/containers-prepare-parameters.yaml"
+    regexp: " namespace: (.*)"
+    replace: " namespace: {{ docker_registry_host }}/{{ docker_registry_namespace }}"
     backup: true
 
 # update the container tag to match dlrn hash
 - name: update container tag if needed in container-prepare-parameters.yaml
   when:
     - container_build_id != ''
-  vars:
-    yaml_file: "{{ working_dir }}/containers-prepare-parameters.yaml"
-    container_image_prep_updates:
-      set:
-        tag: "{{ container_build_id }}"
-    initial_dict: |
-      {{ lookup('file', yaml_file) | from_yaml }}
-    merged_dict:
-      parameter_defaults:
-        ContainerImagePrepare:
-          - |
-            {{ initial_dict.parameter_defaults.ContainerImagePrepare |
-               combine(container_image_prep_updates, recursive=true) }}
-  copy:
-    content: "{{ merged_dict | to_nice_yaml }}"
-    dest: "{{ yaml_file }}"
+  replace:
+    path: "{{ working_dir }}/containers-prepare-parameters.yaml"
+    regexp: " tag: (.*)"
+    replace: " tag: {{ container_build_id }}"
     backup: true
 
 # in extra-common/defaults
 # docker_prep_prefix: "{{ ansible_distribution | lower }}-binary-"
 - name: update container name_prefix for the appropriate distro
-  vars:
-    yaml_file: "{{ working_dir }}/containers-prepare-parameters.yaml"
-    container_image_prep_updates:
-      set:
-        name_prefix: "{{ docker_prep_prefix }}"
-    initial_dict: |
-      {{ lookup('file', yaml_file) | from_yaml }}
-    merged_dict:
-      parameter_defaults:
-        ContainerImagePrepare:
-          - |
-            {{ initial_dict.parameter_defaults.ContainerImagePrepare |
-               combine(container_image_prep_updates, recursive=true) }}
-  copy:
-    content: "{{ merged_dict | to_nice_yaml }}"
-    dest: "{{ yaml_file }}"
+  replace:
+    path: "{{ working_dir }}/containers-prepare-parameters.yaml"
+    regexp: " name_prefix: (.*)"
+    replace: " name_prefix: {{ docker_prep_prefix }}"
     backup: true
 
 # ceph parameters
 - name: update container ceph parameters
   when:
     - standalone_container_ceph_updates|default(false)|bool
-  vars:
-    yaml_file: "{{ working_dir }}/containers-prepare-parameters.yaml"
-    container_image_prep_updates:
-      set:
-        ceph_namespace: "{{ docker_ceph_namespace }}"
-        ceph_image: "{{ docker_ceph_image }}"
-        ceph_tag: "{{ docker_ceph_tag }}"
-    initial_dict: |
-      {{ lookup('file', yaml_file) | from_yaml }}
-    merged_dict:
-      parameter_defaults:
-        ContainerImagePrepare:
-          - |
-            {{ initial_dict.parameter_defaults.ContainerImagePrepare |
-               combine(container_image_prep_updates, recursive=true) }}
-  copy:
-    content: "{{ merged_dict | to_nice_yaml }}"
-    dest: "{{ yaml_file }}"
+  replace:
+    path: "{{ working_dir }}/containers-prepare-parameters.yaml"
+    regexp: " {{ item.original }}: (.*)"
+    replace: " {{ item.replace }}"
     backup: true
+  with_items:
+    - { original: "ceph_namespace", replace: "ceph_namespace: {{ docker_ceph_namespace }}" }
+    - { original: "ceph_image", replace: "ceph_image: {{ docker_ceph_image }}" }
+    - { original: "ceph_tag", replace: "ceph_tag: {{ docker_ceph_tag }}" }
 
 # update params for container update
 - name: Add updates to container-prepare-parameters.yaml
   when:
     - standalone_container_prep_updates
-  vars:
-    yaml_file: "{{ working_dir }}/containers-prepare-parameters.yaml"
-    container_image_prep_updates:
-      - push_destination: "{{ local_docker_registry_host }}:8787"
-        tag_from_label: null
-        modify_role: tripleo-modify-image
-        modify_append_tag: "{{ update_containers_append_tag }}"
-        modify_only_with_labels:
-          - kolla_version
-        modify_vars:
-          tasks_from: yum_update.yml
-          yum_repos_dir_path: /etc/yum.repos.d
-          update_repo: "{{ standalone_container_prep_update_repo }}"
-    initial_dict: |
-      {{ lookup('file', yaml_file) | from_yaml }}
-    merged_dict:
-      parameter_defaults:
-        DockerInsecureRegistryAddress:
-          - "{{ local_docker_registry_host }}:8787"
-        ContainerImagePrepare:
-          - |
-            {{ initial_dict.parameter_defaults.ContainerImagePrepare |
-               combine(container_image_prep_updates, recursive=true) }}
-  copy:
-    content: "{{ merged_dict | to_nice_yaml }}"
-    dest: "{{ yaml_file }}"
-    backup: true
+  block:
+    - name: Replace tag_from_label value
+      replace:
+        path: "{{ working_dir }}/containers-prepare-parameters.yaml"
+        regexp: " tag_from_label: (.*)"
+        replace: " tag_from_label: null"
+        backup: true
 
+    - name: Add settings to modify
+      blockinfile:
+        path: "{{ working_dir }}/containers-prepare-parameters.yaml"
+        state: present
+        backup: true
+        insertbefore: "(.*) tag_from_label: null"
+        block: |
+          #
+              push_destination: "{{ local_docker_registry_host }}:8787"
+              modify_role: tripleo-modify-image
+              modify_append_tag: "{{ update_containers_append_tag }}"
+              {% if osp_release is defined -%}
+              # no kolla labels are defined
+              {% else -%}
+              modify_only_with_labels:
+              - kolla_version
+              {% endif -%}
+              modify_vars:
+                tasks_from: yum_update.yml
+                yum_repos_dir_path: /etc/yum.repos.d
+                update_repo: "{{ standalone_container_prep_update_repo }}"
+
+- name: Modify the insecure registry value when using podman
+  when:
+    - standalone_container_prep_updates
+    - osp_release is defined
+    - release not in ['newton', 'ocata', 'pike', 'queens', 'rocky']
+  replace:
+    path: "{{ working_dir }}/standalone_parameters.yaml"
+    regexp: " - 192.168.24.1:8787"
+    replace: " - 192.168.24.1"
+    backup: true
 
 - name: Create the deploy command for standalone
   template:
