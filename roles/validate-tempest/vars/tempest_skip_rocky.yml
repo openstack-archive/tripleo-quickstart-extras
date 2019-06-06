@@ -119,6 +119,12 @@ known_failures:
   - test: 'tempest.api.compute.admin.test_auto_allocate_network.AutoAllocateNetworkTest.test_server_multi_create_auto_allocate'
     reason: 'Test is failing due microversion'
     lp: 'https://bugs.launchpad.net/tripleo/+bug/1821690'
+  - test: 'tempest.api.compute.servers.test_server_actions.ServerActionsTestJSON.test_resize_server_revert_with_volume_attached'
+    reason: 'REVERT_RESIZE stuck for 300s: "VirtualInterfaceCreateException: Virtual Interface creation failed'
+    lp: 'https://bugzilla.redhat.com/show_bug.cgi?id=1678681, https://bugs.launchpad.net/tripleo/+bug/1831223'
+  - test: 'tempest.api.compute.servers.test_servers.ServerShowV263Test.test_show_update_rebuild_list_server'
+    reason: 'ServerShowV263Test only passing when image has already been cached Edit'
+    lp: 'https://bugs.launchpad.net/nova/+bug/1831866'
   # skip list for undercloud
   - test: 'tempest.api.network.test_networks.NetworksTest.test_external_network_visibility'
     reason: 'Running on undercloud'
