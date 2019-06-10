@@ -43,3 +43,6 @@ Role Variables
 - `composable_scenario`: <''> -- path to the composable scenarios used at deployment time
 - `upgrade_composable_scenario`: <''> -- path to the composable scenarios used at upgrade time
 - `undercloud_rpm_dependencies`: <'python-tripleoclient'> -- Dependency packages for undercloud deployments.
+- `baremetal_provision`: <false> Deploy baremetal with "openstack overcloud node provision" and deployed-server, instead of with heat/nova
+- `undercloud_enable_nova`: <true> -- sets up the 'enable_nova'
+  option in undercloud.conf.

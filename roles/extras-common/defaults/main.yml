@@ -84,3 +84,9 @@ validate_performance: true
 
 # If `validate_services` is `true`, run the validate-services role
 validate_services: false
+
+# If `baremetal_provision` is `true`, deploy baremetal with "openstack overcloud node provision" and deployed-server, instead of with heat/nova
+baremetal_provision: false
+
+# If `undercloud_enable_nova` is `true`, the undercloud will have running glance and nova services
+undercloud_enable_nova: true
