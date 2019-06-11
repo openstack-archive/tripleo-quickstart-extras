@@ -73,16 +73,3 @@
   when:
     - overcloud_templates_refspec is defined or overcloud_templates_branch is defined
     - overcloud_templates_repo is defined
-
-- name: Copy extra THT config files on the undercloud
-  copy:
-    src: "{{ item }}"
-    dest: "{{ working_dir }}"
-  with_items: "{{ extra_tht_configs|default([]) }}"
-
-- name: Add extra THT config file to the deploy command
-  set_fact:
-    extra_tht_config_args: >-
-      {{ extra_tht_config_args|default('') }}
-      -e {{ working_dir }}/{{ item | basename }}
-  with_items: "{{ extra_tht_configs|default([]) }}"

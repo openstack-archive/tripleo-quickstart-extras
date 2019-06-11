@@ -46,7 +46,8 @@ A description of the settable variables for this role should go here, including 
 * `virt_type`: qemu|kvm default is qemu. kvm is only enabled when kvm-{intel|amd}
    kernel module can be loaded.
 * `topology_map`: undefined - a dictionary of roles with their scale (count) and flavor names. Example: topology_map: { 'Controller': { 'scale': 3, 'flavor': 'baremetal' } }
-
+* `extra_tht_configs`: -- a list of files to copy to the undercloud and add as
+  extra config to the overcloud-deployment command.
 
 Dependencies
 ------------
