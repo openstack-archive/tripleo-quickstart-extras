@@ -14,10 +14,10 @@ new undercloud image.
 Requirements
 ------------
 
-* [convert-image](https://opendev.org/openstack/tripleo-quickstart/tree/roles/convert-image) role from tripleo-quickstart (if building an undercloud image)
-* [fetch-images](https://opendev.org/openstack/tripleo-quickstart/tree/roles/fetch-images) role from tripleo-quickstart (if using isolated build)
-* [modify-image](https://opendev.org/openstack/tripleo-quickstart-extras/tree/roles/modify-image) role from tripleo-quickstart-extras
-* [repo-setup](https://opendev.org/openstack/tripleo-quickstart-extras/tree/roles/repo-setup) role from tripleo-quickstart-extras
+* [convert-image](https://opendev.org/openstack/tripleo-quickstart/src/branch/master/roles/convert-image) role from tripleo-quickstart (if building an undercloud image)
+* [fetch-images](https://opendev.org/openstack/tripleo-quickstart/src/branch/master/roles/fetch-images) role from tripleo-quickstart (if using isolated build)
+* [modify-image](https://opendev.org/openstack/tripleo-quickstart-extras/src/branch/master/roles/modify-image) role from tripleo-quickstart-extras
+* [repo-setup](https://opendev.org/openstack/tripleo-quickstart/src/branch/master/roles/repo-setup/) role from tripleo-quickstart-extras
 
 Role Variables
 --------------
