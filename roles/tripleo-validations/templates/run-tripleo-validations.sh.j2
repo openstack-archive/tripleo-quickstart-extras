@@ -49,7 +49,7 @@ for validation_name in $LIST_VALIDATIONS; do
             sleep 1
             STATE=$(mistral execution-get -f value -c State "$ID")
             TRIES=$((TRIES+1))
-            if [ "$TRIES" -gt 40 ]; then
+            if [ "$TRIES" -gt {{ validations_max_retries }} ]; then
                 break
             fi
         done
