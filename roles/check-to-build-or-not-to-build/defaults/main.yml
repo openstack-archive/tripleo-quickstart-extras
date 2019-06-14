@@ -6,3 +6,4 @@ default_projects_need_build_list:
   - instack-undercloud
   - python-tripleoclient
   - tripleo-common
+  - ironic-python-agent
