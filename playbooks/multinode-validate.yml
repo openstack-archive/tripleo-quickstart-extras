@@ -19,3 +19,18 @@
     - {role: validate-simple, when: test_ping|bool}
     - {role: validate-services, when: validate_services|default(false)|bool}
     - {role: validate-tempest, when: run_tempest|bool}
+
+- name: Validate the deployment
+  hosts: undercloud
+  tasks:
+    - include_tasks: tempest.yml
+      vars:
+        tempest_install_method: distro
+        tempest_cloud_name: 'overcloud'
+        tempest_cidr: '192.168.24.0/24'
+      when:
+        - not run_tempest|bool
+        - use_os_tempest is defined
+        - use_os_tempest|bool
+  tags:
+    - overcloud-validate

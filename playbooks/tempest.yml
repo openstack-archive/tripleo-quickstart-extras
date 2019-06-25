@@ -12,6 +12,20 @@
   set_fact:
     tempest_service_available_neutron: true
 
+- name: Create /root/.config/openstack directory
+  file:
+    state: directory
+    path: "/root/.config/openstack"
+    mode: 0700
+  become: true
+
+- name: Copy clouds.yaml file from user's home to /root directory
+  copy:
+    src: '{{ ansible_user_dir }}/.config/openstack/clouds.yaml'
+    dest: '/root/.config/openstack/clouds.yaml'
+    mode: 0600
+  become: true
+
 - name: Set network vars
   set_fact:
     tempest_public_net_physical_type: 'datacentre'
