@@ -1,0 +1,5 @@
+---
+other:
+  - |
+    The `openstack undercloud deploy` command has been removed. The support for
+    this method of deployment in the `undercloud-deploy` role has been removed.
