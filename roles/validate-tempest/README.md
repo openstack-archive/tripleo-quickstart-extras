@@ -40,8 +40,7 @@ Role Variables
                                 For example:
                                 ```
                                 tempest_format: venv
-                                tempest_plugins_git: [https://opendev.org/openstack/tempest-tripleo-ui,
-                                                      https://opendev.org/openstack/keystone-tempest-plugin,
+                                tempest_plugins_git: [https://opendev.org/openstack/keystone-tempest-plugin,
                                                       https://opendev.org/openstack/cinder-tempest-plugin]
                                 ```
 * `tempest_extra_config`: dict - A dict of tempest configuration which needs to be overridden in tempest.conf,
