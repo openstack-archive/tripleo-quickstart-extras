@@ -85,6 +85,15 @@
   roles:
     - validate-undercloud
 
+- name: Download amphora image for octavia
+  hosts: undercloud
+  gather_facts: false
+  tags:
+    - octavia
+  roles:
+    - {role: octavia-amphora-download,
+       when: download_amphora is defined and download_amphora|bool}
+
 - name: Set Libvirt type
   hosts: overcloud
   roles:
