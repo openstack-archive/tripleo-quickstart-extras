@@ -1,0 +1,13 @@
+---
+- name: Prepare and run Tobiko
+  hosts: undercloud
+  vars:
+    debug: true
+    tobiko_config: true
+    tobiko_run: true
+    tempest_cloud_name: overcloud
+  tags:
+    - overcloud-validate
+    - standalone
+  roles:
+    - {role: validate-tobiko}
