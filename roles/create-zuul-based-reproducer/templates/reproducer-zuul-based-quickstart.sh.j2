@@ -246,7 +246,7 @@ rsync -a *-playbook.yaml $WORKSPACE
 cd $WORKSPACE
 
 # Run the playbook to set up the launcher env
-ansible-playbook \
+PATH=${HOME}/.local/bin:$PATH ansible-playbook \
     $WORKSPACE/launcher-env-setup-playbook.yaml \
     -vv \
     ${EXTRA_PARAMS[@]}
@@ -303,7 +303,7 @@ fi
 
 
 # Run the launcher playbook
-ansible-playbook \
+PATH=${HOME}/.local/bin:$PATH ansible-playbook \
     $WORKSPACE/launcher-playbook.yaml \
     -vv \
     --tags all \
