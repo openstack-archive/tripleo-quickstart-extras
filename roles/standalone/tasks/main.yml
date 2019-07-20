@@ -114,7 +114,8 @@
 - name: Modify the insecure registry value when using podman
   when:
     - standalone_container_prep_updates
-    - osp_release is defined
+    - ansible_distribution == 'RedHat'
+    - ansible_distribution_major_version|int >= 8
     - release not in ['newton', 'ocata', 'pike', 'queens', 'rocky']
   replace:
     path: "{{ working_dir }}/standalone_parameters.yaml"
