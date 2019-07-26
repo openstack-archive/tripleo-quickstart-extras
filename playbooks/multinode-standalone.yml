@@ -48,11 +48,15 @@
 
 - name: Validate the deployment
   hosts: undercloud
+  # Note(chkumar246): Moved the os_tempest related var at the top
+  # of play level in order to have scope for the whole of the play
+  # https://bugs.launchpad.net/tripleo/+bug/1838496
+
+  vars:
+    tempest_install_method: distro
+    tempest_cloud_name: 'standalone'
   tasks:
     - include_tasks: tempest.yml
-      vars:
-        tempest_install_method: distro
-        tempest_cloud_name: 'standalone'
       when:
         - not run_tempest|bool
         - use_os_tempest is defined
