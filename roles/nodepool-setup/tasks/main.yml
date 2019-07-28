@@ -30,7 +30,7 @@
     path: /etc/yum/vars/contentdir
   register: yum_contentdir
 
-- when: not yum_contentdir.stat.exists
+- when: not yum_contentdir.stat.exists and ansible_distribution|lower != 'fedora'
   block:
 
     - name: Discover package architecture
@@ -63,9 +63,10 @@
     - centos-release-openstack-ocata
     - epel-release
   become: true
+  when: ansible_distribution|lower != 'fedora'
 
 - name: Install packages
-  yum:
+  package:
     name: "{{ packages_list }}"
     state: latest
   become: true
@@ -140,7 +141,7 @@
   block:
 
     - name: Update packages
-      yum:
+      package:
         name: '*'
         state: latest
       become: true

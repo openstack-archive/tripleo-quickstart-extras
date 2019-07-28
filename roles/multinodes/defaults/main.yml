@@ -31,3 +31,4 @@ subnode_flavor: m1.large
 subnode_groups:
   - subnodes
 nodepool_user: zuul
+default_image_user: centos
