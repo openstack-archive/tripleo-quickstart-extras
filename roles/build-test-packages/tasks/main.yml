@@ -143,6 +143,10 @@
     >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
     find /etc/yum.repos.d -name "delorean*build-deps.repo" -exec sed 's/enabled=.*/enabled=1/g' {} \;
     >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
+    {% if ansible_distribution|lower == "redhat" and ansible_distribution_major_version == "8" %}
+    find /etc/yum.repos.d -name "rh-cloud.repo" -exec sed 's/enabled=.*/enabled=1/g' {} \;
+    >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
+    {% endif %}
     echo '"""' >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
     mkdir -p /tmp/fake-dlrn-repos/current;
     touch /tmp/fake-dlrn-repos/delorean-deps.repo;
