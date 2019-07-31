@@ -1,0 +1,13 @@
+---
+- name: gather facts used by role
+  setup:
+    gather_subset: "!min,distribution"
+  when: ansible_distribution is not defined
+
+- include: create-scripts.yml
+  tags:
+    - minion-scripts
+
+- include: install-minion.yml
+  tags:
+    - minion-install

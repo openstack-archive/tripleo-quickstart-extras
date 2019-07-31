@@ -1,0 +1,221 @@
+[DEFAULT]
+
+#
+# From minion_config
+#
+
+# Cleanup temporary files. Setting this to False will leave the
+# temporary files used during deployment in place after the command is
+# run. This is useful for debugging the generated files or if errors
+# occur. (boolean value)
+#cleanup = true
+
+# Container CLI used for deployment; Can be docker or podman. (string
+# value)
+container_cli = {{ minion_container_cli }}
+
+# Whether or not we disable the container healthchecks. (boolean
+# value)
+container_healthcheck_disabled = {{ minion_healthcheck_disabled }}
+
+# Heat environment file with parameters for all required container
+# images. Or alternatively, parameter "ContainerImagePrepare" to drive
+# the required image preparation. (string value)
+{% if minion_container_images_file is defined %}
+container_images_file = {{ minion_container_images_file }}
+{% else %}
+container_images_file = {{ working_dir }}/containers-prepare-parameter.yaml
+{% endif %}
+
+# Used to add custom insecure registries for containers. (list value)
+# Deprecated group/name - [DEFAULT]/docker_insecure_registries
+{% if minion_container_insecure_registries is defined and minion_container_insecure_registries|length>0 %}
+container_insecure_registries = {{ minion_container_insecure_registries | join(',') }}
+{% elif undercloud_docker_insecure_registries is defined and undercloud_docker_insecure_registries|length>0 %}
+container_insecure_registries = {{ undercloud_docker_insecure_registries }}
+{% else %}
+#container_insecure_registries =
+{% endif %}
+
+# An optional container registry mirror that will be used. (string
+# value)
+# Deprecated group/name - [DEFAULT]/docker_registry_mirror
+#container_registry_mirror =
+
+# List of any custom environment yaml files to use. These are applied
+# after any other configuration and can be used to override any
+# derived values. This should be used only by advanced users. (list
+# value)
+{% if minion_custom_env_files is defined %}
+custom_env_files = {{ minion_custom_env_files.split()|join(',') }}
+{% else %}
+#custom_env_files =
+{% endif %}
+
+# User used to run openstack undercloud install command which will be
+# used to add the user to the docker group, required to upload
+# containers (string value)
+#deployment_user = <None>
+
+# Whether to install the Heat Engine service. (boolean value)
+enable_heat_engine = {{ minion_enable_heat_engine }}
+
+# Whether to install the Ironic Conductor service. This is currently
+# disabled by default. (boolean value)
+enable_ironic_conductor = {{ minion_enable_ironic_conductor }}
+
+# URL for the heat container image to use. (string value)
+#heat_container_image =
+
+# Execute the heat-all process natively on this host. This option
+# requires that the heat-all binaries be installed locally on this
+# machine. This option is enabled by default which means heat-all is
+# executed on the host OS  directly. (boolean value)
+#heat_native = true
+
+# Path to hieradata override file. Relative paths get computed inside
+# of $HOME. When it points to a heat env file, it is passed in t-h-t
+# via "-e <file>", as is. When the file contains legacy instack data,
+# it is wrapped with <role>ExtraConfig and also passed in for
+# t-h-t as a temp file created in output_dir. Note, instack hiera data
+# may be not t-h-t compatible and will highly likely require a manual
+# revision. (string value)
+{% if minion_hieradata_override is defined %}
+hieradata_override = {{ minion_hieradata_override }}
+{% else %}
+#hieradata_override =
+{% endif %}
+
+# Whether to enable the debug log level for OpenStack services and
+# Container Image Prepare step. (boolean value)
+minion_debug = {{ minion_minion_debug }}
+
+# Enable or disable SELinux during the deployment. (boolean value)
+minion_enable_selinux = {{ minion_selinux_enabled }}
+
+# Run pre-flight checks when installing or upgrading. (boolean value)
+#minion_enable_validations = true
+
+# Fully qualified hostname (including domain) to set on the
+# Undercloud. If left unset, the current hostname will be used, but
+# the user is responsible for configuring all system hostname settings
+# appropriately.  If set, the undercloud install will configure all
+# system hostname settings. (string value)
+#minion_hostname = <None>
+
+# Network interface on the Undercloud that will be handling the PXE
+# boots and DHCP for Overcloud instances. (string value)
+{% if minion_local_interface is defined %}
+minion_local_interface = {{ minion_local_interface }}
+{% else %}
+#minion_local_interface = eth1
+{% endif %}
+
+# IP information for the interface on the Undercloud that will be
+# handling the PXE boots and DHCP for Overcloud instances.  The IP
+# portion of the value will be assigned to the network interface
+# defined by local_interface, with the netmask defined by the prefix
+# portion of the value. (string value)
+minion_local_ip = {{ minion_local_ip|default(
+    '%s/%s' % (undercloud_network_cidr|nthhost(4),
+    undercloud_network_cidr.split('/').1)) }}
+#minion_local_ip = 192.168.24.50/24
+
+# MTU to use for the local_interface. (integer value)
+{% if minion_local_mtu is defined %}
+minion_local_mtu = {{ minion_local_mtu }}
+{% endif %}
+#minion_local_mtu = 1500
+
+# The path to a log file to store the undercloud install/upgrade logs.
+# (string value)
+minion_log_file = {{ minion_install_log }}
+
+# DNS nameserver(s). Use for the undercloud node and for the overcloud
+# nodes. (NOTE: To use different nameserver(s) for the overcloud,
+# override the DnsServers parameter in overcloud environment.) (list
+# value)
+{% if virthost_nameservers is string %}
+minion_nameservers = {{ virthost_nameservers }}
+{% elif virthost_nameservers is sequence and virthost_nameservers|length > 0 %}
+minion_nameservers = {{ virthost_nameservers|join(',') }}
+{% elif minion_minion_nameservers is string %}
+minion_nameservers = {{ minion_minion_nameservers }}
+{% elif minion_minion_nameservers is sequence %}
+minion_nameservers = {{ minion_minion_nameservers|join(',') }}
+{% elif undercloud_undercloud_nameservers is string %}
+minion_nameservers = {{ undercloud_undercloud_nameservers }}
+{% elif undercloud_undercloud_nameservers is sequence %}
+minion_nameservers = {{ undercloud_undercloud_nameservers|join(',') }}
+{% else %}
+#minion_nameservers =
+{% endif %}
+
+# List of ntp servers to use. (list value)
+{% if minion_minion_ntp_servers is string %}
+minion_ntp_servers = {{ minion_minion_ntp_servers }}
+{% elif minion_minion_ntp_servers is sequence %}
+minion_ntp_servers = {{ minion_minion_ntp_servers|join(',') }}
+{% elif undercloud_undercloud_ntp_servers is string %}
+minion_ntp_servers = {{ undercloud_undercloud_ntp_servers }}
+{% elif undercloud_undercloud_ntp_servers is sequence %}
+minion_ntp_servers = {{ undercloud_undercloud_ntp_servers|join(',') }}
+{% else %}
+#minion_ntp_servers = 0.pool.ntp.org,1.pool.ntp.org,2.pool.ntp.org,3.pool.ntp.org
+{% endif %}
+
+# The name of the file to look for the passwords used to connect to
+# the undercloud. We assume this file is in the folder where the
+# command is executed if a fully qualified path is not provided.
+# (string value)
+#minion_password_file = tripleo-undercloud-passwords.yaml
+
+# TODO: Certificate file to use for OpenStack service SSL connections.
+# Setting this enables SSL for the OpenStack API endpoints, leaving it
+# unset disables SSL. (string value)
+#minion_service_certificate =
+
+# Host timezone to be used. If no timezone is specified, the existing
+# timezone configuration is used. (string value)
+#minion_timezone = <None>
+
+# The name of the file to look for the undercloud output file that
+# contains configuration information. We assume this file is in the
+# folder where the command is executed if a fully qualified path is
+# not provided. (string value)
+#minion_undercloud_output_file = tripleo-undercloud-output.yaml
+
+# Path to network config override template.Relative paths get computed
+# inside of $HOME. Must be in the json format.Its content overrides
+# anything in t-h-t UndercloudNetConfigOverride. The processed
+# template is then passed in Heat via the undercloud_parameters.yaml
+# file created in output_dir and used to configure the networking via
+# run-os-net-config. If you wish to disable you can set this location
+# to an empty file.Templated for instack j2 tags may be used, for
+# example:
+#
+# ... snip example because ansible ...
+#
+#   (string value)
+#net_config_override =
+
+# Networks file to override for heat. May be an absolute path or the
+# path relative to the t-h-t templates directory used for deployment
+# (string value)
+#networks_file = <None>
+
+# Directory to output state, processed heat templates, ansible
+# deployment files. (string value)
+{% if minion_minion_output_dir is defined %}
+output_dir = {{ minion_minion_output_dir }}
+{% else %}
+#output_dir = $HOME/.undercloud-heat-installer
+{% endif %}
+
+# Roles file to override for heat. May be an absolute path or the path
+# relative to the t-h-t templates directory used for deployment
+# (string value)
+#roles_file = <None>
+
+# heat templates file to override. (string value)
+templates = {{ minion_templates_path }}
