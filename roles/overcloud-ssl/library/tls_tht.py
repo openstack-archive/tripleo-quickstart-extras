@@ -115,7 +115,7 @@ def create_anchor_file(cert_ca_pem, source_dir, dest_dir, enable_tls_overcloud, 
     # Optionally include the undercloud's local CA certificate
     try:
         undercloud_ca = "/etc/pki/ca-trust/source/anchors/cm-local-ca.pem"
-        with open(undercloud_ca, 'ro') as undercloud_ca_file:
+        with open(undercloud_ca, 'r') as undercloud_ca_file:
             undercloud_ca_content = undercloud_ca_file.read()
         ca_map.update({"undercloud-ca": {"content": undercloud_ca_content}})
     except IOError:

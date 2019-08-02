@@ -2,15 +2,13 @@
 # tasks file for ansible-role-tripleo-ssl
 - when: ssl_overcloud|bool
   block:
-    - name: Ensure rpm requirements for ssl are installed
-      yum: name={{ item }} state=latest
-      with_items:
-        - openssl
-
-    - name: Ensure tripleo heat template rpm requirements for ssl are installed
-      yum: name={{ item }} state=latest
-      with_items:
-        - openstack-tripleo-heat-templates
+    - name: Ensure rpm requirements for ssl and heat template are installed
+      become: true
+      package:
+        name:
+          - openssl
+          - openstack-tripleo-heat-templates
+        state: latest
 
     - name: Create overcloud-create-ssl-cert.sh
       template:
