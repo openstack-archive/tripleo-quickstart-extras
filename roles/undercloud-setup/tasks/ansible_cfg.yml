@@ -26,7 +26,7 @@
     path: /etc/ansible/ansible.cfg
     regexp: '^#callback_plugins'
     line: |
-      callback_plugins=/usr/lib/python2.7/site-packages/ara/plugins/callbacks
+      callback_plugins={% if ansible_python.version.major == 3 %}/usr/local/lib/python3.6/site-packages{% else %}/usr/lib/python2.7/site-packages{% endif %}/ara/plugins/callbacks
 
 - name: Update the default ansible action setting in /etc/ansible/ansible.cfg
   become: true
@@ -34,12 +34,4 @@
     path: /etc/ansible/ansible.cfg
     regexp: '^#action_plugins'
     line: |
-      action_plugins=/usr/lib/python2.7/site-packages/ara/plugins/actions
-
-- name: Update the default ansible library setting in /etc/ansible/ansible.cfg
-  become: true
-  lineinfile:
-    path: /etc/ansible/ansible.cfg
-    regexp: '^#library'
-    line: |
-      library=/usr/lib/python2.7/site-packages/ara/plugins/modules
+      action_plugins={% if ansible_python.version.major == 3 %}/usr/local/lib/python3.6/site-packages{% else %}/usr/lib/python2.7/site-packages{% endif %}/ara/plugins/actions
