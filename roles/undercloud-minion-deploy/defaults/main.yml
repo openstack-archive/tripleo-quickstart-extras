@@ -5,6 +5,7 @@ minion_install_cmd: openstack undercloud minion install
 minion_install_cli_options: ""
 minion_post_install_script: minion-install-post.sh.j2
 minion_install_log: "{{ working_dir }}/minion_install.log"
+minion_minion_hostname: minion.localdomain
 
 minion_install_script: minion-install.sh.j2
 

@@ -102,6 +102,7 @@ minion_enable_selinux = {{ minion_selinux_enabled }}
 # appropriately.  If set, the undercloud install will configure all
 # system hostname settings. (string value)
 #minion_hostname = <None>
+minion_hostname = {{ minion_minion_hostname }}
 
 # Network interface on the Undercloud that will be handling the PXE
 # boots and DHCP for Overcloud instances. (string value)
