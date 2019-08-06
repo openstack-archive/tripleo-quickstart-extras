@@ -48,11 +48,6 @@
       shell: "{{ ansible_pkg_mgr }} --enablerepo='gating-repo' update -y"
       become: true
       when: hostvars['undercloud']['compressed_gating_repo'] is defined
-    - name: Include hostname tasks
-      include_role:
-        name: undercloud-setup
-        tasks_from: hostname
-      when: hostname_correction|default(false)|bool or step_set_undercloud_hostname|default(false)|bool
   tags:
     - undercloud-setup
 
