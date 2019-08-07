@@ -1,0 +1,6 @@
+---
+validate_minion_heat_engine: true
+validate_minion_ironic_conductor: false
+validate_minion_simple_script: validate_minion_simple.sh.j2
+validate_minion_simple_log: validate_minion_simple.log
+undercloud_user: stack

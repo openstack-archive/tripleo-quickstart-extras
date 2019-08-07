@@ -28,6 +28,10 @@
 
 - name: Setup the undercloud minion
   hosts: overcloud
+  vars:
+    # these are the defaults but we should be explicit
+    minion_enable_heat_engine: true
+    minion_enable_ironic_conductor: true
   tasks:
     - name: Include atop setup
       include_role:
@@ -57,3 +61,13 @@
     - undercloud-minion-deploy
   tags:
     - undercloud-setup
+
+- name: Validate minion
+  hosts: undercloud
+  vars:
+    validate_minion_heat_engine: true
+    validate_minion_ironic_conductor: true
+  roles:
+    - validate-minion
+  tags:
+    - overcloud-validate
