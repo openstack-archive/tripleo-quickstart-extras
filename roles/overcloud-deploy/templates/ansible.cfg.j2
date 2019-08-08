@@ -1,6 +1,6 @@
 [defaults]
-action_plugins = /usr/lib/python2.7/site-packages/ara/plugins/actions
-callback_plugins = /usr/lib/python2.7/site-packages/ara/plugins/callbacks
+action_plugins = {% if ansible_python.version.major == 3 %}/usr/local/lib/python3.6/site-packages{% else %}/usr/lib/python2.7/site-packages{% endif %}/ara/plugins/actions
+callback_plugins = {% if ansible_python.version.major == 3 %}/usr/local/lib/python3.6/site-packages{% else %}/usr/lib/python2.7/site-packages{% endif %}/ara/plugins/callbacks
 # debug (former name human_log) makes stdout/stdderr lines more readable
 stdout_callback=debug
 
