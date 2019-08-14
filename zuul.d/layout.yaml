@@ -11,6 +11,10 @@
       jobs:
         - tripleo-ci-centos-7-standalone
         - openstack-tox-linters
+        - tripleo-ci-centos-7-containers-undercloud-minion:
+            files:
+              - ^roles/.*minion.*$
+              - ^playbooks/.*minion.*$
     gate:
       queue: tripleo
       jobs:
