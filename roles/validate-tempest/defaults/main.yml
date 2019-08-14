@@ -31,7 +31,13 @@ tempest_container_registry: >-
   {%- else -%}
   {{ docker_registry_host }}/{{ docker_registry_namespace }}
   {%- endif %}
-tempest_container_namespace: centos-binary-tempest
+tempest_container_namespace: >-
+   {% if ansible_distribution == 'CentOS' -%}
+   centos-binary-tempest
+   {%- elif ansible_distribution == 'RedHat' -%}
+   rhel-binary-tempest
+   {%- endif -%}
+
 tempest_container_tag: >-
   {% if (undercloud_enable_tempest is defined and undercloud_enable_tempest|bool) and (update_containers_append_tag is defined)-%}
   {{ container_build_id }}{{ update_containers_append_tag }}
