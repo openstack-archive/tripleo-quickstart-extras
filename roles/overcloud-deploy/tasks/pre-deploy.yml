@@ -278,6 +278,14 @@
   when:
     - overcloud_neutron_global_physnet_mtu is defined
 
+- name: set storage_args for CinderLVMLoopDeviceSize settings
+  set_fact:
+    storage_args: >-
+      {{ storage_args }}
+      -e {{ working_dir }}/overcloud_storage_params.yaml
+  when:
+    - overcloud_cinder_lvm_loop_device_size is defined
+
 # 15 is "reserved time for logs=10" + 5 minutes for inventory role for OVB jobs
 # Time must be synchronised on hosts
 - name: Set overcloud deployment timeout in CI for OVB

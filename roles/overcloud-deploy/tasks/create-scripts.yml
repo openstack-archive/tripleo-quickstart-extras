@@ -89,6 +89,13 @@
     src: "overcloud_network_params.yaml.j2"
     dest: "{{ working_dir }}/overcloud_network_params.yaml"
 
+- name: Create the overcloud storage parameters yaml
+  when:
+    - overcloud_cinder_lvm_loop_device_size is defined
+  template:
+    src: "overcloud_storage_params.yaml.j2"
+    dest: "{{ working_dir }}/overcloud_storage_params.yaml"
+
 - name: Create overriding ansible.cfg for overcloud deployment
   when: override_ansiblecfg|bool
   template:
