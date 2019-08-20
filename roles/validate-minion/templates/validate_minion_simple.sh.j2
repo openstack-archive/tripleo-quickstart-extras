@@ -1,0 +1,58 @@
+#!/bin/bash
+#   Copyright 2019 Red Hat, Inc. All Rights Reserved.
+#
+#   Licensed under the Apache License, Version 2.0 (the "License"); you may
+#   not use this file except in compliance with the License. You may obtain
+#   a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#   WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#   License for the specific language governing permissions and limitations
+#   under the License.
+#
+# simple script to check if the minion is has successfully reported into the
+# undercloud.
+
+set -eux
+VALIDATE_HEAT_ENGINE="${VALIDATE_HEAT_ENGINE:-{{ validate_minion_heat_engine }}}"
+VALIDATE_IRONIC_CONDUCTOR="${VALIDATE_IRONIC_CONDUCTOR:-{{ validate_minion_ironic_conductor }}}"
+RC=0
+
+set +x
+source "/home/{{ undercloud_user }}/stackrc"
+set -x
+
+if [[ ${VALIDATE_HEAT_ENGINE,,} == "true" ]]; then
+    openstack orchestration service list
+    HOST_COUNT=$(openstack orchestration service list -c Host -f value | sort | uniq | wc -l)
+    if [ "$HOST_COUNT" -le 1 ]; then
+        # count should be > 1 if we have an undercloud + minion
+        echo "ERROR: Heat Engine host count is 1 or less."
+        RC=1
+    fi
+
+    DOWN_STATUS=$(openstack orchestration service list -c Status -f value | grep -v up | wc -l)
+    if [ "$DOWN_STATUS" -ge 1 ]; then
+        echo "ERROR: Heat Engine status contains a service that is not up."
+        RC=1
+    fi
+fi
+if [[ ${VALIDATE_IRONIC_CONDUCTOR,,} == "true" ]]; then
+    openstack baremetal conductor list
+    HOST_COUNT=$(openstack baremetal conductor list -c Hostname -f value | sort | uniq | wc -l)
+    if [ "$HOST_COUNT" -le 1 ]; then
+        # count should be > 1 if we have an undercloud + minion
+        echo "ERROR: Ironic Conductor host count is 1 or less."
+        RC=1
+    fi
+    DOWN_STATUS=$(openstack baremetal conductor list -c Alive -f value | grep -v True | wc -l)
+    if [ "$DOWN_STATUS" -ge 1 ]; then
+        echo "ERROR: Ironic Conductor status contains a service that is not up."
+        RC=1
+    fi
+fi
+
+exit $RC

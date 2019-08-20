@@ -1,0 +1,12 @@
+---
+- name: Create the tripleo-minion simple validate script
+  template:
+    src: "{{ validate_minion_simple_script }}"
+    dest: "{{ local_working_dir }}/validate_minion_simple.sh"
+    mode: 0744
+
+- name: Execute the simple minion validation
+  shell: >
+    set -o pipefail &&
+    {{ local_working_dir }}/validate_minion_simple.sh
+    | tee {{ validate_minion_simple_log }}
