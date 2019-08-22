@@ -111,6 +111,14 @@
                 yum_repos_dir_path: /etc/yum.repos.d
                 update_repo: "{{ standalone_container_prep_update_repo }}"
 
+- name: Update rhel_containers value
+  when: ansible_distribution == 'RedHat'
+  replace:
+    path: "{{ working_dir }}/containers-prepare-parameters.yaml"
+    regexp: "rhel_containers: false"
+    replace: "rhel_containers: true"
+    backup: true
+
 - name: Modify the insecure registry value when using podman
   when:
     - standalone_container_prep_updates
