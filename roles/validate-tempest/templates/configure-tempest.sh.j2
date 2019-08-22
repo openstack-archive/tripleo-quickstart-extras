@@ -196,7 +196,8 @@ $TEMPESTCONF --out etc/tempest.conf \
   {{ key }} {{ value }} \
   {% endfor %}
   {% endif %}
-  orchestration.stack_owner_role Member
+  orchestration.stack_owner_role Member \
+  compute_feature_enabled.config_drive True
 
 {% if ironic_overcloud|default(false)|bool %}
 # tempest is using the m1.nano flavor, set it up for using a resource class if testing ironic
