@@ -49,7 +49,7 @@
     dest: "{{ artcl_collect_dir }}/{{ old_reproducer_dir }}/reproducer-quickstart.sh"
     mode: 0755
 
-- name: Create reproducer script documentation from template
-  template:
-    src: README-reproducer-quickstart.html.j2
+- name: Copy reproducer script documentation
+  copy:
+    src: README-reproducer-quickstart.html
     dest: "{{ reproducer_quickstart_readme_file }}"
