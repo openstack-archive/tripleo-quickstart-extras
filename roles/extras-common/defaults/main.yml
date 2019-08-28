@@ -19,6 +19,16 @@ containerized_overcloud_upgrade: >-
   {%- else -%}
   true
   {%- endif -%}
+undercloud_container_cli: >-
+  {% if release in ['rocky'] -%}
+  docker
+  {%- else -%}
+  podman
+  {%- endif -%}
+# the variable is only used in overcloud-deploy role
+# for stein and beyond, so it's safe to set it to podman,
+# as for stable branches the variable won't be used.
+overcloud_container_cli: podman
 local_docker_registry_host: "{{ undercloud_network_gateway|default(undercloud_network_cidr|nthhost(1)) }}"
 docker_registry_host: docker.io
 docker_registry_namespace: "tripleo{{ release }}"
