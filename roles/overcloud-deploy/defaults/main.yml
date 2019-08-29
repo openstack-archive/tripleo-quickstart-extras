@@ -178,9 +178,9 @@ resource_registry_args:
   OS::TripleO::ObjectStorage::Net::SoftwareConfig: nic-configs/swift-storage.yaml
   OS::TripleO::CephStorage::Net::SoftwareConfig: nic-configs/ceph-storage.yaml
 
-# Used to deploy podman on the undercloud instead of docker
-# TODO(emilien) in Stein, we'll switch the default to podman
-overcloud_container_cli: docker
+# This default is set in roles/extras-common/defaults/main.yml
+# overcloud_container_cli
+
 # We disable selinux when running under CentOS. It's enabled for RHEL
 overcloud_selinux_enabled: >-
    {% if ansible_distribution == 'CentOS' -%}
