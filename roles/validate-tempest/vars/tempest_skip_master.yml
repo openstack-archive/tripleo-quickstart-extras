@@ -160,12 +160,6 @@ known_failures:
   - test: 'telemetry_tempest_plugin.scenario.test_telemetry_integration.TestTelemetryIntegration'
     reason: 'telemetry tests failed due to One or more ports have an IP allocation from this subnet'
     lp: 'https://bugs.launchpad.net/tripleo/+bug/1792862'
-  - test: 'tempest.api.volume.admin.test_snapshots_actions.SnapshotsActionsTest.test_snapshot_force_delete_when_snapshot_is_error'
-    reason: 'Insufficient free virtual space (-12.0GB) to accommodate thin provisioned 1GB volume on host'
-    lp: 'https://bugs.launchpad.net/tripleo/+bug/1841071'
-  - test: 'tempest.api.volume.admin.test_snapshots_actions.SnapshotsActionsTest.test_snapshot_force_delete_when_snapshot_is_deleting'
-    reason: 'Insufficient free virtual space (-12.0GB) to accommodate thin provisioned 1GB volume on host'
-    lp: 'https://bugs.launchpad.net/tripleo/+bug/1841071'
 
   # skip list for undercloud
   - test: 'tempest.api.network.test_networks.NetworksTest.test_external_network_visibility'

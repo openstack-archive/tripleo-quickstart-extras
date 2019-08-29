@@ -76,7 +76,7 @@ cloud_name_args: ""
 hostnamemap_args: ""
 network_args: ""
 storage_args: ""
-overcloud_cinder_lvm_loop_device_size: 12288
+overcloud_cinder_lvm_loop_device_size: 20480
 network_isolation_args: ""
 ntp_args: ""
 pacemaker_args: ""
