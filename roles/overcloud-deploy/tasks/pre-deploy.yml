@@ -208,7 +208,7 @@
       -e {{ working_dir }}/containers-prepare-parameter.yaml
       {% endif %}
       {% if release not in ['pike', 'queens', 'rocky'] %}
-      -e {{ overcloud_templates_path }}/environments/{{ overcloud_container_cli | default('docker') }}.yaml
+      -e {{ overcloud_templates_path }}/environments/{{ overcloud_container_cli }}.yaml
       {% endif %}
   when:
     - containerized_overcloud|bool
