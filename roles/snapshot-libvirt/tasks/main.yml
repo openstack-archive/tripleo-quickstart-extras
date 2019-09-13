@@ -8,12 +8,21 @@
     uri: "{{ libvirt_uri }}"
   with_items: "{{ overcloud_nodes }}"
 
+- name: Evaluate overcloud VM libvirt names
+  set_fact:
+    libvirt_oc_names: >-
+      {%- set names=[] -%}
+      {%- for n in overcloud_nodes -%}
+        {%- if names.append(hostvars[n['name']]['inventory_hostname']) -%}{%- endif -%}
+      {%- endfor -%}
+      {{ names | join('|') }}
+
 - name: Wait for vms to shutdown
   async: 300
   poll: 0
   shell: |
     while true
-    do virsh list | grep subnode > /dev/null || break
+    do virsh list | grep -E '{{ libvirt_oc_names }}' > /dev/null || break
     done
   register: vms_shutdown
 
@@ -59,7 +68,7 @@
 
 - name: "Wait for the vms to start"
   wait_for:
-    host: "{{ hostvars[item]['ansible_host'] }}"
+    host: "{{ hostvars[item.name]['ansible_host'] }}"
     port: 22
     state: started
-  with_items: "{{ groups['subnodes'] }}"
+  with_items: "{{ overcloud_nodes }}"
