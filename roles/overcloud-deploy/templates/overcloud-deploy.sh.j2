@@ -28,6 +28,12 @@ done
 
 ### --start_docs
 
+{% if baremetal_provision|bool %}
+## * Provision the baremetal nodes
+## ::
+openstack overcloud node provision --stack overcloud --output {{ working_dir }}/overcloud-baremetal-deployed.yaml {{ working_dir }}/overcloud_baremetal_deploy.yaml
+{% endif %}
+
 ## * Deploy the overcloud!
 ## ::
 openstack overcloud deploy {% if release is not in ['newton', 'ocata', 'pike', 'queens'] %}--override-ansible-cfg {{ working_dir }}/custom_ansible.cfg{% endif %} \

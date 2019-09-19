@@ -244,7 +244,22 @@
       -e {{ overcloud_templates_path }}/environments/deployed-server-bootstrap-environment-centos.yaml
       {% endif %}
       --overcloud-ssh-user {{ undercloud_user }}
+      {% if not undercloud_enable_nova|bool %}
+      --deployed-server
+      {% endif %}
   when: deploy_multinode|bool
+
+- name: set the baremetal provision args
+  set_fact:
+    hypervisor_wait: false
+    multinode_args: >-
+      -e {{ overcloud_templates_path }}/environments/deployed-server-environment.yaml
+      {% if release not in ['mitaka', 'newton'] and overcloud_release|default('') not in ['newton', 'mitaka'] %}
+      -e {{ overcloud_templates_path }}/environments/deployed-server-bootstrap-environment-centos.yaml
+      {% endif %}
+      -e {{ working_dir }}/overcloud-baremetal-deployed.yaml
+      --deployed-server
+  when: baremetal_provision|bool
 
 - name: set the OVN args
   set_fact:

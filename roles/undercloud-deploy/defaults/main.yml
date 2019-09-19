@@ -64,7 +64,6 @@ undercloud_enable_validations: true
 undercloud_enable_zaqar: true
 undercloud_ipxe_deploy: true
 undercloud_enable_swift_encryption: false
-undercloud_enable_nova: true
 
 undercloud_undercloud_debug: true
 
