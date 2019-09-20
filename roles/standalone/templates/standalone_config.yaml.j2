@@ -27,7 +27,7 @@ parameter_defaults:
       NetworkGateway: {{ standalone_ip }}
   StandaloneEnableRoutedNetworks: false
   StandaloneHomeDir: {{ working_dir }}
-  StandaloneLocalMtu: 1500
+  InterfaceLocalMtu: 1500
   NovaComputeLibvirtType: {{ standalone_libvirt_type }}
   SELinuxMode: {{ standalone_selinux_mode }}
   NovaHWMachineType: x86_64=pc,aarch64=virt-rhel7.6.0,ppc64=pseries-rhel7.6.0,ppc64le=pseries-rhel7.6.0
