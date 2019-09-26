@@ -343,6 +343,9 @@ cat >"{{ env_vars_to_source_file }}" <<EOF
 export ZUUL_CHANGES="${ZUUL_CHANGES}"
 export NODES_FILE="${NODES_FILE}"
 export TOCI_JOBTYPE="${TOCI_JOBTYPE}"
+# for periodic jobs enable the following
+# export EXTRA_VARS="$EXTRA_VARS -e to_build=True "
+# export EXTRA_VARS="$EXTRA_VARS -e docker_registry_host=trunk.registry.rdoproject.org "
 export EXTRA_VARS="${EXTRA_VARS}"
 export REMAINING_TIME="$TIMEOUT"
 export PLAYBOOKS="$PLAYBOOKS"
