@@ -26,7 +26,7 @@ export DIB_YUM_REPO_CONF=""
 export DIB_YUM_REPO_CONF="$DIB_YUM_REPO_CONF {{ repo_path }}"
 {% endfor %}
 {% if base_image_url is defined and base_image_path is defined %}
-wget -nv {{ base_image_url }} -O {{ base_image_path }}
+curl -Lo {{ base_image_path }} {{ base_image_url }}
 export DIB_LOCAL_IMAGE={{ base_image_path }}
 {% endif %}
 {# note(trown): there was not support in tripleoclient for YAML config images in Newton #}

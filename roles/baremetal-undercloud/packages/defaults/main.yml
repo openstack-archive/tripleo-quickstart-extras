@@ -4,7 +4,7 @@ undercloud_additional_pkgs:
   - vim
   - tmux
   - openssl
-  - wget
+  - curl
   - bind-utils
   - net-tools
   - git

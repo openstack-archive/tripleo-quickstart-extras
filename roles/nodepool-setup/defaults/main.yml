@@ -23,5 +23,5 @@ packages_list:
   - unbound
   - screen
   - vim
-  - wget
+  - curl
   - iptables-services

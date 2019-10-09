@@ -28,11 +28,11 @@ sed -i "1i$IPA_SERVER_IP $CA_SERVER_HOSTNAME" /etc/hosts
 
 ## * Install required system packages::
 
-yum install -yq ipa-server ipa-server-dns wget epel-release
+yum install -yq ipa-server ipa-server-dns curl epel-release
 
 ## * Increase system entropy (to prevent slow down during IPA installation)::
 
-wget https://centos7.iuscommunity.org/ius-release.rpm
+curl -Lo ius-release.rpm https://centos7.iuscommunity.org/ius-release.rpm
 rpm -Uvh ius-release*.rpm
 yum install -y haveged
 systemctl start haveged.service
