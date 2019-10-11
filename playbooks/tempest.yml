@@ -22,6 +22,7 @@
 - name: Copy clouds.yaml file from user's home to /root directory
   copy:
     src: '{{ ansible_user_dir }}/.config/openstack/clouds.yaml'
+    remote_src: true
     dest: '/root/.config/openstack/clouds.yaml'
     mode: 0600
   become: true
