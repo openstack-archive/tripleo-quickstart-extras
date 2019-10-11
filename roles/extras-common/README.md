@@ -38,7 +38,7 @@ Role Variables
 - `docker_ceph_namespace: <'docker.io/ceph'> Namespace for the ceph container
   image
 - `docker_ceph_image: <'daemon'> Name of the ceph container image
-- `docker_ceph_tag: <'v4.0.0-stable-4.0-nautilus-centos-7-x86_64'> Tag for the
+- `docker_ceph_tag: <'v4.0.4-stable-4.0-nautilus-centos-7-x86_64'> Tag for the
   ceph container image
 - `composable_scenario`: <''> -- path to the composable scenarios used at deployment time
 - `upgrade_composable_scenario`: <''> -- path to the composable scenarios used at upgrade time
