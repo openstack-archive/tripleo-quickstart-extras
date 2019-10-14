@@ -101,6 +101,7 @@
             ready_releases_file: |
               {{ releases_file_output | replace('export', '  export') }}
             {% endif -%}
+            registry_login_enabled: false
             featureset_override:
               {% if featureset_override_file_output is defined -%}
               {{ featureset_override_file_output | indent(14) }}
