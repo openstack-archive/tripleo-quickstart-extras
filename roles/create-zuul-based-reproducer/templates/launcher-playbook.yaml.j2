@@ -101,6 +101,9 @@
             ready_releases_file: |
               {{ releases_file_output | replace('export', '  export') }}
             {% endif -%}
+            {% if 'periodic' in zuul.job -%}
+            force_periodic: true
+            {% endif %}
             registry_login_enabled: false
             featureset_override:
               {% if featureset_override_file_output is defined -%}
