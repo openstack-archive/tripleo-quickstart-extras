@@ -33,8 +33,9 @@
 
 # Verify the scale
 - name: Determine the post scale node count
-  shell: >
-    source {{ working_dir }}/stackrc;
+  shell: |
+    set -eo pipefail
+    source {{ working_dir }}/stackrc
     nova list | grep {{ node_to_scale }} | cut -f2- -d':' | wc -l
   register: post_scale_node_count
   changed_when: false

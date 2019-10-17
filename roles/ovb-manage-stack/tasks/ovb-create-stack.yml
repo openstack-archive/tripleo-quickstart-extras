@@ -69,6 +69,7 @@
   changed_when: true
 
 - name: Return stack state
+  # noqa: 306
   shell: >
       export OS_USERNAME="{{ os_username }}";
       export OS_PASSWORD="{{ os_password }}";

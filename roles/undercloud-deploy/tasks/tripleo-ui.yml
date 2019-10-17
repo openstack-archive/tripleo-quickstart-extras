@@ -98,7 +98,7 @@
 - when:
     - enable_port_forward_for_tripleo_ui|bool
     - hostvars[groups['virthost'][0]].ansible_host is defined
-    - tripleo_ui_secure_access|bool == false
+    - not (tripleo_ui_secure_access|bool)
     - ooo_ui_config_file.stat.exists
   block:
     - name: update config in tripleo_ui_config.js, connect via virthost ip with ssl

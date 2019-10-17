@@ -1,5 +1,6 @@
 ---
 - name: Delete stack
+  # noqa: 306
   shell: >
     echo "Executing 'openstack stack delete {{ stack_name }} --yes'" >>  {{ stack_log }};
     openstack stack delete {{ stack_name }} --yes &>> {{ stack_log }} && {
