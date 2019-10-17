@@ -61,7 +61,7 @@
 # switch that.
 - name: Set tempest_test_blacklist
   set_fact:
-    tempest_test_blacklist: "{{ known_failures | default([]) }}"
+    tempest_test_blacklist: "{{ known_failures | json_query('[?undercloud != `true`]') }}"
 
 - name: Run os_tempest role
   vars:
