@@ -1,0 +1,2 @@
+---
+target_dir: "{{ working_dir }}"
