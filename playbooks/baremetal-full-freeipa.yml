@@ -41,6 +41,7 @@
         ip link set dev eth2 mtu 1450;
         ping 10.0.0.1 -c 4 -q;
       become: true
+      changed_when: false
 
     - include_role:
         name: freeipa-setup

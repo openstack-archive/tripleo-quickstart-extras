@@ -8,6 +8,7 @@
   tasks:
     - name: Host setup
       shell: >
+        set -eo pipefail;
         echo "127.0.0.1 $(hostname) $(hostname).openstacklocal" | sudo tee -a /etc/hosts;
         echo "127.0.0.2 undercloud undercloud.openstacklocal" | sudo tee -a /etc/hosts;
         if [ ! -e ${HOME}/.ssh/id_rsa.pub ] ; then
@@ -24,6 +25,7 @@
         sudo cp {{tripleo_root}}/tripleo-ci/test-environments/overcloud-cacert.pem /etc/pki/ca-trust/source/anchors/;
         sudo update-ca-trust extract;
         cp -f {{ lookup('env', 'TE_DATAFILE') }} ~/instackenv.json;
+      changed_when: true
 
     - name: Correct the driver for newer releases
       # TODO(dtantsur): remove when Pike is not supported
@@ -47,5 +49,5 @@
     - name: Install ipmitool if not installed
       package:
         name: ipmitool
-        state: latest
+        state: latest  # noqa 403
       become: true

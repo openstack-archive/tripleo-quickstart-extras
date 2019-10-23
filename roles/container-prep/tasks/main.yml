@@ -18,7 +18,8 @@
 - when: get_build_command is defined
   block:
     - name: execute build_command
-      shell: "echo {{ get_build_command }}"
+      shell: |
+        echo {{ get_build_command }}  # noqa 305
       register: build_command_output
       tags:
         - undercloud-install

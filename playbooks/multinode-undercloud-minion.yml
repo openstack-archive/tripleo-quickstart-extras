@@ -49,7 +49,8 @@
         tasks_from: package_installs
       when: package_installs|default(true)|bool
     - name: Update built packages
-      shell: "{{ ansible_pkg_mgr }} --enablerepo='gating-repo' update -y"
+      shell: |
+        {{ ansible_pkg_mgr }} --enablerepo='gating-repo' update -y  # noqa 305
       become: true
       when: hostvars['undercloud']['compressed_gating_repo'] is defined
   tags:
