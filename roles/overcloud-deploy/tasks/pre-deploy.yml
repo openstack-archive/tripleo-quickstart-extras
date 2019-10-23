@@ -240,7 +240,7 @@
   set_fact:
     multinode_args: >-
       -e {{ overcloud_templates_path }}/environments/deployed-server-environment.yaml
-      {% if release not in ['mitaka', 'newton'] and overcloud_release|default('') not in ['newton', 'mitaka'] %}
+      {% if release in ['queens', 'rocky', 'stein'] and overcloud_release|default('') in ['queens', 'rocky', 'stein'] %}
       -e {{ overcloud_templates_path }}/environments/deployed-server-bootstrap-environment-centos.yaml
       {% endif %}
       --overcloud-ssh-user {{ undercloud_user }}
@@ -254,7 +254,7 @@
     hypervisor_wait: false
     multinode_args: >-
       -e {{ overcloud_templates_path }}/environments/deployed-server-environment.yaml
-      {% if release not in ['mitaka', 'newton'] and overcloud_release|default('') not in ['newton', 'mitaka'] %}
+      {% if release in ['queens', 'rocky', 'stein'] and overcloud_release|default('') in ['queens', 'rocky', 'stein'] %}
       -e {{ overcloud_templates_path }}/environments/deployed-server-bootstrap-environment-centos.yaml
       {% endif %}
       -e {{ working_dir }}/overcloud-baremetal-deployed.yaml
