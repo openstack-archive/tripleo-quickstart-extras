@@ -4,6 +4,25 @@
     gather_subset: "!min,distribution"
   when: ansible_distribution is not defined
 
+- name: Run podman --version
+  command: podman --version
+  ignore_errors: true
+  register: podman_ver
+  tags:
+    - undercloud-install
+
+
+- name: Set fact for podman version
+  set_fact:
+    podman_version: >-
+      {%- if podman_ver is success -%}
+      {{ podman_ver.stdout | replace("podman version ", "") }}
+      {%- else -%}0.0
+      {%- endif -%}
+  tags:
+    - undercloud-install
+
+
 - include: novajoin_prep.yml
   when: enable_tls_everywhere|bool and prepare_novajoin|bool
   tags:
