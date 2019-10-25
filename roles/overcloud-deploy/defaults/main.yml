@@ -68,7 +68,7 @@ flavor_args: >-
   --swift-storage-flavor {{flavor_map.swift
   if flavor_map is defined and 'objectstorage' in flavor_map else 'oooq_objectstorage'}}
 
-timeout_args: "--timeout {{deploy_timeout}}"
+timeout_args: "--timeout {{ deploy_timeout }}"
 
 set_overcloud_workers: true
 

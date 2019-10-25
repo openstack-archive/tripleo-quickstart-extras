@@ -4,7 +4,7 @@
   tasks:
     - name: Add the virthost to the inventory
       add_host:
-        name: "{{virthost}}"
+        name: "{{ virthost }}"
         groups: "virthost"
         ansible_fqdn: "{{ virthost }}"
         ansible_user: "root"

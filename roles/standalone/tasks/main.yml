@@ -20,7 +20,7 @@
 - name: Create the standalone params
   template:
     src: "{{ standalone_config }}"
-    dest: "{{ working_dir}}/standalone_parameters.yaml"
+    dest: "{{ working_dir }}/standalone_parameters.yaml"
     mode: 0755
 
 - name: Create container parameters script
@@ -134,7 +134,7 @@
 - name: Create the deploy command for standalone
   template:
     src: "{{ standalone_deploy_script }}"
-    dest: "{{ working_dir}}/standalone.sh"
+    dest: "{{ working_dir }}/standalone.sh"
     mode: 0755
 
 - name: Run dstat on the standalone prior to standalone deploy
@@ -165,16 +165,16 @@
     - name: Lint playbooks
       shell: >
         source {{ quickstart_venv }}/bin/activate;
-        exec 1>>{{ working_dir }}/{{standalone_ansible_lint_log}};
+        exec 1>>{{ working_dir }}/{{ standalone_ansible_lint_log }};
         exec 2>&1;
-        echo LINTING {{item}};
-        ansible-lint -v {{item}};
+        echo LINTING {{ item }};
+        ansible-lint -v {{ item }};
         rc=$?;
         echo DONE rc=$rc;
         exit $rc
       register: lint_result
       environment:
         ANSIBLE_LIBRARY: |
-          /usr/share/ansible-modules/:{{lookup('env', 'ANSIBLE_LIBRARY')}}
+          /usr/share/ansible-modules/:{{ lookup('env', 'ANSIBLE_LIBRARY') }}
       with_items: "{{ playbooks.stdout_lines }}"
       failed_when: lint_result.rc == 1

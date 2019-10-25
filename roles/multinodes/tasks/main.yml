@@ -157,7 +157,7 @@
         groups: wheel
         append: true
       become: true
-      delegate_to: "{{ item}}"
+      delegate_to: "{{ item }}"
       with_items:
         - "{{ groups['subnodes'] }}"
 
@@ -168,7 +168,7 @@
         key: "{{ lookup('file', '{{ key_location }}') }}"
       become: true
       become_user: "{{ nodepool_user }}"
-      delegate_to: "{{ item}}"
+      delegate_to: "{{ item }}"
       with_items:
         - "{{ groups['subnodes'] }}"
 
@@ -179,7 +179,7 @@
         line: '{{ nodepool_user }} ALL=(ALL) NOPASSWD:ALL'
         validate: 'visudo -cf %s'
       become: true
-      delegate_to: "{{ item}}"
+      delegate_to: "{{ item }}"
       with_items:
         - "{{ groups['subnodes'] }}"
 

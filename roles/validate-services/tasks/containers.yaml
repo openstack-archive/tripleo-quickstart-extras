@@ -22,7 +22,7 @@
       become: true
       shell: >
         {% raw %}
-        podman ps -a --filter 'status=exited' --format '{{.Names}} {{.Status}}'
+        podman ps -a --filter 'status=exited' --format '{{ .Names }} {{ .Status }}'
         {% endraw %}
       register: failed_podman
 
@@ -43,7 +43,7 @@
     - name: Get failed containers from docker
       shell: >
         {% raw %}
-        docker ps -a --filter 'status=exited' --format '{{.Names}} {{.Status}}'
+        docker ps -a --filter 'status=exited' --format '{{ .Names }} {{ .Status }}'
         {% endraw %}
       register: failed_docker
 
@@ -56,4 +56,4 @@
       when:
         - failed_docker is defined
         - item is not match(".* Exited \(0\) .* ago")
-      loop: "{{ failed_docker.stdout_lines}}"
+      loop: "{{ failed_docker.stdout_lines }}"

@@ -45,17 +45,19 @@
 
 - name: Check if releases.sh file exits
   stat:
-    path: '/home/{{ undercloud_user}}/workspace/logs/releases.sh'
+    path: '/home/{{ undercloud_user }}/workspace/logs/releases.sh'
   register: releases_file_result
 
 - name: Get releases.sh file output
   set_fact:
-    releases_file_output: "{{ lookup('file', '/home/{{ undercloud_user}}/workspace/logs/releases.sh') | replace('export' , '            export') }}"
+    releases_file_output: |
+      {{ lookup('file', '/home/{{ undercloud_user }}/workspace/logs/releases.sh') | replace('export' , '            export') }}
   when: releases_file_result.stat.exists
 
 - name: Get featureset-override file output
   set_fact:
-    featureset_override_file_output: "{{ lookup('file', '/home/{{ undercloud_user }}/src/opendev.org/openstack/tripleo-ci/featureset-override.yaml') }}"
+    featureset_override_file_output: |
+      {{ lookup('file', '/home/{{ undercloud_user }}/src/opendev.org/openstack/tripleo-ci/featureset-override.yaml') }}
   when: featureset_override_file.stat.exists
 
 - name: Create the zuul-based launcher-env-setup-playbook from template

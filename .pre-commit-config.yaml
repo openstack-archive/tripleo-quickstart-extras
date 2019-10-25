@@ -22,7 +22,7 @@ repos:
         types: [file, yaml]
         entry: yamllint --strict -f parsable
   - repo: https://github.com/ansible/ansible-lint
-    rev: 0523c63f193d65313dcd743686d7fb0623a72ee8
+    rev: v4.1.1a1
     hooks:
       - id: ansible-lint
         files: \.(yaml|yml)$

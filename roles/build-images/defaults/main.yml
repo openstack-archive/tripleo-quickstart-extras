@@ -19,7 +19,7 @@ overcloud_repo_paths:
   - "$(ls /etc/yum.repos.d/CentOS-Ceph-*)"
   - "$(ls /etc/yum.repos.d/centos-*)"
   - "$(ls /etc/yum.repos.d/quickstart-*)"
-  - "$(ls {{working_dir}}/web-gating.repo)"
+  - "$(ls {{ working_dir }}/web-gating.repo)"
 image_build_yaml_paths:
   - "/usr/share/tripleo-common/image-yaml/overcloud-images-centos7.yaml"
   - "/usr/share/tripleo-common/image-yaml/overcloud-images.yaml"
