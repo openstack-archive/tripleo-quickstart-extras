@@ -45,8 +45,8 @@ for r in $(openstack router list -c ID -f value); do
     done
 done
 for i in $(openstack router list -c ID -f value); do openstack router delete $i; done
-for i in $(openstack port list -c ID -f value); do openstack port delete $i; done
-for i in $(openstack network list -c ID -f value); do openstack network delete $i; done
+for i in $(openstack port list -c ID -c Name -f value | sed -e '/octavia/d' | cut -f 1 -d ' '); do openstack port delete $i; done
+for i in $(openstack network list -c ID -c Name -f value | sed -e '/lb-mgmt-net/d' | cut -f 1 -d ' '); do openstack network delete $i; done
 
 {% if ironic_overcloud|default(false)|bool %}
 
