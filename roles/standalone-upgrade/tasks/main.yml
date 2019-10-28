@@ -5,7 +5,7 @@
 - name: Create the standalone params for upgrade
   template:
     src: "{{ standalone_config }}"
-    dest: "{{ working_dir}}/standalone_parameters_upgrade.yaml"
+    dest: "{{ working_dir }}/standalone_parameters_upgrade.yaml"
     mode: 0755
 
 - name: Create container parameters script for upgrade
@@ -22,7 +22,7 @@
 - name: Create the upgrade command for standalone
   template:
     src: "{{ standalone_upgrade_script }}"
-    dest: "{{ working_dir}}/standalone-upgrade.sh"
+    dest: "{{ working_dir }}/standalone-upgrade.sh"
     mode: 0755
 
 - name: Upgrade the standalone

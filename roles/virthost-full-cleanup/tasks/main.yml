@@ -109,7 +109,7 @@
         - /var/spool/mail/{{ non_root_user }}
 
     - name: remove files automation files from /root
-      file: name={{item}} state=absent
+      file: name={{ item }} state=absent
       with_items:
         - /root/KEYS
         - /root/fedora-prep
@@ -124,7 +124,7 @@
       service: name=network enabled=yes
 
     - name: remove files automation files from /root
-      file: name={{item}} state=absent
+      file: name={{ item }} state=absent
       with_items:
         - /usr/share/instack-undercloud
         - /usr/bin/instack-setup-host
@@ -179,7 +179,7 @@
     #    - delorean_rpms.stdout_lines
 
     - name: remove any openstack rpms from the host
-      yum: name={{item}} state=absent
+      yum: name={{ item }} state=absent
       ignore_errors: true
       with_flattened:
         - "{{ director_rpms.stdout_lines }}"

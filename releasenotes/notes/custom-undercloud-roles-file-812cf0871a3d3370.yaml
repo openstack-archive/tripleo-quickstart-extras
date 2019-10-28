@@ -4,7 +4,7 @@ features:
     Add `undercloud_roles_data` for containerized undercloud
     deployments. Allows to specify a custom undercloud roles file which
     should be taken into account when preparing docker images for UC.
-    Defaults to `{{overcloud_templates_path}}/roles_data_undercloud.yaml`.
+    Defaults to `{{ overcloud_templates_path }}/roles_data_undercloud.yaml`.
 
     .. note :: The default value can not be changed yet. The command
       `openstack undercloud deploy` works only with the static role file

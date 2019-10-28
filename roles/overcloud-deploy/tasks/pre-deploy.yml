@@ -220,7 +220,7 @@
   when: composable_roles|bool
 
 - name: Generate composable roles file
-  command: openstack overcloud roles generate --roles-path {{ overcloud_templates_path }}/roles -o {{ working_dir }}/overcloud_roles.yaml {{generate_overcloud_roles}}
+  command: openstack overcloud roles generate --roles-path {{ overcloud_templates_path }}/roles -o {{ working_dir }}/overcloud_roles.yaml {{ generate_overcloud_roles }}
   when: composable_roles|bool and generate_overcloud_roles is defined
 
 - name: set composable service args fact

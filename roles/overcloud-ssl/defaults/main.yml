@@ -3,5 +3,5 @@
 ssl_overcloud: false
 
 overcloud_public_vip: "{{ undercloud_external_network_cidr|nthhost(5) }}"
-overcloud_ssl_cert_log: "{{working_dir}}/overcloud_create_ssl_cert.log"
+overcloud_ssl_cert_log: "{{ working_dir }}/overcloud_create_ssl_cert.log"
 overcloud_ssl_cert_script: overcloud-create-ssl-cert.sh.j2

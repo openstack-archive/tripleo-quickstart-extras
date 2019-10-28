@@ -91,7 +91,7 @@
     ansible_fqdn: undercloud
     ansible_user: "{{ undercloud_user }}"
     ansible_private_key_file: "{{ undercloud_key }}"
-    ansible_ssh_extra_args: '-F "{{local_working_dir}}/ssh.config.ansible"'
-    ansible_scp_extra_args: '-F "{{local_working_dir}}/ssh.config.ansible"'
-    ansible_sftp_extra_args: '-F "{{local_working_dir}}/ssh.config.ansible"'
+    ansible_ssh_extra_args: '-F "{{ local_working_dir }}/ssh.config.ansible"'
+    ansible_scp_extra_args: '-F "{{ local_working_dir }}/ssh.config.ansible"'
+    ansible_sftp_extra_args: '-F "{{ local_working_dir }}/ssh.config.ansible"'
     undercloud_ip: "{{ registered_undercloud_ip.stdout }}"

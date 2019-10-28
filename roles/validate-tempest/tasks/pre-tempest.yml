@@ -59,8 +59,8 @@
   become: true
   package:
     name:
-      - "{{python_package_prefix}}-os-testr"
-      - "{{python_package_prefix}}-subunit"
+      - "{{ python_package_prefix }}-os-testr"
+      - "{{ python_package_prefix }}-subunit"
       - subunit-filters
     state: present
   when: tempest_format in ['container', 'packages']
@@ -68,7 +68,7 @@
 - name: Install stestr
   become: true
   package:
-    name: "{{python_package_prefix}}-stestr"
+    name: "{{ python_package_prefix }}-stestr"
     state: present
   when: tempest_format in ['container', 'packages'] and release not in ['newton', 'ocata']
 
