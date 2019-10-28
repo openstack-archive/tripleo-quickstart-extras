@@ -1,4 +1,8 @@
 ---
+- name: Collect hardware facts if necessary
+  setup:
+    gather_subset: "!all,!min,hardware"
+  when: ansible_processor is not defined
 - name: Check cpu vendor
   set_fact:
     cpu_vendor: "{{ item }}"
