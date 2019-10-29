@@ -4,11 +4,10 @@
 - name: Install ara deps
   become: true
   pip:
-    name: "{{ item }}"
+    name:
+      - pip
+      - setuptools
     state: latest
-  with_items:
-    - pip
-    - setuptools
   # TODO(sshnaidm): https://bugs.launchpad.net/tripleo/+bug/1792622
   ignore_errors: true
 
