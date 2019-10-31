@@ -45,7 +45,7 @@ docker_ceph_tag: >-
   {%- elif release in ['queens','rocky'] -%}
   v3.2.1-stable-3.2-luminous-centos-7-x86_64
   {%- else -%}
-  v4.0.0-stable-4.0-nautilus-centos-7-x86_64
+  v4.0.4-stable-4.0-nautilus-centos-7-x86_64
   {%- endif -%}
 rhel_containers: >-
    {% if ansible_distribution == 'RedHat' -%}
