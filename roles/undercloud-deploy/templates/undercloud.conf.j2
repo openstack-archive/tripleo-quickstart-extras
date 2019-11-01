@@ -224,6 +224,13 @@ undercloud_enable_selinux = {{undercloud_selinux_enabled}}
 # undercloud_enable_selinux = true
 {% endif %}
 
+# Enable or disable Paunch to manage containers. (boolean value)
+{% if undercloud_enable_paunch is defined %}
+undercloud_enable_paunch = {{undercloud_enable_paunch}}
+{% else %}
+# undercloud_enable_paunch = true
+{% endif %}
+
 # Whether to install Tempest in the Undercloud. (boolean value)
 enable_tempest = {{undercloud_enable_tempest}}
 

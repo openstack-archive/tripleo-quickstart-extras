@@ -97,6 +97,7 @@ https://docs.openstack.org/tripleo-quickstart/latest/accessing-libvirt.html
 - `undercloud_roles_data`: <null> -- A custom t-h-t roles file. Consumed from ``undercloud_templates_path``
   or an alternative location as well.
 - `undercloud_selinux_enabled`: <'true'> -- Enabled for RHEL by default, Disabled for CentOS by default
+- `undercloud_enable_paunch`: <null> -- Enable or disable Paunch to manage containers. Undefined by default.
 - `undercloud_container_cli`: <'podman'> -- Container CLI to use for the Undercloud deployment. Default to 'podman'.
 
 Role Network Variables
