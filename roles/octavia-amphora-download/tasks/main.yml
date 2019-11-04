@@ -11,7 +11,26 @@
   when:
     download_url is not defined
 
+- name: check for target directory for amphora image
+  stat:
+    path: "{{ octavia_amphora_path | dirname }}"
+  register: amphora_path_stat_result
+
+# We check for an existing directory because we do not want to modify
+# permissions on existing directories, potentially causing perm issues
+# with other tasks/processes.
+- name: If target path does not exist, create as readable to everyone.
+  file:
+    path: "{{ octavia_amphora_path | dirname }}"
+    state: directory
+    mode: 0755
+  become: true
+  when:
+    - not amphora_path_stat_result.stat.exists|bool
+
 - name: Download the amphora
   get_url:
     url: "{{ download_url }}"
-    dest: "{{ target_dir }}/amphora.qcow2"
+    dest: "{{ octavia_amphora_path }}"
+    mode: 0644
+  become: true
