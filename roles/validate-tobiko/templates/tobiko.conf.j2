@@ -1,0 +1,18 @@
+[DEFAULT]
+debug = True
+log_file = "{{ tobiko_log_file }}"
+log_dir = "{{ working_dir }}"
+
+{% if tobiko_no_proxy_servers is defined %}
+[http]
+no_proxy = "{{ tobiko_no_proxy_servers }}"
+{% endif %}
+
+[nova]
+key_file = "{{ tobiko_key_file_name }}"
+
+[neutron]
+floating_network = "{{ tobiko_floating_ip_network }}"
+
+[glance]
+images_dir = "{{ working_dir }}"/.tobiko/cache/glance/images"
