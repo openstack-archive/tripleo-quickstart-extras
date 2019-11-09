@@ -132,6 +132,10 @@
     repo: '{{ artg_rdoinfo_repo_url }}'
     dest: '{{ build_repo_dir }}/DLRN/rdoinfo'
     version: 'master'
+  register: _git_clone
+  until: _git_clone is success
+  retries: 3
+  delay: 5
 
 - name: Use local {{ ansible_distribution }} mirror if available
   shell: >
