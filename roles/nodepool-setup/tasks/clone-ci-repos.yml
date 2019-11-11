@@ -37,6 +37,9 @@
     line: "git+file:///opt/stack/{{ item }}/#egg={{ item }}"
   with_items:
     - "browbeat"
+    - "ansible-config_template"
+    - "ansible-role-python_venv_build"
+    - "openstack-ansible-os_tempest"
     - "tripleo-ha-utils"
 
 - name: Create /opt/cache/files directory
