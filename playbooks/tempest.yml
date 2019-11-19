@@ -63,6 +63,7 @@
 - name: Set tempest_test_blacklist
   set_fact:
     tempest_test_blacklist: "{{ known_failures | json_query('[?undercloud != `true`]') }}"
+  when: tempest_cloud_name != 'undercloud'
 
 - name: Run os_tempest role
   vars:

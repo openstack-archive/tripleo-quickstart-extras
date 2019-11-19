@@ -37,3 +37,4 @@
         - use_os_tempest|bool
   tags:
     - overcloud-validate
+    - undercloud-validate
