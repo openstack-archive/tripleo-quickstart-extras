@@ -7,7 +7,7 @@
 # Clone https://github.com/openstack/tripleo-quickstart and run:
 # >> ansible-playbook launcher-playbook.yaml \
 #    -e nodepool_provider=libvirt \
-#    -e mirror_path=mirror.mtl01.inap.openstack.org
+#    -e mirror_fqdn=mirror.mtl01.inap.openstack.org
 #
 # To run on a different cloud defined in clouds.yaml ( default is rdo-cloud):
 # >> ansible-playbook launcher-playbook.yaml \
@@ -53,7 +53,8 @@
     clouds_yaml_path: "/home/{{ ansible_user }}/.config/openstack/clouds.yaml"
     {% endraw -%}
     ovb_key_name: tripleo-ci-team
-    mirror_path: mirror.regionone.rdo-cloud.rdoproject.org
+    mirror_fqdn: "{{ mirror_path | default(mirror_fqdn | default('mirror.regionone.rdo-cloud.rdoproject.org')) }}"
+    pypi_fqdn: "{{ pypi_fqdn | default(mirror_fqdn) }}"
     launch_job_branch: {{ zuul.branch }}
     {% if 'periodic' not in zuul.job -%}
     depends_on:
@@ -94,9 +95,8 @@
                 baremetal_image: CentOS-7-x86_64-GenericCloud-1804_02
             remove_ovb_after_job: false
             {% endif -%}
-            {% raw -%}
-            mirror_fqdn: {{ mirror_path }}
-            {% endraw -%}
+            mirror_fqdn: "{{ mirror_fqdn | default('mirror.mtl01.inap.openstack.org') }}"
+            pypi_fqdn: "{{ pypi_fqdn | default(mirror_fqdn) }}"
             {% if releases_file_output is defined -%}
             ready_releases_file: |
               {{ releases_file_output | replace('export', '  export') }}
