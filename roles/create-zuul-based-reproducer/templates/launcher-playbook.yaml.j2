@@ -103,7 +103,7 @@
             {% endif -%}
             {% if 'periodic' in zuul.job -%}
             force_periodic: true
-            {% endif %}
+            {% endif -%}
             registry_login_enabled: false
             featureset_override:
               {% if featureset_override_file_output is defined -%}
