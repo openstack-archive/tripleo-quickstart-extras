@@ -77,6 +77,38 @@
     - { original: "ceph_image", replace: "ceph_image: {{ docker_ceph_image }}" }
     - { original: "ceph_tag", replace: "ceph_tag: {{ docker_ceph_tag }}" }
 
+- name: Set repos defined in the job to update
+  when:
+    - job.add_repos is defined
+    - job.add_repos != []
+    - standalone_container_prep_updates
+  block:
+    - name: Create string of repos to update
+      set_fact:
+        add_repo_update_list: >-
+          {% if job.add_repos[item|int].update_container|default(false) -%}
+          {{ job.add_repos[item|int].reponame }}
+          {% endif -%}
+      with_sequence: start=0 end="{{ (job.add_repos|length -1)|int }}"
+      register: add_repo_update_list_result
+
+    - debug:
+        var: add_repo_update_list
+
+    - name: Add repos to update_repo
+      set_fact:
+        add_repos_update: "{{ add_repo_update_list_result.results | map(attribute='ansible_facts.add_repo_update_list') | list }}"
+        cacheable: true
+      when: add_repo_update_list_result|length > 0
+
+    - debug:
+        var: add_repos_update
+
+    - name: Create string from list
+      set_fact:
+        add_repos_update: "{{ add_repos_update | join(',') }}"
+      when: add_repos_update|length > 0
+
 # update params for container update
 - name: Add updates to container-prepare-parameters.yaml
   when:
@@ -109,7 +141,7 @@
               modify_vars:
                 tasks_from: yum_update.yml
                 yum_repos_dir_path: /etc/yum.repos.d
-                update_repo: "{{ standalone_container_prep_update_repo }}"
+                update_repo: "{{ standalone_container_prep_update_repo }},{{ add_repos_update|default('') }}"
 
 - name: Update rhel_containers value
   when: ansible_distribution == 'RedHat'
