@@ -19,13 +19,23 @@
     mode: 0700
   become: true
 
-- name: Copy clouds.yaml file from user's home to /root directory
-  copy:
-    src: '{{ ansible_user_dir }}/.config/openstack/clouds.yaml'
-    remote_src: true
-    dest: '/root/.config/openstack/clouds.yaml'
-    mode: 0600
-  become: true
+- name: Copy clouds.yaml file to /root directory
+  block:
+    - name: Copy clouds.yaml file from user's home to /root directory
+      copy:
+        src: '{{ ansible_user_dir }}/.config/openstack/clouds.yaml'
+        remote_src: true
+        dest: '/root/.config/openstack/clouds.yaml'
+        mode: 0600
+      become: true
+  rescue:
+    - name: Copy clouds.yaml file /etc/openstack to /root directory
+      copy:
+        src: '/etc/openstack/clouds.yaml'
+        remote_src: true
+        dest: '/root/.config/openstack/clouds.yaml'
+        mode: 0600
+      become: true
 
 - name: Set network vars
   set_fact:
