@@ -3,7 +3,14 @@
   stat:
     path: "{{ working_dir }}/{{ containers_file }}"
   register: stat_cont_file
-  failed_when: not stat_cont_file.stat.exists
+
+- name: "Render {{ containers_file }} if it doesn't exist."
+  include_role:
+    name: undercloud_deploy
+    tasks_from: create-scripts.yml
+  vars:
+    containerized_undercloud: "{{ containerized_undercloud_upgrade }}"
+  when: not stat_cont_file.stat.exists
 
 - name: "Substitute containers registry to {{ docker_registry_host|default('nothing') }}/{{ docker_registry_namespace_used|default('nothing') }}"
   replace:
