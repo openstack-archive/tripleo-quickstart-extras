@@ -26,7 +26,7 @@
     - undercloud-upgrade
   roles:
     - role: container-update
-      when: containerized_undercloud|default(false)|bool
+      when: containerized_undercloud_upgrade|default(false)|bool
 
 - name: Run tripleo-upgrade role to upgrade undercloud
   hosts: undercloud

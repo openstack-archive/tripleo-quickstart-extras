@@ -13,6 +13,12 @@ containerized_undercloud: >-
   {%- else -%}
   false
   {%- endif -%}
+containerized_undercloud_upgrade: >-
+  {% if release not in ['newton','ocata','pike'] -%}
+  true
+  {%- else -%}
+  false
+  {%- endif -%}
 containerized_overcloud_upgrade: >-
   {% if release in ['newton', 'ocata'] -%}
   false
