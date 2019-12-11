@@ -30,6 +30,10 @@ sed -i "1i$IPA_SERVER_IP $CA_SERVER_HOSTNAME" /etc/hosts
 
 yum install -yq ipa-server ipa-server-dns curl epel-release
 
+## * Update NSS (required for CA server to launch during deploy)
+
+yum update -y nss
+
 ## * Increase system entropy (to prevent slow down during IPA installation)::
 
 curl -Lo ius-release.rpm https://centos7.iuscommunity.org/ius-release.rpm
