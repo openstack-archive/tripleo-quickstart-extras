@@ -1,7 +1,62 @@
+{% set modules_path = [
+     '/root/.ansible/plugins/modules',
+     '/usr/share/ansible/tripleo-plugins/modules',
+     '/usr/share/ansible/plugins/modules',
+     '/usr/share/openstack-tripleo-validations/library'
+   ]
+%}
+{% set lookups_path = [
+     '/root/.ansible/plugins/lookup',
+     '/usr/share/ansible/tripleo-plugins/lookup',
+     '/usr/share/ansible/plugins/lookup',
+     '/usr/share/openstack-tripleo-validations/lookup'
+   ]
+%}
+{% set callbacks_path = [
+     '/root/.ansible/plugins/callback',
+     '/usr/share/ansible/tripleo-plugins/callback',
+     '/usr/share/ansible/plugins/callback',
+     '/usr/share/openstack-tripleo-validations/callback_plugins'
+   ]
+%}
+{% set action_plugins_path = [
+     '/root/.ansible/plugins/action',
+     '/usr/share/ansible/tripleo-plugins/action',
+     '/usr/share/ansible/plugins/action',
+     '/usr/share/openstack-tripleo-validations/action_plugins'
+   ]
+%}
+{% set filter_plugins_path = [
+     '/root/.ansible/plugins/filter',
+     '/usr/share/ansible/tripleo-plugins/filter',
+     '/usr/share/ansible/plugins/filter',
+     '/usr/share/openstack-tripleo-validations/filter_plugins'
+   ]
+%}
+{% set roles_path = [
+     '/root/.ansible/roles',
+     '/usr/share/ansible/tripleo-roles',
+     '/usr/share/ansible/roles',
+     '/etc/ansible/roles',
+     '/usr/share/openstack-tripleo-validations/roles'
+   ]
+%}
+{% if ansible_python.version.major == 3 %}
+{%   set _ = action_plugins_path.append('/usr/local/lib/python3.6/site-packages/ara/plugins/actions') %}
+{% else %}
+{%   set _ = action_plugins_path.append('/usr/lib/python2.7/site-packages/ara/plugins/actions') %}
+{% endif %}
+{% if ansible_python.version.major == 3 %}
+{% else %}
+{%   set _ = callbacks_path.append('/usr/lib/python2.7/site-packages/ara/plugins/callbacks') %}
+{% endif %}
 [defaults]
-action_plugins = {% if ansible_python.version.major == 3 %}/usr/local/lib/python3.6/site-packages{% else %}/usr/lib/python2.7/site-packages{% endif %}/ara/plugins/actions
-callback_plugins = {% if ansible_python.version.major == 3 %}/usr/local/lib/python3.6/site-packages{% else %}/usr/lib/python2.7/site-packages{% endif %}/ara/plugins/callbacks
-# debug (former name human_log) makes stdout/stdderr lines more readable
+roles_path={{ roles_path | join(':') }}
+library={{ modules_path | join(':') }}
+callback_plugins={{ callbacks_path | join(':') }}
+action_plugins={{ action_plugins_path | join(':') }}
+lookup_plugins={{ lookups_path | join(':') }}
+filter_plugins={{ filter_plugins_path | join(':') }}
 stdout_callback=debug
 
 [ara]
