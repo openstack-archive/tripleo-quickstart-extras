@@ -183,8 +183,8 @@ resource_registry_args:
 
 # We disable selinux when running under CentOS. It's enabled for RHEL
 overcloud_selinux_enabled: >-
-   {% if ansible_distribution == 'CentOS' -%}
-   permissive
-   {%- else -%}
+   {% if osp_release is defined -%}
    enforcing
+   {%- else -%}
+   permissive
    {%- endif -%}
