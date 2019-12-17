@@ -85,10 +85,10 @@ default_undercloud_roles_data_path: "{{ undercloud_templates_path }}/roles_data_
 
 # We disable selinux when running under CentOS. It's enabled for RHEL
 undercloud_selinux_enabled: >-
-   {% if ansible_distribution == 'CentOS' -%}
-   false
-   {%- else -%}
+   {% if osp_release is defined -%}
    true
+   {%- else -%}
+   false
    {%- endif -%}
 
 undercloud_container_cli: >-
