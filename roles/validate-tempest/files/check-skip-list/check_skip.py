@@ -67,7 +67,7 @@ class CheckSkipCmd(object):
         try:
             resp.raise_for_status()
         except requests.exceptions.HTTPError as e:
-            self.log.error('An error ocurred when trying to download '
+            self.log.error('An error occurred when trying to download '
                            'console log: {}'.format(e))
             return None
         return resp.content.decode('utf-8')
