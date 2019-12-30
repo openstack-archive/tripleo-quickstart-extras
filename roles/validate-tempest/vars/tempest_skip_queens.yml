@@ -5,6 +5,18 @@
 ## the TripleO PTL, Thanks                          ##
 
 known_failures:
+  - test: 'tempest.api.compute.admin.test_servers_on_multinodes.ServersOnMultiNodesTest.test_create_servers_on_different_hosts_with_list_of_servers'
+    reason: 'Errors with servres on multiple nodes'
+    lp: 'https://bugs.launchpad.net/tripleo/+bug/1857365'
+  - test: 'tempest.scenario.test_security_groups_basic_ops.TestSecurityGroupsBasicOps.test_boot_into_disabled_port_security_network_without_secgroup'
+    reason: 'Failed to boot servers on different Compute nodes'
+    lp: 'https://bugs.launchpad.net/tripleo/+bug/1857365'
+  - test: 'tempest.scenario.test_security_groups_basic_ops.TestSecurityGroupsBasicOps.test_port_security_disable_security_group'
+    reason: 'Failed to boot servers on different Compute nodes'
+    lp: 'https://bugs.launchpad.net/tripleo/+bug/1857365'
+  - test: 'tempest.scenario.test_security_groups_basic_ops.TestSecurityGroupsBasicOps.test_port_update_new_security_group'
+    reason: 'Failed to boot servers on different Compute nodes'
+    lp: 'https://bugs.launchpad.net/tripleo/+bug/1857365'
   - test: 'neutron_tempest_plugin.scenario'
     reason: 'Neutron Tempest plugin scenario tests are not yet stable.'
     lp: 'https://launchpad.net/bugs/1737940'
