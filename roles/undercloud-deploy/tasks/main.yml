@@ -28,13 +28,39 @@
   tags:
     - undercloud-install
 
+# NOTE(aschultz): this creates all the magical config related items, will
+# want to extract the script part from configs
 - include: create-scripts.yml
   tags:
     - undercloud-scripts
 
-- include: install-undercloud.yml
+- name: Run install via tripleo-operator-ansible
+  when:
+    - release in ['master']
+    - step_install_undercloud|bool
   tags:
     - undercloud-install
+  block:
+    - name: Run dstat on the undercloud prior to undercloud install
+      include_role:
+        name: validate-perf
+
+    - name: Install undercloud
+      collections:
+        - tripleo.operator
+      import_role:
+        name: tripleo-undercloud-install
+      vars:
+        tripleo_undercloud_install_debug: "{{ undercloud_undercloud_debug }}"
+
+# TODO(mwhahaha): remove this after backwards compatibility support
+- name: Run legacy install
+  when: release not in ['master']
+  tags:
+    - undercloud-install
+  block:
+    - include: install-undercloud.yml
+
 
 # Ironic defaults to using `qemu:///system`.  When running libvirtd
 # unprivileged we need to use `qemu:///session`.  This allows us to pass

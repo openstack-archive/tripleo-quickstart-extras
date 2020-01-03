@@ -41,6 +41,7 @@
     - "ansible-role-python_venv_build"
     - "openstack-ansible-os_tempest"
     - "tripleo-ha-utils"
+    - "tripleo-operator-ansible"
 
 - name: Create /opt/cache/files directory
   file:
