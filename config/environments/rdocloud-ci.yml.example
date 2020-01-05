@@ -37,4 +37,3 @@ mtu_interface:
 
 undercloud_local_mtu: "{{ mtu }}"
 overcloud_neutron_global_physnet_mtu: "{{ mtu }}"
-

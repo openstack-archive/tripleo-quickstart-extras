@@ -199,4 +199,3 @@ Tests
 -----
 
 [user@localhost tempestmail]$ python -m unittest discover -v
-
