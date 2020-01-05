@@ -120,7 +120,8 @@
     - delete
 
 - name: Get output from nodes
-  shell: openstack stack output show {{ stack_name }} subnode_ip_pairs -c output_value -f value
+  command: >
+    openstack stack output show {{ stack_name }} subnode_ip_pairs -c output_value -f value
   register: subnode_ips
 
 - name: Add hosts

@@ -183,6 +183,7 @@
     quickstart_venv: "{{ lookup('env','OPT_WORKDIR') }}"
   block:
     - name: Install ansible-lint
+      # noqa 403
       pip:
         name: ansible-lint
         state: latest

@@ -21,7 +21,7 @@
       copy: "src={{ local_working_dir }}/gating_repo.tar.gz dest=/tmp/gating_repo.tar.gz"
 
 - name: Copy compressed repo to /tmp
-  shell: cp -f {{ ib_repo_file_path }} /tmp/gating_repo.tar.gz
+  command: cp -f {{ ib_repo_file_path }} /tmp/gating_repo.tar.gz
   when: ib_repo_host is not defined
 
 - include: install_built_repo.yml

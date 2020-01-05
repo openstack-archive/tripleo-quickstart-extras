@@ -18,6 +18,7 @@
   when: release == 'newton'
 
 - name: Install openstack services tempest plugins
+  # noqa 403
   package:
     state: latest
     name: "{{ item | regex_replace( '^python[0-9]*-(.*)$', python_package_prefix + '-\\1' ) }}"

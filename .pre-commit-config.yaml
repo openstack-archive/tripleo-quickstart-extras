@@ -1,7 +1,7 @@
 ---
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.3.0
+    rev: v2.4.0
     hooks:
       - id: trailing-whitespace
       - id: mixed-line-ending
@@ -15,18 +15,24 @@ repos:
       - id: check-yaml
         files: .*\.(yaml|yml)$
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.18.0
+    rev: v1.20.0
     hooks:
       - id: yamllint
         files: \.(yaml|yml)$
         types: [file, yaml]
         entry: yamllint --strict -f parsable
   - repo: https://github.com/ansible/ansible-lint
-    rev: v4.1.1a1
+    rev: v4.2.0
     hooks:
       - id: ansible-lint
-        files: \.(yaml|yml)$
-        entry: ansible-lint --force-color -v
+        always_run: true
+        pass_filenames: false
+        # do not add file filters here as ansible-lint does not give reliable
+        # results when called with individual files.
+        # https://github.com/ansible/ansible-lint/issues/611
+        verbose: true
+        # plugins is the standard collection dir for modules
+        entry: env ANSIBLE_LIBRARY=plugins ansible-lint --force-color -p -v
   - repo: https://github.com/openstack-dev/bashate.git
     rev: 0.6.0
     hooks:

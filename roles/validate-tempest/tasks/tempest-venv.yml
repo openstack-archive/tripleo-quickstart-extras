@@ -21,7 +21,7 @@
   when: release != 'newton'
 
 - name: Check if virtualenv is in the system
-  shell: "{{ python_cmd }} -m virtualenv --version"
+  command: "{{ python_cmd }} -m virtualenv --version"
   register: virtualenv_exist
   failed_when: false
   changed_when: false

@@ -70,8 +70,11 @@
 
 - name: get undercloud ip
   delegate_to: "{{ virthost }}"
-  shell: ip route get 1 | awk '{print $NF;exit}'
+  shell: |
+    set -euo pipefail
+    ip route get 1 | awk '{print $NF;exit}'
   register: registered_undercloud_ip
+  changed_when: false
 
 - name: Re-add the virthost to the inventory
   add_host:

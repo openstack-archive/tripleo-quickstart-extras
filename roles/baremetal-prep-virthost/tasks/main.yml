@@ -12,3 +12,4 @@
   become: true
   shell: >
     "{{ working_dir }}"/add-provisioning-interface.sh
+  changed_when: true

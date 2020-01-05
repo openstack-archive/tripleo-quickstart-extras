@@ -1,7 +1,8 @@
 ---
 - name: Set abs path for image
-  shell: echo "{{ image_to_modify }}"
+  command: echo "{{ image_to_modify }}"
   register: image_to_modify_abs_path
+  changed_when: false
 
 - name: Create a temp dir for extracting images
   command: mktemp -d

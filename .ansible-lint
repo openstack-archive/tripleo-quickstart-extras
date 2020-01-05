@@ -7,7 +7,10 @@ quiet: false
 skip_list:
     # TODO(ssbarnea): Gradually remove these skips ASAP
     - 204  # Lines should be no longer than 160 chars
+    - 301  # Commands should not change things if nothing needs doing
+    - 302  # rm used in place of argument state=absent to file module
     - 303  # sed used in place of template, replace or lineinfile module
+    - 306  # Shells that use pipes should set the pipefail option
     - 504  # Do not use 'local_action', use 'delegate_to: localhost'
     - 601  # Don't compare to literal True/False
     - 602  # Don't compare to empty string

@@ -4,6 +4,7 @@
   block:
     - name: Ensure rpm requirements for ssl and heat template are installed
       become: true
+      # noqa 403
       package:
         name:
           - openssl
