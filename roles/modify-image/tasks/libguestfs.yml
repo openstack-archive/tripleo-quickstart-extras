@@ -51,6 +51,7 @@
     LIBGUESTFS_BACKEND_SETTINGS: "{{ lookup( 'env', 'LIBGUESTFS_BACKEND_SETTINGS')|default('force_tcg', true) }}"
   args:
     chdir: "{{ modify_image_working_dir }}"
+  changed_when: true
 
 - name: Extract artifacts from the image
   shell: >
@@ -63,3 +64,4 @@
   args:
     chdir: "{{ modify_image_working_dir }}"
   with_items: "{{ modify_image_extract_list }}"
+  changed_when: true

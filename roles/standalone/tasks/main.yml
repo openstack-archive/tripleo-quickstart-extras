@@ -33,6 +33,7 @@
   shell: >
     set -o pipefail &&
     {{ working_dir }}/standalone-container-prep.sh 2>&1 {{ timestamper_cmd }} > {{ working_dir }}/{{ standalone_container_prep_log }}
+  changed_when: true
 
 # update the registry to rdo or docker.io
 - name: update registry if needed in container-prepare-parameters.yaml
@@ -177,6 +178,7 @@
   shell: >
     set -o pipefail &&
     {{ working_dir }}/standalone.sh 2>&1 {{ timestamper_cmd }} > {{ working_dir }}/{{ standalone_deploy_log }}
+  changed_when: true
 
 - when: standalone_ansible_lint|default(false)|bool
   vars:

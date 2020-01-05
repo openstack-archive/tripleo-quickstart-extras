@@ -3,6 +3,7 @@
   shell: >
     systemctl list-units --failed --plain --no-legend --no-pager "tripleo_*"
   register: systemd_state
+  changed_when: false
 
 - name: Print out any failed Systemd services for tripleo_*
   debug:

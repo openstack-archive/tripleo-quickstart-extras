@@ -10,3 +10,4 @@
   ignore_errors: true
   environment:
     OS_CLOUD: "{{ tempest_cloud_name }}"
+  changed_when: true

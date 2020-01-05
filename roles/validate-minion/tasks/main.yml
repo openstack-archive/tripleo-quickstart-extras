@@ -10,3 +10,4 @@
     set -o pipefail &&
     {{ local_working_dir }}/validate_minion_simple.sh
     | tee {{ validate_minion_simple_log }}
+  changed_when: false

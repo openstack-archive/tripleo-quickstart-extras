@@ -20,6 +20,7 @@
   shell: >
     git config --global user.email "user@example.com";
     git config --global user.name "CI user"
+  changed_when: true
 
 - include_tasks: patch_repos.yml
   with_items: "{{ repos }}"

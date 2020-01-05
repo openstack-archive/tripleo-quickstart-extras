@@ -25,6 +25,7 @@
     do virsh list | grep -E '{{ libvirt_oc_names }}' > /dev/null || break
     done
   register: vms_shutdown
+  changed_when: false
 
 - name: Check that vms are shutdown
   async_status:
@@ -40,6 +41,7 @@
     removes: "{{ libvirt_volume_path }}/{{ item.name }}.qcow2.bak"
   with_items: "{{ overcloud_nodes }}"
   when: snapshot_create|bool
+  changed_when: true
 
 - name: Create snapshot
   shell: |
@@ -49,6 +51,7 @@
     creates: "{{ libvirt_volume_path }}/{{ item.name }}.qcow2.bak"
   with_items: "{{ overcloud_nodes }}"
   when: snapshot_create|bool
+  changed_when: true
 
 - name: Restore previous snapshot
   shell: |
@@ -56,6 +59,7 @@
     qemu-img create -f qcow2 -b {{ libvirt_volume_path }}/{{ item.name }}.qcow2.bak {{ libvirt_volume_path }}/{{ item.name }}.qcow2
   with_items: "{{ overcloud_nodes }}"
   when: snapshot_restore|bool
+  changed_when: true
 
 - name: Start vms
   virt:

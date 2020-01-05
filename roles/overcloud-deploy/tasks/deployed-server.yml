@@ -19,3 +19,4 @@
     no_proxy: "{{ lookup('env', 'no_proxy') }}"
     TRIPLEO_ROOT: "{{ lookup('env','TRIPLEO_ROOT') }}"
     SUBNODES_SSH_KEY: "/etc/nodepool/id_rsa"
+  changed_when: true

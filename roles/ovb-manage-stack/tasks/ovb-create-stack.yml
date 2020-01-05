@@ -51,6 +51,7 @@
       nova keypair-add --pub-key {{ existing_key_location }}.pub key-{{ idnum }}
   ignore_errors: true
   no_log: true
+  changed_when: true
 
 - name: copy clouds.yaml file
   template:
@@ -65,6 +66,7 @@
       {{ ovb_dir }}/bin/deploy.py --env {{ local_working_dir }}/env-{{ idnum }}.yaml --name {{ stack_name }} --quintupleo
   args:
     chdir: "{{ ovb_dir }}"
+  changed_when: true
 
 - name: Return stack state
   shell: >
@@ -89,6 +91,7 @@
       openstack stack show "{{ stack_name }}" | grep "status"
   register: stack_status
   no_log: true
+  changed_when: false
 
 - name: Show stack status
   debug:
@@ -117,6 +120,7 @@
       openstack stack show {{ stack_name }} -f json -c outputs
   register: stack_outputs
   no_log: true
+  changed_when: false
 
 - name: Set fact for undercloud floating IP address
   set_fact:
@@ -142,6 +146,7 @@
   until: result is success
   retries: 300
   delay: 5
+  changed_when: false
 
 - when: ovb_setup_user|default('false')|bool
   block:
@@ -190,6 +195,7 @@
       export OS_CLOUD="{{ cloud_name }}";
       {{ ovb_dir }}/bin/build-nodes-json --env {{ local_working_dir }}/env-{{ idnum }}.yaml --driver {{ baremetal_driver }}
   register: nodes_json
+  changed_when: true
 
 - name: remove clouds.yaml file
   file:

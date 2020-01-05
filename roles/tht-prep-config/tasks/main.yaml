@@ -15,3 +15,4 @@
     {{ working_dir }}/{{ script_name }} 2>&1 {{ timestamper_cmd }} >
     {{ custom_tht_log }}
   become: true
+  changed_when: true

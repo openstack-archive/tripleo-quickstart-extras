@@ -4,3 +4,4 @@
     set -o pipefail &&
     {{ working_dir }}/overcloud-prep-images.sh 2>&1 {{ timestamper_cmd }} >
     {{ overcloud_prep_images_log }}
+  changed_when: true

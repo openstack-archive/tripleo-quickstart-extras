@@ -10,3 +10,4 @@
     set -o pipefail &&
     {{ local_working_dir }}/ui_validate_simple.sh
     | tee {{ ui_validate_simple_log }}
+  changed_when: true

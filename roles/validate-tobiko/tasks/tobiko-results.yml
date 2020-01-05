@@ -14,11 +14,13 @@
     {{ testr_command }} last --subunit > {{ tobiko_log_dir }}/testrepository.subunit
   args:
     chdir: "{{ working_dir }}/tobiko"
+  changed_when: true
 
 - name: Generate HTML results file
   shell: |
     set -o pipefail &&
     subunit2html {{ tobiko_log_dir }}/testrepository.subunit {{ tobiko_log_dir }}/{{ tobiko_log_file }}.html
+  changed_when: true
 
 - name: Fetch HTML results
   fetch:
