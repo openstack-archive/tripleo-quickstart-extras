@@ -16,3 +16,4 @@
     set -o pipefail &&
     {{ working_dir }}/ovb-undercloud-connectivity.sh 2>&1 {{ timestamper_cmd }} >
     {{ ovb_undercloud_connectivity_log }}
+  changed_when: true

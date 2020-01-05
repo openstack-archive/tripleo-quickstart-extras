@@ -4,6 +4,7 @@
 - name: Install ara deps
   become: true
   pip:
+    # noqa 403
     name:
       - pip
       - setuptools
