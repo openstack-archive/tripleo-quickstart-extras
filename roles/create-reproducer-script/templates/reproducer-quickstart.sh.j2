@@ -368,7 +368,7 @@ cat >>"{{ env_vars_to_source_file }}" <<EOF
 # Uncomment this if you have established docker proxy on virthost
 # export NODEPOOL_DOCKER_REGISTRY_PROXY=$NODEPOOL_DOCKER_REGISTRY_PROXY
 export NODEPOOL_CENTOS_MIRROR=$NODEPOOL_CENTOS_MIRROR
-export NODEPOOL_MIRROR_HOST=mirror.mtl01.inap.openstack.org
+export NODEPOOL_MIRROR_HOST={{ mirror_fqdn | default('mirror.mtl01.inap.openstack.org') }}
 EOF
 fi
 
