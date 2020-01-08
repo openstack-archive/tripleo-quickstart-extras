@@ -23,6 +23,7 @@
 
             - name: Install python setuptools (easy_install)
               when: easy_install_exists.rc != 0
+              # noqa 403
               package:
                 state: latest
                 name:
@@ -34,6 +35,7 @@
               command: "{{ python_cmd }} -m easy_install pip"
 
     - name: Update pip
+      # noqa 403
       pip:
         name: pip
         state: latest
@@ -41,6 +43,7 @@
       become: true
 
     - name: Pip install container-check
+      # noqa 403
       pip:
         name: container-check
         state: latest

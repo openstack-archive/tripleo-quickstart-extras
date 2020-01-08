@@ -96,8 +96,9 @@
 
 - block:
     - name: Get full stack status info in case of failure
-      shell: openstack stack show "{{ stack_name }}"
+      command: openstack stack show "{{ stack_name }}"
       register: failed_stack
+      changed_when: false
 
     - name: Show stack status in case of failure
       debug: var="failed_stack.stdout"

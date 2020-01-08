@@ -33,6 +33,7 @@
 - name: Map project name to DLRN project name
   register: project_name_mapped
   shell: >
+    set -euo pipefail;
     source {{ build_repo_dir }}/dlrn-venv/bin/activate;
     export PROJECT_NAME=$(echo {{ artg_change.project }} | sed "s|openstack/||");
     rdopkg findpkg -s $PROJECT_NAME -l rdoinfo | grep ^name | awk '{print $2}'

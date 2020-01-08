@@ -35,7 +35,8 @@
       shell: find /var/cache/tripleo-quickstart/images/*  -mtime +3 -exec rm -rf {} \;
 
     - name: remove tripleo-quickstart /var/oooqvms
-      shell: rm -rf /var/oooqvms/
+      command: rm -rf /var/oooqvms/
+      changed_when: true
 
     - name: remove ansible-role-tripleo-image-build artifacts
       shell: >
@@ -56,10 +57,11 @@
 
     - name: destroy local libvirt storage, networks and config
       become: true
-      shell: "rm -rf {{ working_dir }}/.config/libvirt"
+      command: "rm -rf {{ working_dir }}/.config/libvirt"
 
     - name: get user_id for stack user
       shell: >
+        set -euo pipefail;
         cat /etc/passwd | grep stack | awk -F ':' '{ print $3 }'
       register: user_id
 
@@ -103,10 +105,11 @@
       user: name={{ non_root_user }} remove=yes force=yes state=absent
 
     - name: remove stack home dir
-      shell: rm -Rf {{ item }}
+      command: rm -Rf {{ item }}
       with_items:
         - /home/{{ non_root_user }}
         - /var/spool/mail/{{ non_root_user }}
+      changed_when: true
 
     - name: remove files automation files from /root
       file: name={{ item }} state=absent

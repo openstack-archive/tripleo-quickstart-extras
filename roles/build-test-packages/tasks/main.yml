@@ -41,7 +41,7 @@
         {% endif %}
 
 - name: Check if virtualenv is in the system
-  shell: "{{ python_cmd }} -m virtualenv --version"
+  command: "{{ python_cmd }} -m virtualenv --version"
   args:
     warn: false
   register: virtualenv_exist
@@ -92,6 +92,7 @@
     dest: '{{ build_repo_dir }}/DLRN/projects.ini'
 
 - name: Install and update pip
+  # noqa 403
   pip:
     name: pip
     virtualenv: "{{ build_repo_dir }}/dlrn-venv"
@@ -106,6 +107,7 @@
   when: not dlrn_pre_installed|bool
 
 - name: Pip install DLRN
+  # noqa 403
   pip:
     name: dlrn
     virtualenv: "{{ build_repo_dir }}/dlrn-venv"
@@ -254,12 +256,12 @@
         find {{ build_repo_dir }}/DLRN/data/repos -type f -name '*.rpm' -print0 | xargs -0 cp -t {{ build_repo_dir }}/gating_repo;
 
     - name: Run createrepo on generated rpms
-      shell: 'createrepo gating_repo'
+      command: createrepo gating_repo
       args:
         chdir: '{{ build_repo_dir }}'
 
     - name: Compress the repo
-      shell: 'tar czf {{ artg_compressed_gating_repo }} gating_repo'
+      command: 'tar czf {{ artg_compressed_gating_repo }} gating_repo'
       args:
         chdir: '{{ build_repo_dir }}'
     - name: Trigger repo injection for quickstart

@@ -66,6 +66,7 @@
   when: ansible_distribution|lower != 'fedora'
 
 - name: Install packages
+  # noqa 403
   package:
     name: "{{ packages_list }}"
     state: latest
@@ -74,9 +75,10 @@
 - include: clone-ci-repos.yml
 
 - name: Set primary public key on all hosts
-  shell: cat /etc/nodepool/id_rsa.pub
+  command: cat /etc/nodepool/id_rsa.pub
   register: primary_key
   when: inventory_hostname == "subnode-0"
+  changed_when: false
 
 - name: Add primary key
   lineinfile:
@@ -141,6 +143,7 @@
   block:
 
     - name: Update packages
+      # noqa 403
       package:
         name: '*'
         state: latest

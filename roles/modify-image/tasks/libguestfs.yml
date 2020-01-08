@@ -1,5 +1,6 @@
 ---
 - name: ensure libguestfs is installed
+  # noqa 403
   yum: name=libguestfs-tools-c state=latest
   become: true
 
