@@ -37,23 +37,26 @@
 - block:
     - name: Map project name to DLRN project name
       register: project_name_mapped
-      shell: >
-        set -exo pipefail;
-        source {{ build_repo_dir }}/dlrn-venv/bin/activate;
-        rdopkg findpkg -s {{ artg_change.project | basename }} -l rdoinfo | grep ^name | awk '{print $2}'
-      args:
+      shell:
         chdir: '{{ build_repo_dir }}/DLRN'
+        cmd: |
+          source '{{ build_repo_dir }}/dlrn-venv/bin/activate'
+          set -xeo pipefail
+          rdopkg findpkg -s '{{ artg_change.project | basename }}' -l rdoinfo | \
+            awk '/^name/{print $2}; {print "findpkg: " $0 > "/dev/stderr"}'
       changed_when: false
+      failed_when: project_name_mapped.rc != 0 or not project_name_mapped.stdout
 
   rescue:
     - debug:
         msg: |
-          WARNING: Unable to build {{ artg_change.project }}
-          {{ project_name_mapped }}
+          WARNING: Got {{ project_name_mapped.rc }} result code trying to build {{ artg_change.project }}
+          --- STDERR ---
+          {{ project_name_mapped.stderr }}
+          --- STDOUT ---
+          {{ project_name_mapped.stdout }}
 
-- when:
-    - project_name_mapped is success
-    - project_name_mapped.stdout != ''  # noqa 602
+- when: project_name_mapped is success
   block:
     - name: Append project name to package list
       set_fact:
@@ -64,7 +67,7 @@
 
     - name: Copy from ready directories if configured
       command: >
-        cp -raf {{ artg_repos_dir }}/{{ artg_change.project|regex_replace('openstack[^/]*/', '') }}
+        cp -raf {{ artg_repos_dir | dirname  }}/{{ artg_change.project }}
         {{ build_repo_dir }}/DLRN/data/{{ project_name_mapped.stdout }}
       ignore_errors: true
       register: copy_dir
@@ -112,8 +115,3 @@
         chdir: '{{ build_repo_dir }}/DLRN'
       register: repo_built
       when: artg_build_one|bool
-
-- name: Ensure artg_rdo_packages is defined
-  set_fact:
-    artg_rdo_packages: []
-  when: artg_rdo_packages is not defined
