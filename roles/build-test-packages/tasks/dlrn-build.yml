@@ -30,27 +30,26 @@
   loop_control:
     loop_var: project_item
 
-- name: Map project name to DLRN project name
-  register: project_name_mapped
-  shell: >
-    set -euo pipefail;
-    source {{ build_repo_dir }}/dlrn-venv/bin/activate;
-    export PROJECT_NAME=$(echo {{ artg_change.project }} | sed "s|openstack/||");
-    rdopkg findpkg -s $PROJECT_NAME -l rdoinfo | grep ^name | awk '{print $2}'
-  args:
-    chdir: '{{ build_repo_dir }}/DLRN'
-  changed_when: false
+- block:
+    - name: Map project name to DLRN project name
+      register: project_name_mapped
+      shell: >
+        set -exo pipefail;
+        source {{ build_repo_dir }}/dlrn-venv/bin/activate;
+        rdopkg findpkg -s {{ artg_change.project | basename }} -l rdoinfo | grep ^name | awk '{print $2}'
+      args:
+        chdir: '{{ build_repo_dir }}/DLRN'
+      changed_when: false
 
-- debug:
-    msg: "WARNING: Unable to build {{ artg_change.project }}. No pkg found."
-  when: project_name_mapped.stdout == ''
+  rescue:
+    - debug:
+        msg: |
+          WARNING: Unable to build {{ artg_change.project }}
+          {{ project_name_mapped }}
 
-- name: Ensure artg_rdo_packages is defined
-  set_fact:
-    artg_rdo_packages: []
-  when: artg_rdo_packages is not defined
-
-- when: project_name_mapped.stdout != ''
+- when:
+    - project_name_mapped is success
+    - project_name_mapped.stdout != ''  # noqa 602
   block:
     - name: Append project name to package list
       set_fact:
@@ -82,7 +81,9 @@
         refspec: '{{ artg_change.distgit.refspec }}'
         version: 'FETCH_HEAD'
         accept_hostkey: true
-      when: artg_change.distgit is defined and (artg_repos_dir is not defined or copy_dir is failed)
+      when:
+        - artg_change.distgit is defined
+        - artg_repos_dir is not defined or copy_dir is failed
 
     - name: Run DLRN
       shell: >
@@ -107,3 +108,8 @@
         chdir: '{{ build_repo_dir }}/DLRN'
       register: repo_built
       when: artg_build_one|bool
+
+- name: Ensure artg_rdo_packages is defined
+  set_fact:
+    artg_rdo_packages: []
+  when: artg_rdo_packages is not defined

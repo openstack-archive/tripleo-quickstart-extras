@@ -1,3 +1,7 @@
 ---
 - name: Converge
   hosts: all
+  tasks:
+    - name: Include role
+      include_role:
+        name: build-test-packages
