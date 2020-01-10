@@ -24,24 +24,28 @@
     source {{ working_dir }}/stackrc;
     nova list | grep {{ node_to_scale }} | cut -f2- -d':' | wc -l
   register: initial_node_count
+  changed_when: false
 
 - name: Register uuid of original {{ node_to_scale }} node
   shell: >
     source {{ working_dir }}/stackrc;
     nova list | grep -m 1 {{ node_to_scale }} | sed -e 's/|//g' | awk '{print $1}'
   register: node_id_to_delete
+  changed_when: false
 
 - name: Register the Name of the original {{ node_to_scale }} node
   shell: >
     source {{ working_dir }}/stackrc;
     nova list | grep -m 1 {{ node_to_scale }} | sed -e 's/|//g' | awk '{print $2}'
   register: node_name_to_delete
+  changed_when: false
 
 - name: Register pre-scale nova list
   shell: >
     source {{ working_dir }}/stackrc;
     nova list
   register: pre_scale_nova_list
+  changed_when: false
 
 - name: Display pre-scale nova list
   debug: msg={{ pre_scale_nova_list.stdout_lines }}

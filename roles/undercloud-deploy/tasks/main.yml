@@ -10,6 +10,7 @@
   register: podman_ver
   tags:
     - undercloud-install
+  changed_when: false
 
 
 - name: Set fact for podman version

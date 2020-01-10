@@ -12,3 +12,4 @@
     {{ cleanup_stacks_keypairs_log }}
   args:
     executable: /bin/bash
+  changed_when: true

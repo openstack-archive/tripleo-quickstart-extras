@@ -7,6 +7,7 @@
     set -o pipefail &&
     {{ working_dir }}/scale-deployment.sh 2>&1 {{ timestamper_cmd }} >
     overcloud_deployment_scale_console.log;
+  changed_when: true
 
 - name: Poll heat stack-list to determine when node scale is complete
   shell: >
@@ -16,12 +17,14 @@
   until: heat_stack_list_result.stdout.find("COMPLETE") != -1
   retries: 20
   delay: 90
+  changed_when: false
 
 - name: Register post-scale nova list
   shell: >
     source {{ working_dir }}/stackrc;
     nova list
   register: post_scale_nova_list
+  changed_when: false
 
 - name: Display post-scale nova list
   debug:
@@ -34,6 +37,7 @@
     source {{ working_dir }}/stackrc;
     nova list | grep {{ node_to_scale }} | cut -f2- -d':' | wc -l
   register: post_scale_node_count
+  changed_when: false
 
 - name: Check that post scale node count is correct
   fail:

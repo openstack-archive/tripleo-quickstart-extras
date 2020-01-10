@@ -29,6 +29,7 @@
     set -o pipefail &&
     {{ working_dir }}/install_novajoin.sh 2>&1 {{ timestamper_cmd }} >
     {{ working_dir }}/install_novajoin.sh.log
+  changed_when: true
 
 - name: Install novajoin preparation script
   template:
@@ -41,10 +42,12 @@
     set -o pipefail &&
     {{ working_dir }}/novajoin_prep.sh 2>&1 {{ timestamper_cmd }} >
     {{ working_dir }}/novajoin_prep.sh.log
+  changed_when: true
 
 - name: Register OTP output
   command: cat {{ freeipa_otp_key }}
   register: ipa_otp_register
+  changed_when: false
 
 - name: Set OTP Fact for undercloud enrollment
   set_fact:

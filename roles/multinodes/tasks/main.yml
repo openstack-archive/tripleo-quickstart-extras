@@ -11,6 +11,7 @@
   register: openstack_client_installed
   tags:
     - delete
+  changed_when: false
 
 - name: Fail if no openstack client is installed
   fail:
@@ -44,6 +45,7 @@
     - name: find image
       shell: openstack image list --long -f value -c ID --public --property latest=centos-7-latest | tail -1
       register: image_id_latest
+      changed_when: false
 
     - name: Set fact for image
       set_fact:
@@ -63,6 +65,7 @@
     OS_AUTH_URL: "{{ os_auth_url }}"
   args:
     executable: /bin/bash
+  changed_when: true
 
 - name: Create parent template
   template:
@@ -107,6 +110,7 @@
   args:
     executable: /bin/bash
   register: create_stack
+  changed_when: true
 
 - name: Fail if stack failed to create
   fail:
@@ -123,6 +127,7 @@
   command: >
     openstack stack output show {{ stack_name }} subnode_ip_pairs -c output_value -f value
   register: subnode_ips
+  changed_when: true
 
 - name: Add hosts
   add_host:
@@ -147,6 +152,7 @@
   delay: 5
   with_items:
     - "{{ groups['subnodes'] }}"
+  changed_when: false
 
 # In case of blank centos image we need to create CI user and update inventory
 - when: hostvars['subnode-0'].ansible_user != "{{ nodepool_user }}"

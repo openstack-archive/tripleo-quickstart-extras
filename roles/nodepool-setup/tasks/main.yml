@@ -10,6 +10,7 @@
     swapon /root/swapfile;
     echo "/root/swapfile swap swap defaults 0 0" >> /etc/fstab;
   become: true
+  changed_when: true
 
 - name: Create /etc/ci directory
   file:
@@ -36,6 +37,7 @@
     - name: Discover package architecture
       command: rpm -q --qf "%{arch}" -f /etc/redhat-release
       register: rpm_arch
+      changed_when: false
 
     - debug:
         msg: Package architecture is '{{ rpm_arch.stdout }}'
@@ -96,6 +98,7 @@
   with_inventory_hostnames:
     - subnodes
   become: true
+  changed_when: true
 
 - name: start unbound service
   service:
@@ -125,6 +128,7 @@
   shell:
     iptables-save > /etc/sysconfig/iptables
   become: true
+  changed_when: true
 
 - name: Set some env vars
   lineinfile:
