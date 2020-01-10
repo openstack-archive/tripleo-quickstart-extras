@@ -11,6 +11,13 @@
 # implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+# see http://docs.ansible.com/developing_modules.html#common-module-boilerplate
+import json
+import logging
+import re
+import requests
+from ansible.module_utils.basic import *
+
 
 DOCUMENTATION = '''
 ---
@@ -48,11 +55,6 @@ EXAMPLES = '''
     change_id: I387b6bfd763d2d86cad68a3119b0edd0caa237b0
     patchset_rev: d18f21853e2f3be7382a20d0f42232ff3a78b348
 '''
-
-import json
-import logging
-import re
-import requests
 
 # we ignore any other host reference
 ALLOWED_HOSTS = ['review.opendev.org',
@@ -222,9 +224,6 @@ def main():
                          module.params['patchset_rev'])
     module.exit_json(**result)
 
-
-# see http://docs.ansible.com/developing_modules.html#common-module-boilerplate
-from ansible.module_utils.basic import *
 
 if __name__ == "__main__":
     main()

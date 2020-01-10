@@ -1,4 +1,5 @@
 ---
+# to bump run: pre-commit autoupdate
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.4.0
@@ -9,11 +10,12 @@ repos:
       - id: check-executables-have-shebangs
       - id: check-merge-conflict
       - id: debug-statements
-      - id: flake8
-        additional_dependencies:
-          - hacking<1.2.0,>=1.1.0
       - id: check-yaml
         files: .*\.(yaml|yml)$
+  - repo: https://github.com/PyCQA/flake8.git
+    rev: 3.7.9
+    hooks:
+      - id: flake8
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.20.0
     hooks:

@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# see http://docs.ansible.com/developing_modules.html#common-module-boilerplate
+from ansible.module_utils.basic import *
+
 DOCUMENTATION = '''
 ---
 module: zuul_deps
@@ -75,9 +78,6 @@ def main():
                      module.params['branch'])
     module.exit_json(**result)
 
-
-# see http://docs.ansible.com/developing_modules.html#common-module-boilerplate
-from ansible.module_utils.basic import *
 
 if __name__ == "__main__":
     main()

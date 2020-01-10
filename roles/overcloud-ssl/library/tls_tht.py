@@ -15,6 +15,9 @@
 # implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import yaml
+from ansible.module_utils.basic import *
+
 
 DOCUMENTATION = '''
 ---
@@ -62,9 +65,6 @@ EXAMPLES = '''
 # Generate the tht templates for enabled ssl
 - tls_tht:
 '''
-
-import yaml
-from ansible.module_utils.basic import *  # noqa
 
 
 def _open_yaml(filename):
