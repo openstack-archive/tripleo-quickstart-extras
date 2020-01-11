@@ -24,4 +24,3 @@ sudo grep -rl 'type: ovs_bond' $CUSTOM_TEMPLATES_DIR/ | xargs sudo sed -i 's/typ
 sudo grep -rl 'ovs_options' $CUSTOM_TEMPLATES_DIR/ | xargs sudo sed -i 's/ovs_options/bonding_options/g'
 
 ### --stop_docs
-

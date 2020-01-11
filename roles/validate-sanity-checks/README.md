@@ -46,5 +46,3 @@ Author Information
 ------------------
 
 TripleO CI Team
-
-

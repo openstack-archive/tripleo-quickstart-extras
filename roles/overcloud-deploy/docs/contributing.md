@@ -40,4 +40,3 @@ After committing your changes, resubmit the review:
 
 [gerrit]: https://docs.openstack.org/infra/manual/developers.html#development-workflow
 [git-review]: https://docs.openstack.org/infra/manual/developers.html#installing-git-review
-
