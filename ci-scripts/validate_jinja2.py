@@ -15,17 +15,18 @@
 # implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-DOCUMENTATION = '''
----
-python script to read and parse jinja2 templates
----
-'''
-
 from jinja2 import Environment
 from jinja2 import exceptions
 
 import os
 import sys
+
+
+DOCUMENTATION = '''
+---
+python script to read and parse jinja2 templates
+---
+'''
 
 # Jinja Environment
 env = Environment()
