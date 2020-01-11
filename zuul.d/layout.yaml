@@ -11,6 +11,9 @@
       jobs:
         - tripleo-ci-centos-7-standalone
         - openstack-tox-linters
+        - openstack-tox-molecule:
+            required-projects:
+              - openstack/tripleo-quickstart
         - tripleo-ci-centos-7-containers-undercloud-minion:
             files:
               - ^roles/.*minion.*$
@@ -19,3 +22,6 @@
       queue: tripleo
       jobs:
         - openstack-tox-linters
+        - openstack-tox-molecule:
+            required-projects:
+              - openstack/tripleo-quickstart
