@@ -331,19 +331,21 @@ class TempestMailCmd(object):
         data = []
         if self.args.file:
             console, date, link = self.get_console()
+            link = link or ''
             d = self.get_data(console, date, link)
-            if not link:
-                return
+
             data.append(d)
         else:
             index = self.get_index()
             for run in index:
                 console, date, link = self.get_console(run)
+
                 if not console or not date:
                     continue
-                if not link:
-                    return
+
+                link = link or ''
                 d = self.get_data(console, date, link)
+
                 data.append(d)
 
         data = sorted(data, key=lambda x: x['date'])
