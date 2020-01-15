@@ -14,6 +14,7 @@ repos:
   - https://opendev.org/openstack/openstack-ansible-os_tempest
   - https://opendev.org/openstack/ansible-config_template
   - https://opendev.org/openstack/ansible-role-python_venv_build
+  - https://opendev.org/openstack/tripleo-operator-ansible
 zuul_changes: "{{ lookup('env', 'ZUUL_CHANGES') }}"
 subnode_swap_size: 8388608  # 8GB
 update_subnodes: true
