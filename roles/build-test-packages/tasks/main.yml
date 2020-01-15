@@ -211,6 +211,10 @@
     artg_change_list: "{{ artg_change_list|union(zuul_change_list|default([])) }}"
     cacheable: true
 
+- name: Print out the change list
+  debug:
+    var: artg_change_list
+
 - name: Clone and build the specific DLRN projects
   include: dlrn-build.yml artg_change={{ item }}
   with_items: '{{ artg_change_list|default([]) }}'
