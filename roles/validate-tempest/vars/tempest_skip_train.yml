@@ -97,9 +97,6 @@ known_failures:
   - test: 'tempest.scenario.test_security_groups_basic_ops.TestSecurityGroupsBasicOps.test_cross_tenant_traffic'
     reason: 'Timed out waiting for 10.0.0.102 to become reachable from 10.0.0.117'
     lp: 'https://bugs.launchpad.net/tripleo/+bug/1856016'
-  - test: 'tempest.api.network.admin.test_agent_management.AgentManagementTestJSON.test_list_agent'
-    reason: 'Failed with mismatch error related to ovn'
-    lp: 'https://bugs.launchpad.net/tripleo/+bug/1855985'
 
   # skip list for undercloud
   - test: 'tempest.api.network.test_networks.NetworksTest.test_external_network_visibility'
