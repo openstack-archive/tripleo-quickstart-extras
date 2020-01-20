@@ -49,8 +49,8 @@
     - name: Install undercloud
       collections:
         - tripleo.operator
-      import_role:
-        name: tripleo-undercloud-install
+      include_role:
+        name: tripleo_undercloud_install
       vars:
         tripleo_undercloud_install_debug: "{{ undercloud_undercloud_debug }}"
 
