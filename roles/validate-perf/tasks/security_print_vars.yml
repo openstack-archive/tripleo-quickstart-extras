@@ -1,0 +1,17 @@
+---
+- name: Check /sys/kernel for security performance affecting features
+  become: true
+  shell: |
+    echo "/sys/kernel/debug/x86/{{ item }}: $(cat /sys/kernel/debug/x86/{{ item }})"
+  register: security_vars
+  with_items:
+    - pti_enabled
+    - retp_enabled
+    - ibrs_enabled
+    - ibpb_enabled
+  ignore_errors: true
+  changed_when: false
+
+- name: Debug print the security_vars
+  debug:
+    msg: "{{ security_vars.results|map(attribute='stdout')|list }}"

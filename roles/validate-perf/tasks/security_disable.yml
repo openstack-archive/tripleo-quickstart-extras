@@ -1,0 +1,17 @@
+---
+- name: Check /sys/kernel settings before disabling
+  include_tasks: security_print_vars.yml
+
+- name: Turn off security
+  become: true
+  copy:
+    dest: "/sys/kernel/debug/x86/{{ item }}"
+    content: "0"
+  ignore_errors: true
+  with_items:
+    - pti_enabled
+    - retp_enabled
+    - ibrs_enabled
+
+- name: Check /sys/kernel settings after disabling
+  include_tasks: security_print_vars.yml

@@ -2,6 +2,8 @@
 - name: Validate performance (dstat) on overcloud
   become: true
   block:
+  - include_tasks: security_disable.yml
+    when: not kernel_sec|bool
   - name: Install the latest version of dstat on overcloud
     package:
       name: dstat
