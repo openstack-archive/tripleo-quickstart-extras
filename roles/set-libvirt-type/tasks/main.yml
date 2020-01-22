@@ -3,6 +3,7 @@
   setup:
     gather_subset: "!all,!min,hardware"
   when: ansible_processor is not defined
+
 - name: Check cpu vendor
   set_fact:
     cpu_vendor: "{{ item }}"
@@ -10,20 +11,25 @@
   with_items:
     - intel
     - amd
+
 - name: Check virt extensions on cpu flags
+  # noqa 306
   shell: egrep 'vmx|svm' /proc/cpuinfo
   register: cpuflags
   failed_when: false
   no_log: true
   when: cpu_vendor is defined
+
 - name: Set qemu as virt type
   set_fact:
     virt_type: qemu
   when: cpu_vendor is not defined or cpuflags.stdout == ""
+
 - name: Set kvm as virt type
   set_fact:
     virt_type: kvm
   when: cpu_vendor is defined and cpuflags.stdout != ""
+
 - name: Print virtualization type
   debug:
     var: virt_type

@@ -21,6 +21,7 @@
   async: 300
   poll: 0
   shell: |
+    set -eo pipefail
     while true
     do virsh list | grep -E '{{ libvirt_oc_names }}' > /dev/null || break
     done

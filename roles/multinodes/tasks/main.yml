@@ -83,6 +83,7 @@
     dest: "{{ local_working_dir }}/params_multinode.yaml"
 
 - name: Create stack
+  # noqa: 306
   shell: >
     echo "Executing 'openstack stack create {{ stack_name }} --template {{ local_working_dir }}/multinode_stack.yaml
     -e {{ local_working_dir }}/params_multinode.yaml &>> {{ stack_log }}'" | tee -a {{ stack_log }};
