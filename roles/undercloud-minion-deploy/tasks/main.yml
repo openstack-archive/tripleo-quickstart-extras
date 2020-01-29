@@ -21,8 +21,8 @@
     - name: Install undercloud minion
       collections:
         - tripleo.operator
-      import_role:
-        name: tripleo-undercloud-minion-install
+      include_role:
+        name: tripleo_undercloud_minion_install
       vars:
         tripleo_undercloud_minion_install_debug: "{{ minion_minion_debug }}"
 
