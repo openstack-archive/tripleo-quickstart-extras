@@ -1,5 +1,5 @@
 ---
-artcl_gzip_only: true
+artcl_gzip: true
 artcl_artifact_url: https://ci.centos.org/artifacts/rdo
 artcl_publish: true
 artcl_use_rsync: true
