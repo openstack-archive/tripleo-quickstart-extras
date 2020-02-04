@@ -164,21 +164,48 @@
     replace: " - 192.168.24.1"
     backup: true
 
-- name: Create the deploy command for standalone
-  template:
-    src: "{{ standalone_deploy_script }}"
-    dest: "{{ working_dir }}/standalone.sh"
-    mode: 0755
-
 - name: Run dstat on the standalone prior to standalone deploy
   include_role:
     name: validate-perf
 
-- name: Deploy the standalone
-  shell: >
-    set -o pipefail &&
-    {{ working_dir }}/standalone.sh 2>&1 {{ timestamper_cmd }} > {{ working_dir }}/{{ standalone_deploy_log }}
-  changed_when: true
+- name: Run standalone via tripleo-operator-ansible
+  when:
+    - release not in ['queens', 'rocky', 'stein', 'train']
+  collections:
+    - tripleo.operator
+  include_role:
+    name: tripleo_deploy
+  vars:
+    tripleo_deploy_debug: true
+    tripleo_deploy_local_ip: "{{ standalone_ip }}/{{ standalone_network_prefix }}"
+    tripleo_deploy_roles_file: "{{ overcloud_templates_path }}/roles/{{ standalone_role }}"
+    tripleo_deploy_output_dir: "{{ working_dir }}"
+    tripleo_deploy_environment_files: |-
+      {% set env_files = [overcloud_templates_path + '/environments/standalone/standalone-tripleo.yaml',
+                          working_dir + '/containers-prepare-parameters.yaml',
+                          working_dir + '/standalone_parameters.yaml'] %}
+      {% if standalone_custom_env_files %}
+      {% set env_files = env_files + standalone_custom_env_files %}
+      {% endif %}
+      {{ env_files }}
+
+# TODO(mwhahaha): remove after backwards compatibility is checked. Standalone hasn't
+# changed in the few releases so we can probably just remove this.
+- name: Run standalone legacy
+  when:
+    - release in ['queens', 'rocky', 'stein', 'train']
+  block:
+  - name: Create the deploy command for standalone
+    template:
+      src: "{{ standalone_deploy_script }}"
+      dest: "{{ working_dir }}/standalone.sh"
+      mode: 0755
+
+  - name: Deploy the standalone
+    shell: >
+      set -o pipefail &&
+      {{ working_dir }}/standalone.sh 2>&1 {{ timestamper_cmd }} > {{ working_dir }}/{{ standalone_deploy_log }}
+    changed_when: true
 
 - when: standalone_ansible_lint|default(false)|bool
   vars:
