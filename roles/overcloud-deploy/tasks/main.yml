@@ -24,3 +24,14 @@
   tags:
     - overcloud-post-deploy
   when: overcloud_deploy_result is defined and overcloud_deploy_result == "passed"
+
+- block:
+    - include: pre-cell-deploy.yml
+      tags:
+        - overcloud-scripts-cell
+    - include: deploy-cell.yml
+      tags:
+        - overcloud-deploy-cell
+  when:
+    - additional_cell|bool
+    - overcloud_deploy_result is defined and overcloud_deploy_result == "passed"

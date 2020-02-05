@@ -72,6 +72,7 @@ undercloud_networks:
 # Define all the flavors
 flavor_map:
   control: baremetal
+  cellcontrol: baremetal
   compute: baremetal
   storage: baremetal
   ceph: baremetal

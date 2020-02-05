@@ -2,11 +2,15 @@
 
 # Script and log locations used during the deploy process.
 deploy_script: overcloud-deploy.sh.j2
+deploy_cell_script: overcloud-deploy-cell.sh.j2
 deploy_log: "{{ working_dir }}/overcloud_deploy.log"
+deploy_cell_log: "{{ working_dir }}/cell_deploy.log"
 post_deploy_script: overcloud-deploy-post.sh.j2
 post_deploy_log: "{{ working_dir }}/overcloud_deploy_post.log"
 failed_deployments_log: "{{ working_dir }}/failed_deployments.log"
 failed_deployment_list: "{{ working_dir }}/failed_deployment_list.log"
+failed_cell_deployment_list: "{{ working_dir }}/failed_cell_deployment_list.log"
+failed_cell_deployments_log: "{{ working_dir }}/failed_cell_deployments.log"
 tripleo_config_download_log: "{{ working_dir }}/tripleo_config_download.log"
 ansible_steps_log: "{{ working_dir }}/ansible_steps.log"
 validate_script: overcloud-validate.sh.j2
@@ -59,6 +63,8 @@ overcloud_release: "{{ release }}"
 flavor_args: >-
   --control-flavor {{flavor_map.control
   if flavor_map is defined and 'control' in flavor_map else 'oooq_control'}}
+  --cellcontrol-flavor {{flavor_map.cellcontrol
+  if flavor_map is defined and 'cellcontrol' in flavor_map else 'oooq_cellcontrol'}}
   --compute-flavor {{flavor_map.compute
   if flavor_map is defined and 'compute' in flavor_map else 'oooq_compute'}}
   --ceph-storage-flavor {{flavor_map.ceph
@@ -144,6 +150,7 @@ composable_services: false
 deploy_multinode: false
 
 step_deploy_overcloud: true
+step_deploy_cell: true
 
 deploy_steps_ansible_workflow: false
 
