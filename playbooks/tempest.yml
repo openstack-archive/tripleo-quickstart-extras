@@ -62,6 +62,17 @@
     tempest_venv_bin: "{{ ansible_user_dir }}/tempest_venv/bin"
   when: tempest_install_method == 'source'
 
+# stackviz in venv pulls oslo.db due upstream constraints,
+# but it dropped py2 support so on such system we need to skip it
+# https://bugs.launchpad.net/tripleo/+bug/1862134
+- name: disable stackviz in python2 environment
+  set_fact:
+    tempest_run_stackviz: false
+  when:
+    - release|default('master') in ['master', 'train']
+    - ansible_distribution|lower in ['redhat', 'centos']
+    - ansible_distribution_major_version is version('7', '==')
+
 - name: Load tempest skiplist file
   include_vars: "{{ playbook_dir | dirname }}/vars/tempest_skip_{{ release | default('master') }}.yml"
 
