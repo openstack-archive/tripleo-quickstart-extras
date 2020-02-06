@@ -39,6 +39,10 @@
         {% else %}
         libselinux-python
         {% endif %}
+  register: package_ensure_dlrndeps
+  until: package_ensure_dlrndeps is success
+  retries: 3
+  delay: 5
 
 # https://bugs.launchpad.net/tripleo/+bug/1863632
 # "'virtualenv' is a package and cannot be directly executed"
@@ -69,6 +73,10 @@
         {% else %}
         python-virtualenv
         {% endif %}
+  register: package_virtualenv
+  until: package_virtualenv is success
+  retries: 3
+  delay: 5
 
 - name: Create mock group
   become: true
