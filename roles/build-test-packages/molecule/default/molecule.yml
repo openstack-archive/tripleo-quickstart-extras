@@ -2,8 +2,6 @@
 driver:
   name: docker
 log: true
-lint:
-  enabled: false
 platforms:
   - name: instance
     image: centos:7
@@ -14,8 +12,5 @@ provisioner:
     # ANSIBLE_STDOUT_CALLBACK: yaml
     # hack to make it find 'common' role from tq
     ANSIBLE_ROLES_PATH: "${ANSIBLE_ROLES_PATH}:${MOLECULE_SCENARIO_DIRECTORY}/../../../../../tripleo-quickstart/roles"
-
 verifier:
   name: ansible
-  lint:
-    name: ansible-lint
