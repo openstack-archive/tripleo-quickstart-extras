@@ -18,9 +18,10 @@
 from jinja2 import Environment
 from jinja2 import exceptions
 
+import io
 import os
 import sys
-
+import inspect
 
 DOCUMENTATION = '''
 ---
@@ -46,7 +47,7 @@ def get_jinja_files(dir_path):
 def validate_jinja_templates(file_path):
     """Validate jinja templates file"""
     try:
-        with open(file_path) as fobj:
+        with io.open(file_path, 'r', encoding='utf8') as fobj:
             env.parse(fobj.read())
     except exceptions.TemplateSyntaxError as e:
         print('%s has template error: %s' % (file_path, e))
@@ -54,9 +55,10 @@ def validate_jinja_templates(file_path):
 
 
 if __name__ == "__main__":
-    base_dir = os.path.join(os.path.dirname(sys.argv[0]), "..")
+    base_dir = os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))), "..")
+#    print('base execution directory: %s' % base_dir)
     os.chdir(base_dir)
     jinja_files = get_jinja_files(base_dir)
     for file_path in jinja_files:
         validate_jinja_templates(file_path)
-        print('Validating: %s' % file_path)
+#        print('Validating jinja2: %s' % file_path)
