@@ -63,8 +63,6 @@ overcloud_release: "{{ release }}"
 flavor_args: >-
   --control-flavor {{flavor_map.control
   if flavor_map is defined and 'control' in flavor_map else 'oooq_control'}}
-  --cellcontrol-flavor {{flavor_map.cellcontrol
-  if flavor_map is defined and 'cellcontrol' in flavor_map else 'oooq_cellcontrol'}}
   --compute-flavor {{flavor_map.compute
   if flavor_map is defined and 'compute' in flavor_map else 'oooq_compute'}}
   --ceph-storage-flavor {{flavor_map.ceph
