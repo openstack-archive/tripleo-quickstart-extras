@@ -94,6 +94,9 @@ known_failures:
   - test: 'telemetry_tempest_plugin.scenario.test_telemetry_integration.TestTelemetryIntegration'
     reason: 'telemetry tests failed due to One or more ports have an IP allocation from this subnet'
     lp: 'https://bugs.launchpad.net/tripleo/+bug/1792862'
+  - test: 'tempest.scenario.test_security_groups_basic_ops.TestSecurityGroupsBasicOps.test_cross_tenant_traffic'
+    reason: 'Timed out waiting for 10.0.0.102 to become reachable from 10.0.0.117'
+    lp: 'https://bugs.launchpad.net/tripleo/+bug/1856016'
 
   # skip list for undercloud
   - test: 'tempest.api.network.test_networks.NetworksTest.test_external_network_visibility'
