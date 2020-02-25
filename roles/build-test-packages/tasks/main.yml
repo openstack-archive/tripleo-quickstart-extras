@@ -139,32 +139,26 @@
   retries: 3
   delay: 5
 
-- name: Use local {{ ansible_distribution }} mirror if available
+- name: Use local {{ ansible_distribution }} mirror if available ( centos 7 and RHEL )
   shell: >
     set -o pipefail ;
-    gawk '{ print $0 }; /^# repos$/ { exit }' {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}.cfg
-    > {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
-    cat /etc/yum.repos.d/quickstart-{{ ansible_distribution | lower }}-*.repo >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
+    gawk '{ print $0 }; /^# repos$/ { exit }' {{ build_repo_dir }}/DLRN/scripts/{{ initial_dlrn_config }}.cfg
+    > {{ build_repo_dir }}/DLRN/scripts/{{ initial_dlrn_config }}-local.cfg;
+    cat /etc/yum.repos.d/quickstart-{{ ansible_distribution | lower }}-*.repo >> {{ build_repo_dir }}/DLRN/scripts/{{ initial_dlrn_config }}-local.cfg;
     find /etc/yum.repos.d -name "delorean*repo" ! -name "delorean*build-deps.repo" -exec cat {} \; -exec echo ""  \;
-    >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
+    >> {{ build_repo_dir }}/DLRN/scripts/{{ initial_dlrn_config }}-local.cfg;
     find /etc/yum.repos.d -name "delorean*build-deps.repo" -exec sed 's/enabled=.*/enabled=1/g' {} \;
-    >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
+    >> {{ build_repo_dir }}/DLRN/scripts/{{ initial_dlrn_config }}-local.cfg;
     {% if ansible_distribution|lower == "redhat" and ansible_distribution_major_version == "8" %}
     find /etc/yum.repos.d -name "rh-cloud.repo" -exec sed 's/enabled=.*/enabled=1/g' {} \;
-    >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
+    >> {{ build_repo_dir }}/DLRN/scripts/{{ initial_dlrn_config }}-local.cfg;
     {% endif %}
-    echo '"""' >> {{ build_repo_dir }}/DLRN/scripts/{{ ansible_distribution | lower }}-local.cfg;
+    echo '"""' >> {{ build_repo_dir }}/DLRN/scripts/{{ initial_dlrn_config }}-local.cfg;
     mkdir -p /tmp/fake-dlrn-repos/current;
     touch /tmp/fake-dlrn-repos/delorean-deps.repo;
     touch /tmp/fake-dlrn-repos/current/delorean.repo;
-  when: dlrn_use_local_mirrors|bool
-
-- name: Use custom target for DLRN
-  lineinfile:
-    dest: '{{ build_repo_dir }}/DLRN/projects.ini'
-    regexp: 'target=.*'
-    line: 'target={{ ansible_distribution | lower }}-local'
-  when: dlrn_use_local_mirrors|bool
+  when:
+    - dlrn_use_local_mirrors|bool
 
 # FIXME(jpena): once DLRN 0.8.0 is released, we can remove this
 - name: Check if DLRN/scripts/build_rpm.sh exists

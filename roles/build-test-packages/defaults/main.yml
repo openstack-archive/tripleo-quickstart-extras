@@ -8,14 +8,54 @@ artg_compressed_gating_repo: "/home/stack/gating_repo.tar.gz"
 artg_build_one: true
 artg_rdo_packages: []
 dlrn_target: >-
-  {%- if ansible_distribution == "RedHat" -%}
+  {%- if (ansible_distribution == "RedHat") and
+  (dlrn_use_local_mirrors|bool) -%}
+  redhat-local
+  {%- elif (ansible_distribution == "RedHat") -%}
   redhat
-  {%- else %}centos{% endif -%}
+  {%- elif (ansible_distribution == "CentOS") and
+  (ansible_distribution_major_version|int >= 8) and
+  (dlrn_use_local_mirrors|bool) -%}
+  centos8-local
+  {%- elif (ansible_distribution == "CentOS") and
+  (ansible_distribution_major_version|int >= 8) -%}
+  centos8
+  {%- elif (ansible_distribution == "CentOS") and
+  (ansible_distribution_major_version|int <= 7) and
+  (dlrn_use_local_mirrors|bool) -%}
+  centos-local
+  {%- else -%}
+  centos
+  {%- endif -%}
+
+initial_dlrn_config: >-
+  {%- if (ansible_distribution == "RedHat") -%}
+  redhat
+  {%- elif (ansible_distribution == "CentOS") and
+  (ansible_distribution_major_version|int >= 8) -%}
+  centos8
+  {%- else -%}
+  centos
+  {%- endif -%}
+
+
 dlrn_cleanup: false
 dlrn_baseurl: >-
   {%- if ansible_distribution == "RedHat" and ansible_distribution_major_version|int == 8 -%}
   https://trunk.rdoproject.org/rhel8-master
-  {%- else %}https://trunk.rdoproject.org/centos7/{% endif -%}
+  {%- elif (ansible_distribution == "CentOS") and (ansible_distribution_major_version|int >= 8) -%}
+  https://trunk.rdoproject.org/centos8/
+  {%- else -%}
+  https://trunk.rdoproject.org/centos7/
+  {%- endif -%}
+
+use_components: >-
+  {%- if (ansible_distribution == "CentOS") and (ansible_distribution_major_version|int >= 8) -%}
+  1
+  {%- else -%}
+  0
+  {%- endif -%}
+
 dlrn_use_local_mirrors: false
 dlrn_pre_installed: false
 
