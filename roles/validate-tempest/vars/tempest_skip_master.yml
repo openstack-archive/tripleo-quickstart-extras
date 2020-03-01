@@ -5,12 +5,6 @@
 ## the TripleO PTL, Thanks                          ##
 
 known_failures:
-  - test: 'tempest.api.compute.images.test_images.ImagesTestJSON.test_delete_saving_image'
-    reason: 'Sometimes fails due to a race condition see bug for more information'
-    lp: 'https://bugs.launchpad.net/tripleo/+bug/1856723'
-  - test: 'tempest.api.compute.images.test_images_oneserver_negative.ImagesOneServerNegativeTestJSON.test_create_second_image_when_first_image_is_being_saved'
-    reason: 'Sometimes fails due to a race condition see bug for more information'
-    lp: 'https://bugs.launchpad.net/tripleo/+bug/1856723'
   - test: 'neutron_tempest_plugin.scenario.test_dns_integration.DNSIntegrationTests'
     reason: 'Remove this blacklist when OVS 2.12 will be released and https://patchwork.ozlabs.org/patch/1102717/ merged.'
     lp: 'https://bugs.launchpad.net/tripleo/+bug/1832166'
