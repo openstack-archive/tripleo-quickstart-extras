@@ -40,6 +40,16 @@
         libselinux-python
         {% endif %}
 
+# https://bugs.launchpad.net/tripleo/+bug/1863632
+# "'virtualenv' is a package and cannot be directly executed"
+- name: Make sure we have contextlib2 between 0.5 < 0.6 when queens
+  become: true
+  when: release in ['queens']
+  tags: notest
+  pip:
+    name: contextlib2>0.5.0,<0.6.0
+    extra_args: '-U --force-reinstall'
+
 - name: Check if virtualenv is in the system
   command: "{{ python_cmd }} -m virtualenv --version"
   args:
