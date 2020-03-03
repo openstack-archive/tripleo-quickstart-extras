@@ -4,10 +4,17 @@ valid YAML.  The default to_nice_yaml filter doesn't quote strings,
 which can cause unexpected implicit type conversion when the
 resulting YAML is consumed, whereas with JSON all strings are quoted.
 #}
+
+{% if undercloud_undercloud_debug | default(true) %}
+{% set config_debug = {'parameter_defaults': {'ConfigDebug': true}} %}
+{% else %}
+{% set config_debug = {} %}
+{% endif %}
+
 {% if undercloud_resource_registry_args %}
 {% set undercloud_resource_registry = {'resource_registry': undercloud_resource_registry_args} %}
 {% else %}
 {% set undercloud_resource_registry = {} %}
 {% endif %}
 {% set undercloud_parameter_defaults = {'parameter_defaults': undercloud_network_environment_args} %}
-{{ undercloud_parameter_defaults|combine(undercloud_resource_registry, recursive=True)|to_nice_json }}
+{{ undercloud_parameter_defaults|combine(undercloud_resource_registry, recursive=True)|combine(config_debug, recursive=True)|to_nice_json }}
