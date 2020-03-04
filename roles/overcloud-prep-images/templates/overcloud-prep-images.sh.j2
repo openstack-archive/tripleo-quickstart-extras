@@ -49,7 +49,7 @@ openstack overcloud image upload
 ## * Create and upload image to glance, this step is specific to nodepool based deployments.
 ## ::
 
-rpm -q qemu-img || sudo yum install -y qemu-img
+rpm -q qemu-img || sudo {{ ansible_pkg_mgr }} install -y qemu-img
 qemu-img create -f qcow2 overcloud-full.qcow2 1G
 
 glance image-create --container-format bare \
@@ -136,7 +136,7 @@ done
 
 {% if step_introspect_debug|bool %}
 
-sudo yum -y install tcpdump
+sudo {{ ansible_pkg_mgr }} -y install tcpdump
 sudo tcpdump -i any port {{ step_introspect_debug_tcpdump_ports | join(' or port ') }} -w {{ step_introspect_debug_tcpdump_log }} &
 sleep 1
 pidof_tcpdump=$(ps --ppid $! -o pid=)
