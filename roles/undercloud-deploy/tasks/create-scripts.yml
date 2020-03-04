@@ -99,6 +99,44 @@
     dest: "{{ working_dir }}/undercloud-parameter-defaults.yaml"
     mode: 0600
 
+
+- name: Set repos defined in the job for container update
+  when:
+    - job.add_repos is defined
+    - job.add_repos != []
+    - containerized_undercloud|bool or containerized_overcloud|bool
+  block:
+    - name: Create string of repos to update
+      set_fact:
+        add_repo_update_list: >-
+          {% if job.add_repos[item|int].update_container|default(false) -%}
+          {{ job.add_repos[item|int].reponame }}
+          {% endif -%}
+      with_sequence: start=0 end="{{ (job.add_repos|length -1)|int }}"
+      register: add_repo_update_list_result
+
+    - debug:
+        var: add_repo_update_list
+
+    - name: Add repos to update_repo
+      set_fact:
+        add_repos_update: "{{ add_repo_update_list_result.results | map(attribute='ansible_facts.add_repo_update_list') | list }}"
+        cacheable: true
+      when: add_repo_update_list_result|length > 0
+
+    - debug:
+        var: add_repos_update
+
+    - name: Create string from list
+      set_fact:
+        add_repos_update: ",{{ add_repos_update | join(',') }}"
+      when: add_repos_update|length > 0
+
+    - name: Create string from list
+      set_fact:
+        update_containers_repo: "{{ update_containers_repo }}{{ add_repos_update }}"
+      when: add_repos_update|length > 0
+
 - name: Create containers-prepare-parameter.yaml
   when: containerized_undercloud|bool or containerized_overcloud|bool
   block:
