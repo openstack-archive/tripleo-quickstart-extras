@@ -29,8 +29,13 @@ tar xvfp {{ overcloud_full_tar_name }}
 
 {% if step_overcloud_image|bool %}
 
+{% if undercloud_enable_nova|bool %}
 ## * Upload images to glance.
 ## ::
+{% else %}
+## * Copy images to /var/lib/ironic/images.
+## ::
+{% endif %}
 
 openstack overcloud image upload
 {%- if containerized_undercloud|bool %}
@@ -41,6 +46,9 @@ openstack overcloud image upload
 {%- endif %}
 {%- if whole_disk_images|bool %}
     --whole-disk
+{%- endif %}
+{%- if not undercloud_enable_nova|bool %}
+    --local
 {%- endif %}
 {% endif %}
 
@@ -59,13 +67,14 @@ glance image-create --container-format bare \
 
 {% endif %}
 
+{% if undercloud_enable_nova|bool %}
 ## * List out all the available OpenStack flavors.
 ## ::
 
 for i in `openstack flavor list -c Name  -f value`; do
     echo $i; openstack flavor show $i;
 done || true
-
+{% endif %}
 
 {% if step_register|bool %}
 
