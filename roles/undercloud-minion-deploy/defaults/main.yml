@@ -37,7 +37,10 @@ minion_network_environment_args: {}
 
 update_containers: false
 gating_repo_name: gating-repo
-update_containers_repo: "{{ gating_repo_name }},delorean-current"
+container_prep_additional_repos: ""
+update_containers_repo: >-
+  {% if compressed_gating_repo is defined %}{{ gating_repo_name }},{% endif %}delorean-current
+  {%- if container_prep_additional_repos -%},{{ container_prep_additional_repos }}{%- endif -%}
 
 default_minion_roles_data_path: "{{ minion_templates_path }}/roles_data_minion.yaml"
 
