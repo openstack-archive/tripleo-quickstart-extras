@@ -9,12 +9,12 @@
       - tripleo-standalone-scenarios-full
     check:
       jobs:
-        - tripleo-ci-centos-7-standalone
+        - tripleo-ci-centos-8-standalone
         - openstack-tox-linters
         - openstack-tox-molecule:
             required-projects:
               - openstack/tripleo-quickstart
-        - tripleo-ci-centos-7-containers-undercloud-minion:
+        - tripleo-ci-centos-8-containers-undercloud-minion:
             files:
               - ^roles/.*minion.*$
               - ^playbooks/.*minion.*$
