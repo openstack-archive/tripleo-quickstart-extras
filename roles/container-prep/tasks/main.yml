@@ -15,9 +15,7 @@
 # get_build_command is passing the current hash
 # plus the latest dlrn hash and I'm not sure why
 # http://opendev.org/openstack/tripleo-ci/tree/roles/run-test/templates/oooq_common_functions.sh.j2#n155
-- when:
-    - get_build_command is defined
-    - ansible_distribution_major_version is version(8, '<') or ansible_distribution == "RedHat"
+- when: get_build_command is defined
   block:
     - name: execute build_command
       shell: |
@@ -27,33 +25,6 @@
         - undercloud-install
 
     - name: set container_build_id from get_build_command
-      set_fact:
-        container_build_id: "{{ build_command_output.stdout }}"
-        cacheable: true
-      tags:
-        - undercloud-install
-
-- when:
-    - get_build_command is defined
-    - ansible_distribution_major_version is version(8, '>=')
-    - ansible_distribution == "CentOS"
-  block:
-    - name: Get md5 checksum for centos-8
-      shell: |
-        set -euo pipefail
-        dlrn_base={{ dlrn_baseurl }}
-        if [ -e /etc/ci/mirror_info.sh ]; then
-          source /etc/ci/mirror_info.sh
-          NODEPOOL_RDO_PROXY=${NODEPOOL_RDO_PROXY:-https://trunk.rdoproject.org}
-          dlrn_base=${dlrn_base/https:\/\/trunk.rdoproject.org/$NODEPOOL_RDO_PROXY}
-        fi
-        curl -s --fail --show-error ${dlrn_base}/{{ dlrn_hash_tag }}/delorean.repo.md5
-      register: build_command_output
-      retries: 5
-      tags:
-        - undercloud-install
-
-    - name: set container_build_id from get_build_command - md5
       set_fact:
         container_build_id: "{{ build_command_output.stdout }}"
         cacheable: true
