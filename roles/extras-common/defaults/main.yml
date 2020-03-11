@@ -105,4 +105,9 @@ octavia_amphora_path: >-
   {{ working_dir }}/amphora.qcow2
   {%- endif %}
 
-undercloud_enable_mistral: true
+undercloud_enable_mistral: >-
+  {% if release in ['queens', 'rocky', 'stein', 'train'] -%}
+  true
+  {%- else -%}
+  false
+  {%- endif %}
