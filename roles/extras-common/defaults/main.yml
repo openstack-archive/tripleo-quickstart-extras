@@ -104,3 +104,5 @@ octavia_amphora_path: >-
   {%- else -%}
   {{ working_dir }}/amphora.qcow2
   {%- endif %}
+
+undercloud_enable_mistral: true
