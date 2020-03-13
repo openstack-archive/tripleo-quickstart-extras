@@ -44,7 +44,7 @@
 # "'virtualenv' is a package and cannot be directly executed"
 - name: Make sure we have contextlib2 between 0.5 < 0.6 when queens
   become: true
-  when: release in ['queens']
+  when: (release in ['queens']) or (lookup('env', 'ZUUL_BRANCH') | replace('stable/', '') in ['queens'])
   tags: notest
   pip:
     name: contextlib2>0.5.0,<0.6.0
