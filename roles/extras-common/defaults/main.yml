@@ -96,3 +96,11 @@ baremetal_provision: false
 
 # If `undercloud_enable_nova` is `true`, the undercloud will have running glance and nova services
 undercloud_enable_nova: true
+
+# Set the location for the downloaded amphora image when download_amphora is true
+octavia_amphora_path: >-
+  {% if release in ['queens', 'rocky'] -%}
+  /usr/share/openstack-octavia-amphora-images/amphora-x64-haproxy.qcow2
+  {%- else -%}
+  {{ working_dir }}/amphora.qcow2
+  {%- endif %}

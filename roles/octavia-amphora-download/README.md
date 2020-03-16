@@ -11,7 +11,7 @@ This playbook expects a supported version of Ansible and working Internet access
 Role Variables:
 ---------------
 
-- target\_dir <'$HOME'> -- location to store the downloaded image
+- octavia_amphora_path -- full path for the downloaded amphora image.
 - amphora\_url -- url of image to download. If not provided a default location based on branch is used.
 
 Dependenncies
