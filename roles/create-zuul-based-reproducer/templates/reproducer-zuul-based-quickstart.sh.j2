@@ -183,11 +183,6 @@ fi
 
 curl -o bindep.txt https://raw.githubusercontent.com/rdo-infra/ansible-role-tripleo-ci-reproducer/master/bindep.txt
 
-# Install rpms and other requirements
-# Currently, only python2 is supported
-export USER_PYTHON_OVERRIDE=python2
-export USER_OVERRIDE_SUDO_CHECK=1
-
 source install-deps.sh
 # install just enough python
 install_deps
@@ -200,44 +195,46 @@ install_package_deps_via_bindep
 # Ensure pip is updated
 sudo pip install --upgrade pip
 
-# Fail as early as possible if the docker
-# group is not setup appropriately.
-# This has to be done AFTER package intalls.
-# Set up docker groups
-if ! groups | grep -Eq "docker|dockerroot"; then
-    echo "$USER is not in the docker|dockerroot group."
-    if grep -q docker: /etc/group; then
-        DG=docker
-    elif grep -q dockerroot: /etc/group; then
-        DG=dockerroot
-    elif ! grep -q docker /etc/group; then
-        sudo groupadd docker
-        DG=docker
+if [ -x "/usr/bin/docker" ] ; then
+    # Fail as early as possible if the docker
+    # group is not setup appropriately.
+    # This has to be done AFTER package intalls.
+    # Set up docker groups
+    if ! groups | grep -Eq "docker|dockerroot"; then
+        echo "$USER is not in the docker|dockerroot group."
+        if grep -q docker: /etc/group; then
+            DG=docker
+        elif grep -q dockerroot: /etc/group; then
+            DG=dockerroot
+        elif ! grep -q docker /etc/group; then
+            sudo groupadd docker
+            DG=docker
+        fi
+        sudo usermod -aG $DG $USER
+        echo -e "\e[31m WARNING: The script has exited the current shell in order to setup \
+    the user groups via usermod correctly. Please re-execute the script. \e[0m"
+        exec sg $DG newgrp `id -gn`
     fi
-    sudo usermod -aG $DG $USER
-    echo -e "\e[31m WARNING: The script has exited the current shell in order to setup \
-the user groups via usermod correctly. Please re-execute the script. \e[0m"
-    exec sg $DG newgrp `id -gn`
-fi
 
-# This can only be checked after rpms are installed.
-# Check the Docker config
-if [[ -f /etc/docker/daemon.json ]]; then
-     if cat /etc/docker/daemon.json | grep '"group": "docker"'; then
-         echo "docker group is already added to /etc/docker/daemon.json"
-     elif cat /etc/docker/daemon.json | grep '"group": "dockerroot"'; then
-         echo "dockerroot group is already added to /etc/docker/daemon.json"
-     elif (( $(cat /etc/docker/daemon.json | wc -m) > 3 )); then
-         echo -e "\e[31m /etc/docker/daemon.json is populated. \
-               Exit this script and either clear the file or add the docker group. \e[0m" | xargs
-         exit 1
-     else
-         echo "The docker|dockerroot group will be added to /etc/docker/daemon.json."
-     fi
-fi
+    # This can only be checked after rpms are installed.
+    # Check the Docker config
+    if [[ -f /etc/docker/daemon.json ]]; then
+        if cat /etc/docker/daemon.json | grep '"group": "docker"'; then
+            echo "docker group is already added to /etc/docker/daemon.json"
+        elif cat /etc/docker/daemon.json | grep '"group": "dockerroot"'; then
+            echo "dockerroot group is already added to /etc/docker/daemon.json"
+        elif (( $(cat /etc/docker/daemon.json | wc -m) > 3 )); then
+            echo -e "\e[31m /etc/docker/daemon.json is populated. \
+                Exit this script and either clear the file or add the docker group. \e[0m" | xargs
+            exit 1
+        else
+            echo "The docker|dockerroot group will be added to /etc/docker/daemon.json."
+        fi
+    fi
 
-# Ensure the docker process has been restarted
-sudo systemctl restart docker
+    # Ensure the docker process has been restarted
+    sudo systemctl restart docker
+fi
 
 # Start from a clean workspace
 export WORKSPACE
