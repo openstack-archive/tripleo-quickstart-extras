@@ -9,13 +9,16 @@ set -eux
 ## * Prepare Your Environment.
 ## ::
 
+{% if release in ['mitaka', 'newton', 'ocata', 'pike', 'queens', 'rocky', 'stein'] -%}
 HOSTFILE=/etc/hosts
+{% endif -%}
 
 ## * Source in the undercloud credentials.
 ## ::
 
 . {{ working_dir }}/stackrc
 
+{% if release in ['mitaka', 'newton', 'ocata', 'pike', 'queens', 'rocky', 'stein'] -%}
 ## * Remove any old overcloud host entries from `/etc/hosts`.
 ## ::
 
@@ -34,6 +37,7 @@ $(openstack stack output show overcloud PublicVip \
 {% endif %}
 ## END OVERCLOUD HOSTS    #nodocs
 EOF
+{% endif -%}
 
 ## * Create the `heat_stack_owner` role if it doesn't already exist.
 ## ::
