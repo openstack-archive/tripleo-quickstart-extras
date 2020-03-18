@@ -41,8 +41,6 @@ https://docs.openstack.org/tripleo-quickstart/latest/accessing-libvirt.html
 - `undercloud_extra_args`: <''> -- extra options for undercloud deploy command.
 - `undercloud_install_cmd`: <'openstack undercloud install'> -- command used to install the undercloud
 - `undercloud_install_cli_options`: <''> -- extra options for undercloud install command.
-- `undercloud_enable_mistral`: <'true'> -- sets up the 'enable_mistral' option
-  in undercloud.conf.
 - `undercloud_enable_monitoring`: <'false'> -- sets up the 'enable_monitoring'
   option in undercloud.conf.
 - `undercloud_enable_telemetry`: <'true'> -- sets up the 'enable_telemetry'

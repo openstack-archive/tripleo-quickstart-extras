@@ -46,3 +46,5 @@ Role Variables
 - `baremetal_provision`: <false> Deploy baremetal with "openstack overcloud node provision" and deployed-server, instead of with heat/nova
 - `undercloud_enable_nova`: <true> -- sets up the 'enable_nova'
   option in undercloud.conf.
+- `undercloud_enable_mistral`: <'true'> -- sets up the 'enable_mistral' option
+  in undercloud.conf for the undercloud and install ara in the mistral executor container before deploying the overcloud.
