@@ -1,0 +1,11 @@
+ansible
+ansi2html  # GPL (soft-dependency of pytest-html)
+docker
+paramiko>=2.5.0  # LGPL (soft-dependency of docker that enables ssh protocol)
+pytest
+pytest-cov
+pytest-html
+pytest-molecule
+mock
+molecule>=3.0,<3.1
+selinux>=0.2.1
