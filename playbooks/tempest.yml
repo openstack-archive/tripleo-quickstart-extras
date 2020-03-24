@@ -62,6 +62,11 @@
     tempest_venv_bin: "{{ ansible_user_dir }}/tempest_venv/bin"
   when: tempest_install_method == 'source'
 
+- name: set cirros image facts for periodic
+  set_fact:
+    tempest_tempestconf_profile_extras:
+      image: http://images.rdoproject.org/cirros/cirros-0.4.0-x86_64-disk.img
+
 # stackviz in venv pulls oslo.db due upstream constraints,
 # but it dropped py2 support so on such system we need to skip it
 # https://bugs.launchpad.net/tripleo/+bug/1862134
