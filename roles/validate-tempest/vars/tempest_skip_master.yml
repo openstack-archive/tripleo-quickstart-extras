@@ -5,6 +5,9 @@
 ## the TripleO PTL, Thanks                          ##
 
 known_failures:
+  - test: 'tempest.scenario.test_security_groups_basic_ops.TestSecurityGroupsBasicOps.test_port_security_disable_security_group'
+    reason: 'timing out in ssh'
+    lp: 'https://bugs.launchpad.net/tripleo/+bug/1869077'
   - test: 'neutron_tempest_plugin.scenario.test_dns_integration.DNSIntegrationTests'
     reason: 'Remove this blacklist when OVS 2.12 will be released and https://patchwork.ozlabs.org/patch/1102717/ merged.'
     lp: 'https://bugs.launchpad.net/tripleo/+bug/1832166'
