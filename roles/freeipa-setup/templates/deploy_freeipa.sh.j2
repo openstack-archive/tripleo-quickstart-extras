@@ -27,19 +27,36 @@ hostnamectl set-hostname --static $CA_SERVER_HOSTNAME
 sed -i "1i$IPA_SERVER_IP $CA_SERVER_HOSTNAME" /etc/hosts
 
 ## * Install required system packages::
+DISABLE_REPO_CMD="yum-config-manager --disable"
 
-yum install -yq ipa-server ipa-server-dns curl epel-release
+{% if ansible_distribution_major_version is version("8", ">=") -%}
+
+DISABLE_REPO_CMD="dnf config-manager --set-disabled"
+dnf module enable -y idm:DL1/{dns,adtrust,client,server,common}
+
+{% endif %}
+
+{{ ansible_pkg_mgr }} install -yq ipa-server \
+            ipa-server-dns curl epel-release iptables
 
 ## * Update NSS (required for CA server to launch during deploy)
 
-yum update -y nss
+{{ ansible_pkg_mgr }} update -y nss
 
 ## * Increase system entropy (to prevent slow down during IPA installation)::
 
+{% if ansible_distribution_major_version is version("7", "<=") -%}
+
 curl -Lo ius-release.rpm https://centos7.iuscommunity.org/ius-release.rpm
 rpm -Uvh ius-release*.rpm
-yum install -y haveged
+
+{% endif %}
+
+{{ ansible_pkg_mgr }} install -y haveged
 systemctl start haveged.service
+
+## * Lets now disable epel since we got required packages already
+$DISABLE_REPO_CMD epel
 
 ## * Install FreeIPA::
 
