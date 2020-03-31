@@ -23,7 +23,6 @@ standalone_container_prep_update_repo: >-
   {%- if container_prep_additional_repos -%},{{ container_prep_additional_repos }}{%- endif -%}
 
 # deploy script
-standalone_deploy_script: standalone.sh.j2
 standalone_deploy_log: standalone_deploy.log
 standalone_ansible_lint_log: standalone_ansible_lint.log
 

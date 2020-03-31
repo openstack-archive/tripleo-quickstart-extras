@@ -185,8 +185,6 @@
     name: validate-perf
 
 - name: Run standalone via tripleo-operator-ansible
-  when:
-    - release not in ['queens', 'rocky', 'stein', 'train']
   collections:
     - tripleo.operator
   include_role:
@@ -204,24 +202,6 @@
       {% set env_files = env_files + standalone_custom_env_files %}
       {% endif %}
       {{ env_files }}
-
-# TODO(mwhahaha): remove after backwards compatibility is checked. Standalone hasn't
-# changed in the few releases so we can probably just remove this.
-- name: Run standalone legacy
-  when:
-    - release in ['queens', 'rocky', 'stein', 'train']
-  block:
-  - name: Create the deploy command for standalone
-    template:
-      src: "{{ standalone_deploy_script }}"
-      dest: "{{ working_dir }}/standalone.sh"
-      mode: 0755
-
-  - name: Deploy the standalone
-    shell: >
-      set -o pipefail &&
-      {{ working_dir }}/standalone.sh 2>&1 {{ timestamper_cmd }} > {{ working_dir }}/{{ standalone_deploy_log }}
-    changed_when: true
 
 - when: standalone_ansible_lint|default(false)|bool
   vars:

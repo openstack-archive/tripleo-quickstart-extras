@@ -24,7 +24,6 @@ Role Variables
 - standalone_container_prep_log: <'standalone_container_prep.log'> --  The log of the container prepa ctions
 - standalone_container_prep_updates: <'true'> --  Adds needed parameters to containers-prepare-parameters.yaml so that new container images and packages will be retrieved
 
-- standalone_deploy_script: <'standalone.sh.j2'> -- The script name use to deploy the standalone server
 - standalone_deploy_log: <'standalone_deploy.log'> --  The log of the deployment
 - standalone_ansible_lint_log: <'standalone_ansible_lint.log'> -- The ansible lint output
 
