@@ -5,7 +5,6 @@ parameter_defaults:
   ContainerImagePrepareDebug: true
   ControlPlaneStaticRoutes: []
   Debug: true
-  ConfigDebug: true
   DeploymentUser: {{ undercloud_user }}
   DnsServers: {{ undercloud_undercloud_nameservers | to_json }}
 {% if standalone_container_prep_updates is defined and standalone_container_prep_updates %}
