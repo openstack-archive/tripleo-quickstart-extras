@@ -15,6 +15,24 @@
   hostname:
     name: "{{ standalone_hostname }}"
   become: true
+  when: not enable_tls|default(false)|bool
+
+- name: set virtual-control-ip for TLS deployments
+  set_fact:
+    standalone_control_virtual_ip: "{{ undercloud_network_cidr|nthhost(210) }}"
+    cacheable: true
+  when: enable_tls|default(false)|bool
+
+- name: Add DNS and NTP server settings for TLS deployments
+  become: true
+  blockinfile:
+    path: "{{ overcloud_templates_path }}/ci/environments/standalone-ipa.yaml"
+    insertafter: "  HAProxyExternalNetwork: ctlplane"
+    block: |
+      # Custom IPA params
+        DnsServers: ["{{ subnode_1_ip }}"]
+        NtpServer: "{{ job.standalone_ntp_servers|default(['clock.redhat.com']) }}"
+  when: enable_tls|default(false)|bool
 
 # standalone params
 - name: Create the standalone params
@@ -22,6 +40,18 @@
     src: "{{ standalone_config }}"
     dest: "{{ working_dir }}/standalone_parameters.yaml"
     mode: 0755
+
+- name: Remove settings that will be added with TLS
+  lineinfile:
+    path: "{{ working_dir }}/standalone_parameters.yaml"
+    regexp: "{{ item }}"
+    state: absent
+    backup: true
+  with_items:
+    - '  CloudName: 192.168.24.1'
+    - '  CertmongerCA: local'
+    - '  DnsServers: (.*)'
+  when: enable_tls|default(false)|bool
 
 - name: Run container prepare legacy
   when:
@@ -192,12 +222,13 @@
   vars:
     tripleo_deploy_debug: true
     tripleo_deploy_local_ip: "{{ standalone_ip }}/{{ standalone_network_prefix }}"
+    tripleo_deploy_control_virtual_ip: "{{ standalone_control_virtual_ip|default() }}"
     tripleo_deploy_roles_file: "{{ overcloud_templates_path }}/roles/{{ standalone_role }}"
     tripleo_deploy_output_dir: "{{ working_dir }}"
     tripleo_deploy_environment_files: |-
       {% set env_files = [overcloud_templates_path + '/environments/standalone/standalone-tripleo.yaml',
                           working_dir + '/containers-prepare-parameters.yaml',
-                          working_dir + '/standalone_parameters.yaml'] %}
+                          working_dir + '/standalone_parameters.yaml']%}
       {% if standalone_custom_env_files %}
       {% set env_files = env_files + standalone_custom_env_files %}
       {% endif %}

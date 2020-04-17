@@ -1,0 +1,127 @@
+---
+- set_fact:
+    subnode_1_ip: "{{ hostvars['subnode-1'].inventory_ip }}"
+
+- name: set the freeipa_internal_ip
+  set_fact:
+    inventory_hostname: "{{ subnode_1_ip }}"
+    undercloud_ipv4_address: "{{ hostvars['undercloud']['ansible_default_ipv4'].address }}"
+    standalone_control_virtual_ip: "{{ undercloud_network_cidr|nthhost(210) }}"
+    cacheable: true
+
+- include_role:
+    name: repo-setup
+  vars:
+    repo_setup_dir: /home/{{ ansible_user|default('centos') }}
+
+- name: set FQDN
+  shell: hostnamectl set-hostname --static {{ ipa_nameserver }}
+  become: true
+
+- name: install required packages
+  shell: dnf module -y enable pki-deps pki-core idm:DL1
+  become: true
+
+- name: install FreeIPA packages
+  become: true
+  package:
+    name: '{{ ipa_packages }}'
+    state: latest
+
+- name: set python_cmd
+  set_fact:
+    python_cmd: "python{{ ansible_python.version.major }}"
+    cacheable: true
+  when: python_cmd is not defined
+
+- name: check if FreeIPA is configured
+  shell: >
+    {{ python_cmd }} -c 'import sys; from ipaserver.install.installutils import is_ipa_configured; print(is_ipa_configured())'
+  register: ipa_install
+
+- name: Add subnode IP to /etc/hosts
+  shell:
+    cmd: |
+      sed -i "1i{{ subnode_1_ip }} {{ ipa_nameserver }}" /etc/hosts
+  become: true
+
+- name: configure FreeIPA
+  shell: >
+    ipa-server-install --realm {{ ipa_realm }}
+    --ds-password {{ freeipa_directory_password }}
+    --admin-password {{ freeipa_admin_password }}
+    --hostname {{ ipa_nameserver }}
+    --setup-dns
+    --forwarder {{ job.public_name_server|default('1.1.1.1') }}
+    --auto-reverse
+    --unattended
+    --ip-address {{ subnode_1_ip }}
+  become: true
+  when:
+    ipa_install.stdout == 'False'
+
+# This needs to be set on the FreeIPA server so that the overcloud nodes
+# can pull the certificate. If this isn't set, the overcloud nodes will
+# have an HTML 404 Not Found response stored in their certificate files
+# instead of a valid DER encoded certificate. This eventually snowballs and
+# causes openssl operations to fall during the overcloud installation
+# process.
+- name: configure FreeIPA to publish Master CRL at start
+  become: true
+  lineinfile:
+    path: /etc/pki/pki-tomcat/ca/CS.cfg
+    regexp: '^ca.crl.MasterCRL.publishOnStart=(.*)$'
+    line: 'ca.crl.MasterCRL.publishOnStart=true'
+
+- name: restart FreeIPA server
+  become: true
+  service:
+    name: ipa
+    state: restarted
+
+- name: installation notice
+  debug:
+    msg:
+      - "FreeIPA has been installed on {{ inventory_hostname }} with the following
+        administrator credentials:"
+      - "user: {{ freeipa_principal }}"
+      - "password: {{ freeipa_admin_password }}"
+
+- name: Check DNS works
+  shell: >
+    ping -c 5 redhat.com
+  register: ping_output_com
+
+- debug:
+    msg: "{{ ping_output_com.stdout }}"
+
+- name: Add DNS entries
+  become: true
+  shell: >
+    echo "{{ freeipa_admin_password }}" | kinit admin ;
+    ipa dnsrecord-add ooo.test standalone-0 --a-rec "{{ undercloud_ipv4_address }}";
+    ipa dnsrecord-add ooo.test overcloud.ctlplane --a-rec "{{ standalone_control_virtual_ip }}";
+    ipa dnsrecord-add ooo.test overcloud --a-rec "{{ standalone_control_virtual_ip }}";
+    ipa dnsrecord-add ooo.test overcloud.internalapi --a-rec "{{ standalone_control_virtual_ip }}";
+    ipa dnsrecord-add ooo.test overcloud.storage --a-rec "{{ standalone_control_virtual_ip }}";
+    ipa dnsrecord-add ooo.test overcloud.storagemgmt --a-rec "{{ standalone_control_virtual_ip }}";
+
+- name: Show DNS entries - standalone-0
+  become: true
+  shell: >
+    echo "{{ freeipa_admin_password }}" | kinit admin ;
+    ipa dnsrecord-show ooo.test standalone-0
+  register: standalone_record
+
+- name: Show DNS entries - overcloud
+  become: true
+  shell: >
+    echo "{{ freeipa_admin_password }}" | kinit admin ;
+    ipa dnsrecord-show ooo.test overcloud
+  register: overcloud_record
+
+- debug:
+    msg: "{{ standalone_record.stdout }}"
+
+- debug:
+    msg: "{{ overcloud_record.stdout }}"

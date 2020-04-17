@@ -1,0 +1,124 @@
+---
+- set_fact:
+    subnode_1_ip: "{{ hostvars['subnode-1'].inventory_ip }}"
+    standalone_hostname: "standalone-0.{{ tripleo_domain }}"
+    tripleo_domain: ooo.test
+    ipa_domain: "{{ tripleo_domain }}"
+    ipa_realm: "{{ ipa_domain | upper }}"
+    ipa_user: admin
+    ipa_password: "{{ freeipa_admin_password }}"
+    ipa_nameserver: "ipa.{{ tripleo_domain }}"
+    undercloud_hostname: "standalone-0.{{ tripleo_domain }}"
+    cloud_domain: "{{ tripleo_domain }}"
+    undercloud_cloud_domain: "{{ tripleo_domain }}"
+    freeipa_server_hostname: "ipa.{{ tripleo_domain }}"
+    freeipa_admin_password: fce95318204114530f31f885c9df588f
+    enable_tls: true
+    cacheable: true
+
+- name: Add subnode IP to /etc/hosts
+  lineinfile:
+    line: "{{ subnode_1_ip }} {{ freeipa_server_hostname }}"
+    path: /etc/hosts
+  become: true
+
+- name: Add {{ subnode_1_ip }} host to freeipa group
+  add_host:
+    name: "{{ freeipa_internal_ip }}"
+    groups: freeipa
+
+- name: set FQDN
+  become: true
+  hostname:
+    name: "{{ undercloud_hostname }}"
+
+- name: set hostname properly
+  become: true
+  lineinfile:
+    dest: /etc/hosts
+    line: "127.0.0.1 undercloud.localdomain localhost localhost.localdomain"
+    regexp: '^127\.0\.0\.1'
+
+- name: Prepare the undercloud for installation
+  include_role:
+    name: undercloud-setup
+  tags:
+    - standalone
+
+# We need to update /etc/resolv.conf so that the undercloud can use FreeIPA
+# for DNS. We also need to make sure it's the first line in
+# /etc/resolv.conf otherwise we'll fail to find FreeIPA (e.g.,
+# ipa.ooo.test).
+- name: ensure that DHCP doesn't overwite DNS settings (CentOS/RHEL >= 8)
+  become: true
+  lineinfile:
+    path: /etc/NetworkManager/NetworkManager.conf
+    regexp: '^dns='
+    insertafter: '^[main]'
+    line: 'dns=none'
+  when:
+    - ansible_os_family == 'RedHat'
+    - ansible_lsb.major_release is version(8, '>=')
+
+- name: set search domain
+  become: true
+  lineinfile:
+    path: /etc/resolv.conf
+    regexp: '^search'
+    line: 'search {{ cloud_domain }}'
+    state: present
+  when:
+    - cloud_domain == ipa_domain
+
+- name: set IPA server as primary DNS provider
+  become: true
+  lineinfile:
+    path: /etc/resolv.conf
+    insertafter: '^search'
+    line: "nameserver {{ freeipa_internal_ip }}"
+    state: present
+
+- name: install tls dependencies
+  become: true
+  package:
+    name: '{{ tls_packages }}'
+    state: latest
+  when:
+    - enable_tls | bool
+
+- name: run undercloud ipa installer
+  become: true
+  become_user: zuul
+  shell: >
+    ansible-playbook -vvv
+    --ssh-extra-args "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+    /usr/share/ansible/tripleo-playbooks/undercloud-ipa-install.yaml
+    | tee undercloud-ipa-install.log
+  environment:
+    IPA_DOMAIN: "{{ ipa_domain }}"
+    IPA_REALM: "{{ ipa_realm }}"
+    IPA_ADMIN_USER: "{{ ipa_user }}"
+    IPA_ADMIN_PASSWORD: "{{ ipa_password }}"
+    IPA_SERVER_HOSTNAME: "{{ ipa_nameserver }}"
+    UNDERCLOUD_FQDN: "{{ undercloud_hostname }}"
+    USER: zuul
+    CLOUD_DOMAIN: "{{ cloud_domain }}"
+    # yamllint disable-line rule:line-length
+    ANSIBLE_ROLES_PATH: "/usr/share/ansible/tripleo-playbooks/roles:/home/zuul/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:/usr/share/ansible/tripleo-playbooks:/home/zuul/{{ zuul.projects['opendev.org/openstack/tripleo-ansible'].src_dir }}/tripleo_ansible/roles"
+  when:
+    - enable_tls | bool
+
+- name: remove all other nameservers from resolv.conf
+  become: true
+  lineinfile:
+    path: /etc/resolv.conf
+    regexp: '^nameserver 127.0.0.1'
+    state: absent
+
+- name: Check that the DNS works
+  shell: >
+    ping -c 5 redhat.com
+  register: dig_ouput_com
+
+- debug:
+    msg: "dig_ouput_com is {{ dig_ouput_com.stdout }}"

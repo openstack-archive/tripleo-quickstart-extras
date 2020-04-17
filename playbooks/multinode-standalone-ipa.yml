@@ -1,0 +1,28 @@
+---
+- name: Add the  nodes to the generated inventory
+  hosts: undercloud
+  gather_facts: true
+  vars:
+    inventory: multinode
+  roles:
+    - tripleo-inventory
+  tags:
+    - standalone
+
+- name: Setup the IPA server
+  hosts: subnode-1
+  tags:
+    - standalone
+  tasks:
+    - include_role:
+        name: ipa-multinode
+        tasks_from: ipaserver-subnode-install.yml
+
+- name: Setup the undercloud for IPA server
+  hosts: undercloud
+  tags:
+    - standalone
+  tasks:
+    - include_role:
+        name: ipa-multinode
+        tasks_from: ipaserver-undercloud-setup.yml
