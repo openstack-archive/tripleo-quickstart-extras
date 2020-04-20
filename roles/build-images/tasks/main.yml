@@ -21,23 +21,36 @@
     repo_run_live: false
     repo_setup_dir: "{{ images_working_dir }}"
 
-- name: create overcloud/ipa image build script
-  template:
-    src: "{{ overcloud_image_build_script }}"
-    dest: "{{ images_working_dir }}/overcloud_image_build_script.sh"
-    mode: 0755
+- name: Check for extra repo created by repo-setup role
+  stat:
+    path: "{{ images_working_dir }}/web-gating.repo"
+  register: new_repo
 
-- name: run the image build script (direct)
-  shell: >
-    set -o pipefail &&
-    {{ images_working_dir }}/overcloud_image_build_script.sh 2>&1 {{ timestamper_cmd }} >
-    {{ working_dir }}/{{ overcloud_image_build_log }}
-  args:
-    chdir: "{{ images_working_dir }}"
-  when: not build_image_isolated|bool
+- name: Append new repo to overcloud_repo_path
+  set_fact:
+    overcloud_repo_paths: "{{ overcloud_repo_paths + [(images_working_dir + '/web-gating.repo')] }}"
+  when: new_repo.stat.exists
+
+- name: Run the image build script (direct) using oooci-build-images role
+  vars:
+    dib_yum_repo_conf: "{{ overcloud_repo_paths }}"
+    workspace: "{{ images_working_dir }}"
+    build_all_images: true
+    tripleo_image_type: overcloud-full
+    tripleo_common_path: "/usr/share/tripleo-common"
+  include_role:
+    name: oooci-build-images
+  when:
+    - not build_image_isolated|bool
+    - to_build|bool
 
 - when: build_image_isolated|bool
   block:
+    - name: Make sure /dev/pts exists
+      shell: |
+        mkdir -p /dev/pts
+        mount devpts /dev/pts -t devpts ||:
+      changed_when: true
 
     - name: get image to use as isolated build env
       include: fetch-images.yml
@@ -127,27 +140,6 @@
 
     - name: Create undercloud md5sum
       shell: md5sum undercloud.qcow2 > undercloud.qcow2.md5
-      args:
-        chdir: "{{ images_working_dir }}"
-
-- when: package_images|bool
-  block:
-    - name: Create overcloud and ironic-python-agent image tars
-      shell: |
-        tar -cf ironic-python-agent.tar \
-                ironic-python-agent.initramfs \
-                ironic-python-agent.kernel
-        tar -cf overcloud-full.tar \
-                overcloud-full.qcow2 \
-                overcloud-full.initrd \
-                overcloud-full.vmlinuz
-      args:
-        chdir: "{{ images_working_dir }}"
-
-    - name: Create md5sums
-      shell: |
-        md5sum ironic-python-agent.tar > ironic-python-agent.tar.md5
-        md5sum overcloud-full.tar > overcloud-full.tar.md5
       args:
         chdir: "{{ images_working_dir }}"
 
