@@ -51,14 +51,13 @@ https://docs.openstack.org/tripleo-quickstart/latest/accessing-libvirt.html
   undercloud.conf.
 - `undercloud_enable_validations`: <'true'> -- sets up the 'enable_validations'
   option in undercloud.conf.
-- `undercloud_enable_novajoin`: <'false'> -- sets up the 'enable_novajoin'
-  value from undercloud.conf. Note that using 'enable_tls_everywhere' will have
-  the same effect.
+- `undercloud_enable_novajoin`: <'true'> -- sets up the 'enable_novajoin'
+  value from undercloud.conf when 'enable_tls_everywhere' is enabled.
 - `novajoin_connect_timeout`: <5> Sets vendordata_dynamic_connect_timeout when novajoin is enabled
 - `novajoin_read_timeout:` <20> Sets vendordata_dynamic_read_timeout when novajoin is enabled
-- `prepare_novajoin`: If set to true, it will install novajoin in the undercloud,
-  and run a script that will create the required privileges/permissions in
-  FreeIPA, as well as the undercloud host entry. this requires
+- `prepare_ipa`: If set to true, it will install novajoin or tripleo-ipa in the
+  undercloud, and run a script that will create the required privileges/permissions
+  in FreeIPA, as well as the undercloud host entry. This requires
   'enable_tls_everywhere' to be set to true, and the following variables to be
   properly defined: 'freeipa_admin_password', 'freeipa_server_hostname',
   'overcloud_cloud_domain', 'undercloud_undercloud_hostname'. If you plan to do

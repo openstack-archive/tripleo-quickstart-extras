@@ -82,7 +82,7 @@ ironic::rpc_response_timeout: {{undercloud_ironic_rpc_response_timeout}}
 
 
 
-{% if undercloud_enable_novajoin or enable_tls_everywhere %}
+{% if undercloud_enable_novajoin and enable_tls_everywhere %}
 nova::api::vendordata_dynamic_connect_timeout: {{ novajoin_connect_timeout }}
 nova::api::vendordata_dynamic_read_timeout: {{ novajoin_read_timeout }}
 {% endif %}

@@ -6,3 +6,7 @@ undercloud_fqdn: "undercloud.tripleodomain"
 provisioning_cidr: "{{ undercloud_network_cidr }}"
 supplemental_user: "stack"
 freeipa_subcas: []
+prepare_ipa: true
+# location which the novajoin-ipa-setup will store the FreeIPA token
+undercloud_enable_novajoin: true
+freeipa_otp_key: /tmp/ipa-otp.txt
