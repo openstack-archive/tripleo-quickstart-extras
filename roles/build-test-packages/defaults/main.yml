@@ -79,3 +79,5 @@ artg_skipped_projects:
   - openstack/tripleo-ci-internal-jobs
   - openstack/tripleo-ci-internal-config
   - tripleo-environments
+  - openstack/validations-common
+  - openstack/validations-libs
