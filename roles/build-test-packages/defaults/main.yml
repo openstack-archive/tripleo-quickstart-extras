@@ -81,3 +81,4 @@ artg_skipped_projects:
   - tripleo-environments
   - openstack/validations-common
   - openstack/validations-libs
+  - testproject
