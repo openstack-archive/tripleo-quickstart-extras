@@ -219,6 +219,16 @@
   debug:
     var: artg_change_list
 
+- name: Check loop devices stat
+  stat:
+    path: "/dev/loop{{ item }}"
+  register: stat_loop_devices
+  with_sequence: start=0 end=11
+
+- name: Set loop_devices_absent fact
+  set_fact:
+    loop_devices_absent: "{{ stat_loop_devices.results|selectattr('stat.exists','equalto',false)|map(attribute='item')|list }}"
+
 - name: Clone and build the specific DLRN projects
   include: dlrn-build.yml artg_change={{ item }}
   with_items: '{{ artg_change_list|default([]) }}'
@@ -251,6 +261,12 @@
   register: repo_built_multi
   when: not artg_build_one|bool
 
+- name: Clean up loop devices created by mock
+  file:
+    path: "/dev/loop{{ item }}"
+    state: absent
+  become: true
+  with_items: "{{ loop_devices_absent }}"
 
 - block:
     - name: Create a directory to hold the rpms
