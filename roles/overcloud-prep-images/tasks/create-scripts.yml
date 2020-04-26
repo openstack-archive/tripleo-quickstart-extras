@@ -6,3 +6,68 @@
     src: "{{ overcloud_prep_images_script }}"
     dest: "{{ working_dir }}/overcloud-prep-images.sh"
     mode: 0755
+
+- name: Create download overcloud image script
+  template:
+    src: "{{ download_overcloud_image_script }}"
+    dest: "{{ working_dir }}/download-overcloud-image.sh"
+    mode: 0755
+  when: download_overcloud_image|bool
+
+- name: Create overcloud upload image script
+  template:
+    src: "{{ overcloud_image_upload_script }}"
+    dest: "{{ working_dir }}/overcloud-image-upload.sh"
+    mode: 0755
+  when: step_overcloud_image|bool
+
+- name: Create glance overcloud upload image script
+  template:
+    src: "{{ overcloud_glance_image_upload_script }}"
+    dest: "{{ working_dir }}/overcloud-glance-image-upload.sh"
+    mode: 0755
+  when: step_glance_upload|bool
+
+- name: Create list overcloud nova flavors script
+  template:
+    src: "{{ overcloud_list_flavors_script }}"
+    dest: "{{ working_dir }}/overcloud-list-flavors.sh"
+    mode: 0755
+  when: undercloud_enable_nova|bool
+
+- name: Create overcloud import nodes script
+  template:
+    src: "{{ overcloud_import_nodes_script }}"
+    dest: "{{ working_dir }}/overcloud-import-nodes.sh"
+    mode: 0755
+  when: step_register|bool
+
+- name: Create root device size script
+  template:
+    src: "{{ root_device_size_script }}"
+    dest: "{{ working_dir }}/root-device-size.sh"
+    mode: 0755
+  when: step_root_device_size|bool
+
+- name: Create root device hints script
+  template:
+    src: "{{ root_device_hints_script }}"
+    dest: "{{ working_dir }}/root-device-hints.sh"
+    mode: 0755
+  when: step_root_device_hints|bool
+
+- name: Create overcloud introspection script
+  template:
+    src: "{{ overcloud_introspect_script }}"
+    dest: "{{ working_dir }}/overcloud-introspect.sh"
+    mode: 0755
+  when: step_introspect|bool
+
+- name: Create ARA to mistral executor injection script
+  template:
+    src: "{{ inject_ara_script }}"
+    dest: "{{ working_dir }}/inject-ara.sh"
+    mode: 0755
+  when:
+    - release not in ['newton', 'ocata', 'pike', 'queens', 'rocky']
+    - undercloud_enable_mistral|bool

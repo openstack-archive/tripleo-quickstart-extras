@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -eux
+
+### --start_docs
+## Prepare images for deploying the overcloud
+## ==========================================
+
+## Prepare Your Environment
+## ------------------------
+
+## * Source in the undercloud credentials.
+## ::
+
+source {{ working_dir }}/stackrc
+
+## * Register nodes with Ironic.
+## ::
+
+{% if release in ['mitaka'] %}
+openstack baremetal import --json instackenv.json
+openstack baremetal configure boot
+{% elif step_introspect|bool or step_introspect_with_retry|bool %}
+openstack overcloud node import instackenv.json
+{% else %}
+openstack overcloud node import instackenv.json --provide
+{% endif %}
+
+### --stop_docs

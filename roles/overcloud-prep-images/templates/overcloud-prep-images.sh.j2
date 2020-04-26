@@ -1,242 +1,37 @@
 #!/bin/bash
 
 set -eux
-
 ### --start_docs
-## Prepare images for deploying the overcloud
-## ==========================================
-
-## Prepare Your Environment
-## ------------------------
 
 ## * Source in the undercloud credentials.
 ## ::
 
 source {{ working_dir }}/stackrc
 
-
 {% if download_overcloud_image|bool %}
-
-## * Download specific Overcloud images
-## ::
-
-if [ -f overcloud-full.qcow2 ]; then
-    sudo rm -rf overcloud-full*
-fi
-curl -L -O "{{ overcloud_image_url }}"
-tar xvfp {{ overcloud_full_tar_name }}
+{% include 'download-overcloud-image.sh.j2' %}
 {% endif %}
-
 {% if step_overcloud_image|bool %}
-
-{% if undercloud_enable_nova|bool %}
-## * Upload images to glance.
-## ::
-{% else %}
-## * Copy images to /var/lib/ironic/images.
-## ::
+{% include 'overcloud-image-upload.sh.j2' %}
 {% endif %}
-
-openstack overcloud image upload
-{%- if containerized_undercloud|bool %}
-    --http-boot=/var/lib/ironic/httpboot
-{%- endif %}
-{%- if bash_deploy_ramdisk|bool %}
-    --old-deploy-image
-{%- endif %}
-{%- if whole_disk_images|bool %}
-    --whole-disk
-{%- endif %}
-{%- if not undercloud_enable_nova|bool %}
-    --local
-{%- endif %}
-{% endif %}
-
 {% if step_glance_upload|bool %}
-
-## * Create and upload image to glance, this step is specific to nodepool based deployments.
-## ::
-
-rpm -q qemu-img || sudo {{ ansible_pkg_mgr }} install -y qemu-img
-qemu-img create -f qcow2 overcloud-full.qcow2 1G
-
-glance image-create --container-format bare \
-    --disk-format qcow2 \
-    --name overcloud-full \
-    --file overcloud-full.qcow2
-
+{% include 'overcloud-glance-image-upload.sh.j2' %}
 {% endif %}
-
 {% if undercloud_enable_nova|bool %}
-## * List out all the available OpenStack flavors.
-## ::
-
-for i in `openstack flavor list -c Name  -f value`; do
-    echo $i; openstack flavor show $i;
-done || true
+{% include 'overcloud-list-flavors.sh.j2' %}
 {% endif %}
-
 {% if step_register|bool %}
-
-## * Register nodes with Ironic.
-## ::
-
-{% if release in ['mitaka'] %}
-openstack baremetal import --json instackenv.json
-openstack baremetal configure boot
-{% elif step_introspect|bool or step_introspect_with_retry|bool %}
-openstack overcloud node import instackenv.json
-{% else %}
-openstack overcloud node import instackenv.json --provide
+{% include 'overcloud-import-nodes.sh.j2' %}
 {% endif %}
-
-{% endif %}
-
 {% if step_root_device_size|bool %}
-
-## * Get nodes UUID
-## ::
-
-export items="$( openstack baremetal node list | awk '/power/ {print $2}' )"
-
-## * Find disk size from instackenv.json
-## ::
-
-export DISK_SIZE="$( jq '.["nodes"][]["disk"] | tonumber' instackenv.json )"
-
-## * Update nodes with disk size hint
-## ::
-
-count=0
-ARRAY_DISK_SIZE=($(echo $DISK_SIZE))
-ROOT_DEVICE_SIZE={{ disk_root_device_size }}
-for item in $items; do
-    if  [ $ROOT_DEVICE_SIZE -ge ${ARRAY_DISK_SIZE[$count]} ]; then
-        declare i ADS
-        ADS=${ARRAY_DISK_SIZE[$count]}
-        openstack baremetal node set --property root_device='{"size": '$ADS'}' $item
-    fi
-    count=$((count+1))
-done
-
+{% include 'root-device-size.sh.j2' %}
 {% endif %}
-
 {% if step_root_device_hints|bool %}
-## * Get nodes UUID
-## ::
-
-export ironic_nodes="$( openstack baremetal node list | awk '/power/ {print $2}' )"
-
-for ironic_node in $ironic_nodes; do
-    # extract IP from ironic node details
-    ip_address=$(openstack baremetal node show -f value -c driver_info $ironic_node | sed -n "s/.*ipmi_address': u'\([0-9\.]*\)'.*/\1/p")
-
-    # get information for the matching template
-    {% for node in root_device_hints %}
-        NODE_IP="{{ node['ip'] }}"
-        if [ "$NODE_IP" == "$ip_address" ]; then
-            # set property
-            openstack baremetal node set --property root_device='{"{{ node['key'] }}": "{{ node['value'] }}"}' $ironic_node
-        fi
-    {% endfor %}
-done
-
+{% include 'root-device-hints.sh.j2' %}
 {% endif %}
-
-{% if step_introspect_debug|bool %}
-
-sudo {{ ansible_pkg_mgr }} -y install tcpdump
-sudo tcpdump -i any port {{ step_introspect_debug_tcpdump_ports | join(' or port ') }} -w {{ step_introspect_debug_tcpdump_log }} &
-sleep 1
-pidof_tcpdump=$(ps --ppid $! -o pid=)
-
-{% endif %}
-
-
 {% if step_introspect|bool %}
-
-## * Introspect hardware attributes of nodes.
-## ::
-
-    {% if release in ['mitaka'] %}
-
-        openstack baremetal introspection bulk start
-
-    {% else %}
-
-        openstack overcloud node introspect --all-manageable
-        openstack overcloud node provide --all-manageable
-
-    {% endif %}
-
+{% include 'overcloud-introspect.sh.j2' %}
 {% endif %}
-
-{% if step_introspect_with_retry|bool %}
-
-## * Introspect all manageable nodes with a caller provided timeout.
-##   then move all nodes that power off after a successful introspection
-##   back to available so we don't introspect them again. This is useful
-##   for large deployments (think 10+ nodes) where bulk introspection
-##   can be troublesome. It's also useful in environments where connection
-##   problems may spuriously fail a deployment. Related-Bug: #1651127
-## ::
-introspect()
-{
-    for node in `openstack baremetal node list -f json | jq -r '.[]| select(.["Provisioning State"] == "manageable")| .["UUID"]'`; do
-        openstack baremetal introspection start $node
-        sleep 30s
-    done
-
-    manageable_count=1
-    on_count=0
-    while [ $on_count -eq 0 ] && [ $manageable_count -gt 0 ]; do
-        manageable_count=$(openstack baremetal node list -f json | jq -r '.[]| select(.["Provisioning State"] == "manageable")| .["UUID"]' | wc -l)
-        on_count=$(openstack baremetal node list -f json|jq -r '.[]| select(.["Power State"] == "power on")| .["UUID"]' | wc -l)
-        sleep 30
-    done
-
-    set +e
-    timeout $1 bash -c -- 'source {{ working_dir }}/stackrc; \
-                            on_count=$(openstack baremetal node list -f json|jq -r ".[]| select(.[\"Power State\"] == \"power on\")| .[\"UUID\"]" | wc -l) ; \
-                            while [ $on_count -gt 0 ]; do \
-                                sleep 30s; \
-                                on_count=$(openstack baremetal node list -f json|jq -r ".[]| select(.[\"Power State\"] == \"power on\")| .[\"UUID\"]" | wc -l) ; \
-                            done'
-    set -e
-
-    for node in `openstack baremetal node list -f json | jq -r '.[]| select(.["Power State"] == "power off")| select(.["Provisioning State"] == "manageable")|.["UUID"]'`; do
-        openstack baremetal node provide $node
-    done
-}
-
-## * Introspect hardware attributes of nodes in a robust manner
-##   retrying up to three times on any given node. This should
-##   only be used in cases where deployment using bulk introspection
-##   has reliability issues.
-## ::
-
-for node in `openstack baremetal node list -f json | jq -r '.[]| select(.["Provisioning State"] == "available")| .["UUID"]'`; do
-    openstack baremetal node manage $node
-done
-
-introspect 15m
-introspect 30m
-introspect 60m
-
-{% endif %}
-
-{% if step_introspect_debug|bool %}
-
-sudo kill $pidof_tcpdump
-
-{% endif %}
-
 {% if release not in ['newton', 'ocata', 'pike', 'queens', 'rocky'] and undercloud_enable_mistral|bool %}
-container_cli="{{ undercloud_container_cli | default('podman') }}"
-cont=$(sudo $container_cli ps | grep executor | awk {'print $1'})
-sudo $container_cli exec --user root $cont bash -c "easy_install pip && pip install 'ara==1.0.0' || pip3 install 'ara==1.0.0'"
-# check it
-sudo $container_cli exec --user root $cont find /usr -type d -name ara
+{% include 'inject-ara.sh.j2' %}
 {% endif %}
-
-### --stop_docs
