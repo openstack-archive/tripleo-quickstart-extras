@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -eux
+
+### --start_docs
+
+## * Download specific Overcloud images
+## ::
+
+if [ -f overcloud-full.qcow2 ]; then
+    sudo rm -rf overcloud-full*
+fi
+curl -L -O "{{ overcloud_image_url }}"
+tar xvfp {{ overcloud_full_tar_name }}
+
+### --stop_docs

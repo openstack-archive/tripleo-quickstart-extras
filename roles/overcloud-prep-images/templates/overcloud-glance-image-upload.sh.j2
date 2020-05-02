@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -eux
+
+### --start_docs
+## Prepare images for deploying the overcloud
+## ==========================================
+
+## Prepare Your Environment
+## ------------------------
+
+## * Source in the undercloud credentials.
+## ::
+
+source {{ working_dir }}/stackrc
+
+## * Create and upload image to glance, this step is specific to nodepool based deployments.
+## ::
+
+rpm -q qemu-img || sudo {{ ansible_pkg_mgr }} install -y qemu-img
+qemu-img create -f qcow2 overcloud-full.qcow2 1G
+
+glance image-create --container-format bare \
+    --disk-format qcow2 \
+    --name overcloud-full \
+    --file overcloud-full.qcow2
+
+### --stop_docs

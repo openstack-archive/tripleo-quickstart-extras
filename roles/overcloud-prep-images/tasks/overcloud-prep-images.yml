@@ -1,7 +1,74 @@
 ---
-- name: Prepare the overcloud images for deploy
+- name: Download overcloud image
   shell: >
     set -o pipefail &&
-    {{ working_dir }}/overcloud-prep-images.sh 2>&1 {{ timestamper_cmd }} >
-    {{ overcloud_prep_images_log }}
+    {{ working_dir }}/download-overcloud-image.sh 2>&1 {{ timestamper_cmd }} >
+    {{ download_overcloud_image_log }}
   changed_when: true
+  when: download_overcloud_image|bool
+
+- name: Upload overcloud images
+  shell: >
+    set -o pipefail &&
+    {{ working_dir }}/overcloud-image-upload.sh 2>&1 {{ timestamper_cmd }} >
+    {{ overcloud_image_upload_log }}
+  changed_when: true
+  when: step_overcloud_image|bool
+
+- name: Upload overcloud images with Glance for multinode
+  shell: >
+    set -o pipefail &&
+    {{ working_dir }}/overcloud-glance-image-upload.sh 2>&1 {{ timestamper_cmd }} >
+    {{ overcloud_glance_image_upload_log }}
+  changed_when: true
+  when: step_glance_upload|bool
+
+- name: List overcloud flavors for Nova deployment
+  shell: >
+    set -o pipefail &&
+    {{ working_dir }}/overcloud-list-flavors.sh 2>&1 {{ timestamper_cmd }} >
+    {{ overcloud_list_flavors_log }}
+  changed_when: true
+  when: undercloud_enable_nova|bool
+
+- name: Import and register overcloud nodes
+  shell: >
+    set -o pipefail &&
+    {{ working_dir }}/overcloud-import-nodes.sh 2>&1 {{ timestamper_cmd }} >
+    {{ overcloud_import_nodes_log }}
+  changed_when: true
+  when: step_register|bool
+
+- name: Set root device size
+  shell: >
+    set -o pipefail &&
+    {{ working_dir }}/root-device-size.sh 2>&1 {{ timestamper_cmd }} >
+    {{ root_device_size_log }}
+  changed_when: true
+  when: step_root_device_size|bool
+
+- name: Set root device hints
+  shell: >
+    set -o pipefail &&
+    {{ working_dir }}/root-device-hints.sh 2>&1 {{ timestamper_cmd }} >
+    {{ root_device_hints_log }}
+  changed_when: true
+  when: step_root_device_hints|bool
+
+- name: Introspect overcloud images
+  shell: >
+    set -o pipefail &&
+    {{ working_dir }}/overcloud-introspect.sh 2>&1 {{ timestamper_cmd }} >
+    {{ overcloud_introspect_script_log }}
+  changed_when: true
+  when: step_introspect|bool
+
+- name: Inject ARA into mistral executor container image
+  shell: >
+    set -o pipefail &&
+    {{ working_dir }}/inject-ara.sh 2>&1 {{ timestamper_cmd }} >
+    {{ inject_ara_log }}
+  changed_when: true
+  when:
+    - release not in ['newton', 'ocata', 'pike', 'queens', 'rocky']
+    - undercloud_enable_mistral|bool
