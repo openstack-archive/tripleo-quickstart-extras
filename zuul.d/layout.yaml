@@ -18,6 +18,11 @@
             files:
               - ^roles/.*minion.*$
               - ^playbooks/.*minion.*$
+        - tripleo-ci-centos-8-standalone-on-multinode-ipa:
+            files:
+              - ^roles/.*multinode-ipa.*$
+              - ^roles/standalone.*$
+              - ^playbooks/multinode-standalone-ipa.yml.*$
     gate:
       queue: tripleo
       jobs:
