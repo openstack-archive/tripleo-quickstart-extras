@@ -48,7 +48,7 @@
   tags: notest
   pip:
     name: contextlib2>0.5.0,<0.6.0
-    extra_args: '-U --force-reinstall'
+    extra_args: '-U --force-reinstall --ignore-installed'
 
 - name: Check if virtualenv is in the system
   command: "{{ python_cmd }} -m virtualenv --version"
