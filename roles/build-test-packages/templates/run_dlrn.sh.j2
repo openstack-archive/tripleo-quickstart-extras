@@ -1,0 +1,27 @@
+set +e
+
+cd {{ build_repo_dir }}/DLRN
+source {{ build_repo_dir }}/dlrn-venv/bin/activate;
+{% if artg_build_one|bool %}
+export PKG={{ project_name_mapped.stdout }}
+{% else %}
+export PKG="{{ artg_rdo_packages|join(' --package-name ') }}"
+{% endif %}
+
+while true; do
+    dlrn --config-file projects.ini --head-only --package-name $PKG --local \
+        --info-repo {{ rdoinfo_repo_name }} \
+        {% if not artg_build_one|bool %}--order {% endif %}--dev;
+    if [ $? -eq 0 ]; then
+        # SUCCESS
+        break;
+    elif [ $? -eq 1 ]; then
+        # FAILED
+        exit 1;
+    elif [ $? -eq 2 ]; then
+        # RETRY
+        continue;
+    fi;
+    # Unexpected DLRN return code
+    exit $?;
+done;

@@ -9,7 +9,11 @@ smtpserver=
 reponame=delorean
 #templatedir=$VIRTUAL_ENV/dlrn/templates
 maxretries=3
+{% if osp_release is defined %}
+pkginfo_driver=dlrn.drivers.downstream.DownstreamInfoDriver
+{% else %}
 pkginfo_driver=dlrn.drivers.rdoinfo.RdoInfoDriver
+{% endif %}
 tags=
 #tags=mitaka
 rsyncdest=
@@ -19,6 +23,18 @@ gerrit_topic=rdo-FTBFS
 database_connection=sqlite:///commits.sqlite
 fallback_to_master=1
 use_components={{ use_components }}
+
+{% if osp_release is defined %}
+[downstream_driver]
+info_files=osp.yml
+versions_url=https://trunk.rdoproject.org/centos8-master/current/versions.csv
+downstream_distro_branch={{ osp_release }}.0-rhel-8-trunk
+# downstream tag needs to be osp-17.0
+downstream_tag=osp-{{ osp_release.split('-')[1] }}.0
+downstream_distgit_key=osp-distgit
+use_upstream_spec=true
+downstream_spec_replace_list=^%global with_doc.+/%global with_doc 0,^%global rhosp.*/%global rhosp 1
+{% endif %}
 
 [gitrepo_driver]
 # Options to be specified if pkginfo_driver is set to

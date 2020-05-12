@@ -17,6 +17,13 @@
     artg_distro: "{{ artg_release }}-rdo"
   when: artg_release not in ['master', 'mitaka']
 
+- name: Make sure /usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT exists (RHEL)
+  shell:
+    cmd: |
+      touch /usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT
+  become: true
+  when: ansible_distribution in ['RedHat']
+
 - name: Use local baseurl when using local mirrors
   set_fact:
     dlrn_baseurl: 'file:///tmp/fake-dlrn-repos'
@@ -33,6 +40,19 @@
     - {regexp: 'source=.*', line: 'source={{ artg_change.branch }}'}
   loop_control:
     loop_var: project_item
+  when: osp_release is not defined
+
+- name: Override projects.ini settings for downstream
+  lineinfile:
+    dest: '{{ build_repo_dir }}/DLRN/projects.ini'
+    regexp: '{{ project_item.regexp }}'
+    line: '{{ project_item.line }}'
+  with_items:
+    - {regexp: 'baseurl=.*', line: 'baseurl={{ dlrn_baseurl }}'}
+    - {regexp: 'source=.*', line: 'source={{ artg_change.branch }}'}
+  loop_control:
+    loop_var: project_item
+  when: osp_release is defined
 
 - block:
     - name: Map project name to DLRN project name
@@ -42,7 +62,10 @@
         cmd: |
           source '{{ build_repo_dir }}/dlrn-venv/bin/activate'
           set -xeo pipefail
-          rdopkg findpkg -s '{{ artg_change.project | basename }}' -l rdoinfo | \
+          # {{ rdoinfo_repo_name }}/{{ rdoinfo_repo_name.split('info')[0] }}-full.yml will
+          # return rdo-full.yml and for downstream is osp-full.yml.
+          rdopkg findpkg -s '{{ artg_change.project | basename }}' \
+            -i {{ rdoinfo_repo_name }}/{{ rdoinfo_repo_name.split('info')[0] }}-full.yml | \
             awk '/^name/{print $2}; {print "findpkg: " $0 > "/dev/stderr"}'
       changed_when: false
       failed_when: project_name_mapped.rc != 0 or not project_name_mapped.stdout
@@ -92,26 +115,17 @@
         - artg_change.distgit is defined
         - artg_repos_dir is not defined or copy_dir is failed
 
+    - name: Generate DLRN Script
+      template:
+        src: run_dlrn.sh.j2
+        dest: "{{ build_repo_dir }}/run_dlrn.sh"
+        mode: 0744
+
     - name: Run DLRN
       shell: >
-        set +e;
-        source {{ build_repo_dir }}/dlrn-venv/bin/activate;
-        while true; do
-            dlrn --config-file projects.ini --head-only --package-name {{ project_name_mapped.stdout }} --local --info-repo rdoinfo --dev;
-            if [ $? -eq 0 ]; then
-                # SUCCESS
-                break;
-            elif [ $? -eq 1 ]; then
-                # FAILED
-                exit 1;
-            elif [ $? -eq 2 ]; then
-                # RETRY
-                continue;
-            fi;
-            # Unexpected DLRN return code
-            exit $?;
-        done;
+        set -o pipefail &&
+        {{ build_repo_dir }}/run_dlrn.sh 2>&1 {{ timestamper_cmd }} >> {{ build_repo_dir }}/dlrn.log
       args:
-        chdir: '{{ build_repo_dir }}/DLRN'
+        chdir: '{{ build_repo_dir }}'
       register: repo_built
       when: artg_build_one|bool

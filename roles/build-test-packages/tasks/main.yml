@@ -83,6 +83,17 @@
     groups: mock
     append: true
 
+- name: Fetch DLRN from source
+  git:
+    repo: '{{ artg_dlrn_repo_url }}'
+    dest: '{{ build_repo_dir }}/DLRN'
+    version: 'master'
+  register: _git_clone
+  until: _git_clone is success
+  retries: 3
+  delay: 5
+  when: dlrn_pre_installed|bool
+
 - name: Ensure DLRN dir is present
   file:
     path: '{{ build_repo_dir }}/DLRN/'
@@ -110,10 +121,11 @@
     extra_args: --upgrade
 
 - name: Pip install rdopkg
+  # noqa 403
   pip:
     name: rdopkg
     virtualenv: "{{ build_repo_dir }}/dlrn-venv"
-    version: 0.47.3
+    state: latest
   when: not dlrn_pre_installed|bool
 
 - name: Pip install DLRN
@@ -127,8 +139,8 @@
 - name: Pip install pre-installed DLRN
   shell: >
     source {{ build_repo_dir }}/dlrn-venv/bin/activate;
-    pip install -r requirements.txt;
-    python setup.py install;
+    pip{{ ansible_python.version.major }} install -r requirements.txt;
+    python{{ ansible_python.version.major }} setup.py install;
   args:
     chdir: '{{ build_repo_dir }}/DLRN'
   when: dlrn_pre_installed|bool
@@ -142,12 +154,20 @@
 - name: Fetch local rdoinfo copy
   git:
     repo: '{{ artg_rdoinfo_repo_url }}'
-    dest: '{{ build_repo_dir }}/DLRN/rdoinfo'
+    dest: '{{ build_repo_dir }}/DLRN/{{ rdoinfo_repo_name }}'
     version: 'master'
   register: _git_clone
   until: _git_clone is success
   retries: 3
   delay: 5
+
+- name: Remove ssh from git url
+  when: osp_release is defined
+  shell: >
+    set -o pipefail;
+    sed -i -e "s|git+ssh|git|g" packages.yml
+  args:
+    chdir: '{{ build_repo_dir }}/DLRN/{{ rdoinfo_repo_name }}'
 
 - name: Use local {{ ansible_distribution }} mirror if available ( centos 7 and RHEL )
   shell: >
@@ -159,8 +179,8 @@
     >> {{ build_repo_dir }}/DLRN/scripts/{{ initial_dlrn_config }}-local.cfg;
     find /etc/yum.repos.d -name "delorean*build-deps.repo" -exec sed 's/enabled=.*/enabled=1/g' {} \;
     >> {{ build_repo_dir }}/DLRN/scripts/{{ initial_dlrn_config }}-local.cfg;
-    {% if ansible_distribution|lower == "redhat" and ansible_distribution_major_version == "8" %}
-    find /etc/yum.repos.d -name "rh-cloud.repo" -exec sed 's/enabled=.*/enabled=1/g' {} \;
+    {% if ansible_distribution in ["RedHat"] and osp_release is defined %}
+    find /etc/yum.repos.d -name "osptrunk-deps.repo" -exec sed 's/enabled=.*/enabled=1/g' {} \;
     >> {{ build_repo_dir }}/DLRN/scripts/{{ initial_dlrn_config }}-local.cfg;
     {% endif %}
     echo '"""' >> {{ build_repo_dir }}/DLRN/scripts/{{ initial_dlrn_config }}-local.cfg;
@@ -169,19 +189,6 @@
     touch /tmp/fake-dlrn-repos/current/delorean.repo;
   when:
     - dlrn_use_local_mirrors|bool
-
-# FIXME(jpena): once DLRN 0.8.0 is released, we can remove this
-- name: Check if DLRN/scripts/build_rpm.sh exists
-  stat:
-    path: '{{ build_repo_dir }}/DLRN/scripts/build_rpm.sh'
-  register: old_dlrn
-
-- name: Remove DLRN RPM install test
-  # noqa 303
-  shell: >
-    sed -i -e 's%--postinstall%%'
-    {{ build_repo_dir }}/DLRN/scripts/build_rpm.sh
-  when: old_dlrn.stat.exists
 
 - name: get env variables for changes and default change list
   set_fact:
@@ -203,17 +210,25 @@
     artg_change_list: "{{ artg_change_list|union(jenkins_change_list|default([])) }}"
     cacheable: true
 
-- name: Parse Zuul changes
-  zuul_deps:
-    host: "{{ lookup('env', 'ZUUL_URL')|default('https://review.opendev.org', true) }}"
-    changes: "{{ lookup('env', 'ZUUL_CHANGES') }}"
-    branch: "{{ zuul.override_checkout | default(lookup('env', 'ZUUL_BRANCH')) }}"
-  when: zuul_changes != ""  # noqa 602
-
-- name: Add Zuul changes to the change list
+# Below is the list of cases needs to handle while constructing zuul change lists to process
+# 1. Gerrit change branch is not equal to project branch
+# 2. project name should be present in zuul processed change list
+- name: construct zuul deps list
   set_fact:
-    artg_change_list: "{{ artg_change_list|union(zuul_change_list|default([])) }}"
+    artg_change_list: "{{ artg_change_list|default([]) + [{'host': item.change_url.rpartition('/')[0],
+                                                           'project': item.project.name,
+                                                           'branch': item.branch,
+                                                           'refspec': '/'.join(['refs', 'changes',
+                                                                                item.change[-2:],
+                                                                                item.change,
+                                                                                item.patchset]) }] }}"
     cacheable: true
+  with_items: "{{ zuul['items'] }}"
+  when:
+    - zuul is defined
+    - "'change_url' in item"
+    - item.project.name not in artg_change_list|default([]) | map(attribute='project') |list
+    - (item.branch == zuul.override_checkout | default(zuul.branch)) or (osp_release is defined and osp_release in item.branch)
 
 - name: Print out the change list
   debug:
@@ -235,31 +250,24 @@
   when:
     - '"-distgit" not in item.project'
     - item.project not in artg_skipped_projects
-    - release in item.branch or (zuul.project.name | default("") == "rdoinfo")
+    - release in item.branch or (zuul.project.name | default("") == rdoinfo_repo_name) or (osp_release is defined and osp_release in item.branch)
 
-- name: Run DLRN
-  shell: >
-    set +e;
-    source {{ build_repo_dir }}/dlrn-venv/bin/activate;
-    while true; do
-        dlrn --config-file projects.ini --head-only --package-name {{ artg_rdo_packages|join(' --package-name ') }} --local --info-repo rdoinfo --dev --order;
-        if [ $? -eq 0 ]; then
-            # SUCCESS
-            break;
-        elif [ $? -eq 1 ]; then
-            # FAILED
-            exit 1;
-        elif [ $? -eq 2 ]; then
-            # RETRY
-            continue;
-        fi;
-        # Unexpected DLRN return code
-        exit $?;
-    done;
-  args:
-    chdir: '{{ build_repo_dir }}/DLRN'
-  register: repo_built_multi
+- name: Build package using DLRN
   when: not artg_build_one|bool
+  block:
+    - name: Generate DLRN Script
+      template:
+        src: run_dlrn.sh.j2
+        dest: "{{ build_repo_dir }}/run_dlrn.sh"
+        mode: 0744
+
+    - name: Run DLRN
+      shell: >
+        set -o pipefail &&
+        {{ build_repo_dir }}/run_dlrn.sh 2>&1 {{ timestamper_cmd }} >> {{ build_repo_dir }}/dlrn.log
+      args:
+        chdir: '{{ build_repo_dir }}'
+      register: repo_built_multi
 
 - name: Clean up loop devices created by mock
   file:
