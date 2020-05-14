@@ -17,7 +17,7 @@
   roles:
     - {role: validate-simple, when: test_ping|bool}
 
-# Execute tempest against the overcloud deployment
+# Execute tempest using validate-tempest against the overcloud deployment
 - name: Execute tempest against the overcloud
   hosts: undercloud
   tags:
@@ -25,6 +25,21 @@
   gather_facts: false
   roles:
     - {role: validate-tempest, when: tempest_config|bool or run_tempest|bool}
+
+# Execute tempest using os_tempest against the overcloud deployment
+- name: Validate the deployment
+  hosts: undercloud
+  tasks:
+    - include_tasks: tempest.yml
+      vars:
+        tempest_install_method: distro
+        tempest_cloud_name: 'overcloud'
+      when:
+        - not run_tempest|bool
+        - use_os_tempest is defined
+        - use_os_tempest|bool
+  tags:
+    - overcloud-validate
 
 # Ensure services and containers are OK
 - name: Execute simple service and container validations
