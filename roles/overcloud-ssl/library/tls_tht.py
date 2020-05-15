@@ -87,6 +87,8 @@ def create_enable_file(certpem, keypem, source_dir, dest_dir, tht_release):
 
     output_dict["parameter_defaults"]["SSLCertificate"] = certpem
     output_dict["parameter_defaults"]["SSLKey"] = keypem
+    output_dict["parameter_defaults"][
+        "InternalTLSCAFile"] = "/etc/pki/ca-trust/source/anchors/overcloud-cacert.pem"
 
     # NoteTLSData has been deprecated/removed in rocky and onwards
     if tht_release in ['mitaka', 'newton', 'ocata', 'pike', 'queens']:
