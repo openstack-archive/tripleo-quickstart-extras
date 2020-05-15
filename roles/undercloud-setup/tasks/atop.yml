@@ -4,13 +4,24 @@
   become: true
   block:
     # Run atop in background
-    - name: Install atop if configured so
+    - name: Install atop from epel repo when configured so (CentOS < 8)
       shell: |
         if [ -e /etc/ci/mirror_info.sh ]; then
           source /etc/ci/mirror_info.sh
         fi
         atop_location=$(repoquery --repoid=osepel --repofrompath=osepel,$NODEPOOL_EPEL_MIRROR/7/x86_64/ --location atop)
         {{ ansible_pkg_mgr }} install -y $atop_location
+      when:
+        - ansible_distribution == 'CentOS'
+        - ansible_distribution_major_version is version(8, '<')
+
+    - name: Install atop from RDO build-deps repo when configured so (CentOS >= 8)
+      package:
+        name: "atop"
+        state: present
+      when:
+        - ansible_distribution == 'CentOS'
+        - ansible_distribution_major_version is version(8, '>=')
 
     - name: Run atop
       shell: "{{ atop_command }} &"
