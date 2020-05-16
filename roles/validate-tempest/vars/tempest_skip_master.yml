@@ -44,8 +44,6 @@ known_failures:
     reason: 'Not supported in TripleO'
   - test: 'tripleo_common_tempest_plugin'
     reason: 'Not supported in TripleO'
-  - test: 'octavia_tempest_plugin'
-    reason: 'Not supported in TripleO'
   - test: 'murano_tempest_tests'
     reason: 'Not supported in TripleO'
   - test: 'mistral_tempest_tests'
