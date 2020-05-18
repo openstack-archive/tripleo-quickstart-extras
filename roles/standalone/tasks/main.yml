@@ -124,6 +124,29 @@
     - { original: "ceph_image", replace: "ceph_image: {{ docker_ceph_image }}" }
     - { original: "ceph_tag", replace: "ceph_tag: {{ docker_ceph_tag }}" }
 
+- name: update container custom ceph parameters, if required
+  when:
+    - standalone_container_ceph_updates|default(false)|bool
+    - custom_ceph_parameters|default(false)|bool
+  replace:
+    path: "{{ working_dir }}/containers-prepare-parameters.yaml"
+    regexp: " {{ item.original }}: (.*)"
+    replace: " {{ item.replace }}"
+    backup: true
+  with_items:
+    - { original: "ceph_alertmanager_image", replace: "ceph_alertmanager_image: {{ custom_ceph_alertmanager_image }}" }
+    - { original: "ceph_alertmanager_namespace", replace: "ceph_alertmanager_namespace: {{ custom_ceph_alertmanager_namespace }}" }
+    - { original: "ceph_alertmanager_tag", replace: "ceph_alertmanager_tag: {{ custom_ceph_alertmanager_tag }}" }
+    - { original: "ceph_grafana_image", replace: "ceph_grafana_image: {{ custom_ceph_grafana_image }}" }
+    - { original: "ceph_grafana_namespace", replace: "ceph_grafana_namespace: {{ custom_ceph_grafana_namespace }}" }
+    - { original: "ceph_grafana_tag", replace: "ceph_grafana_tag: {{ custom_ceph_grafana_tag }}" }
+    - { original: "ceph_node_exporter_image", replace: "ceph_node_exporter_image: {{ custom_ceph_node_exporter_image }}" }
+    - { original: "ceph_node_exporter_namespace", replace: "ceph_node_exporter_namespace: {{ custom_ceph_node_exporter_namespace }}" }
+    - { original: "ceph_node_exporter_tag", replace: "ceph_node_exporter_tag: {{ custom_ceph_node_exporter_tag }}" }
+    - { original: "ceph_prometheus_image", replace: "ceph_prometheus_image: {{ custom_ceph_prometheus_image }}" }
+    - { original: "ceph_prometheus_namespace", replace: "ceph_prometheus_namespace: {{ custom_ceph_prometheus_namespace }}" }
+    - { original: "ceph_prometheus_tag", replace: "ceph_prometheus_tag: {{ custom_ceph_prometheus_tag }}" }
+
 - name: Set repos defined in the job to update
   when:
     - job.add_repos is defined
