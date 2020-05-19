@@ -89,7 +89,9 @@
 - name: Set tempest_test_blacklist
   set_fact:
     tempest_test_blacklist: "{{ known_failures | json_query('[?undercloud != `true`]') }}"
-  when: tempest_cloud_name != 'undercloud'
+  when:
+    - tempest_cloud_name != 'undercloud'
+    - not tempest_run_skipped | default(false) | bool
 
 - name: set python_cmd
   set_fact:
