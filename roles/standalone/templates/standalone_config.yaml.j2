@@ -12,6 +12,9 @@ parameter_defaults:
 {% if standalone_container_prep_updates is defined and standalone_container_prep_updates %}
   DockerInsecureRegistryAddress:
   - {{ standalone_ip }}:8787
+{% if job.build_container_images|default(false)|bool %}
+  - {{ local_registry_ip }}:{{ local_registry_port }}
+{% endif %}
 {% endif %}
 {% if undercloud_docker_registry_mirror is defined and undercloud_docker_registry_mirror %}
   DockerRegistryMirror: {{undercloud_docker_registry_mirror}}
