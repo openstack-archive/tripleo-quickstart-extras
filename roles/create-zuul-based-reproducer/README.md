@@ -25,7 +25,7 @@ The role is run within the collect-logs role.
 Example Playbook
 ----------------
 
-This role generates a launcher-playbook:
+This role generates a launcher-playbook and overrides RPM and PyPi mirrors for Centos 8:
 
 - hosts: localhost
   tasks:
@@ -62,6 +62,8 @@ This role generates a launcher-playbook:
           parent: tripleo-ci-centos-7-multinode-1ctlr-featureset010
           vars:
             mirror_fqdn: mirror.regionone.rdo-cloud.rdoproject.org
+            package_mirror: http://mirror.centos.org/centos
+            pypi_fqdn: mirror01.ord.rax.opendev.org
             featureset_override:
               dlrn_hash_tag:
                 8127e43f39ac9b9e14d4a5a10bcbf41f122f32d7_d2efe5df

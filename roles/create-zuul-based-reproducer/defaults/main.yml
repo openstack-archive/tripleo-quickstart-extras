@@ -5,3 +5,4 @@ reproducer_zuul_based_quickstart_readme_file: "{{ artcl_collect_dir }}/README-re
 reproducer_zuul_based_launcher_playbook: launcher-playbook.yaml.j2
 launcher_env_setup_playbook: launcher-env-setup-playbook.yaml.j2
 zuul_reproducer_dir: reproducer-quickstart
+mirror_path: mirror.regionone.rdo-cloud.rdoproject.org
