@@ -47,7 +47,7 @@ dnf module enable -y idm:DL1/{dns,adtrust,client,server,common}
 
 {% if ansible_distribution_major_version is version("7", "<=") -%}
 
-curl -Lo ius-release.rpm https://centos7.iuscommunity.org/ius-release.rpm
+curl -Lo ius-release.rpm https://repo.ius.io/ius-release-el7.rpm
 rpm -Uvh ius-release*.rpm
 
 {% endif %}
