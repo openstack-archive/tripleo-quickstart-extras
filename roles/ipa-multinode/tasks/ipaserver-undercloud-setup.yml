@@ -92,6 +92,7 @@
   shell: >
     ansible-playbook -vvv
     --ssh-extra-args "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+    -e ipaclient_hostname="{{ undercloud_hostname }}"
     /usr/share/ansible/tripleo-playbooks/undercloud-ipa-install.yaml
     | tee undercloud-ipa-install.log
   environment:
