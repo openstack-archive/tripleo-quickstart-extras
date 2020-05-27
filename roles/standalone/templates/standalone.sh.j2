@@ -1,4 +1,4 @@
-sudo openstack tripleo deploy \
+sudo openstack tripleo deploy {%- if tripleo_deploy_debug | bool -%}--debug{%-endif -%} \
   --templates \
   --local-ip={{ standalone_ip }}/{{ standalone_network_prefix }} \
   -e {{ overcloud_templates_path }}/environments/standalone/standalone-tripleo.yaml \
