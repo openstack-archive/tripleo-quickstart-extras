@@ -244,6 +244,7 @@
     name: tripleo_deploy
   vars:
     tripleo_deploy_debug: true
+    tripleo_deploy_debug_arg: "{{ standalone_tripleo_deploy_debug_arg }}"
     tripleo_deploy_local_ip: "{{ standalone_ip }}/{{ standalone_network_prefix }}"
     tripleo_deploy_control_virtual_ip: "{{ standalone_control_virtual_ip|default() }}"
     tripleo_deploy_roles_file: "{{ overcloud_templates_path }}/roles/{{ standalone_role }}"
