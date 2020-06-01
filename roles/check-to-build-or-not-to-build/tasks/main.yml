@@ -29,8 +29,8 @@
     cacheable: true
   when: projects_need_build != []
 
-- name: Always build images in the periodic jobs
+- name: Always build images in the periodic and component jobs
   set_fact:
     to_build: true
     cacheable: true
-  when: lookup('env', 'PERIODIC')|default('0')|int == 1
+  when: lookup('env', 'PERIODIC')|default('0')|int == 1 or  job.component is defined
