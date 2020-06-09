@@ -41,6 +41,17 @@
   roles:
     - check-to-build-or-not-to-build
 
+- name: Add firewalld services and ports
+  hosts: virthost
+  gather_facts: false
+  tasks:
+    - include_role:
+        name: baremetal-prep-virthost
+        tasks_from: add_services_ports_firewalld.yml
+      when:
+        - ansible_distribution == 'RedHat'
+        - ansible_distribution_major_version|int >= 8
+
 - name: Setup undercloud and baremetal vms and networks in libvirt
   hosts: virthost
   gather_facts: true
@@ -69,7 +80,7 @@
 
 - name: Prepare the host for PXE forwarding
   hosts: virthost
-  gather_facts: false
+  gather_facts: true
   roles:
     - baremetal-prep-virthost
 

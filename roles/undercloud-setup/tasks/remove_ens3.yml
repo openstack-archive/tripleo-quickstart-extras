@@ -1,0 +1,13 @@
+---
+- name: Check if ifcfg-ens3 exists
+  become: true
+  stat:
+    path: /etc/sysconfig/network-scripts/ifcfg-ens3
+  register: ens3_interface
+
+- name: Remove the interface file
+  become: true
+  file:
+    path: /etc/sysconfig/network-scripts/ifcfg-ens3
+    state: absent
+  when: ens3_interface.stat.exists

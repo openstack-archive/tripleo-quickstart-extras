@@ -32,3 +32,7 @@
   include: ansible_cfg.yml
   when:
     - undercloud_ansible_cfg|bool and undercloud_ara|bool
+
+- name: Remove ens interface if it exists
+  include: remove_ens3.yml
+  when: ansible_distribution in ["RedHat", "CentOS"] and ansible_distribution_major_version|int >= 8

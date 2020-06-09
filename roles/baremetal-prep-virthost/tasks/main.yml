@@ -1,9 +1,21 @@
 ---
-- name: Copy over provisioning nic script template
+- name: Copy over provisioning nic script template for rhel7 or centos7
   template:
     src: add-provisioning-interface.sh.j2
     dest: "{{ working_dir }}/add-provisioning-interface.sh"
     mode: 0755
+  when:
+    - ansible_distribution in ['RedHat', 'CentOS']
+    - ansible_distribution_major_version|int <= 7
+
+- name: Copy over provisioning nic script template for rhel8 or centos8
+  template:
+    src: add-provisioning-interface-os-major-version-8.sh.j2
+    dest: "{{ working_dir }}/add-provisioning-interface.sh"
+    mode: 0755
+  when:
+    - ansible_distribution in ['RedHat', 'CentOS']
+    - ansible_distribution_major_version|int >= 8
 
 - name: wait for  script file to exist
   wait_for: path="{{ working_dir }}/add-provisioning-interface.sh"

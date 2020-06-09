@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -eux
+
+### --start_docs
+
+## * Remove the stale nmcli bridge port connection from the previous deployment
+## ::
+
+if sudo nmcli con show | grep -i brovc-port1; then
+    sudo nmcli con delete brovc-port1
+fi
+
+## * Add the NIC on the provisioning interface to the "brovc" bridge
+## ::
+
+sudo nmcli connection add type ethernet slave-type bridge con-name \
+    brovc-port1 ifname {{ virthost_provisioning_interface }} \
+    master brovc
+
+### --stop_docs
