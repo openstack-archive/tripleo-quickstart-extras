@@ -74,6 +74,21 @@
   changed_when: true
   when: step_root_device_hints|bool
 
+- name: Run tcpdump during introspection in background
+  become: true
+  shell: >
+    {{ ansible_pkg_mgr }} -y install tcpdump;
+    tcpdump -U -i any port {{ step_introspect_debug_tcpdump_ports | join(' or port ') }}
+    -w {{ step_introspect_debug_tcpdump_log }} > /dev/null &
+  args:
+    executable: /bin/bash
+  async: 1
+  poll: 0
+  changed_when: false
+  when:
+    - step_introspect|bool
+    - step_introspect_debug|bool
+
 - name: Introspect overcloud images
   shell: >
     set -o pipefail &&
@@ -81,6 +96,12 @@
     {{ overcloud_introspect_script_log }}
   changed_when: true
   when: step_introspect|bool
+
+- name: Stop tcpdump after introspection
+  become: true
+  command: pkill tcpdump
+  changed_when: false
+  failed_when: false
 
 - name: Inject ARA into mistral executor container image
   shell: >

@@ -8,15 +8,6 @@ set -eux
 
 source {{ working_dir }}/stackrc
 
-{% if step_introspect_debug|bool %}
-
-sudo {{ ansible_pkg_mgr }} -y install tcpdump
-sudo tcpdump -i any port {{ step_introspect_debug_tcpdump_ports | join(' or port ') }} -w {{ step_introspect_debug_tcpdump_log }} &
-sleep 1
-pidof_tcpdump=$(ps --ppid $! -o pid=)
-
-{% endif %}
-
 ## * Introspect hardware attributes of nodes.
 ## ::
 openstack overcloud node introspect --all-manageable
@@ -76,9 +67,4 @@ introspect 60m
 
 {% endif %}
 
-{% if step_introspect_debug|bool %}
-
-sudo kill $pidof_tcpdump
-
-{% endif %}
 ### --stop_docs
