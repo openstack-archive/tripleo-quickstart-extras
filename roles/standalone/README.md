@@ -37,6 +37,8 @@ Role Variables
 
 - standalone_custom_env_files: <'[]'> -- list of additional environment files to be added to the deployment command (do not include the -e)
 
+- standalone_tripleo_deploy_debug_arg: <False> -- makes tripleoclient invoked with --debug, that results in calling ansible -vv commands as well.
+
 Dependencies
 ------------
 
