@@ -60,6 +60,13 @@
     - ansible_os_family == 'RedHat'
     - ansible_lsb.major_release is version(8, '>=')
 
+- name: remove any existing entries from the resolv.conf file
+  become: true
+  lineinfile:
+    path: /etc/resolv.conf
+    regexp: "^nameserver "
+    state: absent
+
 - name: set search domain
   become: true
   lineinfile:
