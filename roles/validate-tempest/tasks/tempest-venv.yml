@@ -15,7 +15,7 @@
 
 - name: Cloning python-tempestconf
   git:
-    repo: 'https://opendev.org/openstack/python-tempestconf'
+    repo: 'https://opendev.org/osf/python-tempestconf'
     dest: '{{ working_dir }}/tempestconf_git'
     version: '{{ tempest_conf_version }}'
   when: release != 'newton'
