@@ -152,6 +152,9 @@ known_failures:
   - test: 'telemetry_tempest_plugin.scenario.test_telemetry_integration.TestTelemetryIntegration'
     reason: 'telemetry tests failed due to One or more ports have an IP allocation from this subnet'
     lp: 'https://bugs.launchpad.net/tripleo/+bug/1792862'
+  - test: 'octavia_tempest_plugin.tests.scenario.v2.test_traffic_ops.TrafficOperationsScenarioTest'
+    reason: 'Connection to the 192.168.24.149 via SSH timed out.'
+    lp: 'https://bugs.launchpad.net/tripleo/+bug/1883687'
 
   # skip list for undercloud
   - test: 'tempest.api.network.test_networks.NetworksTest.test_external_network_visibility'
