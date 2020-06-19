@@ -19,6 +19,7 @@ parameter_defaults:
 {% if undercloud_docker_registry_mirror is defined and undercloud_docker_registry_mirror %}
   DockerRegistryMirror: {{undercloud_docker_registry_mirror}}
 {% endif %}
+  LocalContainerRegistry: {{ local_docker_registry_host }}
   MasqueradeNetworks:
     {{ standalone_network }}.0/{{ standalone_network_prefix }}:
     - {{ standalone_network }}.0/{{ standalone_network_prefix }}
