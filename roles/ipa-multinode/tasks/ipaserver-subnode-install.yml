@@ -53,7 +53,6 @@
     --hostname {{ ipa_nameserver }}
     --setup-dns
     --forwarder {{ job.public_name_server|default('1.1.1.1') }}
-    --auto-reverse
     --unattended
     --ip-address {{ subnode_1_ip }}
   become: true
