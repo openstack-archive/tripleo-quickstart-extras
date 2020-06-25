@@ -62,22 +62,12 @@
     tempest_venv_bin: "{{ ansible_user_dir }}/tempest_venv/bin"
   when: tempest_install_method == 'source'
 
-- name: set cirros image facts for periodic (stable branches)
+- name: set cirros image facts for periodic
   vars:
     default_cirros_image: http://images.rdoproject.org/cirros/cirros-0.4.0-x86_64-disk.img
   set_fact:
     tempest_tempestconf_profile_extras:
       image: "{{ featureset_override['cirros_image'] | default(default_cirros_image) }}"
-  when: release|default('master') in ['queens', 'rocky', 'stein', 'train', 'ussuri']
-
-- name: set cirros image facts for periodic (master)
-  vars:
-    default_cirros_image: https://download.cirros-cloud.net/0.5.1/cirros-0.5.1-x86_64-disk.img
-  set_fact:
-    tempest_tempestconf_profile_extras:
-      image: "{{ featureset_override['cirros_image'] | default(default_cirros_image) }}"
-  when: release|default('master') not in ['queens', 'rocky', 'stein', 'train', 'ussuri']
-
 
 # stackviz in venv pulls oslo.db due upstream constraints,
 # but it dropped py2 support so on such system we need to skip it
