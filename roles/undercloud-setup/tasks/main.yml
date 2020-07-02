@@ -32,15 +32,3 @@
   include: ansible_cfg.yml
   when:
     - undercloud_ansible_cfg|bool and undercloud_ara|bool
-
-- name: Discover is ens3 interface exists
-  setup:
-    gather_subset: network
-  register: net
-
-- name: Remove ens interface if file exists but no interface
-  include: remove_ens3.yml
-  when:
-    - ansible_distribution in ["RedHat", "CentOS"]
-    - ansible_distribution_major_version|int >= 8
-    - "'ens3' not in net.ansible_facts.ansible_interfaces"

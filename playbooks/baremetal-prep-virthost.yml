@@ -78,6 +78,17 @@
   roles:
     - undercloud-setup
 
+- name: Remove ens3 if not required
+  hosts: undercloud
+  gather_facts: false
+  tasks:
+    - include_role:
+        name: baremetal-prep-virthost
+        tasks_from: remove_ens3.yml
+      when:
+        - ansible_distribution == 'CentOS'
+        - ansible_distribution_major_version|int >= 8
+
 - name: Prepare the host for PXE forwarding
   hosts: virthost
   gather_facts: true

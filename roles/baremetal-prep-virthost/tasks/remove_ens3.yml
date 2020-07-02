@@ -1,4 +1,10 @@
 ---
+- name: Discover if ens3 interface exists
+  become: true
+  setup:
+    gather_subset: network
+  register: net
+
 - name: Check if ifcfg-ens3 exists
   become: true
   stat:
@@ -10,4 +16,6 @@
   file:
     path: /etc/sysconfig/network-scripts/ifcfg-ens3
     state: absent
-  when: ens3_interface.stat.exists
+  when:
+    - ens3_interface.stat.exists
+    - "'ens3' not in net.ansible_facts.ansible_interfaces"
