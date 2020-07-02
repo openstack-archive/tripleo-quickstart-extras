@@ -20,6 +20,7 @@ ipa_realm: "{{ ipa_domain | upper }}"
 freeipa_directory_password: "{{ freeipa_admin_password }}"
 freeipa_principal: admin
 tls_packages:
+  - ipa-client
   - python3-pip
   - openssl-perl
 ipa_packages:

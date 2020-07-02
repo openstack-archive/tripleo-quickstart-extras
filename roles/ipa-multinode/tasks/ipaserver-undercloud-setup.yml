@@ -45,6 +45,14 @@
   tags:
     - standalone
 
+- name: install tls dependencies
+  become: true
+  package:
+    name: '{{ tls_packages }}'
+    state: latest
+  when:
+    - enable_tls | bool
+
 # We need to update /etc/resolv.conf so that the undercloud can use FreeIPA
 # for DNS. We also need to make sure it's the first line in
 # /etc/resolv.conf otherwise we'll fail to find FreeIPA (e.g.,
@@ -84,14 +92,6 @@
     insertafter: '^search'
     line: "nameserver {{ freeipa_internal_ip }}"
     state: present
-
-- name: install tls dependencies
-  become: true
-  package:
-    name: '{{ tls_packages }}'
-    state: latest
-  when:
-    - enable_tls | bool
 
 - name: run undercloud ipa installer
   become: true
