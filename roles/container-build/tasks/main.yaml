@@ -1,0 +1,44 @@
+---
+# Copyright 2020 Red Hat, Inc.
+# All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+- name: Deploy the local registry
+  become: true
+  podman_container:
+    name: docker_registry
+    image: registry:2
+    net: host
+    env:
+      REGISTRY_HTTP_ADDR: "{{ local_registry_ip }}:{{ local_registry_port }}"
+  tags:
+    - skip_ansible_lint
+
+- name: Build and push container images to the local registry
+  collections:
+    - tripleo.operator
+  include_role:
+    name: tripleo_container_image_build
+  vars:
+    tripleo_container_image_build_debug: true
+    tripleo_container_image_build_generate_scripts: true
+    tripleo_container_image_build_namespace: "{{ container_registry_namespace }}"
+    tripleo_container_image_build_tag: "{{ container_tag }}"
+    tripleo_container_image_build_push: true
+    tripleo_container_image_build_registry: "{{ local_registry_ip }}:{{ local_registry_port }}"
+    tripleo_container_image_build_volumes:
+      - "/etc/yum.repos.d:/etc/yum.repos.d:z"
+      - "/etc/pki/rpm-gpg:/etc/pki/rpm-gpg:z"
+      - "/opt/gating_repo:/opt/gating_repo:z"
+    tripleo_container_image_build_work_dir: "{{ working_dir }}/container-builds"

@@ -43,3 +43,6 @@ standalone_custom_env_files: []
 standalone_container_ceph_updates: true
 
 standalone_tripleo_deploy_debug_arg: false
+
+local_registry_ip: 127.0.0.1
+local_registry_port: 5001

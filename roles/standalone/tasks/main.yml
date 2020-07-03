@@ -53,6 +53,15 @@
     - '  DnsServers: (.*)'
   when: enable_tls|default(false)|bool
 
+- name: Build and push containers into a local registry
+  when:
+    - job.build_container_images|default(false)|bool
+  include_role:
+    name: container-build
+  vars:
+    container_registry_namespace: "{{ docker_registry_namespace }}"
+    container_tag: "{{ container_build_id }}"
+
 - name: Run container prepare legacy
   when:
     - release in ['queens', 'rocky', 'stein', 'train']
@@ -183,6 +192,7 @@
 - name: Add updates to container-prepare-parameters.yaml
   when:
     - standalone_container_prep_updates
+    - not job.build_container_images|default(false)|bool
   block:
     - name: Replace tag_from_label value
       replace:
