@@ -61,7 +61,7 @@
 - name: Wait until nodes will be manageable
   shell: >-
     set -o pipefail &&
-    openstack --os-cloud undercloud baremetal node list -f value -c "Provisioning State" | grep -v manageable
+    openstack --os-cloud undercloud baremetal node list -f value -c "Provisioning State" | grep -v -e manageable -e available
   register: result
   until: result.stdout == ''
   failed_when: result.rc == 0
