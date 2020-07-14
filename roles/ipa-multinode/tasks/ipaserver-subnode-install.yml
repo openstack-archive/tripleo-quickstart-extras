@@ -45,6 +45,34 @@
       sed -i "1i{{ subnode_1_ip }} {{ ipa_nameserver }}" /etc/hosts
   become: true
 
+- name: check if unbound was in use
+  stat:
+    path: /etc/unbound/forwarding.conf
+  register: unbound_forwarding
+
+- when: unbound_forwarding.stat.exists == true
+  block:
+    - name: get forwarding addresses if unbound is used
+      become: true
+      shell:
+        "cat /etc/unbound/forwarding.conf | grep -o 'forward-addr: .*' | cut -f2- -d' '"
+      register: forwarder_addresses_output
+
+    - name: print out forwarder addresses
+      debug:
+        msg: "{{ forwarder_addresses_output.stdout_lines[0] }}"
+
+    # some forwarders have format xxxx:xxxx:xxxx::xxxx
+    # In those cases, use the default 1.1.1.1
+    - name: set forwarder_address
+      set_fact:
+        forwarder_address: >-
+          {% if not '::' in forwarder_addresses_output.stdout_lines[0] -%}
+          "{{ forwarder_addresses_output.stdout_lines[0] }}"
+          {%- else -%}
+          "{{ forwarder_address }}"
+          {%- endif -%}
+
 - name: configure FreeIPA
   shell: >
     ipa-server-install --realm {{ ipa_realm }}
@@ -52,7 +80,7 @@
     --admin-password {{ freeipa_admin_password }}
     --hostname {{ ipa_nameserver }}
     --setup-dns
-    --forwarder {{ job.public_name_server|default('1.1.1.1') }}
+    --forwarder {{ job.public_name_server|default(forwarder_address) }}
     --unattended
     --ip-address {{ subnode_1_ip }}
   become: true
