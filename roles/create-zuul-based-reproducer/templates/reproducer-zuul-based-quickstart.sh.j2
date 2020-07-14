@@ -251,7 +251,7 @@ PATH=${HOME}/.local/bin:$PATH ansible-playbook \
 # Set the options selected into EXTRA_PARAMS
 if [[ "$LIBVIRT" == "1" ]]; then
     EXTRA_PARAMS="$EXTRA_PARAMS -e nodepool_provider=libvirt "
-    EXTRA_PARAMS="$EXTRA_PARAMS -e mirror_path=mirror.mtl01.inap.openstack.org "
+    EXTRA_PARAMS="$EXTRA_PARAMS -e mirror_path=mirror.mtl01.inap.opendev.org "
 fi
 
 if [[ "$LIBVIRT" == "0" && "$CLOUD_NAME" != "rdo-cloud" ]]; then
