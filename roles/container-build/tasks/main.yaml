@@ -25,6 +25,23 @@
   tags:
     - skip_ansible_lint
 
+- name: Set container_image_build_volumes fact
+  set_fact:
+    container_image_build_volumes:
+      - "/etc/yum.repos.d:/etc/yum.repos.d:z"
+      - "/etc/pki/rpm-gpg:/etc/pki/rpm-gpg:z"
+
+- name: Check if /opt/gating_repo exists
+  stat:
+    path: /opt/gating_repo
+  register: gating_stat
+
+- name: Add gating repo to mount volumes if exists
+  set_fact:
+    container_image_build_volumes:
+      '{{ container_image_build_volumes + ["/opt/gating_repo:/opt/gating_repo:z"] }}'
+  when: gating_stat.stat.exists|bool
+
 - name: Build and push container images to the local registry
   collections:
     - tripleo.operator
@@ -37,8 +54,5 @@
     tripleo_container_image_build_tag: "{{ container_tag }}"
     tripleo_container_image_build_push: true
     tripleo_container_image_build_registry: "{{ local_registry_ip }}:{{ local_registry_port }}"
-    tripleo_container_image_build_volumes:
-      - "/etc/yum.repos.d:/etc/yum.repos.d:z"
-      - "/etc/pki/rpm-gpg:/etc/pki/rpm-gpg:z"
-      - "/opt/gating_repo:/opt/gating_repo:z"
+    tripleo_container_image_build_volumes: "{{ container_image_build_volumes }}"
     tripleo_container_image_build_work_dir: "{{ working_dir }}/container-builds"
