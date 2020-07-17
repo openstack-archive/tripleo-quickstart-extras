@@ -43,7 +43,7 @@
     tempest_private_net_provider_type: 'geneve'
     tempest_public_subnet_cidr: '{{ tempest_cidr }}'
     tempest_public_subnet_gateway_ip: '{{ tempest_cidr|nthhost(1) }}'
-    tempest_public_subnet_allocation_pools: '{{ tempest_cidr|nthhost(100) ~ "-" ~ tempest_cidr|nthhost(150) }}'
+    tempest_public_subnet_allocation_pools: '{{ tempest_cidr|nthhost(100) ~ "-" ~ tempest_cidr|nthhost(120) }}'
     tempest_network_ping_gateway: true
   when: tempest_cidr is defined
 
@@ -80,44 +80,25 @@
     - ansible_distribution|lower in ['redhat', 'centos']
     - ansible_distribution_major_version is version('7', '==')
 
-- name: Load tempest skiplist file
-  include_vars: "{{ playbook_dir | dirname }}/vars/tempest_skip_{{ release | default('master') }}.yml"
+- name: Install and run tempest-skip tool
+  block:
+    - name: Install tempest-skip tool
+      vars:
+        tempest_skip_path: "{{ zuul.projects['opendev.org/openstack/openstack-tempest-skiplist'].src_dir }}"
+      include_role:
+        name: install_skiplist
 
-# TODO(arxcruz): For now this is the easiest way to fix this:
-# os_tempest uses the variable tempest_test_blacklist while we use
-# known_failures. Change now, means a lot of changes on other parts of the code
-# (tempestmail, validate-tempest, etc). Once we migrate to os_tempest we can
-# switch that.
-- name: Set tempest_test_blacklist
-  set_fact:
-    tempest_test_blacklist: "{{ known_failures | json_query('[?undercloud != `true`]') }}"
-  when:
-    - tempest_cloud_name != 'undercloud'
-    - not tempest_run_skipped | default(false) | bool
+    - name: Load tests to be skipped
+      vars:
+        list_skipped_yaml_file: "{{ zuul.projects['opendev.org/openstack/openstack-tempest-skiplist'].src_dir }}/roles/validate-tempest/vars/tempest_skip.yml"
+        list_skipped_release: "{{ release }}"
+      include_role:
+        name: list_skipped
 
-- name: set python_cmd
-  set_fact:
-    python_cmd: "python{{ ansible_python.version.major }}"
-    cacheable: true
-  when: python_cmd is not defined
-
-- name: Check if virtualenv is in the system
-  command: "{{ python_cmd }} -m virtualenv --version"
-  register: virtualenv_exist
-  failed_when: false
-  changed_when: false
-
-- when: virtualenv_exist.rc != 0
-  name: Install virtualenv
-  become: true
-  package:
-    state: present
-    name: >
-        {% if ansible_python.version.major == 3 %}
-        python3-virtualenv
-        {% else %}
-        python-virtualenv
-        {% endif %}
+    - name: Set tempest_test_blacklist
+      set_fact:
+        tempest_test_blacklist: "{{ tempest_skip_register.skipped_tests }}"
+  when: tempest_use_skiplist | default(true)
 
 - name: Run os_tempest role
   vars:
