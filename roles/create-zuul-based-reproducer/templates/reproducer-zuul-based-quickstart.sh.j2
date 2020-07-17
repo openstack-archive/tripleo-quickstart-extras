@@ -18,6 +18,7 @@
 : ${UPSTREAM_GERRIT_SSH_KEY:="id_rsa"}
 : ${RDO_GERRIT_SSH_KEY:="id_rsa"}
 : ${EXTRA_PARAMS:=""}
+: ${CONTAINER_MODE:="podman"}
 
 usage () {
     echo "Usage: $0 [options]"
@@ -146,6 +147,11 @@ while [ "x$1" != "x" ]; do
             shift
             ;;
 
+        --container-cli|-cont)
+            CONTAINER_MODE=$2
+            shift
+            ;;
+
         --help|-h)
             usage
             exit
@@ -195,45 +201,47 @@ install_package_deps_via_bindep
 # Ensure pip is updated
 sudo pip install --upgrade pip
 
-if [ -x "/usr/bin/docker" ] ; then
-    # Fail as early as possible if the docker
-    # group is not setup appropriately.
-    # This has to be done AFTER package intalls.
-    # Set up docker groups
-    if ! groups | grep -Eq "docker|dockerroot"; then
-        echo "$USER is not in the docker|dockerroot group."
-        if grep -q docker: /etc/group; then
-            DG=docker
-        elif grep -q dockerroot: /etc/group; then
-            DG=dockerroot
-        elif ! grep -q docker /etc/group; then
-            sudo groupadd docker
-            DG=docker
+if [[ "$CONTAINER_CLI" == "docker"]]; then
+    if [ -x "/usr/bin/docker" ] ; then
+        # Fail as early as possible if the docker
+        # group is not setup appropriately.
+        # This has to be done AFTER package intalls.
+        # Set up docker groups
+        if ! groups | grep -Eq "docker|dockerroot"; then
+            echo "$USER is not in the docker|dockerroot group."
+            if grep -q docker: /etc/group; then
+                DG=docker
+            elif grep -q dockerroot: /etc/group; then
+                DG=dockerroot
+            elif ! grep -q docker /etc/group; then
+                sudo groupadd docker
+                DG=docker
+            fi
+            sudo usermod -aG $DG $USER
+            echo -e "\e[31m WARNING: The script has exited the current shell in order to setup \
+        the user groups via usermod correctly. Please re-execute the script. \e[0m"
+            exec sg $DG newgrp `id -gn`
         fi
-        sudo usermod -aG $DG $USER
-        echo -e "\e[31m WARNING: The script has exited the current shell in order to setup \
-    the user groups via usermod correctly. Please re-execute the script. \e[0m"
-        exec sg $DG newgrp `id -gn`
-    fi
 
-    # This can only be checked after rpms are installed.
-    # Check the Docker config
-    if [[ -f /etc/docker/daemon.json ]]; then
-        if cat /etc/docker/daemon.json | grep '"group": "docker"'; then
-            echo "docker group is already added to /etc/docker/daemon.json"
-        elif cat /etc/docker/daemon.json | grep '"group": "dockerroot"'; then
-            echo "dockerroot group is already added to /etc/docker/daemon.json"
-        elif (( $(cat /etc/docker/daemon.json | wc -m) > 3 )); then
-            echo -e "\e[31m /etc/docker/daemon.json is populated. \
-                Exit this script and either clear the file or add the docker group. \e[0m" | xargs
-            exit 1
-        else
-            echo "The docker|dockerroot group will be added to /etc/docker/daemon.json."
+        # This can only be checked after rpms are installed.
+        # Check the Docker config
+        if [[ -f /etc/docker/daemon.json ]]; then
+            if cat /etc/docker/daemon.json | grep '"group": "docker"'; then
+                echo "docker group is already added to /etc/docker/daemon.json"
+            elif cat /etc/docker/daemon.json | grep '"group": "dockerroot"'; then
+                echo "dockerroot group is already added to /etc/docker/daemon.json"
+            elif (( $(cat /etc/docker/daemon.json | wc -m) > 3 )); then
+                echo -e "\e[31m /etc/docker/daemon.json is populated. \
+                    Exit this script and either clear the file or add the docker group. \e[0m" | xargs
+                exit 1
+            else
+                echo "The docker|dockerroot group will be added to /etc/docker/daemon.json."
+            fi
         fi
-    fi
 
-    # Ensure the docker process has been restarted
-    sudo systemctl restart docker
+        # Ensure the docker process has been restarted
+        sudo systemctl restart docker
+    fi
 fi
 
 # Start from a clean workspace
@@ -298,10 +306,10 @@ if [[ "$RDO_GERRIT_SSH_KEY" != "$USER_SSH_KEY" ]]; then
     EXTRA_PARAMS="$EXTRA_PARAMS -e rdo_gerrit_key=$RDO_GERRIT_SSH_KEY "
 fi
 
-
 # Run the launcher playbook
 PATH=${HOME}/.local/bin:$PATH ansible-playbook \
     $WORKSPACE/launcher-playbook.yaml \
+    -e container_mode="$CONTAINER_MODE" \
     -vv \
     --tags all \
     ${EXTRA_PARAMS[@]}
