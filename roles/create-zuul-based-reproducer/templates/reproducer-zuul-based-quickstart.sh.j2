@@ -201,7 +201,7 @@ install_package_deps_via_bindep
 # Ensure pip is updated
 sudo pip install --upgrade pip
 
-if [[ "$CONTAINER_CLI" == "docker"]]; then
+if [[ "$CONTAINER_MODE" == "docker" ]]; then
     if [ -x "/usr/bin/docker" ] ; then
         # Fail as early as possible if the docker
         # group is not setup appropriately.
