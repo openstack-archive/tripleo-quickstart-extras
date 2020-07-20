@@ -1,96 +1,13 @@
 ---
-- name: Fail the tempest playbook on undefined cloud name and install method
-  fail:
-    msg: |
-      The variable tempest_install_method and tempest_cloud_name is required and
-      has not been set.
-  when:
-    - tempest_install_method is not defined
-    - tempest_cloud_name is not defined
-
-- name: Initialize neutron service for network creation
-  set_fact:
-    tempest_service_available_neutron: true
-
-- name: Create /root/.config/openstack directory
-  file:
-    state: directory
-    path: "/root/.config/openstack"
-    mode: 0700
-  become: true
-
-- name: Copy clouds.yaml file to /root directory
-  block:
-    - name: Copy clouds.yaml file from user's home to /root directory
-      copy:
-        src: '{{ ansible_user_dir }}/.config/openstack/clouds.yaml'
-        remote_src: true
-        dest: '/root/.config/openstack/clouds.yaml'
-        mode: 0600
-      become: true
-  rescue:
-    - name: Copy clouds.yaml file /etc/openstack to /root directory
-      copy:
-        src: '/etc/openstack/clouds.yaml'
-        remote_src: true
-        dest: '/root/.config/openstack/clouds.yaml'
-        mode: 0600
-      become: true
-
-- name: Set network vars
-  set_fact:
-    tempest_public_net_physical_type: 'datacentre'
-    tempest_private_net_provider_type: 'geneve'
-    tempest_public_subnet_cidr: '{{ tempest_cidr }}'
-    tempest_public_subnet_gateway_ip: '{{ tempest_cidr|nthhost(1) }}'
-    tempest_public_subnet_allocation_pools: '{{ tempest_cidr|nthhost(100) ~ "-" ~ tempest_cidr|nthhost(120) }}'
-    tempest_network_ping_gateway: true
-  when: tempest_cidr is defined
-
-- name: Set tempest workspace related vars
-  set_fact:
-    tempest_use_tempestconf: true
-    tempest_service_setup_host: '{{ inventory_hostname }}'
-    tempest_workspace: "{{ ansible_user_dir }}/tempest"
-    stackviz_venv_bin: "{{ ansible_user_dir }}/stackviz_venv/bin"
-
-- name: set facts while running tempest from source
-  set_fact:
-    tempest_git_repo: https://opendev.org/openstack/tempest
-    tempest_tempestconf_git_repo: https://opendev.org/osf/python-tempestconf
-    tempest_tempestconf_venv_bin: "{{ ansible_user_dir }}/tempestconf_venv/bin"
-    tempest_venv_bin: "{{ ansible_user_dir }}/tempest_venv/bin"
-  when: tempest_install_method == 'source'
-
-- name: set cirros image facts for periodic
-  vars:
-    default_cirros_image: http://images.rdoproject.org/cirros/cirros-0.4.0-x86_64-disk.img
-  set_fact:
-    tempest_tempestconf_profile_extras:
-      image: "{{ featureset_override['cirros_image'] | default(default_cirros_image) }}"
-
-# stackviz in venv pulls oslo.db due upstream constraints,
-# but it dropped py2 support so on such system we need to skip it
-# https://bugs.launchpad.net/tripleo/+bug/1862134
-- name: disable stackviz in python2 environment
-  set_fact:
-    tempest_run_stackviz: false
-  when:
-    - release|default('master') in ['master', 'train']
-    - ansible_distribution|lower in ['redhat', 'centos']
-    - ansible_distribution_major_version is version('7', '==')
-
+# Load the skipp list
 - name: Install and run tempest-skip tool
   block:
     - name: Install tempest-skip tool
-      vars:
-        tempest_skip_path: "{{ zuul.projects['opendev.org/openstack/openstack-tempest-skiplist'].src_dir }}"
       include_role:
         name: install_skiplist
 
     - name: Load tests to be skipped
       vars:
-        list_skipped_yaml_file: "{{ zuul.projects['opendev.org/openstack/openstack-tempest-skiplist'].src_dir }}/roles/validate-tempest/vars/tempest_skip.yml"
         list_skipped_release: "{{ release }}"
       include_role:
         name: list_skipped
@@ -98,12 +15,107 @@
     - name: Set tempest_test_blacklist
       set_fact:
         tempest_test_blacklist: "{{ tempest_skip_register.skipped_tests }}"
-  when: tempest_use_skiplist | default(true)
 
-- name: Run os_tempest role
-  vars:
-    ansible_become: true
-    debug: true
-    tempest_run: 'yes'
-  include_role:
-    name: os_tempest
+# This will execute the validate-tempest
+- name: Execute validate-tempest (deprecated)
+  block:
+    - name: Execute validate-tempest role
+      include_role:
+        name: validate-tempest
+  when: run_tempest | bool
+
+# This will execute os_tempest
+- name: Execute os_tempest
+  block:
+    - name: Fail the tempest playbook on undefined cloud name and install method
+      fail:
+        msg: |
+          The variable tempest_install_method and tempest_cloud_name is required and
+          has not been set.
+      when:
+        - tempest_install_method is not defined
+        - tempest_cloud_name is not defined
+
+    - name: Initialize neutron service for network creation
+      set_fact:
+        tempest_service_available_neutron: true
+
+    - name: Create /root/.config/openstack directory
+      file:
+        state: directory
+        path: "/root/.config/openstack"
+        mode: 0700
+      become: true
+
+    - name: Copy clouds.yaml file to /root directory
+      block:
+        - name: Copy clouds.yaml file from user's home to /root directory
+          copy:
+            src: '{{ ansible_user_dir }}/.config/openstack/clouds.yaml'
+            remote_src: true
+            dest: '/root/.config/openstack/clouds.yaml'
+            mode: 0600
+          become: true
+      rescue:
+        - name: Copy clouds.yaml file /etc/openstack to /root directory
+          copy:
+            src: '/etc/openstack/clouds.yaml'
+            remote_src: true
+            dest: '/root/.config/openstack/clouds.yaml'
+            mode: 0600
+          become: true
+
+    - name: Set network vars
+      set_fact:
+        tempest_public_net_physical_type: 'datacentre'
+        tempest_private_net_provider_type: 'geneve'
+        tempest_public_subnet_cidr: '{{ tempest_cidr }}'
+        tempest_public_subnet_gateway_ip: '{{ tempest_cidr|nthhost(1) }}'
+        tempest_public_subnet_allocation_pools: '{{ tempest_cidr|nthhost(100) ~ "-" ~ tempest_cidr|nthhost(120) }}'
+        tempest_network_ping_gateway: true
+      when: tempest_cidr is defined
+
+    - name: Set tempest workspace related vars
+      set_fact:
+        tempest_use_tempestconf: true
+        tempest_service_setup_host: '{{ inventory_hostname }}'
+        tempest_workspace: "{{ ansible_user_dir }}/tempest"
+        stackviz_venv_bin: "{{ ansible_user_dir }}/stackviz_venv/bin"
+
+    - name: set facts while running tempest from source
+      set_fact:
+        tempest_git_repo: https://opendev.org/openstack/tempest
+        tempest_tempestconf_git_repo: https://opendev.org/osf/python-tempestconf
+        tempest_tempestconf_venv_bin: "{{ ansible_user_dir }}/tempestconf_venv/bin"
+        tempest_venv_bin: "{{ ansible_user_dir }}/tempest_venv/bin"
+      when: tempest_install_method == 'source'
+
+    - name: set cirros image facts for periodic
+      vars:
+        default_cirros_image: http://images.rdoproject.org/cirros/cirros-0.4.0-x86_64-disk.img
+      set_fact:
+        tempest_tempestconf_profile_extras:
+          image: "{{ featureset_override['cirros_image'] | default(default_cirros_image) }}"
+
+    # stackviz in venv pulls oslo.db due upstream constraints,
+    # but it dropped py2 support so on such system we need to skip it
+    # https://bugs.launchpad.net/tripleo/+bug/1862134
+    - name: disable stackviz in python2 environment
+      set_fact:
+        tempest_run_stackviz: false
+      when:
+        - release|default('master') in ['master', 'train']
+        - ansible_distribution|lower in ['redhat', 'centos']
+        - ansible_distribution_major_version is version('7', '==')
+
+    - name: Run os_tempest role
+      vars:
+        ansible_become: true
+        debug: true
+        tempest_run: 'yes'
+      include_role:
+        name: os_tempest
+  when:
+    - not run_tempest | bool
+    - use_os_tempest is defined
+    - use_os_tempest | bool

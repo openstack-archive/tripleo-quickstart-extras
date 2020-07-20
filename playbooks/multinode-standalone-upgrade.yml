@@ -62,8 +62,14 @@
 
 - name: Validate the Standalone upgrade
   hosts: undercloud
-  gather_facts: false
-  roles:
-    - {role: validate-tempest, when: run_tempest|bool}
+  # Note(chkumar246): Moved the os_tempest related var at the top
+  # of play level in order to have scope for the whole of the play
+  # https://bugs.launchpad.net/tripleo/+bug/1838496
+  vars:
+    tempest_install_method: distro
+    tempest_cloud_name: 'overcloud'
+    tempest_cidr: '192.168.24.0/24'
+  tasks:
+    - include_tasks: tempest.yml
   tags:
     - standalone-upgrade

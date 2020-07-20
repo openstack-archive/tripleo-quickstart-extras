@@ -18,7 +18,6 @@
   roles:
     - {role: validate-simple, when: test_ping|bool}
     - {role: validate-services, when: validate_services|default(false)|bool}
-    - {role: validate-tempest, when: run_tempest|bool}
 
 - name: Validate the deployment
   hosts: undercloud
@@ -31,10 +30,6 @@
     tempest_cidr: '192.168.24.0/24'
   tasks:
     - include_tasks: tempest.yml
-      when:
-        - not run_tempest|bool
-        - use_os_tempest is defined
-        - use_os_tempest|bool
   tags:
     - overcloud-validate
     - undercloud-validate
