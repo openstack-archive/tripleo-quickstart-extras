@@ -12,9 +12,18 @@
       include_role:
         name: list_skipped
 
-    - name: Set tempest_test_blacklist
+    - name: Add skiplist tests to tempest_test_blacklist - skip them
       set_fact:
         tempest_test_blacklist: "{{ tempest_skip_register.skipped_tests }}"
+      when: not tempest_run_skipped | default(false) | bool
+
+    - name: Add skiplist tests to tempest_test_whitelist - run them
+      set_fact:
+        tempest_test_whitelist: "{{ tempest_skip_register.skipped_tests }}"
+        tempest_test_blacklist: []
+      when: tempest_run_skipped | default(false) | bool
+
+  when: tempest_use_skiplist | default(true)
 
 # This will execute the validate-tempest
 - name: Execute validate-tempest (deprecated)
