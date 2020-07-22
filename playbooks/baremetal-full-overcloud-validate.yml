@@ -27,16 +27,7 @@
   roles:
     - {role: validate-simple, when: test_ping|bool}
 
-# Execute tempest using validate-tempest against the overcloud deployment
-- name: Execute tempest against the overcloud
-  hosts: undercloud
-  tags:
-    - overcloud-validate
-  gather_facts: false
-  roles:
-    - {role: validate-tempest, when: run_tempest|bool}
-
-# Execute tempest using os_tempest against the overcloud deployment
+# Execute tempest against the overcloud deployment
 - name: Validate the deployment
   hosts: undercloud
   tasks:
@@ -44,10 +35,6 @@
       vars:
         tempest_install_method: distro
         tempest_cloud_name: 'overcloud'
-      when:
-        - not run_tempest|bool
-        - use_os_tempest is defined
-        - use_os_tempest|bool
   tags:
     - overcloud-validate
 

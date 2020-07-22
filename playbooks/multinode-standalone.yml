@@ -51,7 +51,6 @@
   gather_facts: false
   roles:
     - {role: validate-services, when: validate_services|default(false)|bool}
-    - {role: validate-tempest, when: run_tempest|bool}
   tags:
     - standalone
 
@@ -66,9 +65,5 @@
     tempest_cloud_name: 'standalone'
   tasks:
     - include_tasks: tempest.yml
-      when:
-        - not run_tempest|bool
-        - use_os_tempest is defined
-        - use_os_tempest|bool
   tags:
     - standalone
