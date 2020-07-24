@@ -2,10 +2,6 @@
 # Load the skipp list
 - name: Install and run tempest-skip tool
   block:
-    - name: Install tempest-skip tool
-      include_role:
-        name: install_skiplist
-
     - name: Load tests to be skipped
       vars:
         list_skipped_release: "{{ release }}"
@@ -22,7 +18,13 @@
         tempest_test_whitelist: "{{ tempest_skip_register.skipped_tests }}"
         tempest_test_blacklist: []
       when: tempest_run_skipped | default(false) | bool
-
+  vars:
+    # when ansible.cfg have the option interpreter_python set to auto, ansible
+    # executes with the system python instead of virtualenv even though you are
+    # inside the virtualenv. Setting ansible_python_interpreter here ensures
+    # that this playbook will be executed the virtualenv python, which have the
+    # openstac-tempest-skiplist module
+    ansible_python_interpreter: "{{ local_working_dir }}/bin/python"
   when: tempest_use_skiplist | default(true)
 
 # This will execute the validate-tempest
