@@ -25,7 +25,9 @@
     # that this playbook will be executed the virtualenv python, which have the
     # openstac-tempest-skiplist module
     ansible_python_interpreter: "{{ local_working_dir }}/bin/python"
+    list_skipped_yaml_file: "{{ local_working_dir }}/usr/local/share/ansible/roles/validate-tempest/vars/tempest_skip.yml"
   when: tempest_use_skiplist | default(true)
+  delegate_to: localhost
 
 # This will execute the validate-tempest
 - name: Execute validate-tempest (deprecated)
