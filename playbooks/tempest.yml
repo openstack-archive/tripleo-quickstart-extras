@@ -29,6 +29,30 @@
   when: tempest_use_skiplist | default(true)
   delegate_to: localhost
 
+- name: set python_cmd
+  set_fact:
+    python_cmd: "python{{ ansible_python.version.major }}"
+    cacheable: true
+  when: python_cmd is not defined
+
+- name: Check if virtualenv is in the system
+  command: "{{ python_cmd }} -m virtualenv --version"
+  register: virtualenv_exist
+  failed_when: false
+  changed_when: false
+
+- when: virtualenv_exist.rc != 0
+  name: Install virtualenv
+  become: true
+  package:
+    state: present
+    name: >
+        {% if ansible_python.version.major == 3 %}
+        python3-virtualenv
+        {% else %}
+        python-virtualenv
+        {% endif %}
+
 - name: Create clouds.yaml if it doesn't exist
   shell: |
     source {{ ansible_user_dir }}/overcloudrc
