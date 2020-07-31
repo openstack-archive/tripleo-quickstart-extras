@@ -29,6 +29,51 @@
   when: tempest_use_skiplist | default(true)
   delegate_to: localhost
 
+- name: Create clouds.yaml if it doesn't exist
+  shell: |
+    source {{ ansible_user_dir }}/overcloudrc
+    mkdir -p {{ ansible_user_dir }}/.config/openstack
+    cat <<EOF>>{{ ansible_user_dir }}/.config/openstack/clouds.yaml
+    clouds:
+      {{ tempest_cloud_name }}:
+          identity_api_version: $OS_IDENTITY_API_VERSION
+          region_name: regionOne
+          auth:
+            auth_url: $OS_AUTH_URL
+            password: $OS_PASSWORD
+            username: $OS_USERNAME
+            user_domain_name: Default
+            project_domain_name: Default
+            project_name: $OS_PROJECT_NAME
+    EOF
+  when:
+    - release in ['queens', 'stein']
+    - use_os_tempest is defined
+    - use_os_tempest | bool
+
+# Ansible requires openstacksdk>=0.12 do the resource setup, however
+# queens upper-constraint has openstacksdk==0.11.36, so we need to
+# implement a custom venv with the right openstacksdk to make it work
+- name: Queens specific settings and tasks
+  when: release in ['queens']
+  vars:
+    sdk_venv_path: "{{ ansible_user_dir }}/.sdk"
+  block:
+    - name: Set tempest_service_setup_host_python_interpreter
+      set_fact:
+        tempest_service_setup_host_python_interpreter: "{{ sdk_venv_path }}/bin/python"
+
+    - name: Prepare openstacksdk venv
+      import_role:
+        name: "python_venv_build"
+      vars:
+        venv_build_constraints:
+          - "--constraint https://releases.openstack.org/constraints/upper/rocky"
+        venv_install_destination_path: "{{ sdk_venv_path }}"
+        venv_pip_packages:
+          - 'openstacksdk'
+        venv_wheel_build_enable: false
+
 # This will execute the validate-tempest
 - name: Execute validate-tempest (deprecated)
   block:
@@ -117,9 +162,9 @@
       set_fact:
         tempest_run_stackviz: false
       when:
-        - release|default('master') in ['master', 'train']
+        - release|default('master') in ['master', 'queens', 'stein', 'train']
         - ansible_distribution|lower in ['redhat', 'centos']
-        - ansible_distribution_major_version is version('7', '==')
+        - ansible_distribution_major_version is version('7', '=')
 
     - name: Run os_tempest role
       vars:
