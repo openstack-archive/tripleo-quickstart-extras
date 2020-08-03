@@ -153,7 +153,7 @@
         tempest_private_net_provider_type: 'geneve'
         tempest_public_subnet_cidr: '{{ tempest_cidr }}'
         tempest_public_subnet_gateway_ip: '{{ tempest_cidr|nthhost(1) }}'
-        tempest_public_subnet_allocation_pools: '{{ tempest_cidr|nthhost(100) ~ "-" ~ tempest_cidr|nthhost(120) }}'
+        tempest_public_subnet_allocation_pools: '{{ tempest_cidr|nthhost(100) ~ "-" ~ tempest_cidr|nthhost(150) }}'
         tempest_network_ping_gateway: true
       when: tempest_cidr is defined
 
