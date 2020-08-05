@@ -60,7 +60,9 @@
   set_fact:
     update_containers_append_tag: "{{ lookup('pipe','date +-updated-%Y%m%d%H%M%S') }}"
     cacheable: true
-  when: update_containers is defined and update_containers|bool and update_containers_append_tag is undefined
+  when:
+    - update_containers_append_tag is undefined
+    - (update_containers is defined and update_containers|bool) or (standalone_container_prep_updates is defined and standalone_container_prep_updates|bool)
   tags:
     - undercloud-install
 
