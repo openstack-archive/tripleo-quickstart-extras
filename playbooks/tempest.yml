@@ -91,6 +91,7 @@
       import_role:
         name: "python_venv_build"
       vars:
+        venv_python_executable: "{{ python_cmd }}"
         venv_build_constraints:
           - "--constraint https://releases.openstack.org/constraints/upper/rocky"
         venv_install_destination_path: "{{ sdk_venv_path }}"
