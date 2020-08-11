@@ -188,49 +188,66 @@
         add_repos_update: ",{{ add_repos_update | join(',') }}"
       when: add_repos_update|length > 0
 
+- name: Load the container params file data
+  slurp:
+    src: "{{ working_dir }}/containers-prepare-parameters.yaml"
+  register: containers_prepare_parameters
+
+- name: Parse container params
+  set_fact:
+    containers_prepare_parameters_yaml: "{{ containers_prepare_parameters['content'] | b64decode | from_yaml }}"
+
 # update params for container update
 - name: Add updates to container-prepare-parameters.yaml
   when:
     - standalone_container_prep_updates
     - not job.build_container_images|default(false)|bool
   block:
-    - name: Replace tag_from_label value
-      replace:
-        path: "{{ working_dir }}/containers-prepare-parameters.yaml"
-        regexp: " tag_from_label: (.*)"
-        replace: " tag_from_label: null"
-        backup: true
-
-    - name: Add settings to modify
-      blockinfile:
-        path: "{{ working_dir }}/containers-prepare-parameters.yaml"
-        state: present
-        backup: true
-        insertbefore: "(.*) tag_from_label: null"
-        block: |
-          #
-              push_destination: "{{ local_docker_registry_host }}:8787"
-              modify_role: tripleo-modify-image
-              modify_append_tag: "{{ update_containers_append_tag }}"
-              {% if osp_release is defined -%}
-              # no kolla labels are defined
-              {% else -%}
-              modify_only_with_labels:
-              - kolla_version
-              - tcib_managed
-              {% endif -%}
-              modify_vars:
-                tasks_from: yum_update.yml
-                yum_repos_dir_path: /etc/yum.repos.d
-                update_repo: "{{ standalone_container_prep_update_repo }}{{ add_repos_update|default('') }}"
+    - name: Generate modified containers file
+      set_fact:
+        containers_prepare_parameters_yaml: |-
+          {% set imageParams = [] %}
+          {% for item in containers_prepare_parameters_yaml['parameter_defaults']['ContainerImagePrepare'] %}
+          {%   set _ = item.__setitem__("push_destination", local_docker_registry_host ~ ":8787") %}
+          {%   set _ = item.__setitem__("modify_role", "tripleo-modify-image") %}
+          {%   set _ = item.__setitem__("modify_append_tag", update_containers_append_tag) %}
+          {% if not (osp_release is defined) %}
+          {%   set _ = item.__setitem__("modify_only_with_labels", ["kolla_version", "tcib_managed"]) %}
+          {% endif %}
+          {%   set _ = item.__setitem__(
+                "modify_vars",
+                {
+                  "tasks_from": "yum_update.yml",
+                  "yum_repos_dir_path": "/etc/yum.repos.d",
+                  "update_repo": standalone_container_prep_update_repo ~ add_repos_update | default('')
+                }
+              )
+          %}
+          {%   set _ = item.pop("tag_from_label", "") %}
+          {%   set _ = imageParams.append(item) %}
+          {% endfor %}
+          {% set defaults = {"ContainerImagePrepare": imageParams} %}
+          {{ {"parameter_defaults": defaults} }}
 
 - name: Update rhel_containers value
-  when: ansible_distribution == 'RedHat'
-  replace:
-    path: "{{ working_dir }}/containers-prepare-parameters.yaml"
-    regexp: "rhel_containers: false"
-    replace: "rhel_containers: true"
-    backup: true
+  when:
+    - ansible_distribution == 'RedHat'
+  set_fact:
+    containers_prepare_parameters_yaml: |-
+      {% set imageParams = [] %}
+      {% for item in (containers_prepare_parameters_yaml | from_yaml)['parameter_defaults']['ContainerImagePrepare'] %}
+      {%   if "set" in item %}
+      {%     set _ = item['set'].__setitem__("rhel_containers", true) %}
+      {%   endif %}
+      {%   set _ = imageParams.append(item) %}
+      {% endfor %}
+      {% set defaults = {"ContainerImagePrepare": imageParams} %}
+      {{ {"parameter_defaults": defaults} }}
+
+- name: Write containers-prepare-parameters.yaml
+  copy:
+    content: "{{ containers_prepare_parameters_yaml | to_nice_yaml }}"
+    dest: "{{ working_dir }}/containers-prepare-parameters.yaml"
 
 - name: Modify the insecure registry value when using podman
   when:
