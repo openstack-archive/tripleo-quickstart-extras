@@ -28,9 +28,8 @@ use_components={{ use_components }}
 [downstream_driver]
 info_files=osp.yml
 versions_url=https://trunk.rdoproject.org/centos8-master/current/versions.csv
-downstream_distro_branch={{ osp_release }}.0-rhel-8-trunk
-# downstream tag needs to be osp-17.0
-downstream_tag=osp-{{ osp_release.split('-')[1] }}.0
+downstream_distro_branch={{ osp_release }}{{ '.0' if '.' not in osp_release else '' }}-rhel-8-trunk
+downstream_tag=osp-{{ osp_release.split('-')[1] }}{{ '.0' if '.' not in osp_release else '' }}
 downstream_distgit_key=osp-distgit
 use_upstream_spec=true
 downstream_spec_replace_list=^%global with_doc.+/%global with_doc 0,^%global rhosp.*/%global rhosp 1
