@@ -58,5 +58,8 @@
     tempest_cloud_name: 'standalone'
   tasks:
     - include_tasks: tasks/tempest.yml
+  environment:
+    # Disable ssl warnings
+    CURL_CA_BUNDLE: ""
   tags:
     - standalone
