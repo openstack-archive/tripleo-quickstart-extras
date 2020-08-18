@@ -265,6 +265,10 @@
   include_role:
     name: validate-perf
 
+- name: Check whether control plane defaults to HA
+  set_fact:
+    tripleo_deploy_ha_control_plane: "{{ release not in ['newton', 'ocata', 'pike', 'queens', 'rocky', 'stein', 'train'] }}"
+
 - name: Run standalone via tripleo-operator-ansible
   collections:
     - tripleo.operator
@@ -274,7 +278,8 @@
     tripleo_deploy_debug: true
     tripleo_deploy_debug_arg: "{{ standalone_tripleo_deploy_debug_arg }}"
     tripleo_deploy_local_ip: "{{ standalone_ip }}/{{ standalone_network_prefix }}"
-    tripleo_deploy_control_virtual_ip: "{{ standalone_control_virtual_ip|default() }}"
+    tripleo_deploy_control_virtual_ip: "{{ standalone_control_virtual_ip|default() or \
+                                           (standalone_ha_control_virtual_ip|default() if tripleo_deploy_ha_control_plane) }}"
     tripleo_deploy_roles_file: "{{ overcloud_templates_path }}/roles/{{ standalone_role }}"
     tripleo_deploy_output_dir: "{{ working_dir }}"
     tripleo_deploy_environment_files: |-
