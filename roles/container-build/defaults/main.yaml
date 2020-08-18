@@ -18,3 +18,9 @@ local_registry_ip: 127.0.0.1
 local_registry_port: 5001
 container_registry_namespace: tripleomaster
 container_tag: current-tripleo
+docker_prep_prefix: >-
+  {% if job.build_container_images|default(false)|bool and not job.provider_job|default(false)|bool -%}
+  openstack
+  {%- else -%}
+  {{ ansible_distribution | lower }}-binary
+  {%- endif -%}

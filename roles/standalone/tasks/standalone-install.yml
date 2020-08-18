@@ -1,0 +1,68 @@
+---
+- name: Run dstat on the standalone prior to standalone deploy
+  include_role:
+    name: validate-perf
+
+- name: Check whether control plane defaults to HA
+  set_fact:
+    tripleo_deploy_ha_control_plane: "{{ release not in ['newton', 'ocata', 'pike', 'queens', 'rocky', 'stein', 'train'] }}"
+
+- name: Run standalone via tripleo-operator-ansible
+  collections:
+    - tripleo.operator
+  include_role:
+    name: tripleo_deploy
+  vars:
+    tripleo_deploy_debug: true
+    tripleo_deploy_debug_arg: "{{ standalone_tripleo_deploy_debug_arg }}"
+    tripleo_deploy_local_ip: "{{ standalone_ip }}/{{ standalone_network_prefix }}"
+    tripleo_deploy_control_virtual_ip: >-
+      {% if standalone_control_virtual_ip is not defined and tripleo_deploy_ha_control_plane|default(false)|bool -%}
+      {{ standalone_ha_control_virtual_ip|default() }}
+      {%- else -%}
+      {{ standalone_control_virtual_ip|default() }}
+      {%- endif -%}
+    tripleo_deploy_roles_file: "{{ overcloud_templates_path }}/roles/{{ standalone_role }}"
+    tripleo_deploy_output_dir: "{{ working_dir }}"
+    tripleo_deploy_environment_files: |-
+      {% set env_files = [overcloud_templates_path + '/environments/standalone/standalone-tripleo.yaml',
+                          working_dir + '/containers-prepare-parameters.yaml',
+                          working_dir + '/standalone_parameters.yaml']%}
+      {% if standalone_custom_env_files %}
+      {% set env_files = env_files + standalone_custom_env_files %}
+      {% endif %}
+      {{ env_files }}
+
+- when: standalone_ansible_lint|default(false)|bool
+  vars:
+    quickstart_venv: "{{ lookup('env','OPT_WORKDIR') }}"
+  block:
+    - name: Install ansible-lint
+      # noqa 403
+      pip:
+        name: ansible-lint
+        state: latest
+        virtualenv: "{{ quickstart_venv }}"
+
+    - name: List playbooks
+      shell: "find $(ls -rtd {{ working_dir }}/undercloud-ansible-* | tail -1)/ -name '*playbook*.yaml'"
+      register: playbooks
+
+    # We ignore (for now) the lint (rc==2), only catch syntax error
+    # (rc==1).
+    - name: Lint playbooks
+      shell: >
+        source {{ quickstart_venv }}/bin/activate;
+        exec 1>>{{ working_dir }}/{{ standalone_ansible_lint_log }};
+        exec 2>&1;
+        echo LINTING {{ item }};
+        ansible-lint -v {{ item }};
+        rc=$?;
+        echo DONE rc=$rc;
+        exit $rc
+      register: lint_result
+      environment:
+        ANSIBLE_LIBRARY: |
+          /usr/share/ansible-modules/:{{ lookup('env', 'ANSIBLE_LIBRARY') }}
+      with_items: "{{ playbooks.stdout_lines }}"
+      failed_when: lint_result.rc == 1

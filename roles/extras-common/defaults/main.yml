@@ -40,7 +40,12 @@ docker_registry_host: docker.io
 docker_registry_namespace: "tripleo{{ release }}"
 docker_image_tag: current-tripleo
 # docker prefix
-docker_prep_prefix: "{{ job.build_container_images|default(false)|bool | ternary('openstack-', (ansible_distribution | lower) ~ '-binary-') }}"
+docker_prep_prefix: >-
+  {% if job.build_container_images|default(false)|bool and not job.provider_job|default(false)|bool -%}
+  openstack-
+  {%- else -%}
+  {{ ansible_distribution | lower }}-binary-
+  {%- endif -%}
 # docker suffix
 docker_prep_suffix: ""
 docker_ceph_namespace: docker.io/ceph

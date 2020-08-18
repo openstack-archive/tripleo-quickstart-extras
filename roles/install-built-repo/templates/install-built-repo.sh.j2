@@ -18,7 +18,12 @@ EOF
 ps -ef | grep -i python | grep SimpleHTTPServer | awk '{print $2}' | xargs --no-run-if-empty kill -9 || true
 pushd /opt/gating_repo
 iptables -I INPUT -p tcp --dport 8766 -j ACCEPT
-nohup python -m SimpleHTTPServer 8766 1>{{ working_dir }}/pkg_mgr_mirror.log 2>{{ working_dir }}/pkg_mgr_mirror_error.log &
+if command -v python3
+then
+    nohup python3 -m http.server 8766 1>{{ working_dir }}/pkg_mgr_mirror.log 2>{{ working_dir }}/pkg_mgr_mirror_error.log &
+else
+    nohup python -m SimpleHTTPServer 8766 1>{{ working_dir }}/pkg_mgr_mirror.log 2>{{ working_dir }}/pkg_mgr_mirror_error.log &
+fi
 popd
 cat > {{ working_dir }}//web-gating.repo << EOF
 [gating-repo]

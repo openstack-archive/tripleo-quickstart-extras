@@ -19,11 +19,18 @@
   podman_container:
     name: docker_registry
     image: registry:2
-    net: host
+    publish:
+      - "{{ local_registry_port }}:{{ local_registry_port }}"
     env:
-      REGISTRY_HTTP_ADDR: "{{ local_registry_ip }}:{{ local_registry_port }}"
+      REGISTRY_HTTP_ADDR: "0.0.0.0:{{ local_registry_port }}"
   tags:
     - skip_ansible_lint
+
+- name: Open port for local registry
+  become: true
+  command: >-
+    iptables -I INPUT -p tcp --dport {{ local_registry_port }} -j ACCEPT
+  changed_when: true
 
 - name: Set container_image_build_volumes fact
   set_fact:
@@ -56,3 +63,4 @@
     tripleo_container_image_build_registry: "{{ local_registry_ip }}:{{ local_registry_port }}"
     tripleo_container_image_build_volumes: "{{ container_image_build_volumes }}"
     tripleo_container_image_build_work_dir: "{{ working_dir }}/container-builds"
+    tripleo_container_image_build_prefix: "{{ docker_prep_prefix }}"
