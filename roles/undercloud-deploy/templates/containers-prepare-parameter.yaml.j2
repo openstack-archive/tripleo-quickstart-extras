@@ -9,10 +9,14 @@ parameter_defaults:
 {% if update_containers|bool and not use_overcloud_mixed_upgrade|default(false)|bool %}
     modify_role: tripleo-modify-image
     modify_append_tag: "{{ update_containers_append_tag }}"
+{% if release in ['rocky', 'stein'] %}
     modify_only_with_labels:
     - kolla_version
-{% if release not in ['queens', 'rocky', 'stein']%}
     - tcib_managed
+{% else %}
+    modify_only_with_source:
+    - kolla
+    - tripleo
 {% endif %}
     modify_vars:
       tasks_from: yum_update.yml

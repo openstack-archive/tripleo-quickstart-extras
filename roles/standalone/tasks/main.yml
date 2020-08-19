@@ -212,11 +212,11 @@
           {%   set _ = item.__setitem__("modify_role", "tripleo-modify-image") %}
           {%   set _ = item.__setitem__("modify_append_tag", update_containers_append_tag) %}
           {% if not (osp_release is defined) %}
-          {% if release in ['queens', 'rocky', 'stein'] %}
-          {%   set _ = item.__setitem__("modify_only_with_labels", ["kolla_version"]) %}
-          {% else %}
-          {%   set _ = item.__setitem__("modify_only_with_labels", ["kolla_version", "tcib_managed"]) %}
-          {% endif %}
+          {%   if release in ['rocky', 'stein'] %}
+          {%     set _ = item.__setitem__("modify_only_with_labels", ["kolla_version"]) %}
+          {%   else %}
+          {%     set _ = item.__setitem__("modify_only_with_source", ["kolla", "tripleo"]) %}
+          {%   endif %}
           {% endif %}
           {%   set _ = item.__setitem__(
                 "modify_vars",
