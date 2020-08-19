@@ -20,6 +20,15 @@ Role Variables
 provisioning interface (which is hardcoded to eth1)
 - `supplemental_user`: <stack> The user which is used to deploy FreeIpa on the supplemental node
 - `ipa_server_install_params`: <''> -- Additional parameters to pass to the ipa-server-install command
+- `prepare_ipa`: If set to true, it will install novajoin or tripleo-ipa in the
+  undercloud, and run a script that will create the required privileges/permissions
+  in FreeIPA, as well as the undercloud host entry. This requires
+  'enable_tls_everywhere' to be set to true, and the following variables to be
+  properly defined: 'freeipa_admin_password', 'freeipa_server_hostname',
+  'overcloud_cloud_domain', 'undercloud_undercloud_hostname'. If you plan to do
+  this yourself, you can set this variable to false. Defaults to true.
+- `undercloud_enable_novajoin`: <'true'> -- uses old novajoin service to register
+  overcloud nodes into IPA when 'enable_tls_everywhere' is enabled.
 
 Example Playbook
 ----------------

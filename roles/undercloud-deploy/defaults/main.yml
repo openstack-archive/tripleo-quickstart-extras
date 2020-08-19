@@ -37,8 +37,8 @@ undercloud_ironic_ipxe_port: 3816
 
 undercloud_conf_extra: ""
 
-undercloud_enable_novajoin: false
-prepare_novajoin: true
+undercloud_enable_novajoin: true
+prepare_ipa: true
 
 # location which the novajoin-ipa-setup will store the FreeIPA token
 freeipa_otp_key: /tmp/ipa-otp.txt

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -eux
+
+### --start_docs
+
+## Set up the necessary permissions/privileges in novajoin
+## =======================================================
+
+
+## * Ensure that the undercloud is using the FreeIPA server
+##   as its DNS server
+## * Make sure that the undercloud_undercloud_hostname resolves
+##   (undercloud.openstacklocal is originally set in prepare-slave.yml)
+## * Set the hostname to undercloud_undercloud_hostname
+## * Make sure the /etc/novajoin directory is created, so that the keytab can
+##   be saved there (ipa-getkeytab doesn't create that directory)
+
+## .. Note:: You may not use sudo and use output redirection '>'::
+
+sudo /bin/su -c "echo -e 'search {{ overcloud_cloud_domain }}\nnameserver {{ undercloud_undercloud_nameservers[-1] }}' > /etc/resolv.conf"
+sudo sed -i "s/undercloud.openstacklocal/{{ undercloud_undercloud_hostname }} undercloud.openstacklocal/" /etc/hosts
+sudo hostnamectl set-hostname {{ undercloud_undercloud_hostname }}
+
+sudo install -d -m 755 --context=system_u:object_r:etc_t:s0 /etc/novajoin
+### --stop_docs
