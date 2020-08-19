@@ -11,7 +11,9 @@ parameter_defaults:
     modify_append_tag: "{{ update_containers_append_tag }}"
     modify_only_with_labels:
     - kolla_version
+{% if release not in ['queens', 'rocky', 'stein']%}
     - tcib_managed
+{% endif %}
     modify_vars:
       tasks_from: yum_update.yml
       yum_repos_dir_path: /etc/yum.repos.d
