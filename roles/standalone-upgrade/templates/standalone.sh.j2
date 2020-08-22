@@ -11,6 +11,9 @@ sudo yum update -y \
 sudo openstack tripleo upgrade $PROMPT_ANSWER \
   --templates \
   --local-ip={{ standalone_ip }}/{{ standalone_network_prefix }} \
+{% if standalone_upgrade_control_virtual_ip %}
+  --control-virtual-ip={{ standalone_upgrade_control_virtual_ip }} \
+{% endif %}
   -e {{ overcloud_templates_path }}/environments/standalone/standalone-tripleo.yaml \
   -r {{ overcloud_templates_path }}/roles/{{ standalone_role }} \
   -e "{{ working_dir }}/containers-prepare-parameters-upgrade.yaml" \

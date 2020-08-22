@@ -20,11 +20,22 @@
     {{ working_dir }}/standalone-container-prep-upgrade.sh 2>&1 {{ timestamper_cmd }} > {{ working_dir }}/{{ standalone_container_prep_log }}
   changed_when: true
 
+- name: Check whether control plane defaults to HA
+  set_fact:
+    standalone_upgrade_ha_control_plane: "{{ release not in ['newton', 'ocata', 'pike', 'queens', 'rocky', 'stein', 'train'] }}"
+
 - name: Create the upgrade command for standalone
   template:
     src: "{{ standalone_upgrade_script }}"
     dest: "{{ working_dir }}/standalone-upgrade.sh"
     mode: 0755
+  vars:
+    standalone_upgrade_control_virtual_ip: >-
+      {% if standalone_control_virtual_ip is not defined and standalone_upgrade_ha_control_plane|default(false)|bool -%}
+      {{ standalone_ha_control_virtual_ip|default() }}
+      {%- else -%}
+      {{ standalone_control_virtual_ip|default() }}
+      {%- endif -%}
 
 - name: Upgrade the standalone
   shell: >

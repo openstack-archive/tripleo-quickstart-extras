@@ -3,6 +3,7 @@ standalone_config: standalone_config.yaml.j2
 standalone_network: 192.168.24
 standalone_network_prefix: 24
 standalone_ip: 192.168.24.1
+standalone_ha_control_virtual_ip: 192.168.24.3
 standalone_interface: br-ex
 
 # container prep script
