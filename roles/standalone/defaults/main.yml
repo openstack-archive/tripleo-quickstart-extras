@@ -20,7 +20,7 @@ standalone_container_prep_updates: >-
 gating_repo_name: gating-repo
 container_prep_additional_repos: ""
 standalone_container_prep_update_repo: >-
-  {% if compressed_gating_repo is defined %}{{ gating_repo_name }},{% endif %}delorean-current,quickstart-centos-ceph-nautilus
+  {% if compressed_gating_repo is defined %}{{ gating_repo_name }},{% endif %}delorean-current
   {%- if container_prep_additional_repos -%},{{ container_prep_additional_repos }}{%- endif -%}
 
 # deploy script
