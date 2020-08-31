@@ -12,7 +12,6 @@ parameter_defaults:
 {% if release in ['rocky', 'stein'] %}
     modify_only_with_labels:
     - kolla_version
-    - tcib_managed
 {% else %}
     modify_only_with_source:
     - kolla
