@@ -1,12 +1,17 @@
 parameter_defaults:
   DockerInsecureRegistryAddress:
   - {{ local_docker_registry_host }}:8787
+{% if job.registry_ip_address is defined %}
+  - {{ docker_registry_host }}
+{% endif %}
 {% if undercloud_docker_registry_mirror is defined and undercloud_docker_registry_mirror %}
   DockerRegistryMirror: {{ undercloud_docker_registry_mirror }}
 {% endif %}
   ContainerImagePrepare:
   - push_destination: "{{ local_docker_registry_host }}:8787"
-{% if update_containers|bool and not use_overcloud_mixed_upgrade|default(false)|bool %}
+{% if update_containers|bool
+   and not use_overcloud_mixed_upgrade|default(false)|bool
+   and not job.consumer_job | default(false) | bool %}
     modify_role: tripleo-modify-image
     modify_append_tag: "{{ update_containers_append_tag }}"
 {% if release in ['rocky', 'stein'] %}
