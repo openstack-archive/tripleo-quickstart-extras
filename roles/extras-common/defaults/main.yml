@@ -40,11 +40,14 @@ docker_registry_host: docker.io
 docker_registry_namespace: "tripleo{{ release }}"
 docker_image_tag: current-tripleo
 # docker prefix
+# Notes(chandankumar): openstack- prefix is used from victoria release onwards
 docker_prep_prefix: >-
-  {% if job.build_container_images|default(false)|bool and not job.provider_job|default(false)|bool -%}
-  openstack-
+  {% if (job.build_container_images|default(false)|bool and
+        not job.provider_job|default(false)|bool) or
+        release not in ['queens', 'rocky', 'pike', 'stein', 'train', 'ussuri'] -%}
+  openstack
   {%- else -%}
-  {{ ansible_distribution | lower }}-binary-
+  {{ ansible_distribution | lower }}-binary
   {%- endif -%}
 # docker suffix
 docker_prep_suffix: ""
