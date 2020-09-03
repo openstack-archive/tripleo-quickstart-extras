@@ -41,9 +41,16 @@ standalone_container_cli: docker
 
 standalone_custom_env_files: []
 
-standalone_container_ceph_updates: true
+standalone_container_ceph_updates: false
 
 standalone_tripleo_deploy_debug_arg: false
 
 local_registry_ip: 127.0.0.1
 local_registry_port: 5001
+
+# containers related params
+custom_ceph_parameters: "{{ job.consumer_job|default(false)|bool }}"
+custom_ceph_alertmanager_namespace: quay.io/prometheus
+custom_ceph_grafana_namespace: quay.io/app-sre
+custom_ceph_node_exporter_namespace: quay.io/prometheus
+custom_ceph_prometheus_namespace: quay.io/prometheus
