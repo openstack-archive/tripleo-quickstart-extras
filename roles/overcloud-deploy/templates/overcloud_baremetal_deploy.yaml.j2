@@ -5,7 +5,8 @@
 - name: {{ role }}
   count: {{ role_count }}
 {% if role_profile %}
-  profile: {{ role_profile }}
+  defaults:
+    profile: {{ role_profile }}
 {% endif %}
 {% endif %}
 {% endfor %}
