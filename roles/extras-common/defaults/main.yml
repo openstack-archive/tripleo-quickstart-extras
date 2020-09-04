@@ -103,7 +103,12 @@ validate_services: false
 baremetal_provision: false
 
 # If `undercloud_enable_nova` is `true`, the undercloud will have running glance and nova services
-undercloud_enable_nova: true
+undercloud_enable_nova: >-
+  {% if release in ['queens', 'rocky', 'stein', 'train', 'ussuri'] -%}
+  true
+  {%- else -%}
+  false
+  {%- endif %}
 
 # Set the location for the downloaded amphora image when download_amphora is true
 octavia_amphora_path: >-
