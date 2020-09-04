@@ -71,7 +71,7 @@
             project_name: $OS_PROJECT_NAME
     EOF
   when:
-    - release in ['queens', 'stein']
+    - release in ['queens', 'rocky', 'stein']
     - use_os_tempest is defined
     - use_os_tempest | bool
 
