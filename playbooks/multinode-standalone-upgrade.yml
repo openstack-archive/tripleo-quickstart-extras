@@ -38,11 +38,13 @@
 - name: Standalone upgrade runs DLRN gate role and install repo
   hosts: undercloud
   vars:
-    artg_compressed_gating_repo: "${HOME}/gating_repo.tar.gz"
+    artg_compressed_gating_repo: "/home/{{ undercloud_user }}/gating_repo.tar.gz"
     # This should not be enabled because the updating of the packages occurs
     # durring the upgrade process. For general installation it's ok to have
     # this enabled, but this needs to be disabled for upgrades
     ib_gating_repo_update: false
+    # pass build_repo_dir https://bugs.launchpad.net/tripleo/+bug/1895138
+    build_repo_dir: "/home/{{ undercloud_user }}"
   roles:
     - build-test-packages
     - {role: install-built-repo, when: compressed_gating_repo is defined}
@@ -67,7 +69,7 @@
   # https://bugs.launchpad.net/tripleo/+bug/1838496
   vars:
     tempest_install_method: distro
-    tempest_cloud_name: 'overcloud'
+    tempest_cloud_name: 'standalone'
     tempest_cidr: '192.168.24.0/24'
   tasks:
     - include_tasks: tempest.yml
