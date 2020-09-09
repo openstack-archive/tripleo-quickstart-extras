@@ -6,3 +6,4 @@
     src: "{{ overcloud_prep_flavors_script }}"
     dest: "{{ working_dir }}/overcloud-prep-flavors.sh"
     mode: 0755
+  when: undercloud_enable_nova|bool

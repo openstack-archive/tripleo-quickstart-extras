@@ -5,3 +5,4 @@
     {{ working_dir }}/overcloud-prep-flavors.sh 2>&1 {{ timestamper_cmd }} >
     {{ overcloud_prep_flavors_log }}
   changed_when: true
+  when: undercloud_enable_nova|bool
