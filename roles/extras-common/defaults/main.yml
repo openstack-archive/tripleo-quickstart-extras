@@ -124,3 +124,9 @@ undercloud_enable_mistral: >-
   {%- else -%}
   false
   {%- endif %}
+undercloud_enable_zaqar: >-
+  {% if release in ['queens', 'rocky', 'stein', 'train'] -%}
+  true
+  {%- else -%}
+  false
+  {%- endif %}
