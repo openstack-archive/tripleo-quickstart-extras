@@ -44,7 +44,8 @@
   tags:
     - overcloud-prep-flavors
   roles:
-    - overcloud-prep-flavors
+    - {role: overcloud-prep-flavors,
+       when: step_overcloud_prep_flavors|bool and undercloud_enable_nova|bool}
 
 # Prepare the undercloud networks for the overcloud deployment
 - name: Prepare the undercloud networks for the overcloud deployment

@@ -110,6 +110,13 @@ undercloud_enable_nova: >-
   false
   {%- endif %}
 
+step_overcloud_prep_flavors: >-
+  {% if release in ['newton','ocata','pike','queens','rocky','stein','train', 'ussuri'] -%}
+  true
+  {%- else -%}
+  false
+  {%- endif -%}
+
 # Set the location for the downloaded amphora image when download_amphora is true
 octavia_amphora_path: >-
   {% if release in ['queens', 'rocky'] -%}
