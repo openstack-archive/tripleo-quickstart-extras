@@ -5,6 +5,7 @@
     - name: Load tests to be skipped
       vars:
         list_skipped_release: "{{ release }}"
+        list_skipped_job: "{{ zuul.job | default(omit) }}"
       include_role:
         name: list_skipped
 
