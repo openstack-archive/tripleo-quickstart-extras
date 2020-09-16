@@ -61,6 +61,7 @@
     tripleo_container_image_build_tag: "{{ container_tag }}"
     tripleo_container_image_build_push: true
     tripleo_container_image_build_registry: "{{ local_registry_ip }}:{{ local_registry_port }}"
+    tripleo_container_image_build_rhel_modules: "{{ rhel_modules|default('') }}"
     tripleo_container_image_build_volumes: "{{ container_image_build_volumes }}"
     tripleo_container_image_build_work_dir: "{{ working_dir }}/container-builds"
     tripleo_container_image_build_prefix: "{{ docker_prep_prefix }}"
