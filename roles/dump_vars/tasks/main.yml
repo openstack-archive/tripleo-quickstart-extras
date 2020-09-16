@@ -1,34 +1,28 @@
 ---
 - name: Prepare directory with extra logs
   file: dest={{ dump_vars_log_dir }} state=directory
-  become: true
 
 - name: generate dump_variables_vars script
   template:
     src: dump_variables_vars.j2
-    dest: "{{ dump_vars_log_dir }}/dump_variables_vars.json"
-  become: true
+    dest: "{{ dump_vars_log_dir }}/dump_variables_vars.yaml"
 
 - name: generate dump_variables_environment script
   template:
     src: dump_variables_environment.j2
-    dest: "{{ dump_vars_log_dir }}/dump_variables_environment.json"
-  become: true
+    dest: "{{ dump_vars_log_dir }}/dump_variables_environment.yaml"
 
 - name: generate dump_variables_group_names script
   template:
     src: dump_variables_group_names.j2
-    dest: "{{ dump_vars_log_dir }}/dump_variables_group_names.json"
-  become: true
+    dest: "{{ dump_vars_log_dir }}/dump_variables_group_names.yaml"
 
 - name: generate dump_variables_groups script
   template:
     src: dump_variables_groups.j2
-    dest: "{{ dump_vars_log_dir }}/dump_variables_groups.json"
-  become: true
+    dest: "{{ dump_vars_log_dir }}/dump_variables_groups.yaml"
 
 - name: generate dump_variables_hostvars script
   template:
     src: dump_variables_hostvars.j2
-    dest: "{{ dump_vars_log_dir }}/dump_variables_hostvars.json"
-  become: true
+    dest: "{{ dump_vars_log_dir }}/dump_variables_hostvars.yaml"
