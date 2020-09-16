@@ -28,3 +28,4 @@ ipa_packages:
   - ipa-server-dns
   - curl
   - iptables
+forwarder_address: 1.1.1.1

@@ -68,6 +68,11 @@
     - ansible_os_family == 'RedHat'
     - ansible_lsb.major_release is version(8, '>=')
 
+- name: cat out resolv.conf to see original DNS config
+  become: true
+  debug:
+    msg: "Content of resolv.conf before modifications: {{ lookup('file', '/etc/resolv.conf') }}"
+
 - name: remove any existing entries from the resolv.conf file
   become: true
   lineinfile:
@@ -100,6 +105,7 @@
     ansible-playbook -vvv
     --ssh-extra-args "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
     -e ipaclient_hostname="{{ undercloud_hostname }}"
+    -e tripleo_ipa_client_install_packages=false
     /usr/share/ansible/tripleo-playbooks/undercloud-ipa-install.yaml
     | tee undercloud-ipa-install.log
   environment:
