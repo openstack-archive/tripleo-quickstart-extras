@@ -77,7 +77,12 @@ rhel_containers: >-
    {%- else -%}
    false
    {%- endif -%}
-additional_insecure_registry: false
+additional_insecure_registry: >-
+  {% if job.registry_ip_address_branch is defined and release in ['queens'] -%}
+  true
+  {%- else -%}
+  false
+  {%- endif -%}
 deployed_server: false
 overcloud_templates_path: /usr/share/openstack-tripleo-heat-templates
 enable_tls_everywhere: false

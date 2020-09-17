@@ -3,6 +3,8 @@ parameter_defaults:
   - {{ local_docker_registry_host }}:8787
 {% if job.consumer_job | default(false) | bool %}
   - {{ job.registry_ip_address_branch[release] }}:{{ local_registry_port }}
+{% else %}
+  - docker.io
 {% endif %}
 {% if undercloud_docker_registry_mirror is defined and undercloud_docker_registry_mirror %}
   DockerRegistryMirror: {{ undercloud_docker_registry_mirror }}

@@ -15,6 +15,17 @@ set -eux
 ## * Add an additional insecure registry if needed
 ## ::
 {% if additional_insecure_registry|bool %}
+{% if job.registry_ip_address_branch is defined %}
+if egrep -q "^INSECURE_REGISTRY=.*{{ job.registry_ip_address_branch[release] }}:{{ local_registry_port }}.*" /etc/sysconfig/docker; then
+    echo "/etc/sysconfig/docker contains the correct settings"
+else
+    echo "updating /etc/sysconfig/docker for internal registry"
+    sudo sed -i \
+        -e "s/^INSECURE_REGISTRY=\"\(.*\)\"/INSECURE_REGISTRY=\"\1 --insecure-registry {{ job.registry_ip_address_branch[release] }}:{{ local_registry_port }}\"/g" \
+        /etc/sysconfig/docker
+    sudo systemctl restart docker
+fi
+{% else %}
 if egrep -q "^INSECURE_REGISTRY=.*{{docker_registry_host}}.*" /etc/sysconfig/docker; then
     echo "/etc/sysconfig/docker contains the correct settings"
 else
@@ -22,6 +33,7 @@ else
     sudo sed -i -e "s/^INSECURE_REGISTRY=\"\(.*\)\"/INSECURE_REGISTRY=\"\1 --insecure-registry {{ docker_registry_host }}\"/g" /etc/sysconfig/docker
     sudo systemctl restart docker
 fi
+{% endif %}
 {% endif %}
 
 PREPARE_ARGS=${PREPARE_ARGS:-"{{ prepare_service_env_args }}"}
