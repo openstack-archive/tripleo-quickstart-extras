@@ -3,13 +3,13 @@
 # needed to avoid potential failure when role is used without gather
 - name: gather facts used by role
   setup:
-    gather_subset: "!min,user_dir,python,processor,pkg_mgr,distribution"
-  when: >
-    ansible_user_dir is not defined or
-    ansible_python is not defined or
-    ansible_processor_vcpus is not defined or
-    ansible_pkg_mgr is not defined or
-    ansible_distribution is not defined
+    gather_subset:
+      - '!min'
+      - user_dir
+      - python
+      - processor
+      - pkg_mgr
+      - distribution
 
 - name: set python_cmd
   set_fact:
