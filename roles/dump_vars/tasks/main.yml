@@ -1,6 +1,10 @@
 ---
 - name: Prepare directory with extra logs
-  file: dest={{ dump_vars_log_dir }} state=directory
+  become: true
+  file:
+    dest: "{{ dump_vars_log_dir }}"
+    state: directory
+    mode: 0777
 
 - name: generate dump_variables_vars script
   template:
