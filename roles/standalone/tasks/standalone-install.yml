@@ -32,6 +32,8 @@
       {% set env_files = env_files + standalone_custom_env_files %}
       {% endif %}
       {{ env_files }}
+    # NOTE(mwhahaha): option no longer required as of V.
+    tripleo_deploy_standalone: "{{ release in ['rocky', 'stein', 'train', 'ussuri'] }}"
 
 - when: standalone_ansible_lint|default(false)|bool
   vars:
