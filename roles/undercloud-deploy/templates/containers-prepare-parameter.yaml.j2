@@ -1,8 +1,8 @@
 parameter_defaults:
   DockerInsecureRegistryAddress:
   - {{ local_docker_registry_host }}:8787
-{% if job.registry_ip_address is defined %}
-  - {{ docker_registry_host }}
+{% if job.consumer_job | default(false) | bool %}
+  - {{ job.registry_ip_address_branch[release] }}:{{ local_registry_port }}
 {% endif %}
 {% if undercloud_docker_registry_mirror is defined and undercloud_docker_registry_mirror %}
   DockerRegistryMirror: {{ undercloud_docker_registry_mirror }}
@@ -35,8 +35,8 @@ parameter_defaults:
 {% endif %}
     set:
       tag: "{{ container_build_id }}"
-{% if job.consumer_job | default(false) | bool and job.registry_ip_address is defined %}
-      namespace: "{{ job.registry_ip_address }}:{{ local_registry_port }}/{{ docker_registry_namespace_used }}"
+{% if job.consumer_job | default(false) | bool %}
+      namespace: "{{ job.registry_ip_address_branch[release] }}:{{ local_registry_port }}/{{ docker_registry_namespace_used }}"
 {% else %}
       namespace: "{{ docker_registry_host }}/{{ docker_registry_namespace_used }}"
 {% endif %}
