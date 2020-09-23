@@ -12,4 +12,8 @@ skip_list:
     - 602  # Don't compare to empty string
     - 504  # Do not use 'local_action', use 'delegate_to: localhost'
     - 701  # No 'galaxy_info' found
+    - 208  # [E208] File permissions unset or incorrect
+    - 106  # [E106] Role name {} does not match ^[a-z][a-z0-9_]+$ pattern
+    - 207  # [E207] Nested jinja pattern
+    - 306  # [E306] Shells that use pipes should set the pipefail option
 verbosity: 1
