@@ -21,7 +21,7 @@ container_tag: current-tripleo
 container_file: /usr/share/openstack-tripleo-common/container-images/tripleo_containers.yaml
 # Notes(chandankumar): openstack- prefix is used from victoria release onwards
 docker_prep_prefix: >-
-  {% if (job.build_container_images|default(false)|bool and
+  {% if (build_container_images|default(false)|bool and
         not job.provider_job|default(false)|bool) or
         release not in ['queens', 'rocky', 'pike', 'stein', 'train', 'ussuri'] -%}
   openstack

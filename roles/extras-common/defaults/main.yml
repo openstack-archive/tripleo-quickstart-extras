@@ -47,10 +47,14 @@ docker_registry_host: >-
   {%- endif -%}
 docker_registry_namespace: "tripleo{{ release }}"
 docker_image_tag: current-tripleo
+
+# set default and convert job.build_container_images to native
+build_container_images: "{{ job.build_container_images|default(false)|bool }}"
+
 # docker prefix
 # Notes(chandankumar): openstack- prefix is used from victoria release onwards
 docker_prep_prefix: >-
-  {% if (job.build_container_images|default(false)|bool and
+  {% if (build_container_images|default(false)|bool and
         not job.provider_job|default(false)|bool) or
         release not in ['queens', 'rocky', 'pike', 'stein', 'train', 'ussuri'] -%}
   openstack

@@ -12,7 +12,7 @@ parameter_defaults:
 {% if job.consumer_job|default(false)|bool or (standalone_container_prep_updates is defined and standalone_container_prep_updates) %}
   DockerInsecureRegistryAddress:
   - {{ standalone_ip }}:8787
-{% if job.build_container_images|default(false)|bool or job.consumer_job|default(false)|bool %}
+{% if build_container_images|default(false)|bool or job.consumer_job|default(false)|bool %}
   - {{ local_registry_ip }}:{{ local_registry_port }}
 {% endif %}
 {% if job.consumer_job | default(false) | bool %}
