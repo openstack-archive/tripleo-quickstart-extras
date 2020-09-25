@@ -18,7 +18,7 @@
   become: true
   podman_container:
     name: docker_registry
-    image: registry:2
+    image: quay.io/tripleoci/registry:2
     publish:
       - "{{ local_registry_port }}:{{ local_registry_port }}"
     env:
