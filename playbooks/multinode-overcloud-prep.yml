@@ -49,3 +49,15 @@
   roles:
     - {role: tripleo-validations,
        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
+
+- name: Ensure openvswitch is started and enabled
+  hosts: overcloud
+  tags:
+    - overcloud-deploy
+  tasks:
+    - name: Ensure openvswitch is started and enabled
+      become: true
+      service:
+        name: openvswitch
+        state: started
+        enabled: true
