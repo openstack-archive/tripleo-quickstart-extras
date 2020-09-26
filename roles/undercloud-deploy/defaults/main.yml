@@ -113,3 +113,6 @@ undercloud_upgrade_composable_scenario: ""
 undercloud_prep_post_hook_script: ""
 undercloud_tht_rpm_url: ""
 download_undercloud_templates_rpm: false
+
+local_registry_ip: 127.0.0.1
+local_registry_port: 5001

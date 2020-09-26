@@ -42,7 +42,12 @@ openstack overcloud container image prepare \
     --output-images-file {{ working_dir }}/overcloud_containers.yaml \
     --output-env-file {{ working_dir }}/containers-default-parameters.yaml \
     ${PREPARE_ARGS} \
-    --namespace {{ docker_registry_host }}/{{ docker_registry_namespace_used }} \
+{% if job.consumer_job | default(false) | bool and job.registry_ip_address is defined %}
+    --namespace "{{ job.registry_ip_address }}:{{ local_registry_port }}/{{ docker_registry_namespace_used }}" \
+{% else %}
+    --namespace "{{ docker_registry_host }}/{{ docker_registry_namespace_used }}" \
+{% endif %}
+
     --tag {{ container_build_id }} \
 {% if docker_prep_prefix is defined %}
     --prefix "{{ docker_prep_prefix }}" \

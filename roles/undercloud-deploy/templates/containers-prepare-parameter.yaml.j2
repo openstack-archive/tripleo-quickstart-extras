@@ -35,7 +35,11 @@ parameter_defaults:
 {% endif %}
     set:
       tag: "{{ container_build_id }}"
+{% if job.consumer_job | default(false) | bool and job.registry_ip_address is defined %}
+      namespace: "{{ job.registry_ip_address }}:{{ local_registry_port }}/{{ docker_registry_namespace_used }}"
+{% else %}
       namespace: "{{ docker_registry_host }}/{{ docker_registry_namespace_used }}"
+{% endif %}
       name_prefix: "{{ docker_prep_prefix }}"
       name_suffix: "{{ docker_prep_suffix }}"
       rhel_containers: "{{ rhel_containers }}"
