@@ -10,7 +10,6 @@
       - tripleo-standalone-multinode-ipa
     check:
       jobs:
-        - tripleo-ci-centos-8-standalone
         - openstack-tox-linters
         - openstack-tox-molecule:
             required-projects:

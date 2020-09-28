@@ -122,7 +122,7 @@
 # ceph parameters
 - name: update container ceph parameters
   when:
-    - standalone_container_ceph_updates|default(false)|bool
+    - standalone_container_ceph_updates|bool or job.consumer_job|default(false)|bool
   replace:
     path: "{{ working_dir }}/containers-prepare-parameters.yaml"
     regexp: " {{ item.original }}: (.*)"
@@ -135,8 +135,8 @@
 
 - name: update container custom ceph parameters, if required
   when:
-    - standalone_container_ceph_updates|default(false)|bool
-    - custom_ceph_parameters|default(false)|bool
+    - custom_ceph_parameters|bool
+    - standalone_container_ceph_updates|bool
   replace:
     path: "{{ working_dir }}/containers-prepare-parameters.yaml"
     regexp: " {{ item.original }}: (.*)"
@@ -155,6 +155,28 @@
     - {original: "ceph_prometheus_image", replace: "ceph_prometheus_image: {{ custom_ceph_prometheus_image }}"}
     - {original: "ceph_prometheus_namespace", replace: "ceph_prometheus_namespace: {{ custom_ceph_prometheus_namespace }}"}
     - {original: "ceph_prometheus_tag", replace: "ceph_prometheus_tag: {{ custom_ceph_prometheus_tag }}"}
+
+# By using non_tripleo_containers.yml playbook in provider job, ceph related containers
+# will be pulled from quay.io and pushed to local registry in content provider job.
+# in order to consume it during deployment in consumer job, ceph containers namespaces
+# needs to be updated in consumer job pointing to content provider job registry
+# to pull respective containers.
+# docker_ceph_namespace will point to local registry in consumer job, is setted in
+# extra-common role.
+- name: update container custom ceph parameters for consumer job
+  when:
+    - custom_ceph_parameters|bool
+    - job.consumer_job|default(false)|bool
+  replace:
+    path: "{{ working_dir }}/containers-prepare-parameters.yaml"
+    regexp: " {{ item.original }}: (.*)"
+    replace: " {{ item.replace }}"
+    backup: true
+  with_items:
+    - {original: "ceph_alertmanager_namespace", replace: "ceph_alertmanager_namespace: {{ docker_ceph_namespace }}"}
+    - {original: "ceph_grafana_namespace", replace: "ceph_grafana_namespace: {{ docker_ceph_namespace }}"}
+    - {original: "ceph_node_exporter_namespace", replace: "ceph_node_exporter_namespace: {{ docker_ceph_namespace }}"}
+    - {original: "ceph_prometheus_namespace", replace: "ceph_prometheus_namespace: {{ docker_ceph_namespace }}"}
 
 - name: Set repos defined in the job to update
   when:

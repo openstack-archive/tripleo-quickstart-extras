@@ -14,10 +14,11 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-local_registry_ip: 127.0.0.1
-local_registry_port: 5001
+content_provider_registry_ip: 127.0.0.1
+content_provider_registry_port: 5001
 container_registry_namespace: tripleomaster
 container_tag: current-tripleo
+container_file: /usr/share/openstack-tripleo-common/container-images/tripleo_containers.yaml
 # Notes(chandankumar): openstack- prefix is used from victoria release onwards
 docker_prep_prefix: >-
   {% if (job.build_container_images|default(false)|bool and

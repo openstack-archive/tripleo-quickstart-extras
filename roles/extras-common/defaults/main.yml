@@ -1,4 +1,7 @@
 ---
+# vars related to content provider job
+local_registry_ip: 127.0.0.1
+local_registry_port: 5001
 
 overcloud_ipv6: false
 containerized_overcloud: >-
@@ -51,7 +54,14 @@ docker_prep_prefix: >-
   {%- endif -%}
 # docker suffix
 docker_prep_suffix: ""
-docker_ceph_namespace: docker.io/ceph
+docker_ceph_namespace: >-
+  {% if job.consumer_job|default(false)|bool -%}
+  {{ job.registry_ip_address }}:{{ local_registry_port }}/{{ docker_registry_namespace }}
+  {%- elif release not in ['queens', 'rocky', 'pike'] -%}
+  quay.ceph.io/ceph-ci
+  {%- else -%}
+  docker.io/ceph
+  {%- endif -%}
 docker_ceph_image: daemon
 docker_ceph_tag: >-
   {% if release in ['pike'] -%}
@@ -59,7 +69,7 @@ docker_ceph_tag: >-
   {%- elif release in ['queens','rocky'] -%}
   v3.2.14-stable-3.2-luminous-centos-7-x86_64
   {%- else -%}
-  v4.0.10-stable-4.0-nautilus-centos-7-x86_64
+  v4.0.13-stable-4.0-nautilus-centos-7-x86_64
   {%- endif -%}
 rhel_containers: >-
    {% if ansible_distribution == 'RedHat' -%}
