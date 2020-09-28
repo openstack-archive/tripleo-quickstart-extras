@@ -106,8 +106,8 @@
             {% endif -%}
             registry_login_enabled: false
             featureset_override:
-              {% if featureset_override_file_output is defined -%}
-              {{ featureset_override_file_output | indent(14) }}
+              {% if job.featureset_override is defined -%}
+              {{ job.featureset_override | to_nice_yaml | indent(14) }}
               {% endif -%}
               {% if releases_file_output is not defined -%}
               {% if dlrn_hash is defined or ('undercloud' in hostvars and 'dlrn_hash' in hostvars['undercloud']) -%}
