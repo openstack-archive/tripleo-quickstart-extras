@@ -274,7 +274,7 @@ ipxe_deploy = {{undercloud_ipxe_deploy}}
 enable_monitoring = {{undercloud_enable_monitoring}}
 
 # Whether to install novajoin metadata service in the Undercloud.
-{% if undercloud_enable_novajoin and enable_tls_everywhere %}
+{% if undercloud_enable_novajoin|bool and enable_tls_everywhere|bool %}
 enable_novajoin = true
 {% else %}
 enable_novajoin = false
