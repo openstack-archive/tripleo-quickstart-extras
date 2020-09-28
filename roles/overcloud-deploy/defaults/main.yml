@@ -91,7 +91,6 @@ use_resource_registry_nic_configs: false
 
 ssl_args: ""
 tls_everywhere_args: ""
-undercloud_enable_novajoin: true
 validation_args: "--validation-warnings-fatal"
 
 enable_swap: false

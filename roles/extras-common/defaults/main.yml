@@ -81,6 +81,7 @@ additional_insecure_registry: false
 deployed_server: false
 overcloud_templates_path: /usr/share/openstack-tripleo-heat-templates
 enable_tls_everywhere: false
+undercloud_enable_novajoin: true
 undercloud_generate_service_certificate: true
 undercloud_network_cidr: 192.168.24.0/24
 undercloud_undercloud_nameservers:
