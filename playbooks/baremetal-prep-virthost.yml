@@ -117,7 +117,6 @@
 - name: Run DLRN gate role and install repo
   hosts: undercloud
   gather_facts: true
-  become: true
   vars:
     artg_compressed_gating_repo: "/home/{{ undercloud_user }}/gating_repo.tar.gz"
     artg_repos_dir: "{{ repo_clone_dir|default('/opt/stack/new') }}"
