@@ -73,6 +73,12 @@
           "{{ forwarder_address }}"
           {%- endif -%}
 
+    - name: disable unbound service
+      become: true
+      service:
+        name: unbound
+        state: stopped
+
 - name: configure FreeIPA
   shell: >
     ipa-server-install --realm {{ ipa_realm }}

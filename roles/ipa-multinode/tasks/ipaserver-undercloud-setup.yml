@@ -80,6 +80,12 @@
     regexp: "^nameserver "
     state: absent
 
+- name: disable unbound service
+  become: true
+  service:
+    name: unbound
+    state: stopped
+
 - name: set search domain
   become: true
   lineinfile:
