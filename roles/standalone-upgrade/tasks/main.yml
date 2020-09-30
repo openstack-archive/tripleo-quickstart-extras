@@ -1,5 +1,9 @@
 ---
 # tasks file for all_in_one upgrade
+- name: gather facts used by role
+  setup:
+    gather_subset: "!min,pkg_mgr"
+  when: ansible_pkg_mgr is not defined
 
 # standalone params
 - name: Create the standalone params for upgrade
