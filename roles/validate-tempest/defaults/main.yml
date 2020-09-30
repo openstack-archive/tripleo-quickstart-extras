@@ -88,7 +88,7 @@ tempest_conf_version: "{{ tempest_conf_version_dict[release] }}"
 tempestmail_config: config.yaml
 tempestmail_log_server: http://logs.openstack.org
 tempest_track_resources: true
-tempest_test_image_version: 0.3.6
+tempest_test_image_version: 0.4.0
 tempest_test_image_name: cirros-{{ tempest_test_image_version }}-x86_64-disk.img
 tempest_test_image_path: http://download.cirros-cloud.net/{{ tempest_test_image_version }}/{{ tempest_test_image_name }}
 # A dict containing values to be removed from tempest.conf

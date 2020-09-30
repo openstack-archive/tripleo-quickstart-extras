@@ -8,12 +8,12 @@ validate_log: "{{ working_dir }}/overcloud_validate.log"
 validate_stack_name: pingtest_stack
 validate_success_status: CREATE_COMPLETE
 validate_failed_status: CREATE_FAILED
-validate_image_file: cirros-0.3.6-x86_64-uec.tar.gz
-validate_image_url: "http://download.cirros-cloud.net/0.3.6/"
+validate_image_file: cirros-0.4.0-x86_64-uec.tar.gz
+validate_image_url: "http://download.cirros-cloud.net/0.4.0/"
 validate_image_path: "/opt/cache/files/{{ validate_image_file }}"
-image_disk: cirros-0.3.6-x86_64-blank.img
-image_initramfs: cirros-0.3.6-x86_64-initrd
-image_kernel: cirros-0.3.6-x86_64-vmlinuz
+image_disk: cirros-0.4.0-x86_64-blank.img
+image_initramfs: cirros-0.4.0-x86_64-initrd
+image_kernel: cirros-0.4.0-x86_64-vmlinuz
 validate_image_name: pingtest_image
 validate_image_dir: "{{ working_dir }}/cirros_images"
 release: mitaka
