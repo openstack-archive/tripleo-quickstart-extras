@@ -20,6 +20,7 @@
         tasks_from: create-repo-script
       vars:
         repo_setup_script: repo_setup_upgrade.sh
+        repo_setup_run_update: false
     # The next task triggers the yum upgrade command in as
     # repo_setup_run_update is true in release files by default.
     - name: Standalone upgrade setup new repos
