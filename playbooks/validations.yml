@@ -1,0 +1,10 @@
+---
+- name: Execute pre undercloud validations
+  hosts: undercloud
+  gather_facts: true
+  tags:
+    - component-validations
+    - tripleo-validations
+  roles:
+    - {role: tripleo_validations,
+       when: job.enable_validation|default(false)|bool}

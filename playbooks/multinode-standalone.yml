@@ -46,6 +46,15 @@
   tags:
     - standalone
 
+- name: Run tripleo-validations standalone and CLI tests
+  hosts: undercloud
+  gather_facts: false
+  tags:
+    - standalone
+  roles:
+    - {role: tripleo_validations,
+       when: job.enable_validation|default(false)|bool}
+
 - name: Validate the undercloud
   hosts: undercloud
   gather_facts: false

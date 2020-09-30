@@ -34,7 +34,7 @@
   vars:
     validations_group: ['pre-introspection']
   roles:
-    - {role: tripleo-validations,
+    - {role: tripleo_validations,
        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
 
 # Prepare the overcloud flavor configuration
@@ -64,7 +64,7 @@
   vars:
     validations_group: ['pre-deployment']
   roles:
-    - {role: tripleo-validations,
+    - {role: tripleo_validations,
        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
 
 - name: Prepare the SSL Configuration for the overcloud deployment

@@ -77,7 +77,7 @@
   vars:
     validations_group: ['post-deployment']
   roles:
-    - {role: tripleo-validations,
+    - {role: tripleo_validations,
        when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
 
 ######################################

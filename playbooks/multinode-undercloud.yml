@@ -69,16 +69,14 @@
   roles:
     - undercloud-deploy
 
-- name: Configure tripleo-validations
+- name: Run tripleo-validations standalone and CLI tests
   hosts: undercloud
   gather_facts: false
   tags:
     - tripleo-validations
-  vars:
-    run_tripleo_validations_setup: true
   roles:
-    - {role: tripleo-validations,
-       when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
+    - {role: tripleo_validations,
+       when: job.enable_validation|default(false)|bool}
 
 - name: Validate the undercloud
   hosts: undercloud
