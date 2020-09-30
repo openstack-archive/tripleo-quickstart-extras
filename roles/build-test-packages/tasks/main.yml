@@ -169,14 +169,6 @@
   retries: 3
   delay: 5
 
-- name: Remove ssh from git url
-  when: osp_release is defined
-  shell: >
-    set -o pipefail;
-    sed -i -e "s|git+ssh|git|g" packages.yml
-  args:
-    chdir: '{{ build_repo_dir }}/DLRN/{{ rdoinfo_repo_name }}'
-
 - name: Use local {{ ansible_distribution }} mirror if available ( centos 7 and RHEL )
   shell: >
     set -o pipefail ;
