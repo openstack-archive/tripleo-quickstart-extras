@@ -17,6 +17,9 @@ Role Variables
 - standalone_network_prefix: <'24'> --  The subnet size for the standalone deployment network
 - standalone_ip: <'192.168.24.1'> --  The IP address of the standalone deployment
 - standalone_interface: <'br-ex'> --  The interface for the standalone deployment
+- standalone_neutron_bridge_mapping: <'datacentre:br-ctlplane,tenant:br-tenant'> --  The mapping for neutron network bridges
+- standalone_neutron_physical_bridge: <'br-ctlplane'> --  Neutron physical bridge
+
 - standalone_hostname: <'standalone.localdomain'> -- FQDN to use for the system being deployed. Must be a fully qualified hostname with the domain.
 
 - standalone_container_prep_options: <''> -- additional parameters for the container prep command

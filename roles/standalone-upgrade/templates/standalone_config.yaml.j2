@@ -19,6 +19,12 @@ parameter_defaults:
     {{ standalone_network }}.0/{{ standalone_network_prefix }}:
     - {{ standalone_network }}.0/{{ standalone_network_prefix }}
   NeutronPublicInterface: {{ standalone_interface }}
+{% if standalone_neutron_bridge_mappings is defined and standalone_neutron_bridge_mappings %}
+  NeutronBridgeMappings: {{ standalone_neutron_bridge_mappings }}
+{% endif %}
+{% if standalone_neutron_physical_bridge is defined and standalone_neutron_physical_bridge %}
+  NeutronPhysicalBridge: {{ standalone_neutron_physical_bridge }}
+{% endif %}
   StandaloneCtlplaneLocalSubnet: ctlplane-subnet
   StandaloneCtlplaneSubnets:
     ctlplane-subnet:
