@@ -70,6 +70,6 @@
     tempest_cloud_name: 'standalone'
     tempest_cidr: '192.168.24.0/24'
   tasks:
-    - include_tasks: tempest.yml
+    - include_tasks: tasks/tempest.yml
   tags:
     - standalone-upgrade
