@@ -1,7 +1,7 @@
 ---
 # This is the playbook used by the `quickstart.sh` script.
 
-- include: quickstart-extras.yml
+- import_playbook: quickstart-extras.yml
 
 - name: Collect logs, create docs, publish
   hosts: all:!localhost

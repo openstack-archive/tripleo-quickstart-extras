@@ -1,4 +1,4 @@
 ---
-- include: quickstart.yml
-- include: multinode-undercloud.yml
-- include: multinode-undercloud-minion.yml
+- import_playbook: quickstart.yml
+- import_playbook: multinode-undercloud.yml
+- import_playbook: multinode-undercloud-minion.yml

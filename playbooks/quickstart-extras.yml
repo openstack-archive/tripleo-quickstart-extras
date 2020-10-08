@@ -1,8 +1,8 @@
 ---
 # This is the playbook used by the `quickstart.sh` script.
 
-- include: quickstart.yml
-- include: quickstart-extras-undercloud.yml
-- include: quickstart-extras-overcloud-prep.yml
-- include: quickstart-extras-overcloud.yml
-- include: quickstart-extras-validate.yml
+- import_playbook: quickstart.yml
+- import_playbook: quickstart-extras-undercloud.yml
+- import_playbook: quickstart-extras-overcloud-prep.yml
+- import_playbook: quickstart-extras-overcloud.yml
+- import_playbook: quickstart-extras-validate.yml

@@ -5,7 +5,7 @@
 ################
 
 # From tripleo-quickstart/playbooks
-- include: quickstart-extras.yml
+- import_playbook: quickstart-extras.yml
 
 ###############
 # Scale Nodes #

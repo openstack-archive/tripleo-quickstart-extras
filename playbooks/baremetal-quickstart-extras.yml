@@ -1,5 +1,5 @@
 ---
-- include: baremetal-full-undercloud.yml
-- include: baremetal-full-overcloud-prep.yml
-- include: baremetal-full-overcloud.yml
-- include: baremetal-full-overcloud-validate.yml
+- import_playbook: baremetal-full-undercloud.yml
+- import_playbook: baremetal-full-overcloud-prep.yml
+- import_playbook: baremetal-full-overcloud.yml
+- import_playbook: baremetal-full-overcloud-validate.yml
