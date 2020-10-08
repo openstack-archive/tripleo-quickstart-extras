@@ -71,3 +71,10 @@
     var: container_build_id
   tags:
     - undercloud-install
+
+- name: Save container_build_id on disk
+  copy:
+    content: "{{ container_build_id }}"
+    dest: /tmp/container_build_id
+  tags:
+    - undercloud-install
