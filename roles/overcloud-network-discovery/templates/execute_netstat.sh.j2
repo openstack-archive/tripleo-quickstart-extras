@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# run netstat periodically to gather data for port audits
+/usr/bin/netstat -lnp -c {{ netstat_interval }} &> {{ netstat_log }}

@@ -1,0 +1,29 @@
+---
+- name: generate netstat script
+  template:
+    src: execute_netstat.sh.j2
+    dest: "{{ netstat_dest_directory }}/execute_netstat.sh"
+    mode: 0755
+  when: execute_netstat|default(false)|bool
+
+- name: execute the netstat script
+  become: true
+  shell: >
+    set -o pipefail &&
+    {{ netstat_dest_directory }}/execute_netstat.sh &
+  changed_when: true
+  async: 0
+  poll: 0
+  when: execute_netstat|bool
+
+- name: kill netstat
+  become: true
+  command: killall -9 netstat
+  ignore_errors: true
+  when: kill_netstat|default(false)|bool
+
+- name: copy log file to /var/log/
+  become: true
+  command: "cp {{ netstat_log }} /var/log/"
+  ignore_errors: true
+  when: kill_netstat|default(false)|bool

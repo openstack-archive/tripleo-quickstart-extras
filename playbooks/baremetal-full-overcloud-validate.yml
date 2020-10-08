@@ -27,6 +27,15 @@
   roles:
     - {role: validate-simple, when: test_ping|bool}
 
+- name: Execute netstat for port audit
+  hosts: overcloud
+  vars:
+    execute_netstat: true
+  roles:
+    - overcloud-network-discovery
+  tags:
+    - overcloud-validate
+
 # Execute tempest against the overcloud deployment
 - name: Validate the deployment
   hosts: undercloud
@@ -35,6 +44,15 @@
       vars:
         tempest_install_method: distro
         tempest_cloud_name: 'overcloud'
+  tags:
+    - overcloud-validate
+
+- name: Kill netstat
+  hosts: overcloud
+  vars:
+    kill_netstat: true
+  roles:
+    - overcloud-network-discovery
   tags:
     - overcloud-validate
 
