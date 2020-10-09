@@ -1,3 +1,9 @@
+# Update tripleo packages before using tripleo commands
+sudo {{ ansible_pkg_mgr }} update -y \
+    python*-tripleoclient \
+    openstack-tripleo-common \
+    tripleo-ansible \
+    openstack-tripleo-heat-templates
 # generate the default container prepare statement
 openstack tripleo container image prepare default \
   --output-env-file {{ working_dir }}/containers-prepare-parameters-upgrade.yaml {{ standalone_container_prep_options }}

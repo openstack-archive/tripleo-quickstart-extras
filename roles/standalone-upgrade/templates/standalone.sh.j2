@@ -3,11 +3,6 @@ if openstack tripleo upgrade --help | grep -qe "--yes"; then
     PROMPT_ANSWER="--yes"
 fi
 
-sudo yum update -y \
-    python-tripleoclient \
-    openstack-tripleo-common \
-    openstack-tripleo-heat-templates
-
 sudo openstack tripleo upgrade $PROMPT_ANSWER \
   --templates \
   --local-ip={{ standalone_ip }}/{{ standalone_network_prefix }} \
