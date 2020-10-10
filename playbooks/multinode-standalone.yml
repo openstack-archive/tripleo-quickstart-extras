@@ -64,6 +64,6 @@
     tempest_install_method: distro
     tempest_cloud_name: 'standalone'
   tasks:
-    - include_tasks: tempest.yml
+    - include_tasks: tasks/tempest.yml
   tags:
     - standalone
