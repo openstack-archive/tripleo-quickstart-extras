@@ -1,24 +1,39 @@
 ---
 - project:
     templates:
-      - tripleo-undercloud-jobs
-      - tripleo-multinode-container-full
-      - tripleo-multinode-experimental
+      - tripleo-undercloud-jobs-pipeline
+      - tripleo-multinode-container-full-pipeline
       - tripleo-multinode-branchful
       - release-notes-jobs-python3
-      - tripleo-standalone-scenarios-full
-      - tripleo-standalone-multinode-ipa
+      - tripleo-standalone-scenarios-pipeline
+      - tripleo-standalone-multinode-ipa-pipeline
     check:
       jobs:
+        - tripleo-ci-centos-8-content-provider
         - openstack-tox-linters
         - openstack-tox-molecule:
             required-projects:
               - openstack/tripleo-quickstart
         - tripleo-ci-centos-8-containers-undercloud-minion:
+            vars: &undercloud_consumer_vars
+              consumer_job: true
+              tags:
+                - undercloud-setup
+                - undercloud-scripts
+                - undercloud-install
+                - undercloud-validate
+            dependencies: &deps
+              - tripleo-ci-centos-8-content-provider
             files:
               - ^roles/.*minion.*$
               - ^playbooks/.*minion.*$
         - tripleo-ci-centos-8-standalone-on-multinode-ipa:
+            vars: &ipa_consumer_vars
+              consumer_job: true
+              build_container_images: false
+              tags:
+                - standalone
+            dependencies: *deps
             files:
               - ^roles/ipa-multinode.*$
               - ^roles/standalone.*$
