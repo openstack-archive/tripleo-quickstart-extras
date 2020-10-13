@@ -135,10 +135,23 @@
     regexp: '^nameserver 127.0.0.1'
     state: absent
 
+- name: debug nodepool_provider
+  debug:
+    msg: '{{ job.nodepool_provider }}'
+
+- name: Add entries to /etc/hosts for providers that don't resolve
+  become: true
+  lineinfile:
+    path: /etc/hosts
+    line: '209.132.183.105 redhat.com'
+    state: present
+  when: job.nodepool_provider is search('rax') or job.nodepool_provider is search('ovh')
+
 - name: Check that the DNS works
   shell: >
-    ping -c 5 redhat.com
+    ping -c 10 redhat.com
   register: dig_ouput_com
+  ignore_errors: true
 
 - debug:
     msg: "dig_ouput_com is {{ dig_ouput_com.stdout }}"
