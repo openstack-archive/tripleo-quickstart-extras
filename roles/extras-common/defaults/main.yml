@@ -39,7 +39,12 @@ undercloud_container_cli: >-
 # as for stable branches before stein the variable won't be used.
 overcloud_container_cli: podman
 local_docker_registry_host: "{{ undercloud_network_gateway|default(undercloud_network_cidr|nthhost(1)) }}"
-docker_registry_host: docker.io
+docker_registry_host: >-
+  {% if job.consumer_job | default(false) | bool -%}
+  {{ job.registry_ip_address_branch[release] }}:{{ local_registry_port }}
+  {%- else -%}
+  docker.io
+  {%- endif -%}
 docker_registry_namespace: "tripleo{{ release }}"
 docker_image_tag: current-tripleo
 # docker prefix
