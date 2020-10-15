@@ -14,7 +14,7 @@
 
 - name: Filter out non-tripleo containers excluding kolla image_source
   set_fact:
-    non_tripleo_containers: "{{ non_tripleo_containers.container_images | json_query('[?image_source != `kolla`]') }}"
+    non_tripleo_containers: "{{ non_tripleo_containers | json_query('[?image_source != `kolla`]') }}"
   when: release in ["train"]
 
 - name: Store non-tripleo containers
