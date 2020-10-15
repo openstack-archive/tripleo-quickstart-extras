@@ -1,0 +1,6 @@
+---
+- import_playbook: ovb-setup.yml
+- import_playbook: baremetal-full-undercloud.yml
+- import_playbook: baremetal-full-overcloud-prep.yml
+- import_playbook: baremetal-full-overcloud.yml
+- import_playbook: baremetal-full-overcloud-validate.yml
