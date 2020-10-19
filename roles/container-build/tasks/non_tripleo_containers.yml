@@ -25,7 +25,66 @@
   debug:
     msg: "{{ non_tripleo_containers }}"
 
-- name: Pull non-tripleo containers to the content provider registry
+- name: "Pull containers from {{ docker_registry_host }}"
+  become: true
+  command: 'podman pull {{ item }}'
+  register: pull_success
+  changed_when: false
+  loop: "{{ non_tripleo_containers }}"
+
+- name: List down missing containers
+  set_fact:
+    missing_containers: "{{ missing_containers | default([]) + [item] }}"
+  when:
+    - item.rc != 0
+    - pull_success is defined
+  loop: "{{ pull_success.results }}"
+
+- name: Pull failed containers from RDO registry
+  become: true
+  command: "podman pull docker://trunk.registry.rdoproject.org/ceph//{{ item.split('/')[-1] }}"
+  register: rdo_pull_success
+  loop: "{{ missing_containers }}"
+  changed_when: false
+  when:
+    - missing_containers is defined
+    - missing_containers | len > 0
+
+- name: Fallback to docker.io registry
+  when: rdo_pull_success.changed
+  block:
+
+    - name: List down missing containers
+      set_fact:
+        rdo_missing_containers: "{{ rdo_missing_containers | default([]) + [item] }}"
+      when: item.rc != 0
+      loop: "{{ rdo_pull_success.results }}"
+
+    - name: Pull failed containers from dockerhub
+      become: true
+      command: "podman pull {{ item.split('/')[-1] }}"
+      register: docker_pull_success
+      loop: "{{ rdo_missing_containers }}"
+      changed_when: false
+      when: rdo_missing_containers is defined
+
+    - name: Fail the job on failure of all fallback registry
+      when: docker_pull_success.changed
+      block:
+
+        - name: List down missing containers
+          set_fact:
+            docker_missing_containers: "{{ docker_missing_containers | default([]) + [item] }}"
+          when: item.rc != 0
+          loop: "{{ docker_pull_success.results }}"
+
+        - name: Fail the job if missing containers exists
+          assert:
+            that:
+              - "docker_missing_containers | len > 0"
+          when: docker_missing_containers is defined
+
+- name: Push non-tripleo containers to the content provider registry
   become: true
   block:
 
@@ -39,7 +98,6 @@
     - name: Pull non-tripleo containers (ceph, alertmanager, prometheus) to the content provider registry
       shell: >
         buildah images;
-        buildah pull {{ item }};
         buildah push --format=v2s2 --tls-verify=False --log-level debug {{ item }} \
           docker://{{ content_provider_registry_ip }}:{{ content_provider_registry_port }}/{{ docker_registry_namespace }}/{{ item.split('/')[-1] }};
       with_items: "{{ non_tripleo_containers }}"
