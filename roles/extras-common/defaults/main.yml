@@ -62,10 +62,8 @@ docker_prep_suffix: ""
 docker_ceph_namespace: >-
   {% if job.consumer_job | default(false) | bool -%}
   {{ job.registry_ip_address_branch[release] }}:{{ local_registry_port }}/{{ docker_registry_namespace }}
-  {%- elif release not in ['queens', 'rocky', 'pike'] -%}
-  quay.ceph.io/ceph-ci
   {%- else -%}
-  docker.io/ceph
+  quay.ceph.io/ceph-ci
   {%- endif -%}
 docker_ceph_image: daemon
 docker_ceph_tag: >-
