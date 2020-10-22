@@ -6,6 +6,7 @@
       vars:
         list_skipped_release: "{{ release }}"
         list_skipped_job: "{{ zuul.job | default(omit) }}"
+        list_skipped_deployment: "{{ (tempest_cloud_name in ['undercloud']) | ternary('undercloud', 'overcloud') }}"
       include_role:
         name: list_skipped
 
