@@ -1,0 +1,57 @@
+---
+- name: Build containers for content provider job
+  hosts: undercloud
+  tasks:
+    - name: Build containers for CentOS 8
+      include_role:
+        name: standalone
+        tasks_from: containers
+        apply:
+          tags:
+            - standalone
+      when: ansible_distribution_major_version is version('8', '>=')
+
+    - name: Build containers for CentOS 7
+      when: ansible_distribution_major_version is version('8', '<')
+      block:
+
+        - name: Include pre tasks from build-containers role
+          vars:
+            buildcontainers_venv: false
+          include_role:
+            name: build-containers
+            tasks_from: pre
+
+        - name: Check for gating repo
+          stat:
+            path: "/etc/yum.repos.d/gating.repo"
+          register: new_repo
+
+        - name: Set proper repos
+          set_fact:
+            buildcontainers_rpm_setup_config: >-
+              http://{{ ansible_default_ipv4.address }}/delorean.repo,
+              http://{{ ansible_default_ipv4.address }}/delorean-current.repo,
+              {% if new_repo.stat.exists %}
+              http://{{ ansible_default_ipv4.address }}/gating.repo,
+              {% endif %}
+              {% if release in ['queens'] %}
+              http://{{ ansible_default_ipv4.address }}/quickstart-centos-ceph-luminous.repo,
+              http://{{ ansible_default_ipv4.address }}/quickstart-centos-extras.repo,
+              http://{{ ansible_default_ipv4.address }}/quickstart-centos-opstools.repo,
+              http://{{ ansible_default_ipv4.address }}/quickstart-centos-updates.repo,
+              http://{{ ansible_default_ipv4.address }}/quickstart-centos7-rt.repo,
+              {% else %}
+              http://{{ ansible_default_ipv4.address }}/delorean-{{ ci_branch }}-build-deps.repo,
+              {% endif %}
+              http://{{ ansible_default_ipv4.address }}/quickstart-centos-qemu.repo,
+              http://{{ ansible_default_ipv4.address }}/delorean-{{ ci_branch }}-deps.repo
+
+        - name: Build containers for provider job
+          vars:
+            buildcontainers_venv: false
+          include_role:
+            name: build-containers
+  tags:
+    - standalone
+    - undercloud
