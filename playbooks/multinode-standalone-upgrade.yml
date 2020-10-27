@@ -48,7 +48,7 @@
     - build-test-packages
     - {role: install-built-repo, when: compressed_gating_repo is defined}
   tags:
-    - standalone-upgrade
+    - build
 
 # NOTE(aschultz): nested virt causes problems in CI so we default to qemu
 # and do not do the dynamic virt lookup.

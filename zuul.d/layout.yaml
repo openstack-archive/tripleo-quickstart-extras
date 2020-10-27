@@ -13,30 +13,24 @@
         - openstack-tox-molecule:
             required-projects:
               - openstack/tripleo-quickstart
-        - tripleo-ci-centos-8-content-provider:
-            dependencies: &deps_mol_lint
-              - openstack-tox-linters
-              - openstack-tox-molecule
         - tripleo-ci-centos-8-containers-undercloud-minion:
-            vars: &undercloud_consumer_vars
+            vars:
               consumer_job: true
-              tags:
-                - undercloud-setup
-                - undercloud-scripts
-                - undercloud-install
-                - undercloud-validate
-            dependencies: &deps_cprovider
+              remove_tags:
+                - build
+            dependencies:
               - tripleo-ci-centos-8-content-provider
             files:
               - ^roles/.*minion.*$
               - ^playbooks/.*minion.*$
         - tripleo-ci-centos-8-standalone-on-multinode-ipa:
-            vars: &ipa_consumer_vars
+            vars:
               consumer_job: true
               build_container_images: false
-              tags:
-                - standalone
-            dependencies: *deps_cprovider
+              remove_tags:
+                - build
+            dependencies:
+              - tripleo-ci-centos-8-content-provider
             files:
               - ^roles/ipa-multinode.*$
               - ^roles/standalone.*$

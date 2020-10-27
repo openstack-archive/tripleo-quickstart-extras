@@ -2,7 +2,7 @@
 - name: Configure next release repository in the undercloud
   hosts: undercloud
   tags:
-    - undercloud-upgrade
+    - build
   vars:
     repo_setup_script: "repo-setup-{{ lookup('env', 'UPGRADE_RELEASE') }}.sh"
     repo_setup_log: "repo-setup-{{ lookup('env', 'UPGRADE_RELEASE') }}.log"
