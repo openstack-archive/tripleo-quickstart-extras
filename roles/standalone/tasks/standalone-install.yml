@@ -1,8 +1,4 @@
 ---
-- name: Run dstat on the standalone prior to standalone deploy
-  include_role:
-    name: validate-perf
-
 - name: Check whether control plane defaults to HA
   set_fact:
     tripleo_deploy_ha_control_plane: "{{ release not in ['newton', 'ocata', 'pike', 'queens', 'rocky', 'stein', 'train'] }}"
