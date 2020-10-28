@@ -65,6 +65,7 @@
     tripleo_container_image_build_volumes: "{{ container_image_build_volumes }}"
     tripleo_container_image_build_work_dir: "{{ working_dir }}/container-builds"
     tripleo_container_image_build_prefix: "{{ docker_prep_prefix }}"
+    tripleo_container_image_build_timeout: 7200
 
 - name: Pull and push non *tripleo* container images to local registry
   import_tasks: non_tripleo_containers.yml
