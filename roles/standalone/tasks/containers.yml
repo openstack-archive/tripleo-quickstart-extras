@@ -1,4 +1,8 @@
 ---
+- name: Run dstat on the standalone prior to standalone tasks
+  include_role:
+    name: validate-perf
+
 - name: Gather ansible distribution
   setup:
     gather_subset: "!min,distribution"
