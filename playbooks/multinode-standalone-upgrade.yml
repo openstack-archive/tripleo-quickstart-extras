@@ -61,6 +61,19 @@
   tags:
     - standalone-upgrade
 
+# Remove me when os_tempest tempest init gets fixed
+- name: Tempest workspace workaround
+  hosts: undercloud
+  tasks:
+    - name: Nuke tempest workspace
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - "{{ ansible_user_dir }}/tempest"
+        - "{{ ansible_user_dir }}/.tempest"
+      ignore_errors: true
+
 - name: Validate the Standalone upgrade
   hosts: undercloud
   # Note(chkumar246): Moved the os_tempest related var at the top
