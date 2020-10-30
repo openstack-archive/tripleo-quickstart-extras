@@ -29,7 +29,8 @@
   become: true
   command: 'podman pull {{ item }}'
   register: pull_success
-  changed_when: false
+  changed_when: true
+  ignore_errors: true
   loop: "{{ non_tripleo_containers }}"
 
 - name: List down missing containers
@@ -44,14 +45,16 @@
   become: true
   command: "podman pull docker://trunk.registry.rdoproject.org/ceph//{{ item.split('/')[-1] }}"
   register: rdo_pull_success
+  ignore_errors: true
   loop: "{{ missing_containers }}"
-  changed_when: false
-  when:
-    - missing_containers is defined
-    - missing_containers | len > 0
+  changed_when: true
+  when: missing_containers | default([]) | length > 0
 
 - name: Fallback to docker.io registry
-  when: rdo_pull_success.changed
+  when:
+    - rdo_pull_success is not skipped
+    - rdo_pull_success is failed
+    - missing_containers | default([]) | length > 0
   block:
 
     - name: List down missing containers
@@ -65,11 +68,14 @@
       command: "podman pull {{ item.split('/')[-1] }}"
       register: docker_pull_success
       loop: "{{ rdo_missing_containers }}"
-      changed_when: false
-      when: rdo_missing_containers is defined
+      changed_when: true
+      ignore_errors: true
+      when: rdo_missing_containers | default([]) | length > 0
 
     - name: Fail the job on failure of all fallback registry
-      when: docker_pull_success.changed
+      when:
+        - docker_pull_success is not skipped
+        - docker_pull_success is failed
       block:
 
         - name: List down missing containers
@@ -79,10 +85,9 @@
           loop: "{{ docker_pull_success.results }}"
 
         - name: Fail the job if missing containers exists
-          assert:
-            that:
-              - "docker_missing_containers | len > 0"
-          when: docker_missing_containers is defined
+          fail:
+            msg: "Failed to pull following containers: {{ docker_missing_containers }}"
+          when: docker_missing_containers | default([]) | length > 0
 
 - name: Push non-tripleo containers to the content provider registry
   become: true
