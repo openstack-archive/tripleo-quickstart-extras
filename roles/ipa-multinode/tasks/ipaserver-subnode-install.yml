@@ -18,6 +18,22 @@
   shell: hostnamectl set-hostname --static {{ ipa_nameserver }}
   become: true
 
+# This can be removed once rhbz#1892216 is fixed and released
+# (in launchpad #1902478)
+# We need to install openjdk beforehand (as it is installed by the freeipa)
+# script and then downgrade it in case the version is the known broken one
+- name: Workaround for newer JDK breaking FreeIPA
+  become: true
+  shell: |
+    dnf install -y 'dnf-command(versionlock)'
+    source /etc/ci/mirror_info.sh
+    wget $NODEPOOL_CENTOS_MIRROR/8/AppStream/x86_64/os/Packages/java-1.8.0-openjdk-1.8.0.265.b01-0.el8_2.x86_64.rpm
+    wget $NODEPOOL_CENTOS_MIRROR/8/AppStream/x86_64/os/Packages/java-1.8.0-openjdk-headless-1.8.0.265.b01-0.el8_2.x86_64.rpm
+    wget $NODEPOOL_CENTOS_MIRROR/8/AppStream/x86_64/os/Packages/java-1.8.0-openjdk-devel-1.8.0.265.b01-0.el8_2.x86_64.rpm
+    dnf install -y java-1.8.0-openjdk*rpm
+    dnf versionlock add java-1.8.0-openjdk java-1.8.0-openjdk-headless java-1.8.0-openjdk-devel
+    dnf versionlock list > /var/log/versionlock.log
+
 - name: install required packages
   shell: dnf module -y enable pki-deps pki-core idm:DL1
   become: true
