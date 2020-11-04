@@ -2,7 +2,7 @@
 # to bump run: pre-commit autoupdate
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.4.0
+    rev: v3.3.0
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
@@ -15,18 +15,18 @@ repos:
       - id: check-yaml
         files: .*\.(yaml|yml)$
   - repo: https://github.com/PyCQA/flake8.git
-    rev: 3.7.9
+    rev: 3.8.4
     hooks:
       - id: flake8
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.20.0
+    rev: v1.25.0
     hooks:
       - id: yamllint
         files: \.(yaml|yml)$
         types: [file, yaml]
         entry: yamllint --strict -f parsable
   - repo: https://github.com/ansible/ansible-lint
-    rev: 9da220ae3a11c10c10ee43284ad6cad6d8ba52b7
+    rev: v4.3.7
     hooks:
       - id: ansible-lint
         always_run: true
@@ -40,7 +40,7 @@ repos:
         additional_dependencies:
           - 'ansible<2.10'
   - repo: https://github.com/openstack-dev/bashate.git
-    rev: 0.6.0
+    rev: 2.0.0
     hooks:
       - id: bashate
         # Run bashate check for all bash scripts

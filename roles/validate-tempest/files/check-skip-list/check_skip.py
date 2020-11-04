@@ -85,8 +85,8 @@ class CheckSkipCmd(object):
             return known_failures
 
     def get_test_results(self, console):
-        ok = [TESTRE.search(l).group(1)
-              for l in console.splitlines() if OK in l]
+        ok = [TESTRE.search(line).group(1)
+              for line in console.splitlines() if OK in line]
         return ok
 
     def compare_results(self, known_failures, ok_results):
