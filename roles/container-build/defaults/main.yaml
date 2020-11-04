@@ -28,3 +28,5 @@ docker_prep_prefix: >-
   {%- else -%}
   {{ ansible_distribution | lower }}-binary
   {%- endif -%}
+# Temporary pin to 8.2 because of LP #1902846
+containers_base_image: "{{ job.containers_base_image|default('ubi8:8.2') }}"
