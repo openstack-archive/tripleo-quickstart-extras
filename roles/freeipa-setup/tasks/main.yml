@@ -19,6 +19,24 @@
       dest: "~{{ supplemental_user }}/deploy_freeipa.sh"
       mode: 0744
 
+  # This can be removed once rhbz#1892216 is fixed and released
+  # (in launchpad #1902478)
+  # We need to install openjdk beforehand (as it is installed by the freeipa)
+  # script and then downgrade it in case the version is the known broken one
+  - name: Workaround for newer JDK breaking FreeIPA
+    become: true
+    shell: |
+      set -e
+      dnf install -y 'dnf-command(versionlock)'
+      export NODEPOOL_CENTOS_MIRROR={{ lookup('env','NODEPOOL_CENTOS_MIRROR')|default('http://mirror.centos.org/centos', true) }}
+      curl -O $NODEPOOL_CENTOS_MIRROR/8/AppStream/x86_64/os/Packages/java-1.8.0-openjdk-1.8.0.265.b01-0.el8_2.x86_64.rpm
+      curl -O $NODEPOOL_CENTOS_MIRROR/8/AppStream/x86_64/os/Packages/java-1.8.0-openjdk-headless-1.8.0.265.b01-0.el8_2.x86_64.rpm
+      curl -O $NODEPOOL_CENTOS_MIRROR/8/AppStream/x86_64/os/Packages/java-1.8.0-openjdk-devel-1.8.0.265.b01-0.el8_2.x86_64.rpm
+      dnf install -y java-1.8.0-openjdk*rpm
+      dnf versionlock add java-1.8.0-openjdk java-1.8.0-openjdk-headless java-1.8.0-openjdk-devel
+      dnf versionlock list > /var/log/versionlock.log
+    when: ansible_distribution_major_version is version('8', '>=')
+
   - name: Deploy FreeIPA
     become: true
     shell: "~{{ supplemental_user }}/deploy_freeipa.sh &> ~{{ supplemental_user }}/deploy_freeipa.log"
