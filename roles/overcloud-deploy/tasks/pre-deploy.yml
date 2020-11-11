@@ -18,6 +18,7 @@
       -e {{ working_dir }}/network-environment.yaml
   when:
     - network_isolation_type in ["single_nic_vlans", "single-nic-vlans"]
+    - not network_provision|bool
 
 - name: set network isolation args for bond-with-vlans IPv4
   set_fact:
@@ -27,6 +28,7 @@
       -e {{ working_dir }}/network-environment.yaml
   when:
     - network_isolation_type in ["bond_with_vlans", "bond-with-vlans"]
+    - not network_provision|bool
 
 # NOTE: 'multi-nic' is deprecated
 - name: set network isolation args for multi-nic IPv4
@@ -38,6 +40,7 @@
   when:
     - network_isolation_type in ["multi-nic", "multiple-nics"]
     - not overcloud_ipv6|bool
+    - not network_provision|bool
 
 # NOTE: 'multi-nic' is deprecated
 - name: set network isolation args for multi-nic IPv6
@@ -49,6 +52,7 @@
   when:
     - network_isolation_type in ["multi-nic", "multiple-nics"]
     - overcloud_ipv6|bool
+    - not network_provision|bool
 
 # Since there are no nic-configs for public-bond in the default
 # tripleo-heat-templates directory, no public-bond specfic
@@ -63,6 +67,33 @@
   when:
     - network_isolation_type == "public-bond"
     - not overcloud_ipv6|bool
+    - not network_provision|bool
+
+- name: set network isolation args for multi-nic IPv4 (deployed networks)
+  set_fact:
+    network_isolation_args: >-
+      --networks-file {{ overcloud_templates_path }}/ci/network_data.yaml
+      -e {{ working_dir }}/overcloud-networks-deployed.yaml
+      -e {{ overcloud_templates_path }}/environments/network-isolation.yaml
+      -e {{ overcloud_templates_path }}/environments/net-multiple-nics.yaml
+      -e {{ working_dir }}/network-environment.yaml
+  when:
+    - network_isolation_type in ["multi-nic", "multiple-nics"]
+    - not overcloud_ipv6|bool
+    - network_provision|bool
+
+- name: set network isolation args for multi-nic IPv6 (deployed networks)
+  set_fact:
+    network_isolation_args: >-
+      --networks-file {{ overcloud_templates_path }}/ci/network_data.yaml
+      -e {{ working_dir }}/overcloud-networks-deployed.yaml
+      -e {{ overcloud_templates_path }}/environments/network-isolation-v6.yaml
+      -e {{ overcloud_templates_path }}/environments/net-multiple-nics-v6.yaml
+      -e {{ working_dir }}/network-environment.yaml
+  when:
+    - network_isolation_type in ["multi-nic", "multiple-nics"]
+    - overcloud_ipv6|bool
+    - network_provision|bool
 
 - name: set network_args fact
   set_fact:

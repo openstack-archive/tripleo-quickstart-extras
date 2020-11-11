@@ -48,3 +48,5 @@ Role Variables
   option in undercloud.conf.
 - `undercloud_enable_mistral`: <'true'> -- sets up the 'enable_mistral' option
   in undercloud.conf for the undercloud and install ara in the mistral executor container before deploying the overcloud.
+- `network_provision`: <false> Deploy composable network with "openstack
+  overcloud network provision" and deployed-networks, instead of with heat
