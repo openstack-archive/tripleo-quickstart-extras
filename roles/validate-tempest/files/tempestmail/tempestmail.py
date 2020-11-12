@@ -68,12 +68,12 @@ def get_html(url):
 
 def get_tests_results(console):
     '''Get results of tests from console'''
-    failed = [TESTRE.search(l).group(1)
-              for l in console.splitlines() if FAILED in l]
-    ok = [TESTRE.search(l).group(1)
-          for l in console.splitlines() if OK in l]
-    errors = [TESTRE.search(l).group(1)
-              for l in console.splitlines() if ERROR in l]
+    failed = [TESTRE.search(line).group(1)
+              for line in console.splitlines() if FAILED in line]
+    ok = [TESTRE.search(line).group(1)
+          for line in console.splitlines() if OK in line]
+    errors = [TESTRE.search(line).group(1)
+              for line in console.splitlines() if ERROR in line]
 
     # all_skipped = [TESTRE.search(l).group(1)
     #               for l in console.splitlines() if SKIPPED in l]
@@ -225,8 +225,8 @@ class TempestMailCmd(object):
             return []
 
         body = res.content.decode() if res.content else ''
-        hrefs = [HREF.search(l).group(1)
-                 for l in body.splitlines() if HREF.search(l)]
+        hrefs = [HREF.search(line).group(1)
+                 for line in body.splitlines() if HREF.search(line)]
         links = ["/".join((url, link))
                  for link in hrefs if JOBRE.match(link)]
         if links:
@@ -261,10 +261,10 @@ class TempestMailCmd(object):
         def _get_date(c):
             text = c.splitlines()
             # find last line with timestamp
-            for l in text[::-1]:
-                if TIMEST.match(l):
+            for line in text[::-1]:
+                if TIMEST.match(line):
                     return datetime.datetime.strptime(
-                        TIMEST.search(l).group(1),
+                        TIMEST.search(line).group(1),
                         "%Y-%m-%d %H:%M")
             return None
 
