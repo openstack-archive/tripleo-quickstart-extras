@@ -76,7 +76,8 @@
 
     - name: print out forwarder addresses
       debug:
-        msg: "{{ forwarder_addresses_output.stdout_lines[0] }}"
+        msg: "{{ item }}"
+      with_items: "{{ forwarder_addresses_output.stdout_lines }}"
 
     # some forwarders have format xxxx:xxxx:xxxx::xxxx
     # In those cases, use the default 1.1.1.1
@@ -103,6 +104,11 @@
     --hostname {{ ipa_nameserver }}
     --setup-dns
     --forwarder {{ job.public_name_server|default(forwarder_address) }}
+    {% if not '::' in forwarder_addresses_output.stdout_lines[0] and forwarder_addresses_output.stdout_lines|length > 1 %}
+    {% for fw in forwarder_addresses_output.stdout_lines %}
+    --forwarder {{ fw }}
+    {% endfor %}
+    {% endif %}
     --unattended
     --ip-address {{ subnode_1_ip }}
   become: true
