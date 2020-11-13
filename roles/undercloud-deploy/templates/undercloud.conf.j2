@@ -288,6 +288,19 @@ ipa_otp = {{ undercloud_ipa_otp }}
 # ipa_otp =
 {% endif %}
 
+# IPv6 address configuration mode for the undercloud provisioning
+# network. (string value)
+# Possible values:
+# dhcpv6-stateless - Address configuration using RA and optional
+# information using DHCPv6.
+# dhcpv6-stateful - Address configuration and optional information
+# using DHCPv6.
+{% if undercloud_ipv6_address_mode is defined %}
+ipv6_address_mode = {{ undercloud_ipv6_address_mode }}
+{% else %}
+# ipv6_address_mode = dhcpv6-stateless
+{% endif %}
+
 {% if undercloud_docker_registry_mirror is defined and undercloud_docker_registry_mirror %}
 docker_registry_mirror = {{undercloud_docker_registry_mirror}}
 {% else %}
