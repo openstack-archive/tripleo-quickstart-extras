@@ -601,6 +601,18 @@ dhcp_start = {{undercloud_dhcp_start|default(
 dhcp_end = {{undercloud_dhcp_end|default(
     undercloud_network_cidr|nthhost(30))}}
 
+{% if release not in ['queens', 'rocky', 'stein'] %}
+# DNS nameservers for the Neutron-managed subnet for the Overcloud
+# instances on this network. If no nameservers are defined for the
+# subnet, the nameservers defined for undercloud_nameservers will be
+# used. (list value)
+{% if undercloud_ctlplane_dns_nameservers is defined %}
+dns_nameservers = {{ undercloud_ctlplane_dns_nameservers }}
+{% else %}
+#dns_nameservers =
+{% endif %}
+{% endif %}
+
 # Network gateway for the Neutron-managed network for Overcloud
 # instances on this network. (string value)
 # Deprecated group/name - [DEFAULT]/network_gateway
