@@ -16,6 +16,9 @@
     - name: Fetch repo to localhost
       fetch: "src={{ ib_repo_file_path }} dest={{ local_working_dir }}/gating_repo.tar.gz flat=yes"
       delegate_to: "{{ ib_repo_host }}"
+      register: fetch_local_repo
+      until: fetch_local_repo is not failed
+      retries: 5
 
     - name: Upload repo to host for install
       copy: "src={{ local_working_dir }}/gating_repo.tar.gz dest=/tmp/gating_repo.tar.gz"
