@@ -39,11 +39,14 @@ source {{ rc_file }}
 ## * Ensure creator and Member role is present
 ## * Member role is needed for Heat tests.
 ## * creator role is needed for Barbican for running volume encryption tests.
+## * ResellerAdmin role is needed for swift/RGW to grant object-store admin permissions.
 ## ::
 
 openstack role show Member > /dev/null || openstack role create Member
 
 openstack role show creator > /dev/null || openstack role create creator
+
+openstack role show ResellerAdmin > /dev/null || openstack role create ResellerAdmin
 
 ## Install openstack-tempest
 ## -------------------------
