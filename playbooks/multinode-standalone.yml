@@ -54,16 +54,19 @@
   tags:
     - standalone
 
+# Per https://bugs.launchpad.net/tripleo/+bug/1903993 we need to reduce the
+# standalone-upgrade runtime. If this is upgrade job fs56 skip tempest include.
 - name: Validate the deployment
   hosts: undercloud
   # Note(chkumar246): Moved the os_tempest related var at the top
   # of play level in order to have scope for the whole of the play
   # https://bugs.launchpad.net/tripleo/+bug/1838496
-
   vars:
     tempest_install_method: distro
     tempest_cloud_name: 'standalone'
   tasks:
     - include_tasks: tasks/tempest.yml
+      when: job is undefined or (job is defined and
+            job.featureset is defined and job.featureset != '056')
   tags:
     - standalone
