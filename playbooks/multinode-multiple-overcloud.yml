@@ -1,0 +1,87 @@
+---
+
+##########################
+# Prepare for deployment #
+##########################
+
+# From tripleo-quickstart/playbooks
+- import_playbook: quickstart.yml
+- import_playbook: multinode-undercloud.yml
+- import_playbook: multinode-overcloud-prep.yml
+
+##################################
+# Deploy First stack - overcloud #
+##################################
+
+- name: Deploy the first overcloud
+  hosts: undercloud
+  gather_facts: false
+  roles:
+    - overcloud-deploy
+  environment:
+    TRIPLEO_ROOT: "{{ lookup('env','TRIPLEO_ROOT') }}"
+
+- name: Check the result of the deployment
+  hosts: localhost
+  tags:
+    - overcloud-deploy
+  tasks:
+    - name: ensure the deployment result has been read into memory
+      include_vars: "{{ local_working_dir }}/overcloud_deployment_result.json"
+
+    # overcloud_deploy_result = ["failed", "passed"]
+    - name: did the deployment pass or fail?
+      debug: var=overcloud_deploy_result
+      failed_when: overcloud_deploy_result == "failed"
+
+#######################################
+# Deploy Second stack - overcloud-two #
+#######################################
+
+- name: Deploy the second overcloud
+  hosts: undercloud
+  gather_facts: false
+  vars:
+    stack_name: "overcloud-two"
+    overcloud_cloud_name: "{{ stack_name }}.localdomain"
+    overcloud_cloud_name_internal: "{{ stack_name }}.internalapi.localdomain"
+    overcloud_cloud_name_storage: "{{ stack_name }}.storage.localdomain"
+    overcloud_cloud_name_storage_management: "{{ stack_name }}.storagemgmt.localdomain"
+    overcloud_cloud_name_ctlplane: "{{ stack_name }}.ctlplane.localdomain"
+  roles:
+    - overcloud-deploy
+  environment:
+    TRIPLEO_ROOT: "{{ lookup('env','TRIPLEO_ROOT') }}"
+
+- name: Check the result of the deployment for overcloud-two
+  hosts: localhost
+  tags:
+    - overcloud-deploy
+  tasks:
+    - name: ensure the deployment result has been read into memory
+      include_vars: "{{ local_working_dir }}/overcloud_deployment_result.json"
+
+    # overcloud_deploy_result = ["failed", "passed"]
+    - name: did the deployment pass or fail?
+      debug: var=overcloud_deploy_result
+      failed_when: overcloud_deploy_result == "failed"
+
+- name: Run tripleo-validations post-deployment tests
+  hosts: undercloud
+  gather_facts: false
+  tags:
+    - tripleo-validations
+  vars:
+    validations_group: ['post-deployment']
+  roles:
+    - {role: tripleo-validations,
+       when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
+
+######################################
+# Run tempest on overcloud-two stack #
+######################################
+
+# From tripleo-quickstart/playbooks
+- import_playbook: multinode-validate.yml
+  vars:
+    tempest_cloud_name: 'overcloud-two'

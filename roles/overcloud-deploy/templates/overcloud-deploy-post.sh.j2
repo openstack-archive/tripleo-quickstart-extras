@@ -29,10 +29,10 @@ sudo sed -i '/^## BEGIN OVERCLOUD HOSTS/,/^## END OVERCLOUD HOSTS/ d' $HOSTFILE
 
 cat <<EOF | sudo tee -a $HOSTFILE
 ## BEGIN OVERCLOUD HOSTS  #nodocs
-$(openstack stack output show overcloud HostsEntry -f value -c output_value)
+$(openstack stack output show {{ stack_name }} HostsEntry -f value -c output_value)
 
 {% if enable_pacemaker|bool and release == 'mitaka' %}
-$(openstack stack output show overcloud PublicVip \
+$(openstack stack output show {{ stack_name }} PublicVip \
             -f value -c output_value) overcloud-public-vip
 {% endif %}
 ## END OVERCLOUD HOSTS    #nodocs
@@ -42,13 +42,13 @@ EOF
 ## * Create the `heat_stack_owner` role if it doesn't already exist.
 ## ::
 
-if openstack stack output show overcloud EnabledServices \
+if openstack stack output show {{ stack_name }} EnabledServices \
         -f value -c output_value | grep -q keystone; then
 
-    ## * Source in the overcloud credentials.
+    ## * Source in the {{ stack_name }} credentials.
     ## ::
 
-    . {{ working_dir }}/overcloudrc
+    . {{ working_dir }}/{{ stack_name }}rc
 
     if ! openstack role show heat_stack_owner > /dev/null 2>&1; then
         openstack role create heat_stack_owner

@@ -5,12 +5,12 @@
 - name: Copy overcloudrc to ansible host
   fetch:
     flat: true
-    src: overcloudrc
-    dest: "{{ local_working_dir }}/overcloudrc"
+    src: "{{ stack_name }}rc"
+    dest: "{{ local_working_dir }}/{{ stack_name }}rc"
 
 - name: Run post-deploy script
   shell: >
     set -o pipefail &&
-    {{ working_dir }}/overcloud-deploy-post.sh 2>&1 {{ timestamper_cmd }} >
+    {{ working_dir }}/{{ stack_name }}-deploy-post.sh 2>&1 {{ timestamper_cmd }} >
     {{ post_deploy_log }}
   changed_when: true

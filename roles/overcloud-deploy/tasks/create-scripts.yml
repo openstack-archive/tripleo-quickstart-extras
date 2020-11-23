@@ -20,13 +20,13 @@
 - name: Create overcloud deploy script
   template:
     src: "{{ deploy_script }}"
-    dest: "{{ working_dir }}/overcloud-deploy.sh"
+    dest: "{{ working_dir }}/{{ stack_name }}-deploy.sh"
     mode: 0755
 
 - name: Create post-deploy script
   template:
     src: "{{ post_deploy_script }}"
-    dest: "{{ working_dir }}/overcloud-deploy-post.sh"
+    dest: "{{ working_dir }}/{{ stack_name }}-deploy-post.sh"
     mode: 0755
 
 - name: Copy neutron l3 ha heat template

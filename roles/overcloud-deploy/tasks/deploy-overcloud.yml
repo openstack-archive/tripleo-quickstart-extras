@@ -2,7 +2,7 @@
 - name: Deploy the overcloud
   shell: >
     set -o pipefail &&
-    {{ working_dir }}/overcloud-deploy.sh 2>&1 {{ timestamper_cmd }} > {{ deploy_log }}
+    {{ working_dir }}/{{ stack_name }}-deploy.sh 2>&1 {{ timestamper_cmd }} > {{ deploy_log }}
   register: deploy_script_result
   ignore_errors: true
   when: step_deploy_overcloud|bool
