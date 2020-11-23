@@ -91,3 +91,4 @@
       args:
         chdir: "{{ working_dir }}/tempestmail"
       ignore_errors: true
+      when: send_mail_tempest|default(false)|bool
