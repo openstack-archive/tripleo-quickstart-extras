@@ -59,7 +59,7 @@
 
 - name: Build and push containers into a local registry
   when:
-    - job.build_container_images|default(false)|bool
+    - build_container_images|default(false)|bool
   include_role:
     name: container-build
   vars:
@@ -228,7 +228,7 @@
 - name: Add updates to container-prepare-parameters.yaml
   when:
     - standalone_container_prep_updates
-    - not job.build_container_images|default(false)|bool
+    - not build_container_images|default(false)|bool
     - not job.consumer_job | default(false) | bool
   block:
     - name: Generate modified containers file
