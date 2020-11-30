@@ -4,6 +4,7 @@
 - name: Standalone upgrade repos setup and host upgrade
   hosts: undercloud
   tasks:
+
     - name: Standalone upgrade get new dlrn hash.
       include_role:
         name: repo-setup
@@ -21,6 +22,7 @@
       vars:
         repo_setup_script: repo_setup_upgrade.sh
         repo_setup_run_update: false
+
     # The next task triggers the yum upgrade command in as
     # repo_setup_run_update is true in release files by default.
     - name: Standalone upgrade setup new repos
@@ -30,6 +32,25 @@
       vars:
         repo_setup_log: repo_setup_upgrade.log
         repo_setup_script: repo_setup_upgrade.sh
+
+    - name: Check and enable the component-ci-testing repo if present
+      become: true
+      when: job.component is defined
+      block:
+        - name: Stat for the component-ci-testing repo file
+          stat:
+            path: "/etc/yum.repos.d/{{ job.component }}-component.repo"
+          register: component_repo
+        - name: Enable the component-ci-testing repo if we have one
+          ini_file:
+            path: "/etc/yum.repos.d/{{ job.component }}-component.repo"
+            option: enabled
+            value: '1'
+            section: "{{ job.component }}"
+            no_extra_spaces: true
+          when:
+            - component_repo.stat.isreg is defined
+            - component_repo.stat.isreg
 
   tags:
     - standalone-upgrade
