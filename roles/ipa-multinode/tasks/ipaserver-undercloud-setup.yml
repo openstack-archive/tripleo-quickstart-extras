@@ -85,6 +85,7 @@
   service:
     name: unbound
     state: stopped
+  ignore_errors: true
 
 - name: set search domain
   become: true

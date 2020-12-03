@@ -87,7 +87,7 @@
           {% if not '::' in forwarder_addresses_output.stdout_lines[0] -%}
           "{{ forwarder_addresses_output.stdout_lines[0] }}"
           {%- else -%}
-          "{{ forwarder_address }}"
+          "{{ forwarder_address_default }}"
           {%- endif -%}
 
     - name: disable unbound service
@@ -103,12 +103,14 @@
     --admin-password {{ freeipa_admin_password }}
     --hostname {{ ipa_nameserver }}
     --setup-dns
-    --forwarder {{ job.public_name_server|default(forwarder_address) }}
-    {% if not '::' in forwarder_addresses_output.stdout_lines[0] and forwarder_addresses_output.stdout_lines|length > 1 %}
+    {% if ( (forwarder_addresses_outputs is defined) and
+    (not '::' in forwarder_addresses_output.stdout_lines[0]) and
+    (forwarder_addresses_output.stdout_lines|length > 1) ) %}
     {% for fw in forwarder_addresses_output.stdout_lines %}
     --forwarder {{ fw }}
     {% endfor %}
     {% endif %}
+    --forwarder {{ job.public_name_server|default(forwarder_address_default) }}
     --unattended
     --ip-address {{ subnode_1_ip }}
   become: true
