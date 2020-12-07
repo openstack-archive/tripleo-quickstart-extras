@@ -15,16 +15,30 @@
 # under the License.
 
 - name: Deploy the content provider registry
-  become: true
-  podman_container:
-    name: docker_registry
-    image: quay.io/tripleoci/registry:2
-    publish:
-      - "{{ content_provider_registry_port }}:{{ content_provider_registry_port }}"
-    env:
-      REGISTRY_HTTP_ADDR: "0.0.0.0:{{ content_provider_registry_port }}"
-  tags:
-    - skip_ansible_lint
+  block:
+    - name: 'Deploy the content provider registry from {{ container_registry_image }}'
+      become: true
+      podman_container:
+        name: docker_registry
+        image: "{{ container_registry_image }}"
+        publish:
+          - "{{ content_provider_registry_port }}:{{ content_provider_registry_port }}"
+        env:
+          REGISTRY_HTTP_ADDR: "0.0.0.0:{{ content_provider_registry_port }}"
+      tags:
+        - skip_ansible_lint
+  rescue:
+    - name: "Deploy the content provider registry from {{ container_registry_image_fallback }}"
+      become: true
+      podman_container:
+        name: docker_registry
+        image: "{{ container_registry_image_fallback }}"
+        publish:
+          - "{{ content_provider_registry_port }}:{{ content_provider_registry_port }}"
+        env:
+          REGISTRY_HTTP_ADDR: "0.0.0.0:{{ content_provider_registry_port }}"
+      tags:
+        - skip_ansible_lint
 
 - name: Open port for content provider registry
   become: true

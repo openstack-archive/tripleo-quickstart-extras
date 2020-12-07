@@ -30,3 +30,5 @@ docker_prep_prefix: >-
   {%- endif -%}
 # Temporary pin to 8.2 because of LP #1902846
 containers_base_image: "{{ job.containers_base_image|default('ubi8') }}"
+container_registry_image: quay.io/tripleoci/registry:2
+container_registry_image_fallback: trunk.registry.rdoproject.org/ceph/registry:2
