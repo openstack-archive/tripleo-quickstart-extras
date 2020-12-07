@@ -31,7 +31,7 @@ done
 {% if baremetal_provision|bool %}
 ## * Provision the baremetal nodes
 ## ::
-openstack overcloud node provision --stack overcloud --output {{ working_dir }}/overcloud-baremetal-deployed.yaml {{ working_dir }}/overcloud_baremetal_deploy.yaml
+openstack overcloud node provision --stack {{ stack_name }}  --output {{ working_dir }}/overcloud-baremetal-deployed.yaml {{ working_dir }}/overcloud_baremetal_deploy.yaml
 if [ $? -ne 0 ]; then
     exit 1
 fi
@@ -39,7 +39,7 @@ fi
 
 ## * Deploy the overcloud!
 ## ::
-openstack overcloud deploy {% if release is not in ['newton', 'ocata', 'pike', 'queens'] %}--override-ansible-cfg {{ working_dir }}/custom_ansible.cfg{% endif %} \
+openstack overcloud deploy --stack {{ stack_name }}  {% if release is not in ['newton', 'ocata', 'pike', 'queens'] %}--override-ansible-cfg {{ working_dir }}/custom_ansible.cfg{% endif %} \
     --templates {{overcloud_templates_path}} \
     {{ deploy_args | regex_replace("\n", " ") }} \
     "$@" && status_code=0 || status_code=$?
@@ -47,7 +47,7 @@ openstack overcloud deploy {% if release is not in ['newton', 'ocata', 'pike', '
 ### --stop_docs
 
 # Check if the deployment has started. If not, exit gracefully. If yes, check for errors.
-if ! openstack stack list | grep -q overcloud; then
+if ! openstack stack list | grep -q {{ stack_name }}; then
     echo "overcloud deployment not started. Check the deploy configurations"
     exit 1
 
@@ -57,12 +57,12 @@ if ! openstack stack list | grep -q overcloud; then
 elif ! openstack stack list | grep -Eq '(CREATE|UPDATE)_COMPLETE'; then
     {%if release not in ['mitaka', 'liberty'] %}
     # get the failures list
-    openstack stack failures list overcloud --long > {{ failed_deployment_list }} || true
+    openstack stack failures list {{ stack_name }} --long > {{ failed_deployment_list }} || true
     {% endif %}
 
     # get any puppet related errors
     for failed in $(openstack stack resource list \
-        --nested-depth 5 overcloud | grep FAILED |
+        --nested-depth 5 {{ stack_name }} | grep FAILED |
         grep 'StructuredDeployment ' | cut -d '|' -f3)
     do
     echo "openstack software deployment show output for deployment: $failed" >> {{ failed_deployments_log }}
@@ -80,9 +80,9 @@ elif ! openstack stack list | grep -Eq '(CREATE|UPDATE)_COMPLETE'; then
     done
     exit 1
 {%if release in ['rocky', 'master'] %}
-elif ! openstack overcloud status | grep -Eq 'DEPLOY_SUCCESS'; then
+elif ! openstack overcloud status --plan {{ stack_name }} | grep -Eq 'DEPLOY_SUCCESS'; then
     # NOTE(emilien) "openstack overcloud failures" was introduced in Rocky
-    openstack overcloud failures >> {{ failed_deployment_list }} || true
+    openstack overcloud failures --plan {{ stack_name }} >> {{ failed_deployment_list }} || true
 {% endif %}
 fi
 exit $status_code
