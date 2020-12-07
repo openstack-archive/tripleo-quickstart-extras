@@ -35,15 +35,15 @@
 
 - name: List down missing containers
   set_fact:
-    missing_containers: "{{ missing_containers | default([]) + [item] }}"
-  when:
-    - item.rc != 0
-    - pull_success is defined
+    missing_containers: "{{ missing_containers | default([]) + [pull_output.item] }}"
+  when: pull_output is failed
   loop: "{{ pull_success.results }}"
+  loop_control:
+    loop_var: pull_output
 
 - name: Pull failed containers from RDO registry
   become: true
-  command: "podman pull docker://trunk.registry.rdoproject.org/ceph//{{ item.split('/')[-1] }}"
+  command: "podman pull docker://trunk.registry.rdoproject.org/ceph/{{ item.split('/')[-1] }}"
   register: rdo_pull_success
   ignore_errors: true
   loop: "{{ missing_containers }}"
@@ -59,9 +59,11 @@
 
     - name: List down missing containers
       set_fact:
-        rdo_missing_containers: "{{ rdo_missing_containers | default([]) + [item] }}"
-      when: item.rc != 0
+        rdo_missing_containers: "{{ rdo_missing_containers | default([]) + [ pull_output.item] }}"
+      when: pull_output is failed
       loop: "{{ rdo_pull_success.results }}"
+      loop_control:
+        loop_var: pull_output
 
     - name: Pull failed containers from dockerhub
       become: true
@@ -80,9 +82,11 @@
 
         - name: List down missing containers
           set_fact:
-            docker_missing_containers: "{{ docker_missing_containers | default([]) + [item] }}"
-          when: item.rc != 0
+            docker_missing_containers: "{{ docker_missing_containers | default([]) + [pull_output.item] }}"
+          when: pull_output is failed
           loop: "{{ docker_pull_success.results }}"
+          loop_control:
+            loop_var: pull_output
 
         - name: Fail the job if missing containers exists
           fail:
