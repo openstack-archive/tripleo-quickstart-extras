@@ -35,7 +35,7 @@
 - name: Set container_image_build_volumes fact
   set_fact:
     container_image_build_volumes:
-      - "/etc/yum.repos.d:/etc/yum.repos.d:z"
+      - "/etc/yum.repos.d:/etc/distro.repos.d:z"
       - "/etc/pki/rpm-gpg:/etc/pki/rpm-gpg:z"
 
 - name: Check if /opt/gating_repo exists
