@@ -27,9 +27,9 @@
   shell: |
     dnf install -y 'dnf-command(versionlock)'
     source /etc/ci/mirror_info.sh
-    wget $NODEPOOL_CENTOS_MIRROR/8/AppStream/x86_64/os/Packages/java-1.8.0-openjdk-1.8.0.265.b01-0.el8_2.x86_64.rpm
-    wget $NODEPOOL_CENTOS_MIRROR/8/AppStream/x86_64/os/Packages/java-1.8.0-openjdk-headless-1.8.0.265.b01-0.el8_2.x86_64.rpm
-    wget $NODEPOOL_CENTOS_MIRROR/8/AppStream/x86_64/os/Packages/java-1.8.0-openjdk-devel-1.8.0.265.b01-0.el8_2.x86_64.rpm
+    wget $NODEPOOL_CENTOS_MIRROR/8/AppStream/x86_64/os/Packages/java-1.8.0-openjdk-1.8.0.265.b01-4.el8.x86_64.rpm
+    wget $NODEPOOL_CENTOS_MIRROR/8/AppStream/x86_64/os/Packages/java-1.8.0-openjdk-headless-1.8.0.265.b01-4.el8.x86_64.rpm
+    wget $NODEPOOL_CENTOS_MIRROR/8/AppStream/x86_64/os/Packages/java-1.8.0-openjdk-devel-1.8.0.265.b01-4.el8.x86_64.rpm
     dnf install -y java-1.8.0-openjdk*rpm
     dnf versionlock add java-1.8.0-openjdk java-1.8.0-openjdk-headless java-1.8.0-openjdk-devel
     dnf versionlock list > /var/log/versionlock.log
