@@ -13,6 +13,12 @@
   set_fact:
     mount_tempdir: "{{ mktemp_command.stdout }}"
 
+- name: Ensure qemu-img is installed
+  package:
+    name: qemu-img
+    state: present
+  become: true
+
 - when: not initramfs_image|bool
   block:
 
@@ -23,6 +29,7 @@
 
     - name: Convert image
       shell: >
+        set -eo pipefail;
         qemu-img convert -f qcow2 -O raw {{ image_to_modify_qcow }} {{ image_to_modify_raw }};
         rm -rf "{{ image_to_modify_qcow }}";
 
