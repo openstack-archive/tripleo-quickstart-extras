@@ -10,7 +10,7 @@
     extra_tht_config_args: >-
       {{ extra_tht_config_args|default('') }}
       {% if extra_tht_configs|default([])|length > 0 %}
-      -e {{ extra_tht_configs | default([]) | map('basename') | map('regex_replace', '(.*)', "{{ working_dir }}/\1") | join (' -e ') }}
+      -e {{ extra_tht_configs | default([]) | map('basename') | map('regex_replace', '(.+)', working_dir + "/\1") | join (' -e ') }}
       {% endif %}
     cacheable: true
 
