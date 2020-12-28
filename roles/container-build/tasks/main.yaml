@@ -25,6 +25,7 @@
           - "{{ content_provider_registry_port }}:{{ content_provider_registry_port }}"
         env:
           REGISTRY_HTTP_ADDR: "0.0.0.0:{{ content_provider_registry_port }}"
+          REGISTRY_LOG_LEVEL: debug
       tags:
         - skip_ansible_lint
   rescue:
@@ -37,6 +38,7 @@
           - "{{ content_provider_registry_port }}:{{ content_provider_registry_port }}"
         env:
           REGISTRY_HTTP_ADDR: "0.0.0.0:{{ content_provider_registry_port }}"
+          REGISTRY_LOG_LEVEL: debug
       tags:
         - skip_ansible_lint
 
