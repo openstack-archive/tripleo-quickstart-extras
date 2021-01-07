@@ -11,12 +11,6 @@
       - pkg_mgr
       - distribution
 
-- name: set python_cmd
-  set_fact:
-    python_cmd: "python{{ ansible_python.version.major }}"
-    cacheable: true
-  when: python_cmd is not defined
-
 - name: Ensure DLRN package dependencies
   become: true
   package:
@@ -33,48 +27,9 @@
       - rpm-build
       - rpmdevtools
       - sqlite
-      - >
-        {% if ansible_python.version.major == 3 %}
-        python3-libselinux
-        {% else %}
-        libselinux-python
-        {% endif %}
+      - python3-libselinux
   register: package_ensure_dlrndeps
   until: package_ensure_dlrndeps is success
-  retries: 3
-  delay: 5
-
-# https://bugs.launchpad.net/tripleo/+bug/1863632
-# "'virtualenv' is a package and cannot be directly executed"
-- name: Make sure we have contextlib2 between 0.5 < 0.6 when queens
-  become: true
-  when: (release in ['queens']) or (lookup('env', 'ZUUL_BRANCH') | replace('stable/', '') in ['queens'])
-  tags: notest
-  pip:
-    name: contextlib2>0.5.0,<0.6.0
-    extra_args: '-U --force-reinstall --ignore-installed'
-
-- name: Check if virtualenv is in the system
-  command: "{{ python_cmd }} -m virtualenv --version"
-  args:
-    warn: false
-  register: virtualenv_exist
-  changed_when: false
-  failed_when: false
-
-- when: virtualenv_exist.rc != 0
-  name: Install virtualenv
-  become: true
-  package:
-    state: present
-    name: >
-        {% if ansible_python.version.major == 3 %}
-        python3-virtualenv
-        {% else %}
-        python-virtualenv
-        {% endif %}
-  register: package_virtualenv
-  until: package_virtualenv is success
   retries: 3
   delay: 5
 
@@ -120,35 +75,42 @@
     src: projects.ini.j2
     dest: '{{ build_repo_dir }}/DLRN/projects.ini'
 
-- name: Install and update pip
-  # noqa 403
-  pip:
-    name: pip
-    virtualenv: "{{ build_repo_dir }}/dlrn-venv"
-    state: latest
-    extra_args: --upgrade
+- name: Pip installs
+  vars:
+    ansible_python_interpreter: "/usr/bin/{{ python_cmd }}"
+  block:
+    - name: Install and update pip
+      # noqa 403
+      pip:
+        name: pip
+        virtualenv: "{{ build_repo_dir }}/dlrn-venv"
+        virtualenv_command: "/usr/bin/{{ python_cmd }} -m venv"
+        state: latest
+        extra_args: --upgrade
 
-- name: Pip install rdopkg
-  # noqa 403
-  pip:
-    name: rdopkg
-    virtualenv: "{{ build_repo_dir }}/dlrn-venv"
-    state: latest
-  when: not dlrn_pre_installed|bool
+    - name: Pip install rdopkg
+      # noqa 403
+      pip:
+        name: rdopkg
+        virtualenv: "{{ build_repo_dir }}/dlrn-venv"
+        virtualenv_command: "/usr/bin/{{ python_cmd }} -m venv"
+        state: latest
+      when: not dlrn_pre_installed|bool
 
-- name: Pip install DLRN
-  # noqa 403
-  pip:
-    name: dlrn
-    virtualenv: "{{ build_repo_dir }}/dlrn-venv"
-    state: latest
-  when: not dlrn_pre_installed|bool
+    - name: Pip install DLRN
+      # noqa 403
+      pip:
+        name: dlrn
+        virtualenv: "{{ build_repo_dir }}/dlrn-venv"
+        virtualenv_command: "/usr/bin/{{ python_cmd }} -m venv"
+        state: latest
+      when: not dlrn_pre_installed|bool
 
 - name: Pip install pre-installed DLRN
   shell: >
     source {{ build_repo_dir }}/dlrn-venv/bin/activate;
-    pip{{ ansible_python.version.major }} install -r requirements.txt;
-    python{{ ansible_python.version.major }} setup.py install;
+    pip install -r requirements.txt;
+    {{ python_cmd }} setup.py install;
   args:
     chdir: '{{ build_repo_dir }}/DLRN'
   when: dlrn_pre_installed|bool

@@ -1,5 +1,6 @@
 ---
 
+python_cmd: python3
 build_repo_dir: "{{ ansible_user_dir }}"
 rdoinfo_repo_name: rdoinfo
 artg_dlrn_repo_url: "https://github.com/openstack-packages/DLRN.git"
