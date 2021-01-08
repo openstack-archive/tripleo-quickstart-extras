@@ -110,6 +110,8 @@
         buildah push --format=v2s2 --tls-verify=False --log-level debug {{ item }} \
           docker://{{ content_provider_registry_ip }}:{{ content_provider_registry_port }}/{{ docker_registry_namespace }}/{{ item.split('/')[-1] }};
       with_items: "{{ non_tripleo_containers }}"
+      retries: 3
+      delay: 5
       register: non_tripleo
       changed_when: false
       tags:
