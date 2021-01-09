@@ -25,6 +25,9 @@
       vars:
         tempest_install_method: distro
         tempest_cloud_name: 'overcloud'
+  environment:
+    # Disable ssl waarnings
+    CURL_CA_BUNDLE: ""
   tags:
     - overcloud-validate
 

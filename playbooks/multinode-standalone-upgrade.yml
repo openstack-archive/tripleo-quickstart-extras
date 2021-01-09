@@ -106,5 +106,8 @@
     tempest_cidr: '192.168.24.0/24'
   tasks:
     - include_tasks: tasks/tempest.yml
+  environment:
+    # Disable ssl warnings
+    CURL_CA_BUNDLE: ""
   tags:
     - standalone-upgrade

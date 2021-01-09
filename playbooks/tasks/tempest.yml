@@ -57,6 +57,8 @@
 
 - name: Create clouds.yaml if it doesn't exist
   shell: |
+    # queens is returning //v3 so we replace with /v3
+    sed -i 's/\/\/v3/\/v3/g' {{ ansible_user_dir }}/overcloudrc
     source {{ ansible_user_dir }}/overcloudrc
     mkdir -p {{ ansible_user_dir }}/.config/openstack
     cat <<EOF>>{{ ansible_user_dir }}/.config/openstack/clouds.yaml
@@ -74,8 +76,7 @@
     EOF
   when:
     - release in ['queens', 'rocky', 'stein']
-    - use_os_tempest is defined
-    - use_os_tempest | bool
+    - not tempest_cloud_name in ['undercloud', 'standalone']
 
 # Ansible requires openstacksdk>=0.12 do the resource setup, however
 # queens upper-constraint has openstacksdk==0.11.36, so we need to
@@ -100,14 +101,6 @@
         venv_pip_packages:
           - 'openstacksdk'
         venv_wheel_build_enable: false
-
-# This will execute the validate-tempest
-- name: Execute validate-tempest (deprecated)
-  block:
-    - name: Execute validate-tempest role
-      include_role:
-        name: validate-tempest
-  when: run_tempest | bool
 
 # This will execute os_tempest
 - name: Execute os_tempest
@@ -153,12 +146,12 @@
     - name: Set network vars
       set_fact:
         tempest_public_net_physical_type: 'datacentre'
-        tempest_private_net_provider_type: "{{ (release in ['queens']) | ternary('vlan', 'geneve') }}"
         tempest_public_subnet_cidr: '{{ tempest_cidr }}'
         tempest_public_subnet_gateway_ip: '{{ tempest_cidr|nthhost(1) }}'
         tempest_public_subnet_allocation_pools: '{{ tempest_cidr|nthhost(100) ~ "-" ~ tempest_cidr|nthhost(150) }}'
         tempest_private_net_seg_id: "{{ (release in ['queens']) | ternary('', omit) }}"
         tempest_network_ping_gateway: true
+        tempest_private_net_provider_type: "{{ (release in ['queens', 'rocky']) | ternary('vlan', 'geneve') }}"
       when: tempest_cidr is defined
 
     - name: Handle migration of br-ex network
@@ -220,9 +213,7 @@
       set_fact:
         tempest_run_stackviz: false
       when:
-        - release|default('master') in ['master', 'queens', 'stein', 'train']
-        - ansible_distribution|lower in ['redhat', 'centos']
-        - ansible_distribution_major_version is version('7', '=')
+        - ansible_distribution_major_version is version('8', '<')
 
     - name: Run os_tempest role
       vars:
@@ -231,7 +222,4 @@
         tempest_run: 'yes'
       include_role:
         name: os_tempest
-  when:
-    - not run_tempest | bool
-    - use_os_tempest is defined
-    - use_os_tempest | bool
+      when: use_os_tempest | default(true)
