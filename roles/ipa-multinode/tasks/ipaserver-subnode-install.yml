@@ -103,7 +103,7 @@
     --admin-password {{ freeipa_admin_password }}
     --hostname {{ ipa_nameserver }}
     --setup-dns
-    {% if ( (forwarder_addresses_outputs is defined) and
+    {% if ( (forwarder_addresses_output is defined) and
     (not '::' in forwarder_addresses_output.stdout_lines[0]) and
     (forwarder_addresses_output.stdout_lines|length > 1) ) %}
     {% for fw in forwarder_addresses_output.stdout_lines %}
