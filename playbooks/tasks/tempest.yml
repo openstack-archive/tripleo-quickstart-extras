@@ -104,6 +104,7 @@
 
 # This will execute os_tempest
 - name: Execute os_tempest
+  when: use_os_tempest | default(true)
   block:
     - name: Fail the tempest playbook on undefined cloud name and install method
       fail:
@@ -222,4 +223,3 @@
         tempest_run: 'yes'
       include_role:
         name: os_tempest
-      when: use_os_tempest | default(true)
