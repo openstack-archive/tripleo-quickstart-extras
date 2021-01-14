@@ -68,6 +68,7 @@
     - include_tasks: tasks/tempest.yml
       when: job is undefined or (job is defined and
             job.featureset is defined and job.featureset != '056')
+            and use_os_tempest | default(true)
   environment:
     # Disable ssl warnings
     CURL_CA_BUNDLE: ""
