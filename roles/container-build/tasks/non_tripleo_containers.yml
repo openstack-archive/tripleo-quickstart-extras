@@ -113,6 +113,7 @@
       retries: 3
       delay: 5
       register: non_tripleo
+      until: non_tripleo is not failed
       changed_when: false
       tags:
         - skip_ansible_lint
