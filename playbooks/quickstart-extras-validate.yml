@@ -25,6 +25,7 @@
       vars:
         tempest_install_method: distro
         tempest_cloud_name: 'overcloud'
+      when: use_os_tempest | default(true)
   environment:
     # Disable ssl waarnings
     CURL_CA_BUNDLE: ""

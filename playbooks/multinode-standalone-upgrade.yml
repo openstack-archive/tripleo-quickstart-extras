@@ -106,6 +106,7 @@
     tempest_cidr: '192.168.24.0/24'
   tasks:
     - include_tasks: tasks/tempest.yml
+      when: use_os_tempest | default(true)
   environment:
     # Disable ssl warnings
     CURL_CA_BUNDLE: ""
