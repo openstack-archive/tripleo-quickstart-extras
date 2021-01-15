@@ -300,15 +300,17 @@ others coming from various related to tripleo-quickstart:
 
 # Check the results of the deployment, note after inventory has executed
 - name: Check the result of the deployment
-  hosts: localhost
+  hosts: undercloud
   tasks:
     - name: ensure the deployment result has been read into memory
       include_vars: "{{ local_working_dir }}/overcloud_deployment_result.json"
+      delegate_to: localhost
 
     # overcloud_deploy_result = ["failed", "passed"]
     - name: did the deployment pass or fail?
       debug: var=overcloud_deploy_result
       failed_when: overcloud_deploy_result == "failed"
+      delegate_to: localhost
   tags:
     - overcloud-deploy-check
 ```

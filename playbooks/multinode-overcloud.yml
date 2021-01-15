@@ -2,23 +2,28 @@
 - name: Deploy the overcloud
   hosts: undercloud
   gather_facts: false
-  roles:
-    - overcloud-deploy
   environment:
     TRIPLEO_ROOT: "{{ lookup('env','TRIPLEO_ROOT') }}"
-
-- name: Check the result of the deployment
-  hosts: localhost
-  tags:
-    - overcloud-deploy
   tasks:
-    - name: ensure the deployment result has been read into memory
-      include_vars: "{{ local_working_dir }}/overcloud_deployment_result.json"
+    - name: Deploy the overcloud
+      include_role:
+        name: overcloud-deploy
+      tags:
+        - overcloud-deploy
 
-    # overcloud_deploy_result = ["failed", "passed"]
-    - name: did the deployment pass or fail?
-      debug: var=overcloud_deploy_result
-      failed_when: overcloud_deploy_result == "failed"
+    - name: Check the overcloud_deployment_result.json if this is CI job
+      tags:
+        - overcloud-deploy
+      block:
+        - name: ensure the deployment result has been read into memory
+          include_vars: "{{ local_working_dir }}/overcloud_deployment_result.json"
+          delegate_to: localhost
+
+        # overcloud_deploy_result = ["failed", "passed"]
+        - name: did the deployment pass or fail?
+          debug: var=overcloud_deploy_result
+          failed_when: overcloud_deploy_result == "failed"
+          delegate_to: localhost
 
 - name: Run tripleo-validations post-deployment tests
   hosts: undercloud
