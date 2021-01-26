@@ -96,26 +96,42 @@
         name: unbound
         state: stopped
 
-- name: configure FreeIPA
+    - name: configure FreeIPA - with unbound forwarder
+      shell: >
+        ipa-server-install --realm {{ ipa_realm }}
+        --ds-password {{ freeipa_directory_password }}
+        --admin-password {{ freeipa_admin_password }}
+        --hostname {{ ipa_nameserver }}
+        --setup-dns
+        {% if (forwarder_addresses_output is defined) %}
+        {% if ((not '::' in forwarder_addresses_output.stdout_lines[0]) and
+        (forwarder_addresses_output.stdout_lines|length > 0) ) %}
+        {% for fw in forwarder_addresses_output.stdout_lines %}
+        --forwarder {{ fw }}
+        {% endfor %}
+        {% endif %}
+        {% endif %}
+        --forwarder {{ job.public_name_server|default(forwarder_address_default) }}
+        --unattended
+        --ip-address {{ subnode_1_ip }}
+      become: true
+      when:
+        ipa_install.stdout == 'False'
+
+- name: configure FreeIPA - no unbound forwarder
   shell: >
     ipa-server-install --realm {{ ipa_realm }}
     --ds-password {{ freeipa_directory_password }}
     --admin-password {{ freeipa_admin_password }}
     --hostname {{ ipa_nameserver }}
     --setup-dns
-    {% if ( (forwarder_addresses_output is defined) and
-    (not '::' in forwarder_addresses_output.stdout_lines[0]) and
-    (forwarder_addresses_output.stdout_lines|length > 1) ) %}
-    {% for fw in forwarder_addresses_output.stdout_lines %}
-    --forwarder {{ fw }}
-    {% endfor %}
-    {% endif %}
     --forwarder {{ job.public_name_server|default(forwarder_address_default) }}
     --unattended
     --ip-address {{ subnode_1_ip }}
   become: true
   when:
-    ipa_install.stdout == 'False'
+    - ipa_install.stdout == 'False'
+    - unbound_forwarding.stat.exists == false
 
 # This needs to be set on the FreeIPA server so that the overcloud nodes
 # can pull the certificate. If this isn't set, the overcloud nodes will
@@ -151,6 +167,14 @@
 
 - debug:
     msg: "{{ ping_output_com.stdout }}"
+
+- name: Check curl works with DNS
+  shell: >
+    curl -s -S https://trunk.rdoproject.org/centos8/component/tripleo/ | grep 'consistent'
+  register: curl_output
+
+- debug:
+    msg: "{{ curl_output.stdout }}"
 
 - name: Add DNS entries
   become: true

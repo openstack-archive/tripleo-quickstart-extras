@@ -140,13 +140,74 @@
   debug:
     msg: '{{ job.nodepool_provider }}'
 
+- name: Set fact on nameserver to use as public
+  set_fact:
+    trunk_public_nameserver: "{{ job.public_name_server|default('8.8.8.8') }}"
+
+- name: Register A record resolved by public nameserver - trunk.rdoproject.org
+  shell: >
+    dig +short @{{ trunk_public_nameserver }} trunk.rdoproject.org
+  register: trunk_record_public
+
+- name: Return A record resolved by public nameserver - trunk.rdoproject.org
+  debug:
+    msg: "{{ trunk_record_public.stdout_lines[1] }}"
+
+- name: Register A record resolved by ipa nameserver - trunk.rdoproject.org
+  shell: >
+    dig +short @{{ ipa_nameserver }} trunk.rdoproject.org
+  register: trunk_record_ipa
+
+- name: Return host resolved by freeipa_address
+  debug:
+    msg: "{{ trunk_record_ipa.stdout_lines[1] }}"
+  when: trunk_record_ipa.stdout_lines|length > 0
+
 - name: Add entries to /etc/hosts for providers that don't resolve
   become: true
   lineinfile:
     path: /etc/hosts
-    line: '209.132.183.105 redhat.com'
+    line: "{{ item }}"
     state: present
-  when: job.nodepool_provider is search('rax') or job.nodepool_provider is search('ovh')
+  with_items:
+    - '209.132.183.105 redhat.com'
+    - '{{ trunk_record_public.stdout_lines[1] }} trunk.rdoproject.org'
+
+- name: check if /etc/ci/mirror_info.sh exists
+  stat:
+    path: /etc/ci/mirror_info.sh
+  register: mirror_info_result
+
+- name: Return RDO proxy when /etc/ci/mirror_info.sh exists
+  when: mirror_info_result.stat.exists
+  block:
+    - name: get nodepool_mirror_host
+      become: true
+      shell: >
+        cat /etc/ci/mirror_info.sh  | sed -n -e 's/export NODEPOOL_MIRROR_HOST=//p'
+      register: nodepool_mirror_host
+
+    - name: Return nodepool_mirror_host
+      debug:
+        msg: "{{ nodepool_mirror_host.stdout }}"
+
+    - name: Register A record resolved by public nameserver - mirror host
+      shell: >
+        dig +short @{{ trunk_public_nameserver }} {{ nodepool_mirror_host.stdout }}
+      register: mirror_host_record_public
+
+    - name: Return A record resolved by public nameserver - mirror host
+      debug:
+        msg: "{{ mirror_host_record_public.stdout_lines[1] }}"
+      when: mirror_host_record_public.stdout_lines|length >=2
+
+    - name: Add entries to /etc/hosts for providers that don't resolve
+      become: true
+      lineinfile:
+        path: /etc/hosts
+        line: '{{ mirror_host_record_public.stdout_lines[1] }} {{ nodepool_mirror_host.stdout }}'
+        state: present
+      when: mirror_host_record_public.stdout_lines|length >=2
 
 - name: Check that the DNS works
   shell: >
@@ -156,3 +217,11 @@
 
 - debug:
     msg: "dig_ouput_com is {{ dig_ouput_com.stdout }}"
+
+- name: Check curl works with DNS
+  shell: >
+    curl -s -S https://trunk.rdoproject.org/centos8/component/tripleo/ | grep 'consistent'
+  register: curl_output
+
+- debug:
+    msg: "{{ curl_output.stdout }}"
