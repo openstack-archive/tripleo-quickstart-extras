@@ -55,11 +55,16 @@
         python-virtualenv
         {% endif %}
 
+- name: Set the rc file
+  set_fact:
+    rc_file: "{{ (tempest_cloud_name in ['undercloud']) | ternary('stackrc', 'overcloudrc') }}"
+  when: release in ['queens', 'rocky', 'stein']
+
 - name: Create clouds.yaml if it doesn't exist
   shell: |
     # queens is returning //v3 so we replace with /v3
-    sed -i 's/\/\/v3/\/v3/g' {{ ansible_user_dir }}/overcloudrc
-    source {{ ansible_user_dir }}/overcloudrc
+    sed -i 's/\/\/v3/\/v3/g' {{ ansible_user_dir }}/{{ rc_file }}
+    source {{ ansible_user_dir }}/{{ rc_file }}
     mkdir -p {{ ansible_user_dir }}/.config/openstack
     cat <<EOF>>{{ ansible_user_dir }}/.config/openstack/clouds.yaml
     clouds:
@@ -76,7 +81,7 @@
     EOF
   when:
     - release in ['queens', 'rocky', 'stein']
-    - not tempest_cloud_name in ['undercloud', 'standalone']
+    - not tempest_cloud_name in ['standalone']
 
 # Ansible requires openstacksdk>=0.12 do the resource setup, however
 # queens upper-constraint has openstacksdk==0.11.36, so we need to
@@ -115,9 +120,11 @@
         - tempest_install_method is not defined
         - tempest_cloud_name is not defined
 
+    # If tempest is running on undercloud, do not set this variable to true
     - name: Initialize neutron service for network creation
       set_fact:
         tempest_service_available_neutron: true
+      when: tempest_cloud_name in ['overcloud', 'standalone']
 
     - name: Create /root/.config/openstack directory
       file:
