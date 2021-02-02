@@ -160,3 +160,9 @@ undercloud_enable_zaqar: >-
   {%- else -%}
   false
   {%- endif %}
+undercloud_enable_swift: >-
+  {% if release in ['queens', 'rocky', 'stein', 'train', 'ussuri', 'victoria'] -%}
+  true
+  {%- else -%}
+  false
+  {%- endif %}
