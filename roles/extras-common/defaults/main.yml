@@ -125,6 +125,9 @@ validate_services: false
 # If `baremetal_provision` is `true`, deploy baremetal with "openstack overcloud node provision" and deployed-server, instead of with heat/nova
 baremetal_provision: false
 
+# If `network_provision` is `true`, deploy network with "openstack overcloud network provision" and deployed-networks, instead of with heat
+network_provision: false
+
 # If `undercloud_enable_nova` is `true`, the undercloud will have running glance and nova services
 undercloud_enable_nova: >-
   {% if release in ['queens', 'rocky', 'stein', 'train', 'ussuri'] -%}

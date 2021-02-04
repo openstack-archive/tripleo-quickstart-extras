@@ -28,6 +28,15 @@ done
 
 ### --start_docs
 
+{% if network_provision|bool %}
+openstack overcloud network provision \
+  --output {{ working_dir }}/overcloud-networks-deployed.yaml \
+  {{overcloud_templates_path}}/ci/network_data.yaml
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+{% endif %}
+
 {% if baremetal_provision|bool %}
 ## * Provision the baremetal nodes
 ## ::
