@@ -301,6 +301,26 @@ ipv6_address_mode = {{ undercloud_ipv6_address_mode }}
 # ipv6_address_mode = dhcpv6-stateless
 {% endif %}
 
+# Ironic network interface implementation to use by default. (string
+# value)
+# Possible values:
+# flat - Use one flat provider network.
+# neutron - Ironic interacts with Neutron to enable other network
+# types and advanced networking features.
+{% if undercloud_ironic_default_network_interface is defined %}
+ironic_default_network_interface = {{ undercloud_ironic_default_network_interface }}
+{% else %}
+#ironic_default_network_interface = flat
+{% endif %}
+
+# Enabled ironic network interface implementations. Each hardware type
+# must have at least one valid implementation enabled. (list value)
+{% if undercloud_ironic_enabled_network_interfaces is defined %}
+ironic_enabled_network_interfaces = {{ undercloud_ironic_enabled_network_interfaces }}
+{% else %}
+#ironic_enabled_network_interfaces = flat
+{% endif %}
+
 {% if undercloud_docker_registry_mirror is defined and undercloud_docker_registry_mirror %}
 docker_registry_mirror = {{undercloud_docker_registry_mirror}}
 {% else %}
