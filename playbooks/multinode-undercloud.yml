@@ -74,9 +74,12 @@
   gather_facts: false
   tags:
     - tripleo-validations
-  roles:
-    - {role: tripleo_validations,
-       when: job.enable_validation|default(false)|bool}
+  tasks:
+    - include_role:
+        name: tripleo_validations
+      when:
+        - job.enable_validation|default(false)|bool
+        - release not in ['queens', 'rocky', 'stein']
 
 - name: Validate the undercloud
   hosts: undercloud

@@ -26,9 +26,12 @@
     - tripleo-validations
   vars:
     validations_group: ['post-deployment']
-  roles:
-    - {role: tripleo_validations,
-       when: run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool}
+  tasks:
+    - include_role:
+        name: tripleo_validations
+      when:
+        - (run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool)
+        - release not in ['queens', 'rocky', 'stein']
 
 # Check the results of the deployment, note after inventory has executed
 - name: Check the result of the deployment
