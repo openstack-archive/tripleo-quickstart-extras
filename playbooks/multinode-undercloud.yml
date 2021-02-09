@@ -72,6 +72,8 @@
 - name: Run tripleo-validations standalone and CLI tests
   hosts: undercloud
   gather_facts: false
+  vars:
+    validation_command: "openstack tripleo validator"
   tags:
     - tripleo-validations
   roles:
