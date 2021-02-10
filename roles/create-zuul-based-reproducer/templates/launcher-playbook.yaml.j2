@@ -9,6 +9,12 @@
 #    -e nodepool_provider=libvirt \
 #    -e mirror_path=mirror.mtl01.inap.opendev.org
 #
+# To split mirror_path into different values for packages and pypi, use f.e.:
+#    ...
+#    -e mirror_fqdn=mirror.mtl01.inap.opendev.org \
+#    -e package_mirror=http://mirror.centos.org/centos
+#    -e pypi_fqdn=mirror.mtl02.inap.opendev.org \
+#
 # To run on a different cloud defined in clouds.yaml ( default is rdo-cloud):
 # >> ansible-playbook launcher-playbook.yaml \
 #    -e cloud_name='<custom cloud>'
@@ -53,7 +59,13 @@
     clouds_yaml_path: "/home/{{ ansible_user }}/.config/openstack/clouds.yaml"
     {% endraw -%}
     ovb_key_name: tripleo-ci-team
-    mirror_path: mirror.regionone.rdo-cloud.rdoproject.org
+    mirror_path: "{{ mirror_path }}"
+    zuul_site_mirror_fqdn: "{{ zuul_site_mirror_fqdn | default(mirror_path) }}"
+    mirror_fqdn: "{{ mirror_fqdn | default(mirror_path) }}"
+    pypi_fqdn: "{{ pypi_fqdn | default(mirror_path) }}"
+    {% if package_mirror is defined -%}
+    package_mirror: "{{ package_mirror }}"
+    {% endif -%}
     launch_job_branch: {{ zuul.branch }}
     {% if 'periodic' not in zuul.job -%}
     depends_on:
@@ -95,7 +107,10 @@
             remove_ovb_after_job: false
             {% endif -%}
             {% raw -%}
-            mirror_fqdn: {{ mirror_path }}
+            zuul_site_mirror_fqdn: {{ zuul_site_mirror_fqdn }}
+            mirror_fqdn: {{ mirror_fqdn }}
+            pypi_fqdn: {{ pypi_fqdn }}
+            package_mirror: {{ package_mirror }}
             {% endraw -%}
             {% if releases_file_output is defined -%}
             ready_releases_file: |
