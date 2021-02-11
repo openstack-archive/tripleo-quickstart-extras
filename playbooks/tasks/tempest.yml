@@ -209,7 +209,7 @@
 
     - name: set cirros image facts for periodic
       vars:
-        default_cirros_image: http://images.rdoproject.org/cirros/cirros-0.4.0-x86_64-disk.img
+        default_cirros_image: https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img
       set_fact:
         tempest_tempestconf_profile_extras:
           image: "{{ featureset_override['cirros_image'] | default(default_cirros_image) }}"
