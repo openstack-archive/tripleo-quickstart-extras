@@ -6,7 +6,8 @@
     - freeipa-setup
   tasks:
 
-    - include_role:
+    - name: Include tripleo-inventory
+      include_role:
         name: tripleo-inventory
       vars:
         inventory: extra_node
@@ -29,7 +30,8 @@
     - freeipa-setup
   tasks:
 
-    - include_role:
+    - name: Include repo-setup
+      include_role:
         name: repo-setup
       vars:
         repo_setup_dir: /home/{{ supplemental_user|default('centos') }}
@@ -43,5 +45,6 @@
       become: true
       changed_when: false
 
-    - include_role:
+    - name: Include freeipa-setup
+      include_role:
         name: freeipa-setup

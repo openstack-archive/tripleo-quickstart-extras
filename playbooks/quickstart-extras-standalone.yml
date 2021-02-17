@@ -14,7 +14,8 @@
   hosts: undercloud
   gather_facts: true
   tasks:
-    - include_role:
+    - name: Include baremetal-prep-virthost
+      include_role:
         name: baremetal-prep-virthost
         tasks_from: remove_ens3.yml
       when:

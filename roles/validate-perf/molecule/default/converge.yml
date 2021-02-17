@@ -3,6 +3,7 @@
   hosts: all
   gather_facts: false
   tasks:
-    - include_role:
+    - name: Include validate-perf security_disable
+      include_role:
         name: validate-perf
         tasks_from: security_disable

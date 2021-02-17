@@ -5,6 +5,9 @@ rules:
   line-length:
     max: 180
 
-#braces: {min-spaces-inside: 1, max-spaces-inside: 10}
+  # Ansible does not need --- prefix and none of other tools we use do
+  document-start: disable
+  # braces: {min-spaces-inside: 1, max-spaces-inside: 10}
+
 ignore: |
   /roles/standalone/tasks/main.yml

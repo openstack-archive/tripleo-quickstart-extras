@@ -77,7 +77,8 @@
   vars:
     validations_group: ['post-deployment']
   tasks:
-    - include_role:
+    - name: Include tripleo_validations
+      include_role:
         name: tripleo_validations
       when:
         - (run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool)

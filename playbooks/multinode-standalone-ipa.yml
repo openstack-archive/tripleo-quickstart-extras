@@ -14,7 +14,8 @@
   tags:
     - standalone
   tasks:
-    - include_role:
+    - name: Include ipa-multinode ipaserver-subnode-install
+      include_role:
         name: ipa-multinode
         tasks_from: ipaserver-subnode-install.yml
 
@@ -23,6 +24,7 @@
   tags:
     - standalone
   tasks:
-    - include_role:
+    - name: Include ipa-multinode ipaserver-undercloud-setup
+      include_role:
         name: ipa-multinode
         tasks_from: ipaserver-undercloud-setup.yml

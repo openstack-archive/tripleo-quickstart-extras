@@ -1,5 +1,6 @@
 ---
-- set_fact:
+- name: set subnode_1_ip
+  set_fact:
     subnode_1_ip: "{{ hostvars['subnode-1'].inventory_ip }}"
 
 - name: set the freeipa_internal_ip
@@ -9,7 +10,8 @@
     standalone_control_virtual_ip: "{{ undercloud_network_cidr|nthhost(210) }}"
     cacheable: true
 
-- include_role:
+- name: Include repo-setup
+  include_role:
     name: repo-setup
   vars:
     repo_setup_dir: /home/{{ ansible_user|default('centos') }}
@@ -149,7 +151,8 @@
     ping -c 5 redhat.com
   register: ping_output_com
 
-- debug:
+- name: Display ping_output_com
+  debug:
     msg: "{{ ping_output_com.stdout }}"
 
 - name: Add DNS entries
@@ -177,8 +180,10 @@
     ipa dnsrecord-show ooo.test overcloud
   register: overcloud_record
 
-- debug:
+- name: Display standalone_record
+  debug:
     msg: "{{ standalone_record.stdout }}"
 
-- debug:
+- name: Display overcloud_record
+  debug:
     msg: "{{ overcloud_record.stdout }}"

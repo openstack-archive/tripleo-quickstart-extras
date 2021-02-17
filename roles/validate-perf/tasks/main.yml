@@ -27,5 +27,6 @@
     poll: 0
     changed_when: false
   rescue:
-    - debug:
+    - name: Display warning about performance
+      debug:
         msg: "Warning: Performance cannot be validated."
