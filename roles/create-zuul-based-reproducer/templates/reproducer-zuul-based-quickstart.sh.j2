@@ -193,6 +193,10 @@ if [[ "$LIBVIRT" == "1" ]]; then
     if [[ ! -z "$LIBVIRT_ERROR" ]]; then
         echo -e "\e[31m ERROR: -l,  libvirt attempted on a machine w/o libvirt capabilities, or on a virtual instance \e[0m"
     fi
+    if [ ! -f "$WORKSPACE/libvirt_nodepool_vars.yml" ]; then
+        cp "$WORKSPACE/roles/libvirt/setup/overcloud/vars/libvirt_nodepool_vars.yml" "$WORKSPACE"
+    fi
+
 fi
 
 curl -o bindep.txt https://raw.githubusercontent.com/rdo-infra/ansible-role-tripleo-ci-reproducer/master/bindep.txt
@@ -317,6 +321,15 @@ fi
 if [[ "$RDO_GERRIT_SSH_KEY" != "$USER_SSH_KEY" ]]; then
     EXTRA_PARAMS="$EXTRA_PARAMS -e rdo_gerrit_key=$RDO_GERRIT_SSH_KEY "
 fi
+
+# to customize your libvirt nodepool settings
+# edit $WORKSPACE/libvirt_nodepool_vars.yml
+if [[ "$LIBVIRT" == "1" ]]; then
+    EXTRA_PARAMS="$EXTRA_PARAMS -e @libvirt_nodepool_vars.yml "
+fi
+
+echo "EXTRA_PARAMS = $EXTRA_PARAMS"
+sleep 3
 
 # Run the launcher playbook
 PATH=${HOME}/.local/bin:$PATH ansible-playbook \
