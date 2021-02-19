@@ -14,6 +14,9 @@
         - openstack-tox-molecule:
             required-projects:
               - openstack/tripleo-quickstart
+        - tripleo-ci-centos-8-content-provider:
+            dependencies:
+              - openstack-tox-linters
         - tripleo-ci-centos-8-containers-undercloud-minion:
             vars:
               consumer_job: true
