@@ -19,6 +19,7 @@
 : ${RDO_GERRIT_SSH_KEY:="id_rsa"}
 : ${EXTRA_PARAMS:=""}
 : ${CONTAINER_MODE:="podman"}
+: ${OVERWRITE_WORKSPACE:="0"}
 
 usage () {
     echo "Usage: $0 [options]"
@@ -69,6 +70,9 @@ usage () {
     echo "                      parameters for playbooks. Multiple files"
     echo "                      can be passed [-e @file1.yml -e @file2.yml ...]"
     echo "                      and arguments [-e var=value -e var2=value2 ...]"
+    echo "  -o, --overwrite-workspace"
+    echo "                      default is to not overwrite any local modifications"
+    echo "                      to the workspace dir made by the user"
     echo "  -h, --help          print this help and exit"
 }
 
@@ -151,6 +155,10 @@ while [ "x$1" != "x" ]; do
             CONTAINER_MODE=$2
             shift
             ;;
+
+        --overwrite-workspace|-o)
+           OVERWRITE_WORKSPACE="1"
+           ;;
 
         --help|-h)
             usage
@@ -246,15 +254,19 @@ fi
 
 # Start from a clean workspace
 export WORKSPACE
-mkdir -p $WORKSPACE
-rsync -a *-playbook.yaml $WORKSPACE
-cd $WORKSPACE
+if [ "$OVERWRITE_WORKSPACE" == 1 ] || [ ! -d "$WORKSPACE" ]; then
+    mkdir -p $WORKSPACE
+    rsync -a *-playbook.yaml $WORKSPACE
+    cd $WORKSPACE
 
-# Run the playbook to set up the launcher env
-PATH=${HOME}/.local/bin:$PATH ansible-playbook \
-    $WORKSPACE/launcher-env-setup-playbook.yaml \
-    -vv \
-    ${EXTRA_PARAMS[@]}
+    # Run the playbook to set up the launcher env
+    PATH=${HOME}/.local/bin:$PATH ansible-playbook \
+        $WORKSPACE/launcher-env-setup-playbook.yaml \
+        -vv \
+        ${EXTRA_PARAMS[@]}
+else
+    cd $WORKSPACE
+fi
 
 # Set the options selected into EXTRA_PARAMS
 if [[ "$LIBVIRT" == "1" ]]; then
