@@ -61,7 +61,7 @@ This role generates a launcher-playbook and overrides RPM and PyPi mirrors for C
           name: tripleo-ci-centos-7-multinode-1ctlr-featureset010-dlrn-hash-tag
           parent: tripleo-ci-centos-7-multinode-1ctlr-featureset010
           vars:
-            mirror_fqdn: mirror.regionone.rdo-cloud.rdoproject.org
+            mirror_fqdn: mirror.mtl01.inap.opendev.org
             package_mirror: http://mirror.centos.org/centos
             pypi_fqdn: mirror01.ord.rax.opendev.org
             featureset_override:
