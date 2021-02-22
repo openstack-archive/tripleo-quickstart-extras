@@ -99,6 +99,7 @@
       - "{{ artcl_collect_dir }}/{{ zuul_reproducer_dir }}/launcher-playbook.yaml"
       - "{{ artcl_collect_dir }}/{{ zuul_reproducer_dir }}/reproducer-zuul-based-quickstart.sh"
       - "{{ artcl_collect_dir }}/{{ zuul_reproducer_dir }}/install-deps.sh"
+      - "{{ artcl_collect_dir }}/{{ zuul_reproducer_dir }}/reproducer-fresh-box-setup.sh"
     dest: "{{ artcl_collect_dir }}/{{ zuul_reproducer_dir }}/reproducer-zuul-based-quickstart.tar"
     mode: 0755
 
