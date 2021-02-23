@@ -58,6 +58,7 @@ openstack overcloud deploy --stack {{ stack_name }}  {% if release is not in ['n
 
 ### --stop_docs
 
+{% if not (ephemeral_heat|default(false)|bool) %}
 # Check if the deployment has started. If not, exit gracefully. If yes, check for errors.
 if ! openstack stack list | grep -q {{ stack_name }}; then
     echo "overcloud deployment not started. Check the deploy configurations"
@@ -97,4 +98,5 @@ elif ! openstack overcloud status --plan {{ stack_name }} | grep -Eq 'DEPLOY_SUC
     openstack overcloud failures --plan {{ stack_name }} >> {{ failed_deployment_list }} || true
 {% endif %}
 fi
+{% endif %}
 exit $status_code

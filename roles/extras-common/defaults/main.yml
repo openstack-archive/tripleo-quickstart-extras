@@ -166,3 +166,4 @@ undercloud_enable_swift: >-
   {%- else -%}
   false
   {%- endif %}
+undercloud_enable_heat: "{{ not ephemeral_heat|default(false) }}"

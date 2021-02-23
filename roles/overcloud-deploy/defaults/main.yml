@@ -112,6 +112,7 @@ multinode_args: ""
 ovn_args: ""
 telemetry_args: ""
 config_download_args: ""
+ephemeral_heat_args: ""
 selinux_args: ""
 
 deploy_args: >-
@@ -141,12 +142,14 @@ deploy_args: >-
   {{ topology }}
   {{ topology_args }}
   {{ config_download_args }}
+  {{ ephemeral_heat_args }}
   {{ selinux_args }}
   {{ extra_args }}
 
 composable_roles: false
 composable_services: false
 deploy_multinode: false
+ephemeral_heat: false
 
 step_deploy_overcloud: true
 step_deploy_cell: true
