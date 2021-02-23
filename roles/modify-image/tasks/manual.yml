@@ -54,6 +54,17 @@
         cp {{ item.src }} {{ mount_tempdir }}/{{ item.dest }};
       with_items: "{{ modify_image_upload_files }}"
 
+    - name: Check if /etc/resolv.conf exists
+      stat:
+        path: "{{ mount_tempdir }}/etc/resolv.conf"
+      register: resolv_stat_result
+
+    - name: Create {{ mount_tempdir }}/etc/resolv.conf if it does not exist
+      file:
+        path: "{{ mount_tempdir }}/etc/resolv.conf"
+        state: touch
+      when: not resolv_stat_result.stat.exists
+
     - name: Run script on image
       shell: >
         chmod 775 {{ mount_tempdir }};
