@@ -1,0 +1,10 @@
+---
+- name: Get current locale and language configuration
+  shell: localectl status | grep 'LANG'
+  register: locale_status
+  changed_when: false
+
+- name: run localectl to set LANG=en_US.UTF-8
+  become: true
+  command: "localectl set-locale LANG=en_US.UTF-8"
+  when: '"LANG=en_US.UTF-8" not in locale_status.stdout'

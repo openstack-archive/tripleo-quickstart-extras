@@ -89,6 +89,17 @@
         - ansible_distribution == 'CentOS'
         - ansible_distribution_major_version|int >= 8
 
+- name: Ensure locale has LANG=en_US.UTF-8
+  hosts: undercloud
+  gather_facts: false
+  tasks:
+    - include_role:
+        name: baremetal-prep-virthost
+        tasks_from: set_locale_UTF_8
+      when:
+        - ansible_distribution == 'RedHat'
+        - ansible_distribution_major_version|int >= 8
+
 - name: Prepare the host for PXE forwarding
   hosts: virthost
   gather_facts: true
