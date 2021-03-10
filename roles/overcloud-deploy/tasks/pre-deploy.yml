@@ -73,9 +73,9 @@
   set_fact:
     network_isolation_args: >-
       --networks-file {{ overcloud_templates_path }}/ci/network_data.yaml
-      -e {{ working_dir }}/overcloud-networks-deployed.yaml
       -e {{ overcloud_templates_path }}/environments/network-isolation.yaml
       -e {{ overcloud_templates_path }}/environments/net-multiple-nics.yaml
+      -e {{ working_dir }}/overcloud-networks-deployed.yaml
       -e {{ working_dir }}/network-environment.yaml
   when:
     - network_isolation_type in ["multi-nic", "multiple-nics"]
@@ -86,9 +86,9 @@
   set_fact:
     network_isolation_args: >-
       --networks-file {{ overcloud_templates_path }}/ci/network_data.yaml
-      -e {{ working_dir }}/overcloud-networks-deployed.yaml
       -e {{ overcloud_templates_path }}/environments/network-isolation-v6.yaml
       -e {{ overcloud_templates_path }}/environments/net-multiple-nics-v6.yaml
+      -e {{ working_dir }}/overcloud-networks-deployed.yaml
       -e {{ working_dir }}/network-environment.yaml
   when:
     - network_isolation_type in ["multi-nic", "multiple-nics"]
