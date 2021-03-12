@@ -1,6 +1,5 @@
 ---
-- name: set facts
-  set_fact:
+- set_fact:
     subnode_1_ip: "{{ hostvars['subnode-1'].inventory_ip }}"
     standalone_hostname: "standalone-0.{{ tripleo_domain }}"
     tripleo_domain: ooo.test
@@ -155,6 +154,5 @@
   register: dig_ouput_com
   ignore_errors: true
 
-- name: Display dig_ouput_com
-  debug:
+- debug:
     msg: "dig_ouput_com is {{ dig_ouput_com.stdout }}"

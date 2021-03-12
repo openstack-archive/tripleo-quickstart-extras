@@ -71,8 +71,7 @@
       failed_when: project_name_mapped.rc != 0 or not project_name_mapped.stdout
 
   rescue:
-    - name: Display details in case of failure
-      debug:
+    - debug:
         msg: |
           WARNING: Got {{ project_name_mapped.rc }} result code trying to build {{ artg_change.project }}
           --- STDERR ---

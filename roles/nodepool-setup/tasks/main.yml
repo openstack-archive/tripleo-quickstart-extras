@@ -39,8 +39,7 @@
       register: rpm_arch
       changed_when: false
 
-    - name: Display rpm_arch result
-      debug:
+    - debug:
         msg: Package architecture is '{{ rpm_arch.stdout }}'
 
     - name: Set contentdir to altarch

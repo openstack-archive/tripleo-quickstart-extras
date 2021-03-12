@@ -2,32 +2,18 @@ exclude_paths:
     - roles/validate-ui/.travis.yml
     # we don't want to see failures from sideloaded repos
     - ../tripleo-upgrade/
-# parseable: true
+parseable: true
 quiet: false
 skip_list:
     # TODO(ssbarnea): Gradually remove these skips ASAP
-    - command-instead-of-module  # Using command rather than module
-    - command-instead-of-shell  # Use shell only when shell functionality is required
-    - deprecated-command-syntax  # Using command rather than an argument to e.g. file
-    - deprecated-local-action  # Do not use 'local_action', use 'delegate_to: localhost'
-    - empty-string-compare  # Don't compare to empty string
-    - meta-no-info  # meta/main.yml should contain relevant info
-    - no-changed-when  # Commands should not change things if nothing needs doing
-    - no-jinja-nesting  # Nested jinja pattern
-    - package-latest  # Package installs should not use latest
-    - risky-file-permissions  # File permissions unset or incorrect
-    - risky-shell-pipe  # Shells that use pipes should set the pipefail option
-    - role-name  # Role name undercloud-setup does not match ``^[a-z][a-z0-9_]+$`` pattern
-    - yaml
+    - 204  # Lines should be no longer than 160 chars
+    - 302  # rm used in place of argument state=absent to file module
+    - 303  # sed used in place of template, replace or lineinfile module
+    - 602  # Don't compare to empty string
+    - 504  # Do not use 'local_action', use 'delegate_to: localhost'
+    - 701  # No 'galaxy_info' found
+    - 208  # [E208] File permissions unset or incorrect
+    - 106  # [E106] Role name {} does not match ^[a-z][a-z0-9_]+$ pattern
+    - 207  # [E207] Nested jinja pattern
+    - 306  # [E306] Shells that use pipes should set the pipefail option
 verbosity: 1
-mock_roles:
-    - collect-logs
-    - common
-    - environment/setup
-    - fetch-images
-    - libvirt/setup
-    - repo-setup
-    - tripleo
-    - tripleo-collect-logs
-    - tripleo-inventory
-    - tripleo-upgrade

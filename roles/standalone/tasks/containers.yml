@@ -198,8 +198,7 @@
       with_sequence: start=0 end="{{ (job.add_repos|length -1)|int }}"
       register: add_repo_update_list_result
 
-    - name: Display add_repo_update_list
-      debug:
+    - debug:
         var: add_repo_update_list
 
     - name: Add repos to update_repo
@@ -208,8 +207,7 @@
         cacheable: true
       when: add_repo_update_list_result|length > 0
 
-    - name: Display add_repos_update
-      debug:
+    - debug:
         var: add_repos_update
 
     - name: Create string from list

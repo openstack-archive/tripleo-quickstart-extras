@@ -77,8 +77,7 @@
   tags:
     - tripleo-validations
   tasks:
-    - name: Include tripleo_validations
-      include_role:
+    - include_role:
         name: tripleo_validations
       when:
         - job.enable_validation|default(false)|bool

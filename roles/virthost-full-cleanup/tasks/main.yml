@@ -8,8 +8,7 @@
     - name: unregister rhn via subscription manager
       redhat_subscription: state=absent
 
-    - name: Display message about ignoring errors
-      debug: msg="All errors in this block are ignored"
+    - debug: msg="All errors in this block are ignored"
 
     - name: ensure libvirt-python is installed
       yum: name=libvirt-python state=present

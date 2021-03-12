@@ -2,6 +2,5 @@
 - name: Decide whether we need to build images
   hosts: undercloud
   tasks:
-    - name: Include check-to-build-or-not-to-build
-      include_role:
+    - include_role:
         name: check-to-build-or-not-to-build

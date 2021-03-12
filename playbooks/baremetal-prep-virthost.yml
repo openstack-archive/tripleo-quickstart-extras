@@ -45,8 +45,7 @@
   hosts: virthost
   gather_facts: false
   tasks:
-    - name: Include baremetal-prep-virthost
-      include_role:
+    - include_role:
         name: baremetal-prep-virthost
         tasks_from: add_services_ports_firewalld.yml
       when:
@@ -83,8 +82,7 @@
   hosts: undercloud
   gather_facts: false
   tasks:
-    - name: Include baremetal-prep-virthost
-      include_role:
+    - include_role:
         name: baremetal-prep-virthost
         tasks_from: remove_ens3.yml
       when:
@@ -95,8 +93,7 @@
   hosts: undercloud
   gather_facts: false
   tasks:
-    - name: Name baremetal-prep-virthost
-      include_role:
+    - include_role:
         name: baremetal-prep-virthost
         tasks_from: set_locale_UTF_8
       when:
@@ -144,16 +141,14 @@
         cacheable: true
       when: "'periodic' in zuul.job"
 
-    - name: Include build-test-packages
-      include_role:
+    - include_role:
         name: build-test-packages
       vars:
         artg_compressed_gating_repo: "/home/{{ undercloud_user }}/gating_repo.tar.gz"
         artg_repos_dir: "{{ repo_clone_dir|default('/opt/stack/new') }}"
       when: build_test_packages|default(false)|bool
 
-    - name: Include install-built-repo
-      include_role:
+    - include_role:
         name: install-built-repo
       vars:
         ib_create_web_repo: "{{ to_build|bool }}"
@@ -169,21 +164,18 @@
     modify_image_vc_cpu: 4
     modify_image_vc_verbose: true
   tasks:
-    - name: Include fetch-images
-      include_role:
+    - include_role:
         name: fetch-images
       when: not to_build|bool
 
-    - name: Include repo-setup
-      include_role:
+    - include_role:
         name: repo-setup
       vars:
         repo_inject_image_path: "/home/{{ undercloud_user }}/overcloud-full.qcow2"
         repo_run_live: false
       when: not to_build|bool
 
-    - name: Include repo-setup
-      include_role:
+    - include_role:
         name: repo-setup
       vars:
         repo_inject_image_path: "/home/{{ undercloud_user }}/ironic-python-agent.initramfs"
@@ -192,15 +184,13 @@
         libguestfs_mode: false
       when: not to_build|bool
 
-    - name: Include install-built-repo
-      include_role:
+    - include_role:
         name: install-built-repo
       vars:
         ib_repo_image_path: "/home/{{ undercloud_user }}/overcloud-full.qcow2"
       when: compressed_gating_repo is defined and not to_build|bool
 
-    - name: Include install-built-repo
-      include_role:
+    - include_role:
         name: install-built-repo
       vars:
         ib_repo_image_path: "/home/{{ undercloud_user }}/ironic-python-agent.initramfs"
