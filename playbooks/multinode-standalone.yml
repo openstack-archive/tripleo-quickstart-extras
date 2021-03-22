@@ -9,6 +9,14 @@
   roles:
     - tripleo-inventory
 
+- name: Enable nested virtualization on the host
+  hosts: undercloud
+  gather_facts: true
+  roles:
+    - parts/kvm
+  tags:
+    - nested_virt
+
 - name: Prepare the undercloud for installation
   hosts: undercloud
   roles:
