@@ -104,10 +104,10 @@
 
     # NOTE(mwhahaha): use buildah because --format can only be specified with buildah push.
     # Additionally we could switch to oci, but v2v2 is what we convert on the undercloud.
-    - name: Pull non-tripleo containers (ceph, alertmanager, prometheus) to the content provider registry
+    - name: Push non-tripleo containers (ceph, alertmanager, prometheus) to the content provider registry
       shell: >
-        buildah images;
-        buildah push --format=v2s2 --tls-verify=False --log-level debug {{ item }} \
+        buildah push --format=v2s2 --tls-verify=False --log-level debug \
+          $(buildah images -q {{ item.split('/')[-1] }}) \
           docker://{{ content_provider_registry_ip }}:{{ content_provider_registry_port }}/{{ docker_registry_namespace }}/{{ item.split('/')[-1] }};
       with_items: "{{ non_tripleo_containers }}"
       retries: 3
@@ -119,7 +119,8 @@
         - skip_ansible_lint
 
 - name: Dump non-tripleo containers output to file
-  copy:
+  local_action:
+    module: copy
     content: "{{ non_tripleo }}"
     dest: "{{ ansible_user_dir }}/non_tripleo_containers.log"
   when: non_tripleo is defined
