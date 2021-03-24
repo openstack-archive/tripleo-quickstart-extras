@@ -116,7 +116,7 @@
         dest: /var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
         backup: true
       become: true
-      when: release in ['master', 'rocky', 'queens', 'pike']
+      when: release in ['master', 'queens', 'pike']
 
     - name: restart the httpd service
       service:

@@ -23,7 +23,7 @@ container_file: /usr/share/openstack-tripleo-common/container-images/tripleo_con
 docker_prep_prefix: >-
   {% if (build_container_images|default(false)|bool and
         not job.provider_job|default(false)|bool) or
-        release not in ['queens', 'rocky', 'pike', 'stein', 'train', 'ussuri'] -%}
+        release not in ['queens', 'pike', 'stein', 'train', 'ussuri'] -%}
   openstack
   {%- else -%}
   {{ ansible_distribution | lower }}-binary

@@ -68,7 +68,7 @@
 
 - name: Run container prepare legacy
   when:
-    - release in ['queens', 'rocky', 'stein', 'train']
+    - release in ['queens', 'stein', 'train']
   block:
 
     - name: Create container parameters script
@@ -85,7 +85,7 @@
 
 - name: Run container prepare via tripleo-operator-ansible
   when:
-    - release not in ['queens', 'rocky', 'stein', 'train']
+    - release not in ['queens', 'stein', 'train']
   collections:
     - tripleo.operator
   include_role:
@@ -240,7 +240,7 @@
           {%   set _ = item.__setitem__("modify_role", "tripleo-modify-image") %}
           {%   set _ = item.__setitem__("modify_append_tag", update_containers_append_tag) %}
           {% if not (osp_release is defined) %}
-          {%   if release in ['rocky', 'stein'] %}
+          {%   if release in ['stein'] %}
           {%     set _ = item.__setitem__("modify_only_with_labels", ["kolla_version"]) %}
           {%   else %}
           {%     set _ = item.__setitem__("modify_only_with_source", ["kolla", "tripleo"]) %}
@@ -286,7 +286,7 @@
     - standalone_container_prep_updates
     - ansible_distribution == 'RedHat'
     - ansible_distribution_major_version|int >= 8
-    - release not in ['newton', 'ocata', 'pike', 'queens', 'rocky']
+    - release not in ['newton', 'ocata', 'pike', 'queens']
   replace:
     path: "{{ working_dir }}/standalone_parameters.yaml"
     regexp: " - 192.168.24.1:8787"

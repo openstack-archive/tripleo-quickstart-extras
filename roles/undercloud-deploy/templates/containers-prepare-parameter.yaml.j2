@@ -16,7 +16,7 @@ parameter_defaults:
    and not job.consumer_job | default(false) | bool %}
     modify_role: tripleo-modify-image
     modify_append_tag: "{{ update_containers_append_tag }}"
-{% if release in ['rocky', 'stein'] %}
+{% if release in ['stein'] %}
     modify_only_with_labels:
     - kolla_version
 {% else %}
@@ -27,11 +27,11 @@ parameter_defaults:
     modify_vars:
       tasks_from: yum_update.yml
       yum_repos_dir_path: /etc/yum.repos.d
-{% if release not in ['pike','queens','rocky','stein'] and podman_version is version('1.5.0', '>=') %}
+{% if release not in ['pike','queens','stein'] and podman_version is version('1.5.0', '>=') %}
       yum_cache: /var/tmp/tripleo-container-image-prepare-cache
 {% endif %}
       update_repo: "{{ update_containers_repo }}"
-{% if  release not in ['newton', 'ocata', 'pike', 'queens', 'rocky'] %}
+{% if  release not in ['newton', 'ocata', 'pike', 'queens'] %}
       container_build_tool: buildah
 {% endif %}
 {% endif %}

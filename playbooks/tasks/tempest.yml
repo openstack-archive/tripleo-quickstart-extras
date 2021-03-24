@@ -58,7 +58,7 @@
 - name: Set the rc file
   set_fact:
     rc_file: "{{ (tempest_cloud_name in ['undercloud']) | ternary('stackrc', 'overcloudrc') }}"
-  when: release in ['queens', 'rocky', 'stein']
+  when: release in ['queens', 'stein']
 
 - name: Create clouds.yaml if it doesn't exist
   shell: |
@@ -80,7 +80,7 @@
             project_name: $OS_PROJECT_NAME
     EOF
   when:
-    - release in ['queens', 'rocky', 'stein']
+    - release in ['queens', 'stein']
     - not tempest_cloud_name in ['standalone']
 
 # Ansible requires openstacksdk>=0.12 do the resource setup, however
@@ -159,7 +159,7 @@
         tempest_public_subnet_allocation_pools: '{{ tempest_cidr|nthhost(100) ~ "-" ~ tempest_cidr|nthhost(150) }}'
         tempest_private_net_seg_id: "{{ (release in ['queens']) | ternary('', omit) }}"
         tempest_network_ping_gateway: true
-        tempest_private_net_provider_type: "{{ (release in ['queens', 'rocky']) | ternary('vlan', 'geneve') }}"
+        tempest_private_net_provider_type: "{{ (release in ['queens']) | ternary('vlan', 'geneve') }}"
       when: tempest_cidr is defined
 
     - name: Handle migration of br-ex network
