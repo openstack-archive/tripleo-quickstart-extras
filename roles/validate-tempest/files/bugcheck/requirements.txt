@@ -1,4 +1,4 @@
 launchpadlib==1.10.5
 python-bugzilla==2.1.0
-PyYAML==3.12
+PyYAML==5.4
 simplejson==3.10.0
