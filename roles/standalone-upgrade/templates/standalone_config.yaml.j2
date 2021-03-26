@@ -21,6 +21,15 @@ parameter_defaults:
   NeutronPublicInterface: {{ standalone_interface }}
 {% if standalone_neutron_bridge_mappings is defined and standalone_neutron_bridge_mappings %}
   NeutronBridgeMappings: {{ standalone_neutron_bridge_mappings }}
+  OVNStaticBridgeMacMappings:
+{% set physnets = [] %}
+{% for sub in standalone_neutron_bridge_mappings.split(',') %}
+{% set _ = physnets.append(sub.split(':')[0]) %}
+{% endfor %}
+   {{ standalone_hostname.split('.')[0] }}:
+{% for physnet in physnets %}
+     {{ physnet }}: {{ "fa:16:3a:00:53:" + '%02x' % loop.index }}
+{% endfor %}
 {% endif %}
 {% if standalone_neutron_physical_bridge is defined and standalone_neutron_physical_bridge %}
   NeutronPhysicalBridge: {{ standalone_neutron_physical_bridge }}
