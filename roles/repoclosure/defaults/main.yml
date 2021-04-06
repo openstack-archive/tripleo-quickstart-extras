@@ -1,0 +1,47 @@
+---
+repo_setup_dir: "{{ working_dir }}"
+repoclosure_script_source: repoclosure.sh.j2
+repoclosure_script: repoclosure.sh
+repoclosure_log: repoclosure.log
+repoclosure_include_repos:
+  - "--enablerepo delorean-*"
+  - "--enablerepo quickstart-*"
+  - "--enablerepo advanced-virt*"
+  - "--enablerepo centos-rabbitmq*"
+  - "--enablerepo centos-opstools"
+  - "--enablerepo centos-nfv-ovs"
+repoclosure_exclude_pkgs:
+  - "*-test*"
+  - "*.src"
+  - "*-devel"
+  - "*-debug"
+  - "*-docs"
+  # the following packages are probably package bugs
+  - python3-oslotest
+  - python3-mox3
+  - python3-stackviz
+  - python3-tobiko
+  - openstack-tempest-all
+  - python3-sahara-tempest
+  - python3-tempest
+  - openstack-tempest
+  - python3-tempestconf
+  - openstack-tripleo-common
+  - openstack-tripleo-common-devtools
+  - openstack-tripleo-heat-templates
+  - python3-tripleoclient
+  - ksc
+  - awscli
+  - ansible-tripleo-powerflex
+# repos that are enabled but not required to check
+repoclosure_exclude_repos:
+  - advanced-virtualization
+  - centos-opstools
+  - quickstart-centos-opstools
+  - centos-rabbitmq-38
+  - delorean-master-testing
+  - quickstart-centos-appstreams
+  - quickstart-centos-ceph-octopus
+  - quickstart-centos-powertools
+  - centos-nfv-ovs
+  - delorean-master-build-deps
