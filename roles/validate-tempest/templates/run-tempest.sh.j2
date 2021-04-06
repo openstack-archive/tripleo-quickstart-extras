@@ -72,7 +72,7 @@ sudo cp \
 sudo cp -Rf {{ working_dir }}/.config $TEMPEST_HOST_DATA
 {% endif %}
 
-{% if release not in ['newton', 'ocata', 'pike', 'queens', 'rocky'] %}
+{% if release not in ['newton', 'ocata', 'pike', 'queens'] %}
 export CONTAINER_BINARY='podman'
 {% else %}
 export CONTAINER_BINARY='docker'

@@ -238,18 +238,18 @@
 - name: set container_args fact
   set_fact:
     container_args: >-
-      {% if release in ['pike', 'queens', 'rocky'] %}
+      {% if release in ['pike', 'queens'] %}
       -e {{ overcloud_templates_path }}/environments/docker.yaml
       {% endif %}
       {% if enable_pacemaker|bool or osp_release is defined%}
       -e {{ overcloud_templates_path }}/environments/docker-ha.yaml
       {% endif %}
-      {% if release in ['ocata', 'pike', 'queens', 'rocky'] %}
+      {% if release in ['ocata', 'pike', 'queens'] %}
       -e {{ working_dir }}/containers-default-parameters.yaml
       {% else %}
       -e {{ working_dir }}/containers-prepare-parameter.yaml
       {% endif %}
-      {% if release not in ['pike', 'queens', 'rocky'] %}
+      {% if release not in ['pike', 'queens'] %}
       -e {{ overcloud_templates_path }}/environments/{{ overcloud_container_cli }}.yaml
       {% endif %}
   when:
@@ -282,7 +282,7 @@
   set_fact:
     multinode_args: >-
       -e {{ overcloud_templates_path }}/environments/deployed-server-environment.yaml
-      {% if release in ['queens', 'rocky', 'stein'] and overcloud_release|default('') in ['queens', 'rocky', 'stein'] %}
+      {% if release in ['queens', 'stein'] and overcloud_release|default('') in ['queens', 'stein'] %}
       -e {{ overcloud_templates_path }}/environments/deployed-server-bootstrap-environment-centos.yaml
       {% endif %}
       --overcloud-ssh-user {{ undercloud_user }}
@@ -296,7 +296,7 @@
     hypervisor_wait: false
     multinode_args: >-
       -e {{ overcloud_templates_path }}/environments/deployed-server-environment.yaml
-      {% if release in ['queens', 'rocky', 'stein'] and overcloud_release|default('') in ['queens', 'rocky', 'stein'] %}
+      {% if release in ['queens', 'stein'] and overcloud_release|default('') in ['queens', 'stein'] %}
       -e {{ overcloud_templates_path }}/environments/deployed-server-bootstrap-environment-centos.yaml
       {% endif %}
       -e {{ working_dir }}/overcloud-baremetal-deployed.yaml

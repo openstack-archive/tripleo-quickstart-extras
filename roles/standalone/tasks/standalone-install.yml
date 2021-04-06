@@ -1,7 +1,7 @@
 ---
 - name: Check whether control plane defaults to HA
   set_fact:
-    tripleo_deploy_ha_control_plane: "{{ release not in ['newton', 'ocata', 'pike', 'queens', 'rocky', 'stein', 'train'] }}"
+    tripleo_deploy_ha_control_plane: "{{ release not in ['newton', 'ocata', 'pike', 'queens', 'stein', 'train'] }}"
 
 - name: Run standalone via tripleo-operator-ansible
   collections:
@@ -29,7 +29,7 @@
       {% endif %}
       {{ env_files }}
     # NOTE(mwhahaha): option no longer required as of V.
-    tripleo_deploy_standalone: "{{ release in ['rocky', 'stein', 'train', 'ussuri'] }}"
+    tripleo_deploy_standalone: "{{ release in ['stein', 'train', 'ussuri'] }}"
 
 - when: standalone_ansible_lint|default(false)|bool
   vars:

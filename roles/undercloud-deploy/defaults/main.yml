@@ -93,7 +93,7 @@ undercloud_selinux_enabled: >-
    {%- endif -%}
 
 undercloud_container_cli: >-
-   {% if release not in ['newton', 'ocata', 'pike', 'queens', 'rocky'] -%}
+   {% if release not in ['newton', 'ocata', 'pike', 'queens'] -%}
    podman
    {% else %}
    docker

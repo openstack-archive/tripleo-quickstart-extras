@@ -26,7 +26,7 @@
 
 - name: Check whether control plane defaults to HA
   set_fact:
-    standalone_upgrade_ha_control_plane: "{{ release not in ['newton', 'ocata', 'pike', 'queens', 'rocky', 'stein', 'train'] }}"
+    standalone_upgrade_ha_control_plane: "{{ release not in ['newton', 'ocata', 'pike', 'queens', 'stein', 'train'] }}"
 
 - name: Create the upgrade command for standalone
   template:

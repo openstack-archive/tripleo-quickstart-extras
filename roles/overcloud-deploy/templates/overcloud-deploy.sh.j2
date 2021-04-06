@@ -91,7 +91,7 @@ elif ! openstack stack list | grep -Eq '(CREATE|UPDATE)_COMPLETE'; then
     # We need to exit with 1 because of the above || true
     done
     exit 1
-{%if release in ['rocky', 'master'] %}
+{%if release in ['master'] %}
 elif ! openstack overcloud status --plan {{ stack_name }} | grep -Eq 'DEPLOY_SUCCESS'; then
     # NOTE(emilien) "openstack overcloud failures" was introduced in Rocky
     openstack overcloud failures --plan {{ stack_name }} >> {{ failed_deployment_list }} || true

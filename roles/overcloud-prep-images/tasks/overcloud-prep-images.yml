@@ -37,7 +37,7 @@
   block:
     - name: Import and register overcloud nodes - legacy
       when:
-        - release in ['queens', 'rocky', 'stein', 'train']
+        - release in ['queens', 'stein', 'train']
       shell: >
         set -o pipefail &&
         {{ working_dir }}/overcloud-import-nodes.sh 2>&1 {{ timestamper_cmd }} >
@@ -46,7 +46,7 @@
 
     - name: Run import nodes via tripleo-operator-ansible
       when:
-        - release not in ['queens', 'rocky', 'stein', 'train']
+        - release not in ['queens', 'stein', 'train']
       collections:
         - tripleo.operator
       include_role:
@@ -122,5 +122,5 @@
     {{ inject_ara_log }}
   changed_when: true
   when:
-    - release not in ['newton', 'ocata', 'pike', 'queens', 'rocky']
+    - release not in ['newton', 'ocata', 'pike', 'queens']
     - undercloud_enable_mistral|bool

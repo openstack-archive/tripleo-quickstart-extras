@@ -31,7 +31,7 @@
         name: tripleo_validations
       when:
         - (run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool)
-        - release not in ['queens', 'rocky', 'stein']
+        - release not in ['queens', 'stein']
 
 # Check the results of the deployment, note after inventory has executed
 - name: Check the result of the deployment

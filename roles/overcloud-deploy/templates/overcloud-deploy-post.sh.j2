@@ -9,7 +9,7 @@ set -eux
 ## * Prepare Your Environment.
 ## ::
 
-{% if release in ['mitaka', 'newton', 'ocata', 'pike', 'queens', 'rocky', 'stein'] -%}
+{% if release in ['mitaka', 'newton', 'ocata', 'pike', 'queens', 'stein'] -%}
 HOSTFILE=/etc/hosts
 {% endif -%}
 
@@ -18,7 +18,7 @@ HOSTFILE=/etc/hosts
 
 . {{ working_dir }}/stackrc
 
-{% if release in ['mitaka', 'newton', 'ocata', 'pike', 'queens', 'rocky', 'stein'] -%}
+{% if release in ['mitaka', 'newton', 'ocata', 'pike', 'queens', 'stein'] -%}
 ## * Remove any old overcloud host entries from `/etc/hosts`.
 ## ::
 

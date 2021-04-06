@@ -28,12 +28,7 @@ containerized_overcloud_upgrade: >-
   {%- else -%}
   true
   {%- endif -%}
-undercloud_container_cli: >-
-  {% if release in ['rocky'] -%}
-  docker
-  {%- else -%}
-  podman
-  {%- endif -%}
+undercloud_container_cli: podman
 # the variable is only used in overcloud-deploy role
 # for stein and beyond, so it's safe to set it to podman,
 # as for stable branches before stein the variable won't be used.
@@ -56,7 +51,7 @@ build_container_images: "{{ job.build_container_images|default(false)|bool }}"
 docker_prep_prefix: >-
   {% if (build_container_images|default(false)|bool and
         not job.provider_job|default(false)|bool) or
-        release not in ['queens', 'rocky', 'pike', 'stein', 'train', 'ussuri'] -%}
+        release not in ['queens', 'pike', 'stein', 'train', 'ussuri'] -%}
   openstack
   {%- else -%}
   {{ ansible_distribution | lower }}-binary
@@ -73,7 +68,7 @@ docker_ceph_image: daemon
 docker_ceph_tag: >-
   {% if release in ['pike'] -%}
   v3.0.3-stable-3.0-jewel-centos-7-x86_64
-  {%- elif release in ['queens','rocky'] -%}
+  {%- elif release in ['queens'] -%}
   v3.2.14-stable-3.2-luminous-centos-7-x86_64
   {%- elif release in ['stein','train','ussuri','victoria'] -%}
   v4.0.13-stable-4.0-nautilus-centos-7-x86_64
@@ -132,14 +127,14 @@ network_provision: false
 
 # If `undercloud_enable_nova` is `true`, the undercloud will have running glance and nova services
 undercloud_enable_nova: >-
-  {% if release in ['queens', 'rocky', 'stein', 'train', 'ussuri'] -%}
+  {% if release in ['queens', 'stein', 'train', 'ussuri'] -%}
   true
   {%- else -%}
   false
   {%- endif %}
 
 step_overcloud_prep_flavors: >-
-  {% if release in ['newton','ocata','pike','queens','rocky','stein','train', 'ussuri'] -%}
+  {% if release in ['newton','ocata','pike','queens','stein','train', 'ussuri'] -%}
   true
   {%- else -%}
   false
@@ -147,26 +142,26 @@ step_overcloud_prep_flavors: >-
 
 # Set the location for the downloaded amphora image when download_amphora is true
 octavia_amphora_path: >-
-  {% if release in ['queens', 'rocky'] -%}
+  {% if release in ['queens'] -%}
   /usr/share/openstack-octavia-amphora-images/amphora-x64-haproxy.qcow2
   {%- else -%}
   {{ working_dir }}/amphora.qcow2
   {%- endif %}
 
 undercloud_enable_mistral: >-
-  {% if release in ['queens', 'rocky', 'stein', 'train'] -%}
+  {% if release in ['queens', 'stein', 'train'] -%}
   true
   {%- else -%}
   false
   {%- endif %}
 undercloud_enable_zaqar: >-
-  {% if release in ['queens', 'rocky', 'stein', 'train'] -%}
+  {% if release in ['queens', 'stein', 'train'] -%}
   true
   {%- else -%}
   false
   {%- endif %}
 undercloud_enable_swift: >-
-  {% if release in ['queens', 'rocky', 'stein', 'train', 'ussuri', 'victoria'] -%}
+  {% if release in ['queens', 'stein', 'train', 'ussuri', 'victoria'] -%}
   true
   {%- else -%}
   false

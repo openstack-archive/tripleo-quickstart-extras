@@ -183,7 +183,7 @@ $TEMPESTCONF --out etc/tempest.conf \
   auth.use_dynamic_credentials true \
   network-feature-enabled.port_security true \
   {% endif %}
-  {% if release in ['queens', 'rocky'] %}
+  {% if release in ['queens'] %}
   compute-feature-enabled.scheduler_available_filters RetryFilter,AvailabilityZoneFilter,ComputeFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,ServerGroupAntiAffinityFilter,ServerGroupAffinityFilter,PciPassthroughFilter \
   {% endif %}
   {% if release in ['newton', 'ocata', 'pike', 'queens'] %}

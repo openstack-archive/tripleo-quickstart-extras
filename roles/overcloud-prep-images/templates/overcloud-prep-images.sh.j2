@@ -32,6 +32,6 @@ source {{ working_dir }}/stackrc
 {% if step_introspect|bool %}
 {% include 'overcloud-introspect.sh.j2' %}
 {% endif %}
-{% if release not in ['newton', 'ocata', 'pike', 'queens', 'rocky'] and undercloud_enable_mistral|bool %}
+{% if release not in ['newton', 'ocata', 'pike', 'queens'] and undercloud_enable_mistral|bool %}
 {% include 'inject-ara.sh.j2' %}
 {% endif %}

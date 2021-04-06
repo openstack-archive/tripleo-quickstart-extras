@@ -211,7 +211,7 @@ inspection_runbench = {{undercloud_inspection_runbench}}
 # services. (boolean value)
 undercloud_debug = {{undercloud_undercloud_debug}}
 
-{% if containerized_undercloud|bool and release != 'rocky' %}
+{% if containerized_undercloud|bool %}
 # Container CLI used for deployment;
 # Can be docker or podman. (string value)
 container_cli = {{undercloud_container_cli}}
@@ -624,7 +624,7 @@ dhcp_start = {{undercloud_dhcp_start|default(
 dhcp_end = {{undercloud_dhcp_end|default(
     undercloud_network_cidr|nthhost(30))}}
 
-{% if release not in ['queens', 'rocky', 'stein'] %}
+{% if release not in ['queens', 'stein'] %}
 # DNS nameservers for the Neutron-managed subnet for the Overcloud
 # instances on this network. If no nameservers are defined for the
 # subnet, the nameservers defined for undercloud_nameservers will be
