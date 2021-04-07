@@ -19,10 +19,20 @@
       set_fact:
         undercloud_outputs: "{{ hostvars['undercloud']['undercloud_outputs'] }}"
         undercloud_passwords: "{{ hostvars['undercloud']['undercloud_passwords'] }}"
-    - name: write output files
+    - name: write output files to old consistent location
       include_role:
         name: undercloud-setup
         tasks_from: write-outputs
+    - name: create new consistent location
+      file:
+        state: directory
+        path: "{{ working_dir ~ '/tripleo-deploy/minion' }}"
+    - name: write output files to new consistent location
+      include_role:
+        name: undercloud-setup
+        tasks_from: write-outputs
+      vars:
+        undercloud_outputs_dir: "{{ working_dir ~ '/tripleo-deploy/minion/' }}"
   tags:
     - undercloud-setup
 

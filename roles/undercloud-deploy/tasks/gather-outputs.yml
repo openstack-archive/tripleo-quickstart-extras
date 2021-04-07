@@ -3,13 +3,21 @@
 # their contents
 - name: Collect undercloud outputs
   slurp:
-    src: "{{ working_dir }}/tripleo-undercloud-outputs.yaml"
+    src: "{{ lookup('first_found', output_paths, errors='ignore') }}"
   register: tmp_undercloud_outputs
+  vars:
+    output_paths:
+      - "{{ working_dir }}/tripleo-undercloud-outputs.yaml"
+      - "{{ working_dir }}/tripleo-deploy/undercloud/tripleo-undercloud-outputs.yaml"
 
 - name: Collect undercloud passwords
   slurp:
-    src: "{{ working_dir }}/tripleo-undercloud-passwords.yaml"
+    src: "{{ lookup('first_found', password_paths, errors='ignore') }}"
   register: tmp_undercloud_passwords
+  vars:
+    password_paths:
+      - "{{ working_dir }}/tripleo-undercloud-passwords.yaml"
+      - "{{ working_dir }}/tripleo-deploy/undercloud/tripleo-undercloud-passwords.yaml"
 
 - name: Setting undercloud outputs and password facts
   set_fact:

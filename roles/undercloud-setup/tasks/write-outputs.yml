@@ -3,9 +3,9 @@
 - name: Write out tripleo-undercloud-outputs.yaml
   copy:
     content: "{{ undercloud_outputs }}"
-    dest: "{{ working_dir }}/tripleo-undercloud-outputs.yaml"
+    dest: "{{ undercloud_outputs_dir }}/tripleo-undercloud-outputs.yaml"
 
 - name: Write out tripleo-undercloud-passwords.yaml
   copy:
     content: "{{ undercloud_passwords }}"
-    dest: "{{ working_dir }}/tripleo-undercloud-passwords.yaml"
+    dest: "{{ undercloud_outputs_dir }}/tripleo-undercloud-passwords.yaml"
