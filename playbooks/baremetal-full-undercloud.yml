@@ -7,20 +7,6 @@
   tags:
     - undercloud-deploy
 
-- name: Configure tripleo-validations
-  hosts: undercloud
-  gather_facts: false
-  tags:
-    - tripleo-validations
-  vars:
-    run_tripleo_validations_setup: true
-  tasks:
-    - include_role:
-        name: tripleo_validations
-      when:
-        - (run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool)
-        - release not in ['queens', 'stein']
-
 - name: Validate the undercloud
   hosts: undercloud
   roles:

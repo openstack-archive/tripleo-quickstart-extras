@@ -69,20 +69,6 @@
   roles:
     - undercloud-deploy
 
-- name: Run tripleo-validations standalone and CLI tests
-  hosts: undercloud
-  gather_facts: false
-  vars:
-    validation_command: "openstack tripleo validator"
-  tags:
-    - tripleo-validations
-  tasks:
-    - include_role:
-        name: tripleo_validations
-      when:
-        - job.enable_validation|default(false)|bool
-        - release not in ['queens', 'stein']
-
 - name: Validate the undercloud
   hosts: undercloud
   roles:

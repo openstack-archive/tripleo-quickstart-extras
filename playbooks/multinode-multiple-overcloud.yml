@@ -69,20 +69,6 @@
           failed_when: overcloud_deploy_result == "failed"
           delegate_to: localhost
 
-- name: Run tripleo-validations post-deployment tests
-  hosts: undercloud
-  gather_facts: false
-  tags:
-    - tripleo-validations
-  vars:
-    validations_group: ['post-deployment']
-  tasks:
-    - include_role:
-        name: tripleo_validations
-      when:
-        - (run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool)
-        - release not in ['queens', 'stein']
-
 ######################################
 # Run tempest on overcloud-two stack #
 ######################################

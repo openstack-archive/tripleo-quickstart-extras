@@ -18,20 +18,6 @@
        step_glance_upload: true,
        step_register: false}
 
-- name: Run tripleo-validations pre-introspection tests
-  hosts: undercloud
-  gather_facts: false
-  tags:
-    - tripleo-validations
-  vars:
-    validations_group: ['pre-introspection']
-  tasks:
-    - include_role:
-        name: tripleo_validations
-      when:
-        - (run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool)
-        - release not in ['queens', 'stein']
-
 - name: Prepare for containerized deployment
   hosts: undercloud
   gather_facts: false
@@ -41,20 +27,6 @@
     - role: overcloud-prep-containers
       use_overcloud_mixed_upgrade: "{{ mixed_upgrade|default(false) }}"
       when: containerized_overcloud|bool
-
-- name: Run tripleo-validations pre-deployment tests
-  hosts: undercloud
-  gather_facts: false
-  tags:
-    - tripleo-validations
-  vars:
-    validations_group: ['pre-deployment']
-  tasks:
-    - include_role:
-        name: tripleo_validations
-      when:
-        - (run_tripleo_validations|bool or run_tripleo_validations_negative_tests|bool)
-        - release not in ['queens', 'stein']
 
 - name: Ensure openvswitch is started and enabled
   hosts: overcloud
