@@ -39,6 +39,9 @@
               - ^roles/ipa-multinode.*$
               - ^roles/standalone.*$
               - ^playbooks/multinode-standalone-ipa.yml.*$
+        - tripleo-ci-centos-8-repoclosure:
+            files:
+              - ^roles/repoclosure.*$
     gate:
       queue: tripleo
       jobs:
