@@ -33,6 +33,10 @@ repoclosure_exclude_pkgs:
   - ksc
   - awscli
   - ansible-tripleo-powerflex
+  - "ceph*"
+  - "ceph-*"
+  - gperftools
+  - rbd-mirror
 # repos that are enabled but not required to check
 repoclosure_exclude_repos:
   - advanced-virtualization

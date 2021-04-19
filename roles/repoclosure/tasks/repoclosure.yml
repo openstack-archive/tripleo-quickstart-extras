@@ -8,7 +8,7 @@
 # or repoclosure is defined
 # if this passes continue
 - name: register enabled yum repos
-  shell: dnf repolist | awk '{print $1}'
+  shell: dnf -q repolist | awk '{print $1}'
   register: yum_repos
   changed_when: true
 
