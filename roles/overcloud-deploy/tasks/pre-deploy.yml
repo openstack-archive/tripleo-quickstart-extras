@@ -167,6 +167,7 @@
         -e {{ overcloud_templates_path }}/environments/services/haproxy-public-tls-certmonger.yaml
         -e {{ overcloud_templates_path }}/environments/ssl/enable-internal-tls.yaml
         -e {{ overcloud_templates_path }}/environments/ssl/tls-everywhere-endpoints-dns.yaml
+        -e {{ overcloud_templates_path }}/environments/ssl/enable-memcached-tls.yaml
   when:
     - enable_tls_everywhere|bool and undercloud_enable_novajoin|bool
     - release not in ['mitaka', 'liberty', 'newton']
@@ -177,6 +178,7 @@
         -e {{ overcloud_templates_path }}/environments/services/haproxy-public-tls-certmonger.yaml
         -e {{ overcloud_templates_path }}/environments/ssl/enable-internal-tls.yaml
         -e {{ overcloud_templates_path }}/environments/ssl/tls-everywhere-endpoints-dns.yaml
+        -e {{ overcloud_templates_path }}/environments/ssl/enable-memcached-tls.yaml
         -e {{ working_dir }}/tls-everywhere.yaml
   when:
     - enable_tls_everywhere|bool and not undercloud_enable_novajoin|bool
