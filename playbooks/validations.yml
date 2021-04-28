@@ -2,12 +2,15 @@
 - name: Execute pre undercloud validations
   hosts: undercloud
   gather_facts: true
+  vars:
+    inventory: "tripleo-ansible-inventory.yaml"
+    vf_log_dir: "/var/log/validations"
   tags:
     - component-validations
     - tripleo-validations
   tasks:
     - include_role:
-        name: tripleo_validations
+        name: validations
       when:
         - job.enable_validation|default(false)|bool
         - release not in ['queens', 'stein']

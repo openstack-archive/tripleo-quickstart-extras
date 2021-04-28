@@ -58,12 +58,14 @@
   hosts: undercloud
   gather_facts: false
   vars:
-    validation_command: "openstack tripleo validator"
+    validation_command: "validation"
+    inventory: "tripleo-ansible-inventory.yaml"
+    vf_log_dir: "/var/log/validations"
   tags:
     - standalone
   tasks:
     - include_role:
-        name: tripleo_validations
+        name: validations
       when:
         - job.enable_validation|default(false)|bool
         - release not in ['queens', 'stein']
