@@ -37,6 +37,11 @@ if [ $? -ne 0 ]; then
 fi
 {% endif %}
 
+{% if network_provision|bool %}
+# NOTE(hjensas): A dummy file, will be replaced in the follow on change
+echo "{}" > {{ working_dir }}/overcloud-vips-deployed.yaml
+{% endif %}
+
 {% if baremetal_provision|bool %}
 ## * Provision the baremetal nodes
 ## ::
