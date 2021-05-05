@@ -19,7 +19,7 @@
       {{ standalone_control_virtual_ip|default() }}
       {%- endif -%}
     tripleo_deploy_roles_file: "{{ overcloud_templates_path }}/roles/{{ standalone_role }}"
-    tripleo_deploy_output_dir: "{{ working_dir }}"
+    tripleo_deploy_output_dir: "{{ working_dir }}/tripleo-deploy"
     tripleo_deploy_environment_files: |-
       {% set env_files = [overcloud_templates_path + '/environments/standalone/standalone-tripleo.yaml',
                           working_dir + '/containers-prepare-parameters.yaml',
