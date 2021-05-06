@@ -131,6 +131,13 @@
   retries: 3
   delay: 5
 
+- name: Remove ssh reference from dist-git url
+  shell: >
+    sed -i -e "s|osp-distgit: git+ssh|osp-distgit: git|g" packages.yml
+  args:
+    chdir: "{{ build_repo_dir }}/DLRN/{{ rdoinfo_repo_name }}"
+  when: ansible_distribution in ['RedHat']
+
 - name: Use local {{ ansible_distribution }} mirror if available ( centos 7 and RHEL )
   shell: >
     set -o pipefail ;
