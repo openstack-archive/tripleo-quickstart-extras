@@ -20,7 +20,10 @@
 - name: Make sure /usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT exists (RHEL)
   shell:
     cmd: |
-      touch /usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT
+      export CERTPATH="/usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT"
+      export CERTDIR=$(dirname $CERTPATH)
+      [ ! -d $CERTDIR ] && mkdir -p $CERTDIR
+      touch $CERTPATH
   become: true
   when: ansible_distribution in ['RedHat']
 
