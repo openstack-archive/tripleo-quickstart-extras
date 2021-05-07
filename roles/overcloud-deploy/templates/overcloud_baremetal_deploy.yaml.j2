@@ -2,10 +2,11 @@
 {% set role_count = topology_map[role].scale |default(0) %}
 {% set role_profile = topology_map[role].flavor |default('') %}
 {% set role_networks = topology_map[role].networks |default([]) %}
+{% set network_config = topology_map[role].network_config |default('') %}
 {% if role_count %}
 - name: {{ role }}
   count: {{ role_count }}
-{% if role_profile or (role_networks and network_isolation and network_provision|bool) %}
+{% if role_profile or (network_config and network_provision|bool) or (role_networks and network_isolation and network_provision|bool) %}
   defaults:
 {% endif %}
 {% if role_profile %}
@@ -14,6 +15,10 @@
 {% if role_networks and network_isolation and network_provision|bool %}
     networks:
       {{ role_networks | to_nice_yaml(indent=2) | indent(6)}}
+{% endif %}
+{% if network_config and network_provision|bool %}
+    network_config:
+      {{ network_config | to_nice_yaml(indent=2) | indent(6)}}
 {% endif %}
 {% endif %}
 {% endfor %}
