@@ -213,6 +213,7 @@
       set_fact:
         tempest_tempestconf_profile_extras:
           image: "{{ featureset_override['cirros_image'] | default(default_cirros_image) }}"
+          flavor_min_mem: 128
           retry_image: true
 
     # stackviz in venv pulls oslo.db due upstream constraints,
