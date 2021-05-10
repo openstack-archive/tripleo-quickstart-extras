@@ -32,7 +32,10 @@
                   # one being too old to be usable. included in openstack distro.
 
             - name: easy-install pip
-              command: "{{ python_cmd }} -m easy_install pip==20.3.4"
+              shell: |-
+                "{{ python_cmd }} -m easy_install pip"
+                "{{ python_cmd }} -m pip install pip==20.3.4"
+              changed_when: true
 
     - name: Update pip
       # noqa 403
