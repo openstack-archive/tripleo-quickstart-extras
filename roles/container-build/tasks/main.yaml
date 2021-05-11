@@ -77,6 +77,20 @@
       '{{ container_image_build_volumes + ["/opt/gating_repo:/opt/gating_repo:z"] }}'
   when: gating_stat.stat.exists|bool
 
+- name: Include exclude_containers and ci_branch from build-containers role
+  when: zuul is defined
+  block:
+
+    - name: Include vars from build-containers to include exclude_containers
+      include_vars: "{{ ansible_user_dir }}/{{ zuul.projects['opendev.org/openstack/tripleo-ci'].src_dir }}/roles/build-containers/vars/main.yaml"
+
+    - name: Set ci_branch for building containers check jobs
+      include_tasks: "{{ ansible_user_dir }}/{{ zuul.projects['opendev.org/openstack/tripleo-ci'].src_dir }}/roles/build-containers/tasks/set_ci_branch.yml"
+
+    - name: Set branch
+      set_fact:
+        branch: "{{ osp_release | default(ci_branch) }}"
+
 - name: Build and push container images to the local registry
   collections:
     - tripleo.operator
@@ -95,6 +109,7 @@
     tripleo_container_image_build_prefix: "{{ docker_prep_prefix }}"
     tripleo_container_image_build_timeout: 10000
     tripleo_container_image_build_base: "{{ containers_base_image }}"
+    tripleo_container_image_build_excludes: "{{ exclude_containers[branch]|default([]) }}"
 
 - name: Pull and push non *tripleo* container images to local registry
   import_tasks: non_tripleo_containers.yml
