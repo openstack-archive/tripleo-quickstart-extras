@@ -27,3 +27,4 @@ standalone_libvirt_type: kvm
 standalone_container_cli: docker
 
 standalone_custom_env_files: []
+standalone_hostname: standalone.localdomain
