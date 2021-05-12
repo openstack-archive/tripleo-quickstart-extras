@@ -26,10 +26,6 @@ repoclosure_exclude_pkgs:
   - python3-tempest
   - openstack-tempest
   - python3-tempestconf
-  - openstack-tripleo-common
-  - openstack-tripleo-common-devtools
-  - openstack-tripleo-heat-templates
-  - python3-tripleoclient
   - ksc
   - awscli
   - ansible-tripleo-powerflex
@@ -41,6 +37,7 @@ repoclosure_exclude_pkgs:
 repoclosure_exclude_repos:
   - advanced-virtualization
   - centos-opstools
+  - quickstart-centos-base
   - quickstart-centos-opstools
   - centos-rabbitmq-38
   - delorean-master-testing
@@ -49,3 +46,4 @@ repoclosure_exclude_repos:
   - quickstart-centos-powertools
   - centos-nfv-ovs
   - delorean-master-build-deps
+  - delorean-current
