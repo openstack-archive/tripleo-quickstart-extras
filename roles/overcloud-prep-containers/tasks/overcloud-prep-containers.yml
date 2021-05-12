@@ -2,41 +2,6 @@
 - when: update_containers|bool
   block:
 
-    - name: ensure_pip on py2 systems
-      when: ansible_python.version.major == 2
-      block:
-
-        - command: "{{ python_cmd }} -m pip --version"
-          register: have_pip
-          changed_when: false
-          failed_when: false
-
-        - when: have_pip.rc != 0
-          become: true
-          block:
-
-            - name: check if python setup tool is installed
-              shell: "{{ python_cmd }} -m easy_install --version"
-              register: easy_install_exists
-              changed_when: false
-              failed_when: false
-
-            - name: Install python setuptools (easy_install)
-              when: easy_install_exists.rc != 0
-              # noqa 403
-              package:
-                state: latest
-                name:
-                  - python2-setuptools
-                  # python2-setuptools deprecates python-setuptools the former
-                  # one being too old to be usable. included in openstack distro.
-
-            - name: easy-install pip
-              shell: |-
-                "{{ python_cmd }} -m easy_install pip"
-                "{{ python_cmd }} -m pip install pip==20.3.4"
-              changed_when: true
-
     - name: Update pip
       # noqa 403
       pip:
