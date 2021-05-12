@@ -16,6 +16,31 @@
 - name: Run atop for monitoring
   include: atop.yml
 
+# to_build is enabled via featureset files or featureset overrides
+- name: Set variables for gating repos for ovb jobs
+  set_fact:
+    artg_repos_dir: "{{ repo_clone_dir|default('/opt/stack/new') }}"
+    ib_create_web_repo: "{{ to_build|default(false)|bool }}"
+    cacheable: true
+  when: to_build|default(false)|bool
+  tags:
+    - build
+
+- name: Run DLRN gate role
+  vars:
+    artg_compressed_gating_repo: "${HOME}/gating_repo.tar.gz"
+  include_role:
+    name: build-test-packages
+  tags:
+    - build
+
+- name: Install gated repo
+  when: compressed_gating_repo is defined
+  include_role:
+    name: install-built-repo
+  tags:
+    - build
+
 - name: Including package_installs tasks
   include: package_installs.yml
   when: package_installs|bool

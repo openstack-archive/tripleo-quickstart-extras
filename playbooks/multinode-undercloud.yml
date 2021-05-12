@@ -41,16 +41,6 @@
   tags:
     - undercloud-setup
 
-- name: Run DLRN gate role and install repo
-  hosts: undercloud
-  vars:
-    artg_compressed_gating_repo: "${HOME}/gating_repo.tar.gz"
-  roles:
-    - build-test-packages
-    - {role: install-built-repo, when: compressed_gating_repo is defined}
-  tags:
-    - build
-
 - name: Install built packages on subnodes
   hosts: overcloud
   vars:

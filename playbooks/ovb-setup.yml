@@ -11,6 +11,12 @@
   roles:
     - tripleo-inventory
 
+# Small playbook with logic for when to build images or not.
+# The logic there can be completely overridden by setting the
+# to_build variable.
+- name: When to build images or not
+  import_playbook: to-build-or-not-to-build.yml
+
 - name: Setup the undercloud
   hosts: undercloud
   gather_facts: true
@@ -39,23 +45,6 @@
   gather_facts: true
   roles:
     - tripleo-inventory
-
-# Small playbook with logic for when to build images or not.
-# The logic there can be completely overridden by setting the
-# to_build variable.
-- include: to-build-or-not-to-build.yml
-
-- name: Run DLRN gate role and install repo
-  hosts: undercloud
-  vars:
-    artg_compressed_gating_repo: "${HOME}/gating_repo.tar.gz"
-    artg_repos_dir: "{{ repo_clone_dir|default('/opt/stack/new') }}"
-    ib_create_web_repo: "{{ to_build|bool }}"
-  roles:
-    - {role: build-test-packages, when: build_test_packages|default(false)|bool}
-    - {role: install-built-repo, when: compressed_gating_repo is defined}
-  tags:
-    - build
 
 - name: Get images for quickstart
   hosts: undercloud
