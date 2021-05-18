@@ -52,6 +52,7 @@ libvirt_default_network_address: 192.168.122.1
 nameserver_from_virthost: false
 virthost_nameservers: []
 
+undercloud_enable_heat: "{{ not ephemeral_heat|default(false) }}"
 undercloud_enable_ironic: true
 undercloud_enable_ironic_inspector: true
 undercloud_enable_monitoring: false

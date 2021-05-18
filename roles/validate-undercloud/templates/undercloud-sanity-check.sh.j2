@@ -60,7 +60,9 @@ citest neutron subnet-list
 citest neutron net-list
 citest neutron agent-list
 citest openstack baremetal node list
+{% if undercloud_enable_heat|bool %}
 citest openstack stack list
+{% endif %}
 ui_sanity_check
 
 exit $script_return_value
