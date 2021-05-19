@@ -1,25 +1,34 @@
 ---
-- name: Fetch tripleo containers
-  command: cat "{{ container_file }}"
-  register: all_containers
-  changed_when: false
+- name: Filter non-tripleo containers
+  when: osp_release is not defined
+  block:
 
-- name: Store tripleo containers
-  set_fact:
-    containers: "{{ all_containers.stdout | from_yaml }}"
+    - name: Fetch tripleo containers
+      command: cat "{{ container_file }}"
+      register: all_containers
+      changed_when: false
 
-- name: Filter out non-tripleo containers
-  set_fact:
-    non_tripleo_containers: "{{ containers.container_images | json_query('[?image_source != `tripleo`]') }}"
+    - name: Store tripleo containers
+      set_fact:
+        containers: "{{ all_containers.stdout | from_yaml }}"
 
-- name: Filter out non-tripleo containers excluding kolla image_source
-  set_fact:
-    non_tripleo_containers: "{{ non_tripleo_containers | json_query('[?image_source != `kolla`]') }}"
-  when: release in ["train"]
+    - name: Filter out non-tripleo containers
+      set_fact:
+        non_tripleo_containers: "{{ containers.container_images | json_query('[?image_source != `tripleo`]') }}"
 
-- name: Store non-tripleo containers
+    - name: Filter out non-tripleo containers excluding kolla image_source
+      set_fact:
+        non_tripleo_containers: "{{ non_tripleo_containers | json_query('[?image_source != `kolla`]') }}"
+      when: release in ["train"]
+
+    - name: Store non-tripleo containers
+      set_fact:
+        non_tripleo_containers: "{{ non_tripleo_containers | map(attribute='imagename') | list }}"
+
+- name: Override non-tripleo containers for Downstream CI
   set_fact:
-    non_tripleo_containers: "{{ non_tripleo_containers | map(attribute='imagename') | list }}"
+    non_tripleo_containers: "{{ downstream_ci_non_tripleo_containers | default([]) }}"
+  when: osp_release is defined
 
 - name: Print non-tripleo containers
   debug:
@@ -48,13 +57,16 @@
   ignore_errors: true
   loop: "{{ missing_containers }}"
   changed_when: true
-  when: missing_containers | default([]) | length > 0
+  when:
+    - missing_containers | default([]) | length > 0
+    - osp_release is not defined
 
 - name: Fallback to docker.io registry
   when:
     - rdo_pull_success is not skipped
     - rdo_pull_success is failed
     - missing_containers | default([]) | length > 0
+    - osp_release is not defined
   block:
 
     - name: List down missing containers
