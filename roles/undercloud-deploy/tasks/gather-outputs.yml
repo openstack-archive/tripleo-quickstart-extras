@@ -7,8 +7,8 @@
   register: tmp_undercloud_outputs
   vars:
     output_paths:
-      - "{{ working_dir }}/tripleo-undercloud-outputs.yaml"
       - "{{ working_dir }}/tripleo-deploy/undercloud/tripleo-undercloud-outputs.yaml"
+      - "{{ working_dir }}/tripleo-undercloud-outputs.yaml"
 
 - name: Collect undercloud passwords
   slurp:
@@ -16,8 +16,8 @@
   register: tmp_undercloud_passwords
   vars:
     password_paths:
-      - "{{ working_dir }}/tripleo-undercloud-passwords.yaml"
       - "{{ working_dir }}/tripleo-deploy/undercloud/tripleo-undercloud-passwords.yaml"
+      - "{{ working_dir }}/tripleo-undercloud-passwords.yaml"
 
 - name: Setting undercloud outputs and password facts
   set_fact:
