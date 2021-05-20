@@ -129,7 +129,8 @@
 
     - name: Create string from list
       set_fact:
-        add_repos_update: ",{{ add_repos_update | join(',') }}"
+        add_repos_update:
+          "{% if update_containers_repo|length >0 %},{% endif %}{{ add_repos_update | join(',') }}"
       when: add_repos_update|length > 0
 
     - name: Create string from list
