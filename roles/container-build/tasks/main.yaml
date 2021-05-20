@@ -18,7 +18,7 @@
   block:
     - name: 'Deploy the content provider registry from {{ container_registry_image }}'
       become: true
-      podman_container:
+      containers.podman.podman_container:
         name: docker_registry
         image: "{{ container_registry_image }}"
         publish:
@@ -31,7 +31,7 @@
   rescue:
     - name: "Deploy the content provider registry from {{ container_registry_image_fallback }}"
       become: true
-      podman_container:
+      containers.podman.podman_container:
         name: docker_registry
         image: "{{ container_registry_image_fallback }}"
         publish:
