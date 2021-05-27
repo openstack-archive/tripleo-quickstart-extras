@@ -26,6 +26,14 @@
 - include: teardown-nodes.yml
 - include: teardown-environment.yml
 
+- name: setup yum repos on virthost
+  hosts: virthost
+  gather_facts: true
+  roles:
+    - repo-setup
+  tags:
+    - provision
+
 # The `environment/setup` role performs any tasks that require `root`
 # access on the target host.
 - name: Install libvirt packages and configure networks
