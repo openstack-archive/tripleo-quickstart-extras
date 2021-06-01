@@ -163,6 +163,24 @@
     msg: "{{ trunk_record_ipa.stdout_lines[1] }}"
   when: trunk_record_ipa.stdout_lines|length > 0
 
+- name: Register A record resolved by public nameserver - releases.openstack.org
+  shell: >
+    dig +short @{{ trunk_public_nameserver }} releases.openstack.org
+  register: releases_record_public
+
+- name: Return A record resolved by public nameserver - releases.openstack.org
+  debug:
+    msg: "{{ releases_record_public.stdout_lines[2] }}"
+
+- name: Register A record resolved by public nameserver - redhat.com
+  shell: >
+    dig +short @{{ trunk_public_nameserver }} redhat.com
+  register: redhat_record_public
+
+- name: Return A record resolved by public nameserver - redhat.com
+  debug:
+    msg: "{{ redhat_record_public.stdout_lines[0] }}"
+
 - name: Add entries to /etc/hosts for providers that don't resolve
   become: true
   lineinfile:
@@ -170,8 +188,9 @@
     line: "{{ item }}"
     state: present
   with_items:
-    - '209.132.183.105 redhat.com'
+    - '{{ redhat_record_public.stdout_lines[0] }} redhat.com'
     - '{{ trunk_record_public.stdout_lines[1] }} trunk.rdoproject.org'
+    - '{{ releases_record_public.stdout_lines[2] }} releases.openstack.org'
 
 - name: check if /etc/ci/mirror_info.sh exists
   stat:
