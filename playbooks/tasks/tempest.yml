@@ -156,7 +156,7 @@
         tempest_public_net_physical_type: 'datacentre'
         tempest_public_subnet_cidr: '{{ tempest_cidr }}'
         tempest_public_subnet_gateway_ip: '{{ tempest_cidr|nthhost(1) }}'
-        tempest_public_subnet_allocation_pools: '{{ tempest_cidr|nthhost(100) ~ "-" ~ tempest_cidr|nthhost(150) }}'
+        tempest_public_subnet_allocation_pools: '{{ tempest_cidr|nthhost(150) ~ "-" ~ tempest_cidr|nthhost(200) }}'
         tempest_private_net_seg_id: "{{ (release in ['queens']) | ternary('', omit) }}"
         tempest_network_ping_gateway: true
         tempest_private_net_provider_type: "{{ (release in ['queens']) | ternary('vlan', 'geneve') }}"
