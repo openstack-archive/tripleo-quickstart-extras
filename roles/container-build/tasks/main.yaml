@@ -18,27 +18,27 @@
   block:
     - name: 'Deploy the content provider registry from {{ container_registry_image }}'
       become: true
-      containers.podman.podman_container:
-        name: docker_registry
-        image: "{{ container_registry_image }}"
-        publish:
-          - "{{ content_provider_registry_port }}:{{ content_provider_registry_port }}"
-        env:
-          REGISTRY_HTTP_ADDR: "0.0.0.0:{{ content_provider_registry_port }}"
-          REGISTRY_LOG_LEVEL: debug
+      shell: >-
+        podman run
+        -d
+        --name docker_registry
+        -p {{ content_provider_registry_port }}:{{ content_provider_registry_port }}
+        -e REGISTRY_HTTP_ADDR="0.0.0.0:{{ content_provider_registry_port }}"
+        -e REGISTRY_LOG_LEVEL=debug
+        {{ container_registry_image }}
       tags:
         - skip_ansible_lint
   rescue:
     - name: "Deploy the content provider registry from {{ container_registry_image_fallback }}"
       become: true
-      containers.podman.podman_container:
-        name: docker_registry
-        image: "{{ container_registry_image_fallback }}"
-        publish:
-          - "{{ content_provider_registry_port }}:{{ content_provider_registry_port }}"
-        env:
-          REGISTRY_HTTP_ADDR: "0.0.0.0:{{ content_provider_registry_port }}"
-          REGISTRY_LOG_LEVEL: debug
+      shell: >-
+        podman run
+        -d
+        --name docker_registry
+        -p {{ content_provider_registry_port }}:{{ content_provider_registry_port }}
+        -e REGISTRY_HTTP_ADDR="0.0.0.0:{{ content_provider_registry_port }}"
+        -e REGISTRY_LOG_LEVEL=debug
+        {{ container_registry_image_fallback }}
       tags:
         - skip_ansible_lint
 
