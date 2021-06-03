@@ -99,6 +99,18 @@
     dest: "{{ working_dir }}/undercloud-parameter-defaults.yaml"
     mode: 0600
 
+- name: Set update_containers_repo if delorean-current is not present
+  stat:
+    path: "/etc/yum.repos.d/delorean-current.repo"
+  register: delorean_current_stat
+
+- name: Remove delorean-current from repo updates
+  set_fact:
+    update_containers_repo: >-
+      {% if compressed_gating_repo is defined %}{{ gating_repo_name }}{% endif %}
+      {%- if compressed_gating_repo is defined and container_prep_additional_repos -%},{%- endif -%}
+      {%- if container_prep_additional_repos -%}{{ container_prep_additional_repos }}{%- endif -%}
+  when: not delorean_current_stat.stat.exists
 
 - name: Set repos defined in the job for container update
   when:
