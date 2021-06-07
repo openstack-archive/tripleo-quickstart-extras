@@ -194,9 +194,7 @@ $TEMPESTCONF --out etc/tempest.conf \
   compute.build_timeout 500 \
   network.build_timeout 500 \
   volume.build_timeout 500 \
-  {% if 'disable-telemetry.yaml' in telemetry_args|default('') %}
   service_available.aodh_plugin False \
-  {% endif %}
   {% if tempest_extra_config %}
   {% for key, value in tempest_extra_config.items() %}
   {{ key }} {{ value }} \
