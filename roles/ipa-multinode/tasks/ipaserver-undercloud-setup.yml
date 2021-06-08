@@ -181,6 +181,24 @@
   debug:
     msg: "{{ redhat_record_public.stdout_lines[0] }}"
 
+- name: Register A record resolved by public nameserver - opendev.org
+  shell: >
+    dig +short @{{ trunk_public_nameserver }} opendev.org
+  register: opendev_record_public
+
+- name: Return A record resolved by public nameserver - opendev.org
+  debug:
+    msg: "{{ opendev_record_public.stdout_lines[0] }}"
+
+- name: Register A record resolved by public nameserver - tarballs.opendev.org
+  shell: >
+    dig +short @{{ trunk_public_nameserver }} tarballs.opendev.org
+  register: tarballs_record_public
+
+- name: Return A record resolved by public nameserver - tarballs.opendev.org
+  debug:
+    msg: "{{ tarballs_record_public.stdout_lines[2] }}"
+
 - name: Add entries to /etc/hosts for providers that don't resolve
   become: true
   lineinfile:
@@ -191,6 +209,8 @@
     - '{{ redhat_record_public.stdout_lines[0] }} redhat.com'
     - '{{ trunk_record_public.stdout_lines[1] }} trunk.rdoproject.org'
     - '{{ releases_record_public.stdout_lines[2] }} releases.openstack.org'
+    - '{{ opendev_record_public.stdout_lines[0] }} opendev.org'
+    - '{{ tarballs_record_public.stdout_lines[2] }} tarballs.opendev.org'
 
 - name: check if /etc/ci/mirror_info.sh exists
   stat:
