@@ -14,6 +14,7 @@ overcloud_as_undercloud: true
 overcloud_repo_paths:
   - "/etc/yum.repos.d/delorean*"
   - "/etc/yum.repos.d/quickstart-*"
+  - "{% if job is defined and job.component is defined -%}/etc/yum.repos.d/*-component.repo{%- endif -%}"
 image_build_extract_list:
   - "/ironic-python-agent.initramfs"
   - "/ironic-python-agent.kernel"
