@@ -9,9 +9,6 @@ default_log_url: 'http://logs.openstack.org'
 emails:
   - mail: 'arxcruz@redhat.com'
     name: 'Arx Cruz'
-  - mail: 'gcerami@redhat.com'
-    name: 'Gabriele'
-    fail_only: true
   - mail: 'sshnaidm@redhat.com'
     name: 'Sagi Shnaidman'
     fail_only: true
