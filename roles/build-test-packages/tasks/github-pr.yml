@@ -1,0 +1,32 @@
+---
+- when: artg_change.project == "containers/ansible-podman-collections"
+  block:
+    - name: Set collection path
+      set_fact:
+        collection_path: "{{ ansible_user_dir }}/{{ zuul.projects['github.com/containers/ansible-podman-collections'].src_dir }}"
+
+    - name: Install packages
+      package:
+        name:
+          - rpm-build
+          - ansible-macros
+        state: present
+        disable_gpg_check: true
+      become: true
+      register: install
+      retries: 10
+      until: install is success
+      delay: 10
+
+    - name: Build collection
+      shell: >-
+        ./contrib/build_rpm.sh > ~/ansible-podman-collections-build_rpm.log 2>&1
+      args:
+        chdir: "{{ collection_path }}"
+      changed_when: true
+      tags:
+        - skip_ansible_lint
+
+    - name: Append project name to package list
+      set_fact:
+        ansible_coll_packages: '{{ ansible_coll_packages }} + {{ [ artg_change.project ] }}'

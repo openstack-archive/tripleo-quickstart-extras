@@ -8,6 +8,7 @@ artg_rdoinfo_repo_url: https://github.com/redhat-openstack/rdoinfo
 artg_compressed_gating_repo: "/home/stack/gating_repo.tar.gz"
 artg_build_one: true
 artg_rdo_packages: []
+ansible_coll_packages: []
 dlrn_target: >-
   {%- if (ansible_distribution == "RedHat") and
   (dlrn_use_local_mirrors|bool) -%}
@@ -82,3 +83,6 @@ artg_skipped_projects:
   - tripleo-environments
   - testproject
   - containers/podman
+
+artg_github_projects:
+  - containers/ansible-podman-collections
