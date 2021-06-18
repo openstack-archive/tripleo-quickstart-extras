@@ -52,6 +52,7 @@
     line: '{{ project_item.line }}'
   with_items:
     - {regexp: 'baseurl=.*', line: 'baseurl={{ dlrn_baseurl }}'}
+    - {regexp: 'distro=.*', line: 'distro={{ release }}-rdo'}
     - {regexp: 'source=.*', line: 'source={{ artg_change.branch }}'}
   loop_control:
     loop_var: project_item
