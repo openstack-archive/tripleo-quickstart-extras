@@ -198,6 +198,7 @@
         tempest_service_setup_host: '{{ inventory_hostname }}'
         tempest_workspace: "{{ ansible_user_dir }}/tempest"
         stackviz_venv_bin: "{{ ansible_user_dir }}/stackviz_venv/bin"
+        tempest_test_extra_test: ['keystone_tempest_plugin.tests.api']
 
     - name: set facts while running tempest from source
       set_fact:
