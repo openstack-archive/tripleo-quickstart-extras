@@ -7,10 +7,13 @@ set -eux
 ## * Download specific Overcloud images
 ## ::
 
-if [ -f overcloud-full.qcow2 ]; then
-    sudo rm -rf overcloud-full*
+if [ -f {{ overcloud_image }}.qcow2 ]; then
+    sudo rm -rf {{ overcloud_image }}.*
 fi
 curl -L -O "{{ overcloud_image_url }}"
-tar xvfp {{ overcloud_full_tar_name }}
+
+{% if not whole_disk_images|bool %}
+tar xvfp {{ overcloud_image }}.tar
+{% endif %}
 
 ### --stop_docs

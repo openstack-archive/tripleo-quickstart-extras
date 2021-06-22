@@ -50,3 +50,5 @@ Role Variables
   in undercloud.conf for the undercloud and install ara in the mistral executor container before deploying the overcloud.
 - `network_provision`: <false> Deploy composable network with "openstack
   overcloud network provision" and deployed-networks, instead of with heat
+- `whole_disk_images`: <false> -- shows if we want to use partition or whole disk images (this will be available starting on Ocata)
+- `overcloud_image`: <'overcloud-full'> Name of overcloud image to build/download/deploy without any file extension
