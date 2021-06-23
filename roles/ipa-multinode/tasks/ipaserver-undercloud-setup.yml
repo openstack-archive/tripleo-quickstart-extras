@@ -199,6 +199,15 @@
   debug:
     msg: "{{ tarballs_record_public.stdout_lines[2] }}"
 
+- name: Register A record resolved by public nameserver - github.com
+  shell: >
+    dig +short @{{ trunk_public_nameserver }} github.com
+  register: github_record_public
+
+- name: Return A record resolved by public nameserver - github.com
+  debug:
+    msg: "{{ github_record_public.stdout_lines[0] }}"
+
 - name: Add entries to /etc/hosts for providers that don't resolve
   become: true
   lineinfile:
@@ -211,6 +220,7 @@
     - '{{ releases_record_public.stdout_lines[2] }} releases.openstack.org'
     - '{{ opendev_record_public.stdout_lines[0] }} opendev.org'
     - '{{ tarballs_record_public.stdout_lines[2] }} tarballs.opendev.org'
+    - '{{ github_record_public.stdout_lines[0] }} github.com'
 
 - name: check if /etc/ci/mirror_info.sh exists
   stat:
