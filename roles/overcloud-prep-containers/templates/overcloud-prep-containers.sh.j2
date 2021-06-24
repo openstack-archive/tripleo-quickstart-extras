@@ -75,6 +75,42 @@ openstack overcloud container image prepare \
 {% if docker_ceph_tag is defined %}
     --set "ceph_tag={{ docker_ceph_tag }}" \
 {% endif %}
+{% if custom_ceph_alertmanager_image is defined %}
+    --set "ceph_alertmanager_image={{ custom_ceph_alertmanager_image }}" \
+{% endif %}
+{% if custom_ceph_alertmanager_namespace is defined %}
+    --set "ceph_alertmanager_namespace={{ custom_ceph_alertmanager_namespace }}" \
+{% endif %}
+{% if custom_ceph_alertmanager_tag is defined %}
+    --set "ceph_alertmanager_tag={{ custom_ceph_alertmanager_tag }}" \
+{% endif %}
+{% if custom_ceph_grafana_image is defined %}
+    --set "ceph_grafana_image={{ custom_ceph_grafana_image }}" \
+{% endif %}
+{% if custom_ceph_grafana_namespace is defined %}
+    --set "ceph_grafana_namespace={{ custom_ceph_grafana_namespace }}" \
+{% endif %}
+{% if custom_ceph_grafana_tag is defined %}
+    --set "ceph_grafana_tag={{ custom_ceph_grafana_tag }}" \
+{% endif %}
+{% if custom_ceph_node_exporter_image is defined %}
+    --set "ceph_node_exporter_image={{ custom_ceph_node_exporter_image }}" \
+{% endif %}
+{% if custom_ceph_node_exporter_namespace is defined %}
+    --set "ceph_node_exporter_namespace={{ custom_ceph_node_exporter_namespace }}" \
+{% endif %}
+{% if custom_ceph_node_exporter_tag is defined %}
+    --set "ceph_node_exporter_tag={{ custom_ceph_node_exporter_tag }}" \
+{% endif %}
+{% if custom_ceph_prometheus_image is defined %}
+    --set "ceph_prometheus_image={{ custom_ceph_prometheus_image }}" \
+{% endif %}
+{% if custom_ceph_prometheus_namespace is defined %}
+    --set "ceph_prometheus_namespace={{ custom_ceph_prometheus_namespace }}" \
+{% endif %}
+{% if custom_ceph_prometheus_tag is defined %}
+    --set "ceph_prometheus_tag={{ custom_ceph_prometheus_tag }}" \
+{% endif %}
 {% if docker_openshift_namespace is defined %}
     --set openshift_namespace={{ docker_openshift_namespace }} \
 {% endif %}
