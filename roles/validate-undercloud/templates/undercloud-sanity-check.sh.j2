@@ -50,15 +50,13 @@ rm -f {{ working_dir }}/undercloud_sanity.subunit.gz
 rm -f {{ working_dir }}/undercloud_sanity.subunit
 
 source {{ working_dir}}/stackrc
-citest openstack user list
-citest openstack catalog list
 {% if undercloud_enable_nova|bool %}
-citest nova service-list
-citest glance image-list
+citest openstack compute service list
+citest openstack image list
 {% endif %}
-citest neutron subnet-list
-citest neutron net-list
-citest neutron agent-list
+citest openstack subnet list
+citest openstack network list
+citest openstack network agent list
 citest openstack baremetal node list
 {% if undercloud_enable_heat|bool %}
 citest openstack stack list
