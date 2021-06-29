@@ -63,6 +63,7 @@ fi
 ## * Deploy the overcloud!
 ## ::
 openstack overcloud deploy --stack {{ stack_name }} \
+  {% if network_provision|bool %}--skip-nodes-and-networks{% endif %} \
   {% if release is not in ['newton', 'ocata', 'pike', 'queens'] %}--override-ansible-cfg {{ working_dir }}/custom_ansible.cfg{% endif %} \
   {% if release not in ['queens', 'stein', 'train', 'ussuri', 'victoria'] and not (ephemeral_heat|bool) %}--heat-type installed{% endif %} --templates {{overcloud_templates_path}} \
   {{ deploy_args | regex_replace("\n", " ") }} \
