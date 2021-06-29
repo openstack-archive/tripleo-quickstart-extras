@@ -238,6 +238,13 @@
         chdir: '{{ build_repo_dir }}'
       register: repo_built_multi
 
+- name: Clone and build the Github PRs
+  include: github-pr.yml artg_change={{ item }}
+  with_items: '{{ artg_change_list|default([]) }}'
+  when:
+    - '"github.com" in item.host'
+    - item.project in artg_github_projects
+
 - name: Clean up loop devices created by mock
   file:
     path: "/dev/loop{{ item }}"
@@ -255,7 +262,12 @@
       shell: >
         set -o pipefail &&
         rm -rf {{ build_repo_dir }}/gating_repo/*;
-        find {{ build_repo_dir }}/DLRN/data/repos -type f -name '*.rpm' -print0 | xargs -0 cp -t {{ build_repo_dir }}/gating_repo;
+        [[ $(find {{ build_repo_dir }}/DLRN/data/repos -type f -name '*.rpm') ]] &&
+        find {{ build_repo_dir }}/DLRN/data/repos -type f -name '*.rpm' -print0 | xargs -0 cp -t {{ build_repo_dir }}/gating_repo ||
+        echo "no DLRN builds";
+        [[ $(find  ~/rpmbuild/RPMS/noarch/*collection*.rpm) ]] &&
+        find ~/rpmbuild/RPMS/noarch -type f -name '*collection*.rpm' -print0 | xargs -0 cp -t {{ build_repo_dir }}/gating_repo ||
+        echo "no collection builds";
 
     - name: Run createrepo on generated rpms
       command: createrepo gating_repo
@@ -273,8 +285,9 @@
         compressed_gating_repo: "{{ artg_compressed_gating_repo }}"
         cacheable: true
   when:
-    - artg_rdo_packages is defined
-    - artg_rdo_packages|length > 0
+    - >-
+        artg_rdo_packages|default([])|length > 0 or
+        ansible_coll_packages|default([])|length > 0
 
 - name: Clean up
   file:
