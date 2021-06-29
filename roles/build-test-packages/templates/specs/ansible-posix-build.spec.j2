@@ -1,0 +1,40 @@
+%global collection_namespace ansible
+%global collection_name posix
+
+Name:           ansible-collection-%{collection_namespace}-%{collection_name}
+Version:        9.9.9
+Release:        999%{?dist}
+Summary:        Ansible Collection targeting POSIX and POSIX-ish platforms
+
+License:        GPLv3+ and Python
+URL:            %{ansible_collection_url}
+Source:         https://github.com/ansible-collections/ansible.posix/archive/%{version}/%{name}-%{version}.tar.gz
+
+BuildRequires:  ansible >= 2.9.10
+
+BuildArch:      noarch
+
+%description
+%{summary}.
+
+%prep
+%autosetup -n ansible.posix-%{version}
+rm -fvr tests/{integration,utils} .github changelogs/fragments/.keep {test-,}requirements.txt shippable.yml
+rm -fvr .azure-pipelines
+find -type f ! -executable -name '*.py' -print -exec sed -i -e '1{\@^#!.*@d}' '{}' +
+find -type f -name '.gitignore' -print -delete
+
+%build
+%ansible_collection_build
+
+%install
+%ansible_collection_install
+
+%files
+%license COPYING
+%doc README.md
+%{ansible_collection_files}
+
+%changelog
+* Mon Jul 05 2021 Sagi Shnaidman <sshnaidm@redhat.com> - 9.9.9
+- Clone this spec from: https://src.fedoraproject.org/rpms/ansible-collection-ansible-posix/blob/rawhide/f/ansible-collection-ansible-posix.spec
