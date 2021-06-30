@@ -1,8 +1,5 @@
 ---
 # tasks file for undercloud-setup
-- name: Run atop for monitoring
-  include: atop.yml
-
 # Add a non-root user
 - name: Including non_root_user_setup tasks list
   include: non_root_user_setup.yml
@@ -15,6 +12,9 @@
 - name: Including repo-setup role
   include_role:
     name: repo-setup
+
+- name: Run atop for monitoring
+  include: atop.yml
 
 - name: Including package_installs tasks
   include: package_installs.yml
