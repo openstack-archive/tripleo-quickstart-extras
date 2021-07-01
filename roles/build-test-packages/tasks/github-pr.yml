@@ -3,7 +3,10 @@
   block:
     - name: Set collection path
       set_fact:
-        collection_path: "{{ ansible_user_dir }}/{{ zuul.projects['github.com/containers/ansible-podman-collections'].src_dir }}"
+        collection_path: >-
+          {{ ansible_user_dir }}/{{
+           zuul.projects['github.com/containers/ansible-podman-collections'].src_dir|
+           default('src/github.com/containers/ansible-podman-collections') }}
 
     - name: Install packages
       package:

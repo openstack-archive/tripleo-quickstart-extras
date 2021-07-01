@@ -199,6 +199,9 @@
     - item.project.name not in artg_change_list|default([]) | map(attribute='project') |list
     - (item.branch == zuul.override_checkout | default(zuul.branch)) or (osp_release is defined and osp_release in item.branch)
 
+- name: Detect github PRs from commit message
+  include: detect_github_pr.yml
+
 - name: Print out the change list
   debug:
     var: artg_change_list
@@ -220,6 +223,7 @@
     - '"-distgit" not in item.project'
     - item.project not in artg_skipped_projects
     - release in item.branch or (zuul.project.name | default("") == rdoinfo_repo_name) or (osp_release is defined and osp_release in item.branch)
+    - '"github.com" not in item.host'
 
 - name: Build package using DLRN
   when: not artg_build_one|bool
