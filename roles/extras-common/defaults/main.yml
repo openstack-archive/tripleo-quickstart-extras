@@ -167,3 +167,5 @@ undercloud_enable_swift: >-
   false
   {%- endif %}
 undercloud_enable_heat: "{{ not ephemeral_heat|default(false) }}"
+whole_disk_images: false
+overcloud_image: overcloud-full

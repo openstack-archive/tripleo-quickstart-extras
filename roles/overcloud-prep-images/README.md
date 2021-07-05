@@ -32,7 +32,6 @@ Role Variables
   Please note that in order to match root device hints with the associated nodes on `instackenv.json`,
   the node `pm_address` will be used as a key.
   At the moment only equal operator is supported, is not possible to use other operators or logical combinations.
-- whole_disk_images: false -- shows if we want to use partition or whole disk images (this will be available starting on Ocata)
 - step_introspect_with_retry: <false> -- a more robust version of the step_introspect option
 
 Dependencies

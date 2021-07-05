@@ -31,7 +31,7 @@
     dib_yum_repo_conf: "{{ overcloud_repo_paths }}"
     workspace: "{{ images_working_dir }}"
     build_all_images: true
-    tripleo_image_type: overcloud-full
+    tripleo_image_type: "{{ overcloud_image }}"
     tripleo_common_path: "/usr/share/tripleo-common"
   include_role:
     name: oooci-build-images
@@ -45,7 +45,7 @@
       include_role:
         name: install-built-repo
       vars:
-        ib_repo_image_path: "{{ images_working_dir }}/overcloud-full.qcow2"
+        ib_repo_image_path: "{{ images_working_dir }}/{{ overcloud_image }}.qcow2"
 
     - name: Enject repo in IPA image
       include_role:
@@ -100,7 +100,7 @@
         virt-cat -a {{ build_isolation_image.name }}.qcow2 \
             /ironic-python-agent.log > ironic-python-agent.log 2>&1 || true
         virt-cat -a {{ build_isolation_image.name }}.qcow2 \
-            /overcloud-full.log > overcloud-full.log 2>&1 || true
+            /{{ overcloud_image }}.log > {{ overcloud_image }}.log 2>&1 || true
       environment:
         LIBGUESTFS_BACKEND: direct
         LIBVIRT_DEFAULT_URI: "{{ libvirt_uri }}"
@@ -122,7 +122,7 @@
       include: modify-image.yml
       vars:
         modify_images_working_dir: "{{ images_working_dir }}"
-        image_to_modify: "{{ images_working_dir }}/overcloud-full.qcow2"
+        image_to_modify: "{{ images_working_dir }}/{{ overcloud_image }}.qcow2"
         modify_script: "{{ images_working_dir }}/repo_setup.sh"
 
     - name: convert the overcloud image to an undercloud image
@@ -156,6 +156,6 @@
 
 - name: Clean up the images working dir
   shell: >-
-    rm -rf {{ images_working_dir }}/overcloud-full.d {{ images_working_dir }}/ironic-python-agent.d/
-    sudo chown $USER: {{ images_working_dir }}/overcloud-full.* {{ images_working_dir }}/ironic-python-agent.*
+    rm -rf {{ images_working_dir }}/{{ overcloud_image }}.d {{ images_working_dir }}/ironic-python-agent.d/
+    sudo chown $USER: {{ images_working_dir }}/{{ overcloud_image }}.* {{ images_working_dir }}/ironic-python-agent.*
   when: cleanup_images_working_dir|bool

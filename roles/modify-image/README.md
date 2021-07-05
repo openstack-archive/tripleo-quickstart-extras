@@ -105,7 +105,7 @@ Example Usage
 - name: Install packages in the image
   hosts: virthost
   vars:
-    image_to_modify: "{{ working_dir }}/overcloud-full.qcow2"
+    image_to_modify: "{{ working_dir }}/{{ overcloud_image }}.qcow2"
     modify_image_install_packages:
       - 'package_to_be_installed_1'
       - 'package_to_be_installed_2'
@@ -116,7 +116,7 @@ Example Usage
 - name: Upload an RPM file and install it in the image
   hosts: virthost
   vars:
-    image_to_modify: "{{ working_dir }}/overcloud-full.qcow2"
+    image_to_modify: "{{ working_dir }}/{{ overcloud_image }}.qcow2"
     modify_image_upload_files:
       - src: "/tmp/rpm_to_be_uploaded.rpm"
         dest: /root/rpm_to_be_installed.rpm
