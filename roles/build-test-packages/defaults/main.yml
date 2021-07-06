@@ -86,3 +86,6 @@ artg_skipped_projects:
 
 artg_github_projects:
   - containers/ansible-podman-collections
+  - ansible-collections/community.general
+  - ansible-collections/ansible.posix
+  - ansible-collections/ansible.netcommon

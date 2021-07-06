@@ -1,0 +1,41 @@
+%global collection_namespace community
+%global collection_name general
+
+Name:           ansible-collection-%{collection_namespace}-%{collection_name}
+Version:        9.9.9
+Release:        999%{?dist}
+Summary:        Modules and plugins supported by Ansible community
+
+License:        GPLv3+ and BSD and Python
+URL:            %{ansible_collection_url}
+Source:         https://github.com/ansible-collections/community.general/archive/%{version}/%{name}-%{version}.tar.gz
+
+BuildRequires:  ansible >= 2.9.10
+
+BuildArch:      noarch
+
+%description
+%{summary}.
+
+%prep
+%autosetup -n community.general-%{version}
+rm -fvr .github .azure-pipelines
+find -type f ! -executable -name '*.py' -print -exec sed -i -e '1{\@^#!.*@d}' '{}' +
+find -type f -name '.gitignore' -print -delete
+test -f scripts && sed -i -e 's|env python$|env python3|' scripts/inventory/*.py scripts/vault/*.py || echo 'nothing to do'
+
+%build
+%ansible_collection_build
+
+%install
+%ansible_collection_install
+rm -vr %{buildroot}%{ansible_collection_files}/%{collection_name}/tests
+
+%files
+%license COPYING
+%doc README.md CHANGELOG.rst
+%{ansible_collection_files}
+
+%changelog
+* Mon Jul 05 2021 Sagi Shnaidman <sshnaidm@redhat.com> - 9.9.9
+- Clone this spec from: https://src.fedoraproject.org/rpms/ansible-collection-community-general/blob/rawhide/f/ansible-collection-community-general.spec
