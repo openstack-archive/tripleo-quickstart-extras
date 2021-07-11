@@ -1,7 +1,6 @@
 ---
 
 # Script and log locations used during the delete process.
-delete_script: overcloud_delete.sh.j2
 delete_log: "{{ working_dir }}/overcloud_delete.log"
 
 # 30 retries * 10 seconds delay = 5 minutes delete timeout

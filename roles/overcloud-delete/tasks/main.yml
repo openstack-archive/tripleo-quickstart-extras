@@ -1,31 +1,36 @@
 ---
-# Generate a script from templates. These are scripts
-# rather than additional ansible tasks so that they can be run
-# manually from the undercloud host.
-- name: Create overcloud delete script
-  template:
-    src: "{{ delete_script }}"
-    dest: "{{ working_dir }}/overcloud-delete.sh"
-    mode: 0755
+- name: "Delete overcloud"
   tags:
-    - overcloud-scripts
-
-- when: step_delete_overcloud|bool
+    - overcloud-delete
   block:
-    - name: Delete the overcloud
-      shell: >
-        set -o pipefail &&
-        {{ working_dir }}/overcloud-delete.sh 2>&1 {{ timestamper_cmd }} > {{ delete_log }}
-      tags:
-        - overcloud-delete
+    - name: "Get overcloud id"
+      shell: >-
+        source {{ working_dir }}/stackrc && \
+        openstack stack list -f value -c ID
+      environment:
+        OVERCLOUD_NAME: "{{ stack_name }}"
+      register: overcloud_id
 
-    - name: check for delete command to complete or fail
+    - name: "Run overcloud delete"
+      when:
+        - step_delete_overcloud | bool
+      collections:
+        - tripleo.operator
+      include_role:
+        name: tripleo_overcloud_delete
+      vars:
+        tripleo_overcloud_delete_debug: true
+        tripleo_overcloud_delete_name: "{{ stack_name }}"
+        tripleo_overcloud_delete_rc_file: "{{ working_dir }}/stackrc"
+        tripleo_overcloud_delete_log: "{{ delete_log }}"
+
+    - name: "check for delete command to complete or fail"
+      when:
+        - step_delete_overcloud | bool
       shell: |
-          source {{ working_dir }}/stackrc
-          openstack stack show $(cat {{ working_dir }}/overcloud_id) -f yaml
+        source {{ working_dir }}/stackrc
+        openstack stack show {{ overcloud_id }} -f yaml
       delay: "{{ delete_check_delay }}"
       retries: "{{ delete_check_retries }}"
       until: heat_stack_show.stdout.find('DELETE_COMPLETE') != -1
       register: heat_stack_show
-      tags:
-        - overcloud-delete
