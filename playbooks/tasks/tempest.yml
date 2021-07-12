@@ -7,6 +7,7 @@
         list_skipped_release: "{{ release }}"
         list_skipped_job: "{{ zuul.job | default(omit) }}"
         list_skipped_deployment: "{{ (tempest_cloud_name in ['undercloud']) | ternary('undercloud', 'overcloud') }}"
+        list_skipped_installer: "{{ (osp_release is defined) | ternary('osp', 'tripleo') }}"
       include_role:
         name: list_skipped
 
