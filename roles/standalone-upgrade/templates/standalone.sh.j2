@@ -16,5 +16,5 @@ sudo openstack tripleo upgrade $PROMPT_ANSWER \
 {% if standalone_custom_env_files %}
   -e {{ standalone_custom_env_files | join(' -e ') }} \
 {% endif %}
-  --output-dir {{ working_dir }} \
+  --output-dir {{ working_dir }}/tripleo-deploy \
   --standalone
