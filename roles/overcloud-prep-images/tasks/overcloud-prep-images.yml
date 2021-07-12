@@ -101,13 +101,30 @@
     - step_introspect|bool
     - step_introspect_debug|bool
 
-- name: Introspect overcloud images
-  shell: >
-    set -o pipefail &&
-    {{ working_dir }}/overcloud-introspect.sh 2>&1 {{ timestamper_cmd }} >
-    {{ overcloud_introspect_script_log }}
-  changed_when: true
+- name: Run Introspection
   when: step_introspect|bool
+  block:
+    - name: Introspect overcloud nodes - legacy
+      when: release in ['queens', 'stein', 'train']
+      shell: >
+        set -o pipefail &&
+        {{ working_dir }}/overcloud-introspect.sh 2>&1 {{ timestamper_cmd }} >
+        {{ overcloud_introspect_script_log }}
+        changed_when: true
+
+    - name: Run Introspection on overcloud nodes via tripleo-operator-ansible
+      when:
+        - release not in ['queens', 'stein', 'train']
+      collections:
+        - tripleo.operator
+      include_role:
+        name: tripleo_overcloud_node_introspect
+      vars:
+        tripleo_os_cloud: undercloud
+        tripleo_overcloud_node_introspect_debug: true
+        tripleo_overcloud_node_introspect_all_manageable: true
+        tripleo_overcloud_node_introspect_provide: true
+        tripleo_overcloud_node_introspect_log: "{{ overcloud_introspect_script_log }}"
 
 - name: Stop tcpdump after introspection
   become: true
