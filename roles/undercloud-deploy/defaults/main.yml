@@ -18,7 +18,6 @@ hieradata_override_file_classic_undercloud: hieradata-overrides-classic-underclo
 hieradata_override_file_t_h_t_undercloud: hieradata-overrides-t-h-t-undercloud.yaml.j2
 
 step_introspect: false
-bash_deploy_ramdisk: false
 step_install_undercloud: true
 
 # The TripleO-UI is available on the undercloud
