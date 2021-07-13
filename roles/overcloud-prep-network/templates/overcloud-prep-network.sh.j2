@@ -106,15 +106,4 @@ sudo ifup ifcfg-{{ network.device_name }}
 
 {% endif %}
 
-## * Set the DNS server in the control plane network
-## ::
-
-{% if overcloud_dns_servers|default([]) %}
-    CTLPLANE_SUBNET=$(openstack subnet show ctlplane-subnet -f value -c id)
-    openstack subnet set $CTLPLANE_SUBNET --no-dns-nameserver \
-        {% for nameserver in overcloud_dns_servers %} --dns-nameserver "{{ nameserver }}" {% endfor %}
-{% else %}
-    openstack subnet set $(openstack subnet list | awk '/ctlplane/{print $(NF-7) }') $(awk 'match($0, /nameserver\s+(([0-9]{1,3}.?){4})/,address){printf " --dns-nameserver %s", address[1]}' /etc/resolv.conf)
-{% endif %}
-
 ### --stop_docs
