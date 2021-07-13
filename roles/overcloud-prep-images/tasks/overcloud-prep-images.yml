@@ -37,7 +37,7 @@
   block:
     - name: Import and register overcloud nodes - legacy
       when:
-        - release in ['queens', 'stein', 'train']
+        - release in ['queens', 'stein']
       shell: >
         set -o pipefail &&
         {{ working_dir }}/overcloud-import-nodes.sh 2>&1 {{ timestamper_cmd }} >
@@ -46,7 +46,7 @@
 
     - name: Run import nodes via tripleo-operator-ansible
       when:
-        - release not in ['queens', 'stein', 'train']
+        - release not in ['queens', 'stein']
       collections:
         - tripleo.operator
       include_role:
@@ -105,16 +105,16 @@
   when: step_introspect|bool
   block:
     - name: Introspect overcloud nodes - legacy
-      when: release in ['queens', 'stein', 'train']
+      when: release in ['queens', 'stein']
       shell: >
         set -o pipefail &&
         {{ working_dir }}/overcloud-introspect.sh 2>&1 {{ timestamper_cmd }} >
         {{ overcloud_introspect_script_log }}
-        changed_when: true
+      changed_when: true
 
     - name: Run Introspection on overcloud nodes via tripleo-operator-ansible
       when:
-        - release not in ['queens', 'stein', 'train']
+        - release not in ['queens', 'stein']
       collections:
         - tripleo.operator
       include_role:
