@@ -31,8 +31,6 @@ the source template for hieradata overrides for heat driven containerized underc
 for ironic deploy
 - `enable_vbmc`: <'true'> use a virtual bmc instead of pxe ssh
 - `step_introspect`: <'false'> -- boolean value to enable/disable ironic introspection
-- `bash_deploy_ramdisk`: <'false'> -- the variable allows older versions of tripleo to upload images
-properly with the option --old-deploy-image
 - `step_install_undercloud`: <'true'> -- turn on/off the undercloud deployment
 - `libvirt_uri`: <'qemu:///session'> -- the URI used by libvirt, by default tripleo-quickstart uses
 user sessions to provide greater flexixiblity to our users. ** additional documentation ** is at

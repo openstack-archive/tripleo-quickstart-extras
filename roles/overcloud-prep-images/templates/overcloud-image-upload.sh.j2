@@ -26,9 +26,6 @@ openstack overcloud image upload
 {%- if containerized_undercloud|bool %}
     --http-boot=/var/lib/ironic/httpboot
 {%- endif %}
-{%- if bash_deploy_ramdisk|bool %}
-    --old-deploy-image
-{%- endif %}
 {%- if whole_disk_images|bool %}
     --whole-disk
 {%- endif %}
