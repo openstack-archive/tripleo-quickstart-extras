@@ -12,7 +12,7 @@
   block:
     - name: Run overcloud image upload - legacy
       when:
-        - release in ['queens', 'stein']
+        - release in ['queens', 'stein', 'train']
       shell: >
         set -o pipefail &&
         {{ working_dir }}/overcloud-image-upload.sh 2>&1 {{ timestamper_cmd }} >
@@ -21,7 +21,7 @@
 
     - name: Run overcloud image upload via tripleo-operator-ansible
       when:
-        - release not in ['queens', 'stein']
+        - release not in ['queens', 'stein', 'train']
       collections:
         - tripleo.operator
       include_role:
