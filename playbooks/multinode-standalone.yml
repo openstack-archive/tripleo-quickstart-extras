@@ -59,7 +59,7 @@
   gather_facts: false
   vars:
     validation_command: "validation"
-    inventory: "tripleo-ansible-inventory.yaml"
+    inventory: "tripleo-deploy/tripleo-ansible-inventory.yaml"
     vf_log_dir: "/var/log/validations"
   tags:
     - standalone
