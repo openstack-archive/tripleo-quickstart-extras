@@ -10,18 +10,7 @@
 - name: Upload Overcloud Images
   when: step_overcloud_image|bool
   block:
-    - name: Run overcloud image upload - legacy
-      when:
-        - release in ['queens', 'stein', 'train']
-      shell: >
-        set -o pipefail &&
-        {{ working_dir }}/overcloud-image-upload.sh 2>&1 {{ timestamper_cmd }} >
-        {{ overcloud_image_upload_log }}
-      changed_when: true
-
     - name: Run overcloud image upload via tripleo-operator-ansible
-      when:
-        - release not in ['queens', 'stein', 'train']
       collections:
         - tripleo.operator
       include_role:
@@ -32,7 +21,6 @@
         tripleo_overcloud_image_upload_generate_scripts: true
         tripleo_overcloud_image_upload_http_boot: "{{ containerized_undercloud | default(false) | ternary('/var/lib/ironic/httpboot', None) }}"
         tripleo_overcloud_image_upload_whole_disk: "{{ whole_disk_images|default(false) }}"
-        tripleo_overcloud_image_upload_local: "{{ undercloud_enable_nova|default(false) }}"
         tripleo_overcloud_image_upload_log: "{{ overcloud_image_upload_log }}"
         tripleo_overcloud_image_upload_log_combine: true
 
