@@ -1,6 +1,6 @@
 ---
 # Load the skipp list
-- name: Install and run tempest-skip tool
+- name: Run tempest-skip tool to load tests to be skipped
   block:
     - name: Load tests to be skipped
       vars:
@@ -20,6 +20,7 @@
         tempest_test_whitelist: "{{ tempest_skip_register.skipped_tests }}"
         tempest_test_blacklist: []
       when: tempest_run_skipped | default(false) | bool
+
   vars:
     # when ansible.cfg have the option interpreter_python set to auto, ansible
     # executes with the system python instead of virtualenv even though you are
@@ -29,6 +30,26 @@
     ansible_python_interpreter: "{{ local_working_dir }}/bin/python"
     list_skipped_yaml_file: "{{ local_working_dir }}/usr/local/share/ansible/roles/validate-tempest/vars/tempest_skip.yml"
   when: tempest_use_skiplist | default(true)
+  delegate_to: localhost
+
+- name: Run tempest-skip tool to load tests to be executed
+  block:
+    - name: Load tests to be executed
+      vars:
+        list_allowed_release: "{{ (osp_release is defined) | ternary(osp_release, release) }}"
+        list_allowed_job: "{{ (tempest_allowed_group is defined) | ternary(omit, zuul.job) }}"
+        list_allowed_group: "{{ tempest_allowed_group | default(omit) }}"
+      include_role:
+        name: list_allowed
+
+    - name: Add tests to tempest_test_includelist
+      set_fact:
+        tempest_test_includelist: "{{ tempest_allowed_register.allowed_tests }}"
+        tempest_test_whitelist: "{{ tempest_allowed_register.allowed_tests }}"
+  vars:
+    ansible_python_interpreter: "{{ local_working_dir }}/bin/python"
+    list_allowed_yaml_file: "{{ local_working_dir }}/usr/local/share/ansible/roles/validate-tempest/vars/tempest_allow.yml"
+  when: tempest_test_whitelist is not defined
   delegate_to: localhost
 
 - name: set python_cmd
