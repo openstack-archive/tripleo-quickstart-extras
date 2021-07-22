@@ -39,7 +39,7 @@ external_interface_netmask: 255.255.255.0
 
 # images to copy to the undercloud
 images:
-  - name: overcloud-full
+  - name: "{{ overcloud_image }}"
     url: "{{ overcloud_image_url }}"
     type: tar
   - name: ipa_images

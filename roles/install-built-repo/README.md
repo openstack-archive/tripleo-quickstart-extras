@@ -46,7 +46,7 @@ Including an example of how to use this role
       gather_facts: false
       vars:
         ib_repo_image_inject: true
-        ib_repo_image_path: "{{ working_dir }}/overcloud-full.qcow2"
+        ib_repo_image_path: "{{ working_dir }}/{{ overcloud_image }}.qcow2"
       roles:
         - install-built-repo
 
