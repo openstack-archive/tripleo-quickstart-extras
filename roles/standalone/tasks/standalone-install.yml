@@ -10,6 +10,7 @@
     name: tripleo_deploy
   vars:
     tripleo_deploy_debug: true
+    tripleo_deploy_reproducer_command: "{{ release not in ['wallaby', 'victoria', 'ussuri', 'train', 'stein'] }}"
     tripleo_deploy_debug_arg: "{{ standalone_tripleo_deploy_debug_arg }}"
     tripleo_deploy_local_ip: "{{ standalone_ip }}/{{ standalone_network_prefix }}"
     tripleo_deploy_control_virtual_ip: >-
