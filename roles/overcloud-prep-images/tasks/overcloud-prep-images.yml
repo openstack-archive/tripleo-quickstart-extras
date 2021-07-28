@@ -19,9 +19,9 @@
         tripleo_os_cloud: undercloud
         tripleo_overcloud_image_upload_debug: true
         tripleo_overcloud_image_upload_generate_scripts: true
-        tripleo_overcloud_image_upload_http_boot: "{{ containerized_undercloud | default(false) | ternary('/var/lib/ironic/httpboot', None) }}"
-        tripleo_overcloud_image_upload_whole_disk: "{{ whole_disk_images|default(false) }}"
-        tripleo_overcloud_image_upload_local: "{{ not undercloud_enable_nova|default(false) }}"
+        tripleo_overcloud_image_upload_http_boot: "{{ containerized_undercloud | default(false) | bool | ternary('/var/lib/ironic/httpboot', None) }}"
+        tripleo_overcloud_image_upload_whole_disk: "{{ whole_disk_images | default(false) | bool }}"
+        tripleo_overcloud_image_upload_local: "{{ not undercloud_enable_nova | default(false)  |bool }}"
         tripleo_overcloud_image_upload_log: "{{ overcloud_image_upload_log }}"
         tripleo_overcloud_image_upload_log_combine: true
 
