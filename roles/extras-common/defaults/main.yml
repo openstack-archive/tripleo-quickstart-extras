@@ -71,7 +71,7 @@ docker_ceph_tag: >-
   {%- elif release in ['queens'] -%}
   v3.2.14-stable-3.2-luminous-centos-7-x86_64
   {%- elif release in ['stein','train','ussuri','victoria'] -%}
-  v4.0.13-stable-4.0-nautilus-centos-7-x86_64
+  v4.0.19-stable-4.0-nautilus-centos-7-x86_64
   {%- else -%}
   v6.0.0-stable-6.0-pacific-centos-8-x86_64
   {%- endif -%}
