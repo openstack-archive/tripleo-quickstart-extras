@@ -15,28 +15,6 @@ set -ux
 
 source {{ working_dir }}/stackrc
 
-{% if hypervisor_wait|bool %}
-### --stop_docs
-# Wait until there are hypervisors available.
-while true; do
-    count=$(openstack hypervisor stats show -c count -f value)
-    if [ $count -gt 0 ]; then
-        break
-    fi
-done
-{% endif %}
-
-### --start_docs
-
-{% if network_provision|bool %}
-openstack overcloud network provision \
-  --output {{ working_dir }}/overcloud-networks-deployed.yaml \
-  {{overcloud_templates_path}}/ci/network_data.yaml
-if [ $? -ne 0 ]; then
-    exit 1
-fi
-{% endif %}
-
 {% if network_provision|bool %}
 openstack overcloud network vip provision \
   --output {{ working_dir }}/overcloud-vips-deployed.yaml \

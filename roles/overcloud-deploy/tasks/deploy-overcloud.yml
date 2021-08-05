@@ -1,4 +1,29 @@
 ---
+
+- name: "Check hypervisors available"
+  when:
+    - hypervisor_wait | bool
+  shell: >-
+    source {{ working_dir }}/stackrc && \
+    openstack hypervisor stats show -c count -f value
+  register: osp_hypervisor_status
+  until: osp_hypervisor_status.stdout | int > 0
+  retries: 100
+  delay: 10
+
+- name: "Provision overcloud network"
+  when:
+    - network_provision | bool
+  collections:
+    - tripleo.operator
+  include_role:
+    name: tripleo_overcloud_network_provision
+  vars:
+    tripleo_overcloud_network_provision_debug: true
+    tripleo_overcloud_network_provision_output_file: "{{ working_dir }}/overcloud-networks-deployed.yaml"
+    tripleo_overcloud_network_provision_deployment_file: "{{ overcloud_templates_path }}/ci/network_data.yaml"
+    tripleo_overcloud_network_provision_rc_file: "{{ working_dir }}/stackrc"
+
 - name: Deploy the overcloud
   shell: >
     set -o pipefail &&
