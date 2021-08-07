@@ -38,7 +38,7 @@
     - name: Load tests to be executed
       vars:
         list_allowed_release: "{{ (osp_release is defined) | ternary(osp_release, release) }}"
-        list_allowed_job: "{{ (tempest_allowed_group is defined) | ternary(omit, zuul.job) }}"
+        list_allowed_job: "{{ zuul.job | default(omit) }}"
         list_allowed_group: "{{ tempest_allowed_group | default(omit) }}"
       include_role:
         name: list_allowed
