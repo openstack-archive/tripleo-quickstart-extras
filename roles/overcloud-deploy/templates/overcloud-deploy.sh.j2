@@ -15,18 +15,6 @@ set -ux
 
 source {{ working_dir }}/stackrc
 
-{% if baremetal_provision|bool %}
-## * Provision the baremetal nodes
-## ::
-openstack overcloud node provision \
-  {% if network_provision|bool %}--network-ports{% endif %} \
-  --stack {{ stack_name }}  \
-  --output {{ working_dir }}/overcloud-baremetal-deployed.yaml {{ working_dir }}/overcloud_baremetal_deploy.yaml
-if [ $? -ne 0 ]; then
-    exit 1
-fi
-{% endif %}
-
 ## * Deploy the overcloud!
 ## ::
 openstack overcloud deploy --stack {{ stack_name }} \

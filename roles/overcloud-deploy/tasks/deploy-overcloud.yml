@@ -37,6 +37,21 @@
     tripleo_overcloud_network_vip_provision_rc_file: "{{ working_dir }}/stackrc"
     tripleo_overcloud_network_vip_provision_stack: "{{ stack_name }}"
 
+- name: "Provision overcloud baremetal node"
+  when:
+    - baremetal_provision | bool
+  collections:
+    - tripleo.operator
+  include_role:
+    name: tripleo_overcloud_node_provision
+  vars:
+    tripleo_overcloud_node_provision_debug: true
+    tripleo_overcloud_node_provision_deployment_file: "{{ working_dir }}/overcloud_baremetal_deploy.yaml"
+    tripleo_overcloud_node_provision_output_file: "{{ working_dir }}/overcloud-baremetal-deployed.yaml"
+    tripleo_overcloud_node_provision_rc_file: "{{ working_dir }}/stackrc"
+    tripleo_overcloud_node_provision_stack: "{{ stack_name }}"
+    tripleo_overcloud_node_provision_network_ports: "{{ network_provision | default(false) | bool }}"
+
 - name: Deploy the overcloud
   shell: >
     set -o pipefail &&
