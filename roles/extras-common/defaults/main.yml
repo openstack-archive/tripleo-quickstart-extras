@@ -62,7 +62,7 @@ docker_ceph_namespace: >-
   {% if job.consumer_job | default(false) | bool -%}
   {{ job.registry_ip_address_branch[release] }}:{{ local_registry_port }}/{{ docker_registry_namespace }}
   {%- else -%}
-  quay.ceph.io/ceph-ci
+  quay.io/ceph
   {%- endif -%}
 docker_ceph_image: daemon
 docker_ceph_tag: >-
@@ -73,7 +73,7 @@ docker_ceph_tag: >-
   {%- elif release in ['stein','train','ussuri','victoria'] -%}
   v4.0.19-stable-4.0-nautilus-centos-7-x86_64
   {%- else -%}
-  v6.0.0-stable-6.0-pacific-centos-8-x86_64
+  v6.0.4-stable-6.0-pacific-centos-8-x86_64
   {%- endif -%}
 rhel_containers: >-
    {% if ansible_distribution == 'RedHat' -%}
