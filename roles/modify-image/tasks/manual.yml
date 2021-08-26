@@ -34,10 +34,70 @@
         rm -rf "{{ image_to_modify_qcow }}";
 
     - name: Mount image
-      shell: >
-        kpartx -avs {{ image_to_modify_raw }};
-        mount /dev/mapper/loop0p1 {{ mount_tempdir }} || mount /dev/loop0 {{ mount_tempdir }};
+      shell: |
+        set -e
+        modprobe nbd
+        IMAGE_FILE={{ image_to_modify_raw }}
+        MOUNT_DIR={{ mount_tempdir }}
+        NBD_DEVICE=/dev/nbd0
+
+        mount_volume () {
+            if [ -b "$1" ]; then
+                if [ ! -d $2 ]; then
+                    mkdir $2
+                fi
+                mount $1 $2
+            fi
+        }
+
+        set -x
+
+        qemu-nbd --format raw --connect $NBD_DEVICE $IMAGE_FILE
+
+        # search for the vg volume group, this is automatic in some environments
+        vgscan
+        # refresh for when this script is called with different values of $NBD_DEVICE
+        vgchange --refresh
+
+        # activate new logical volumes, this is automatic in some environments
+        vgchange -ay
+
+        if [ -b "${NBD_DEVICE}p3" ]; then
+            # 3 partitions in the image, so assume the first 2 are boot partitions
+            if [ -b "/dev/mapper/vg-lv_root" ]; then
+                # a whole-disk overcloud with lvm volumes
+                # for example, overcloud-hardened-uefi-full.qcow2
+                mount /dev/mapper/vg-lv_root $MOUNT_DIR
+                mount_volume /dev/mapper/vg-lv_var $MOUNT_DIR/var
+                mount_volume /dev/mapper/vg-lv_log $MOUNT_DIR/var/log
+                mount_volume /dev/mapper/vg-lv_audit $MOUNT_DIR/var/log/audit
+                mount_volume /dev/mapper/vg-lv_home $MOUNT_DIR/home
+                mount_volume /dev/mapper/vg-lv_tmp $MOUNT_DIR/tmp
+                mount_volume /dev/mapper/vg-lv_srv $MOUNT_DIR/srv
+            else
+                # a whole-disk overcloud with a single root partition
+                # for example, overcloud-hardened-full.qcow2
+                mount ${NBD_DEVICE}p3 $MOUNT_DIR
+            fi
+        else
+            # a partition image
+            # for example, overcloud-full.qcow2
+            if [ -b "${NBD_DEVICE}p1" ]; then
+                mount ${NBD_DEVICE}p1 $MOUNT_DIR
+            else
+                mount ${NBD_DEVICE} $MOUNT_DIR
+            fi
+        fi
       become: true
+      register: mount_result
+      ignore_errors: true
+
+    - name: Debug image mount
+      debug:
+        msg:
+          stdout: "{{ mount_result.stdout }}"
+          stderr: "{{ mount_result.stderr }}"
+      failed_when: mount_result.rc != 0
 
 - name: Extract initramfs image
   shell: set -o pipefail && gunzip -c {{ image_to_modify_abs_path.stdout }} | cpio -i
@@ -76,6 +136,7 @@
         set -o pipefail && chroot {{ mount_tempdir }} /bin/bash /tmp/{{ modify_script|basename }} 2>&1
         {{ timestamper_cmd }} > {{ working_dir }}/{{ modify_script|basename }}.$(date +%s).log;
         mv -f {{ mount_tempdir }}/etc/resolv.conf{_,};
+        umount {{ mount_tempdir }}/dev/;
 
     - name: Extract files from image
       shell: cp {{ mount_tempdir }}/{{ item }} {{ modify_image_working_dir }}/;
@@ -84,8 +145,6 @@
 
     - name: Close initramfs image
       shell: >
-        set -o pipefail &&
-        umount {{ mount_tempdir }}/dev/;
         pushd {{ mount_tempdir }};
         find . -print | cpio -o -H newc | gzip > {{ image_to_modify_abs_path.stdout }};
         popd;
@@ -93,14 +152,47 @@
       when: initramfs_image|bool
 
     - name: Close qcow2 image
-      shell: >
-        chroot {{ mount_tempdir }} setfiles /etc/selinux/targeted/contexts/files/file_contexts / ;
-        umount {{ mount_tempdir }}/dev/;
-        umount {{ mount_tempdir }};
-        kpartx -dv {{ image_to_modify_raw }};
-        qemu-img convert -c -f raw -O qcow2 {{ image_to_modify_raw }} {{ image_to_modify_qcow }};
-        rm -rf "{{ image_to_modify_raw }}";
-        losetup -d /dev/loop0;
-        rm -rf "{{ mount_tempdir }}";
-        chown -R {{ undercloud_user }}: /home/{{ undercloud_user }}/;
+      shell: |
+        chroot {{ mount_tempdir }} setfiles /etc/selinux/targeted/contexts/files/file_contexts /
+
+        MOUNT_DIR={{ mount_tempdir }}
+        NBD_DEVICE=/dev/nbd0
+
+        unmount_volume () {
+            if mountpoint "$1"; then
+                umount $1
+            fi
+        }
+
+        remove_device () {
+            if [ -b "/dev/mapper/$1" ]; then
+                dmsetup remove $1
+            fi
+        }
+
+        if mountpoint "$MOUNT_DIR"; then
+            unmount_volume $MOUNT_DIR/var/log/audit
+            unmount_volume $MOUNT_DIR/var/log
+            unmount_volume $MOUNT_DIR/var
+            unmount_volume $MOUNT_DIR/home
+            unmount_volume $MOUNT_DIR/tmp
+            unmount_volume $MOUNT_DIR/srv
+            umount $MOUNT_DIR
+        fi
+
+        qemu-nbd --disconnect $NBD_DEVICE
+        vgchange --refresh vg || true
+
+        remove_device vg-lv_root
+        remove_device vg-lv_var
+        remove_device vg-lv_log
+        remove_device vg-lv_audit
+        remove_device vg-lv_home
+        remove_device vg-lv_tmp
+        remove_device vg-lv_srv
+
+        qemu-img convert -c -f raw -O qcow2 {{ image_to_modify_raw }} {{ image_to_modify_qcow }}
+        rm -rf "{{ image_to_modify_raw }}"
+        rm -rf "{{ mount_tempdir }}"
+        chown -R {{ undercloud_user }}: /home/{{ undercloud_user }}/
       when: not initramfs_image|bool
