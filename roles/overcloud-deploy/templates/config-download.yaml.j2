@@ -1,10 +1,5 @@
 resource_registry:
   OS::TripleO::DeployedServer::ControlPlanePort: /usr/share/openstack-tripleo-heat-templates/deployed-server/deployed-neutron-port.yaml
-{% if release not in ['train', 'ussuri', 'victoria'] %}
-  # Starting with wallaby with ephemeral Heat, we want to override the default
-  # mapping for ControlPlaneVipPort so that Neutron is not used.
-  OS::TripleO::Network::Ports::ControlPlaneVipPort: /usr/share/openstack-tripleo-heat-templates/deployed-server/deployed-neutron-port.yaml
-{% endif %}
   OS::TripleO::OVNMacAddressNetwork: OS::Heat::None
   OS::TripleO::OVNMacAddressPort: OS::Heat::None
 
@@ -20,14 +15,6 @@ parameter_defaults:
 {% endif %}
 
   DeployedServerPortMap:
-    control_virtual_ip:
-      fixed_ips:
-        - ip_address: 192.168.24.100
-      subnets:
-        - cidr: 192.168.24.0/24
-      network:
-        tags:
-          - 192.168.24.0/24
 {% for subnode in groups['overcloud'] %}
     {{ hostvars[subnode]['ansible_hostname'] }}-ctlplane:
       fixed_ips:
