@@ -1,5 +1,4 @@
 ---
-
 - name: "Check hypervisors available"
   when:
     - hypervisor_wait | bool
@@ -23,6 +22,20 @@
     tripleo_overcloud_network_provision_output_file: "{{ working_dir }}/overcloud-networks-deployed.yaml"
     tripleo_overcloud_network_provision_deployment_file: "{{ overcloud_templates_path }}/ci/network_data.yaml"
     tripleo_overcloud_network_provision_rc_file: "{{ working_dir }}/stackrc"
+
+- name: "Run overcloud network vip provision"
+  when:
+    - network_provision | bool
+  collections:
+    - tripleo.operator
+  include_role:
+    name: tripleo_overcloud_network_vip_provision
+  vars:
+    tripleo_overcloud_network_vip_provision_debug: true
+    tripleo_overcloud_network_vip_provision_output_file: "{{ working_dir }}/overcloud-vips-deployed.yaml"
+    tripleo_overcloud_network_vip_provision_deployment_file: "{{ overcloud_templates_path }}/ci/vip_data.yaml"
+    tripleo_overcloud_network_vip_provision_rc_file: "{{ working_dir }}/stackrc"
+    tripleo_overcloud_network_vip_provision_stack: "{{ stack_name }}"
 
 - name: Deploy the overcloud
   shell: >

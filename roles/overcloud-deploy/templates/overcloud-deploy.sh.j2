@@ -15,17 +15,6 @@ set -ux
 
 source {{ working_dir }}/stackrc
 
-{% if network_provision|bool %}
-openstack overcloud network vip provision \
-  --output {{ working_dir }}/overcloud-vips-deployed.yaml \
-  --stack {{ stack_name }} \
-  {{overcloud_templates_path}}/ci/vip_data.yaml
-if [ $? -ne 0 ]; then
-    exit 1
-fi
-{% endif %}
-
-
 {% if baremetal_provision|bool %}
 ## * Provision the baremetal nodes
 ## ::
