@@ -41,3 +41,41 @@ bond_with_vlans_nic_configs_log: bond_with_vlans_nic_configs_script_log
 tht_rpm_url: https://trunk.rdoproject.org/centos7-{{ release }}/current/
 
 overcloud_prep_post_hook_script: ""
+
+# The `network_data_details` var when defined can be used to copy custom network_data.yaml in
+# zuul/stack user home directory. By default for ci use case we utilize tht ci/network_data.yaml:-
+# https://github.com/openstack/tripleo-heat-templates/blob/master/ci/network_data.yaml
+# In baremetal environment we have to create our own custom network_data.yaml as per
+# network layout, details on how to create this file can be found at:-
+# https://docs.openstack.org/project-deploy-guide/tripleo-docs/latest/deployment/network_v2.html#pre-provision-networks
+# network_data_details:
+#  - name: External
+#    name_lower: external
+#    vip: true
+#    mtu: 1500
+#    subnets:
+#      external_subnet:
+#        ip_subnet: 10.0.0.0/24
+#        allocation_pools:
+#          - start: 10.0.0.4
+#            end: 10.0.0.250
+#        gateway_ip: 10.0.0.1
+#        vlan: 10
+
+# The `network_vip_details` var when defined can be use to create custom vip_data.yaml in zuul
+# zuul/stack home directory. By default for ci use case we utilize tht ci/vip_data.yaml:-
+# https://github.com/openstack/tripleo-heat-templates/blob/master/ci/vip_data.yaml
+# In baremetal environment we have to create our own custom vip_data.yaml as per
+# network layout,  details on how to create this file can be found at:-
+# https://docs.openstack.org/project-deploy-guide/tripleo-docs/latest/deployment/network_v2.html#pre-provision-network-virtual-ips
+# network_vip_details:
+#  - network: ctlplane
+#    dns_name: overcloud
+#  - network: external
+#    dns_name: overcloud
+#  - network: internal_api
+#    dns_name: overcloud
+#  - network: storage
+#    dns_name: overcloud
+#  - network: storage_mgmt
+#    dns_name: overcloud

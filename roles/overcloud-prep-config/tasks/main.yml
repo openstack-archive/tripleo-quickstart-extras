@@ -23,6 +23,25 @@
   tags:
     - overcloud-scripts
 
+- when:
+    - release not in ['train', 'ussuri', 'victoria']
+    - job.environment_type is defined and job.environment_type == 'baremetal'
+  block:
+    - name: Create network_data.yaml according to baremetal environment
+      become: true
+      copy:
+        content: "{{ network_data_details }}"
+        dest: "{{ working_dir }}/network_data.yaml"
+      when:
+        - network_data_details is defined
+    - name: Create vip_data.yaml according to baremetal environment
+      become: true
+      copy:
+        content: "{{ network_vip_details }}"
+        dest: "{{ working_dir }}/vip_data.yaml"
+      when:
+        - network_vip_details is defined
+
 - when: undercloud_type == "baremetal"
   block:
 
