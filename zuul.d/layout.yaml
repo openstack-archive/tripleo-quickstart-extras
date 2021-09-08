@@ -12,6 +12,7 @@
       jobs:
         - openstack-tox-linters
         - openstack-tox-molecule:
+            voting: false
             required-projects:
               - openstack/tripleo-quickstart
         - tripleo-ci-centos-8-content-provider:
@@ -47,6 +48,7 @@
       jobs:
         - openstack-tox-linters
         - openstack-tox-molecule:
+            voting: false
             required-projects:
               - openstack/tripleo-quickstart
         - tripleo-ci-centos-8-containers-undercloud-minion:
