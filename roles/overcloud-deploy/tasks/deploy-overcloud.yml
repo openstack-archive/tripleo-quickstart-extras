@@ -20,7 +20,7 @@
   vars:
     tripleo_overcloud_network_provision_debug: true
     tripleo_overcloud_network_provision_output_file: "{{ working_dir }}/overcloud-networks-deployed.yaml"
-    tripleo_overcloud_network_provision_deployment_file: "{{ overcloud_templates_path }}/ci/network_data.yaml"
+    tripleo_overcloud_network_provision_deployment_file: "{{ network_data_yaml }}"
     tripleo_overcloud_network_provision_rc_file: "{{ working_dir }}/stackrc"
 
 - name: "Run overcloud network vip provision"
@@ -33,7 +33,7 @@
   vars:
     tripleo_overcloud_network_vip_provision_debug: true
     tripleo_overcloud_network_vip_provision_output_file: "{{ working_dir }}/overcloud-vips-deployed.yaml"
-    tripleo_overcloud_network_vip_provision_deployment_file: "{{ overcloud_templates_path }}/ci/vip_data.yaml"
+    tripleo_overcloud_network_vip_provision_deployment_file: "{{ vip_data_yaml }}"
     tripleo_overcloud_network_vip_provision_rc_file: "{{ working_dir }}/stackrc"
     tripleo_overcloud_network_vip_provision_stack: "{{ stack_name }}"
 

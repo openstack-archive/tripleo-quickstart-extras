@@ -197,3 +197,6 @@ overcloud_selinux_enabled: >-
    {%- else -%}
    permissive
    {%- endif -%}
+
+network_data_yaml: "{{ overcloud_templates_path }}/ci/network_data.yaml"
+vip_data_yaml: "{{ overcloud_templates_path }}/ci/vip_data.yaml"
