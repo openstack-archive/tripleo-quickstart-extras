@@ -39,11 +39,33 @@
     line: "127.0.0.1 undercloud.localdomain localhost localhost.localdomain"
     regexp: '^127\.0\.0\.1'
 
-- name: Prepare the undercloud for installation
+- name: Including non_root_user_setup tasks list
   include_role:
     name: undercloud-setup
+    tasks_from: non_root_user_setup
   tags:
     - standalone
+  when: non_root_user_setup|bool
+
+- name: Including repo-setup role
+  include_role:
+    name: repo-setup
+  tags:
+    - standalone
+
+- name: Including package_installs tasks
+  include_role:
+    name: undercloud-setup
+    tasks_from: package_installs
+  when: package_installs|bool
+
+- name: Including hostname tasks
+  include_role:
+    name: undercloud-setup
+    tasks_from: hostname
+  tags:
+    - standalone
+  when: hostname_correction|bool or step_set_undercloud_hostname|bool
 
 - name: install tls dependencies
   become: true

@@ -26,19 +26,18 @@
   tags:
     - build
 
-- name: Run and Install DLRN gate role
-  block:
-    - name: Run DLRN gate role
-      vars:
-        artg_compressed_gating_repo: "${HOME}/gating_repo.tar.gz"
-      include_role:
-        name: build-test-packages
+- name: Run DLRN gate role
+  vars:
+    artg_compressed_gating_repo: "${HOME}/gating_repo.tar.gz"
+  include_role:
+    name: build-test-packages
+  tags:
+    - build
 
-    - name: Install gated repo
-      when: compressed_gating_repo is defined
-      include_role:
-        name: install-built-repo
-  when: freeipa_internal_ip is not defined
+- name: Install gated repo
+  when: compressed_gating_repo is defined
+  include_role:
+    name: install-built-repo
   tags:
     - build
 
