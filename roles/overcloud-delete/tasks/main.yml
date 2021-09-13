@@ -3,17 +3,19 @@
   tags:
     - overcloud-delete
   block:
-    - name: "Get overcloud id"
-      shell: >-
-        source {{ working_dir }}/stackrc && \
-        openstack stack list -f value -c ID
-      environment:
-        OVERCLOUD_NAME: "{{ stack_name }}"
-      register: overcloud_id
+    - name: "Get overcloud status"
+      collections:
+        - tripleo.operator
+      include_role:
+        name: tripleo_overcloud_status
+      vars:
+        tripleo_overcloud_status_rc_file: "{{ working_dir }}/stackrc"
+        tripleo_overcloud_status_plan: "{{ stack_name }}"
 
     - name: "Run overcloud delete"
       when:
         - step_delete_overcloud | bool
+        - tripleo_overcloud_status_result | int == 0
       collections:
         - tripleo.operator
       include_role:
@@ -23,14 +25,25 @@
         tripleo_overcloud_delete_name: "{{ stack_name }}"
         tripleo_overcloud_delete_rc_file: "{{ working_dir }}/stackrc"
         tripleo_overcloud_delete_log: "{{ delete_log }}"
+        tripleo_overcloud_delete_home_dir: "{{ working_dir }}"
 
     - name: "check for delete command to complete or fail"
       when:
         - step_delete_overcloud | bool
-      shell: |
-        source {{ working_dir }}/stackrc
-        openstack stack show {{ overcloud_id }} -f yaml
-      delay: "{{ delete_check_delay }}"
-      retries: "{{ delete_check_retries }}"
-      until: heat_stack_show.stdout.find('DELETE_COMPLETE') != -1
-      register: heat_stack_show
+      collections:
+        - tripleo.operator
+      include_role:
+        name: tripleo_overcloud_status
+      vars:
+        tripleo_overcloud_status_rc_file: "{{ working_dir }}/stackrc"
+        tripleo_overcloud_status_plan: "{{ stack_name }}"
+
+    - name: "Display overcloud status output"
+      debug:
+        var: tripleo_overcloud_status_output
+
+    - name: "Fail if overcloud status command does not contains overcloud"
+      when:
+        - tripleo_overcloud_status_output.find("overcloud") == -1
+      fail:
+        msg: "Overcloud is not deleted"
