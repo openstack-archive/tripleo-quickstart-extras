@@ -18,11 +18,11 @@ source {{ working_dir }}/stackrc
 ## ::
 
 rpm -q qemu-img || sudo {{ ansible_pkg_mgr }} install -y qemu-img
-qemu-img create -f qcow2 overcloud-full.qcow2 1G
+qemu-img create -f qcow2 {{ overcloud_image }}.qcow2 1G
 
 glance image-create --container-format bare \
     --disk-format qcow2 \
-    --name overcloud-full \
-    --file overcloud-full.qcow2
+    --name {{ overcloud_image }} \
+    --file {{ overcloud_image }}.qcow2
 
 ### --stop_docs

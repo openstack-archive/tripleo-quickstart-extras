@@ -77,7 +77,7 @@
     - {role: fetch-images,
        when: not to_build|bool}
     - {role: repo-setup,
-       repo_inject_image_path: "$HOME/overcloud-full.qcow2",
+       repo_inject_image_path: "$HOME/{{ overcloud_image }}.qcow2",
        repo_run_live: false,
        when: not to_build|bool}
     - {role: repo-setup,
@@ -87,7 +87,7 @@
        libguestfs_mode: false,
        when: not to_build|bool}
     - {role: install-built-repo,
-       ib_repo_image_path: "$HOME/overcloud-full.qcow2",
+       ib_repo_image_path: "$HOME/{{ overcloud_image }}.qcow2",
        when: compressed_gating_repo is defined and not to_build|bool}
     - {role: install-built-repo,
        ib_repo_image_path: "$HOME/ironic-python-agent.initramfs",

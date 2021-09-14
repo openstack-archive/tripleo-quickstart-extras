@@ -7,8 +7,8 @@ environment inside of a libvirt guest using libguestfs-tools (isolated).
 
 It starts by creating the overcloud images from the provided yaml files. It
 then uses the convert-image role from tripleo-quickstart to turn the
-overcloud-full.qcow2 image into an undercloud image. Finally, it injects the
-previously created overcloud-full and ironic-python-agent images into this
+qcow2 image into an undercloud image. Finally, it injects the
+previously created overcloud image and ironic-python-agent images into this
 new undercloud image.
 
 Requirements

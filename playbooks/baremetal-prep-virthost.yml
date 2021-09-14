@@ -158,7 +158,7 @@
     - include_role:
         name: repo-setup
       vars:
-        repo_inject_image_path: "/home/{{ undercloud_user }}/overcloud-full.qcow2"
+        repo_inject_image_path: "/home/{{ undercloud_user }}/{{ overcloud_image }}.qcow2"
         repo_run_live: false
       when: not to_build|bool
 
@@ -174,7 +174,7 @@
     - include_role:
         name: install-built-repo
       vars:
-        ib_repo_image_path: "/home/{{ undercloud_user }}/overcloud-full.qcow2"
+        ib_repo_image_path: "/home/{{ undercloud_user }}/{{ overcloud_image }}.qcow2"
       when: compressed_gating_repo is defined and not to_build|bool
 
     - include_role:
