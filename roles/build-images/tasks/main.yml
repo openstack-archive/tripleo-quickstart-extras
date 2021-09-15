@@ -77,6 +77,28 @@
         image_to_modify: "{{ images_working_dir }}/{{ build_isolation_image.name }}.qcow2"
         modify_script: "{{ images_working_dir }}/repo_setup.sh"
 
+    - name: Set image_build_extract_list for {{ overcloud_image }}
+      set_fact:
+        image_build_extract_list:
+          - "ironic-python-agent.initramfs"
+          - "ironic-python-agent.kernel"
+          - "{{ overcloud_image }}.qcow2"
+          - "{{ overcloud_image }}.initrd"
+          - "{{ overcloud_image }}.vmlinuz"
+      when:
+        - image_build_extract_list is not defined
+        - not whole_disk_images|bool
+
+    - name: Set image_build_extract_list for {{ overcloud_image }}
+      set_fact:
+        image_build_extract_list:
+          - "ironic-python-agent.initramfs"
+          - "ironic-python-agent.kernel"
+          - "{{ overcloud_image }}.qcow2"
+      when:
+        - image_build_extract_list is not defined
+        - whole_disk_images|bool
+
     - name: run the image build script (isolated)
       include: modify-image.yml
       vars:
@@ -129,6 +151,28 @@
       include: convert-image.yml
       vars:
         convert_image_working_dir: "{{ images_working_dir }}"
+
+    - name: Set inject_images for {{ overcloud_image }}
+      set_fact:
+        inject_images:
+          - "ironic-python-agent.initramfs"
+          - "ironic-python-agent.kernel"
+          - "{{ overcloud_image }}.qcow2"
+          - "{{ overcloud_image }}.initrd"
+          - "{{ overcloud_image }}.vmlinuz"
+      when:
+        - inject_images is not defined
+        - not whole_disk_images|bool
+
+    - name: Set inject_images for {{ overcloud_image }}
+      set_fact:
+        inject_images:
+          - "ironic-python-agent.initramfs"
+          - "ironic-python-agent.kernel"
+          - "{{ overcloud_image }}.qcow2"
+      when:
+        - inject_images is not defined
+        - whole_disk_images|bool
 
     - name: Inject overcloud/ipa images
       command: >
