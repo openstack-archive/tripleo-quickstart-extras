@@ -33,6 +33,13 @@
         qemu-img convert -f qcow2 -O raw {{ image_to_modify_qcow }} {{ image_to_modify_raw }};
         rm -rf "{{ image_to_modify_qcow }}";
 
+    - name: Install required packages used in modify-image role
+      become: true
+      package:
+        state: present
+        name:
+          - lvm2
+
     - name: Mount image
       shell: |
         set -e
