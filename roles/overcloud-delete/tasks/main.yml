@@ -42,8 +42,8 @@
       debug:
         var: tripleo_overcloud_status_output
 
-    - name: "Fail if overcloud status command does not contains overcloud"
+    - name: "Fail if overcloud is not deleted successfully"
       when:
-        - tripleo_overcloud_status_output.find("overcloud") == -1
+        - tripleo_overcloud_status_output.find("No deployment was found") == -1
       fail:
         msg: "Overcloud is not deleted"
