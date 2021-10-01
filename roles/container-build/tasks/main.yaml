@@ -91,6 +91,13 @@
       set_fact:
         branch: "{{ osp_release | default(ci_branch) }}"
 
+- name: Add tcib_extra params
+  set_fact:
+    tcib_extras:
+      - "tcib_release={{ ansible_distribution_major_version }}"
+      - "tcib_python_version={{ (ansible_distribution_major_version|int < 9) | ternary ('3.6', '3.9') }}"
+  when: branch not in ['train', 'ussuri', 'victoria']
+
 - name: Build and push container images to the local registry
   collections:
     - tripleo.operator
@@ -110,6 +117,7 @@
     tripleo_container_image_build_timeout: 10000
     tripleo_container_image_build_base: "{{ containers_base_image }}"
     tripleo_container_image_build_excludes: "{{ exclude_containers[branch]|default([]) }}"
+    tripleo_container_image_build_tcib_extras: "{{ tcib_extras | default([]) }}"
 
 - name: Pull and push non *tripleo* container images to local registry
   import_tasks: non_tripleo_containers.yml
