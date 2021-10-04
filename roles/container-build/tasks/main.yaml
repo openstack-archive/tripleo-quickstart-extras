@@ -96,7 +96,7 @@
     tcib_extras:
       - "tcib_release={{ ansible_distribution_major_version }}"
       - "tcib_python_version={{ (ansible_distribution_major_version|int < 9) | ternary ('3.6', '3.9') }}"
-  when: branch not in ['train', 'ussuri', 'victoria']
+  when: release not in ['train', 'ussuri', 'victoria']
 
 - name: Build and push container images to the local registry
   collections:
