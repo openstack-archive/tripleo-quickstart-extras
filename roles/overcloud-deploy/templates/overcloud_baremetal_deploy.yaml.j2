@@ -3,6 +3,7 @@
 {% set role_profile = topology_map[role].flavor |default('') %}
 {% set role_networks = topology_map[role].networks |default([]) %}
 {% set network_config = topology_map[role].network_config |default('') %}
+{% set growvols_args = topology_map[role].growvols_args |default('') %}
 {% if role_count %}
 - name: {{ role }}
   count: {{ role_count }}
@@ -19,6 +20,12 @@
 {% if network_config and network_provision|bool %}
     network_config:
       {{ network_config | to_nice_yaml(indent=2) | indent(6)}}
+{% endif %}
+{% if growvols_args and release not in ['train','ussuri','victoria'] %}
+  ansible_playbooks:
+  - playbook: /usr/share/ansible/tripleo-playbooks/cli-overcloud-node-growvols.yaml
+    extra_vars:
+      growvols_args: {{ growvols_args }}
 {% endif %}
 {% endif %}
 {% endfor %}
