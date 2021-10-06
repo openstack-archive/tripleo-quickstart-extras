@@ -95,7 +95,7 @@ def get_details(host, change_id, branch, revision):
     '''Get the details of a specific change'''
     url = ''.join(['https://', host, '/changes/?q=change:', change_id])
     try:
-        req = requests.get(url)
+        req = requests.get(url, verify=False)
         req.raise_for_status()
     except requests.exceptions.HTTPError:
         return {'fail_msg': ''.join(['warning: failed to query change '
@@ -120,7 +120,7 @@ def get_details(host, change_id, branch, revision):
     url = ''.join(['https://', host, '/changes/', full_id,
                    '?o=ALL_REVISIONS&o=ALL_COMMITS'])
     try:
-        req = requests.get(url)
+        req = requests.get(url, verify=False)
         req.raise_for_status()
     except requests.exceptions.HTTPError:
         return {'fail_msg': ''.join(['warning: failed to fetch details of ',
