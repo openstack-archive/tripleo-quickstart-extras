@@ -17,16 +17,6 @@
         - tripleo-ci-centos-8-content-provider:
             dependencies:
               - openstack-tox-linters
-        - tripleo-ci-centos-8-containers-undercloud-minion:
-            vars:
-              consumer_job: true
-              remove_tags:
-                - build
-            dependencies:
-              - tripleo-ci-centos-8-content-provider
-            files:
-              - ^roles/.*minion.*$
-              - ^playbooks/.*minion.*$
         - tripleo-ci-centos-8-standalone-on-multinode-ipa:
             vars:
               consumer_job: true
@@ -49,13 +39,3 @@
         - openstack-tox-molecule:
             required-projects:
               - openstack/tripleo-quickstart
-        - tripleo-ci-centos-8-containers-undercloud-minion:
-            vars:
-              consumer_job: true
-              remove_tags:
-                - build
-            dependencies:
-              - tripleo-ci-centos-8-content-provider
-            files:
-              - ^roles/.*minion.*$
-              - ^playbooks/.*minion.*$
