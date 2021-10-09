@@ -50,7 +50,6 @@
     tripleo_overcloud_node_provision_output_file: "{{ working_dir }}/overcloud-baremetal-deployed.yaml"
     tripleo_overcloud_node_provision_rc_file: "{{ working_dir }}/stackrc"
     tripleo_overcloud_node_provision_stack: "{{ stack_name }}"
-    tripleo_overcloud_node_provision_network_ports: "{{ network_provision | default(false) | bool }}"
 
 - name: Deploy the overcloud
   shell: >
