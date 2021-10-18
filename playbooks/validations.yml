@@ -1,13 +1,13 @@
 ---
-- name: Execute pre undercloud validations
+- name: Execute Validations Framework tests
   hosts: undercloud
   gather_facts: true
   vars:
     inventory: "tripleo-deploy/tripleo-ansible-inventory.yaml"
     vf_log_dir: "/var/log/validations"
   tags:
-    - component-validations
-    - tripleo-validations
+    - overcloud-deploy
+    - undercloud-deploy
   tasks:
     - include_role:
         name: validations
