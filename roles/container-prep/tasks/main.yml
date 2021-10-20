@@ -63,6 +63,7 @@
   when:
     - update_containers_append_tag is undefined
     - (update_containers is defined and update_containers|bool) or (standalone_container_prep_updates is defined and standalone_container_prep_updates|bool)
+    - not build_container_images|default(false)|bool
     - not job.consumer_job | default(false) | bool
   tags:
     - undercloud-install

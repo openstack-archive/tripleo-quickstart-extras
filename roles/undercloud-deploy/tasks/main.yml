@@ -50,6 +50,15 @@
       include_role:
         name: validate-perf
 
+    - name: Build and push containers into a local registry
+      when:
+        - build_container_images|default(false)|bool
+      include_role:
+        name: container-build
+      vars:
+        container_registry_namespace: "{{ docker_registry_namespace }}"
+        container_tag: "{{ container_build_id }}"
+
     - name: Install undercloud
       collections:
         - tripleo.operator
