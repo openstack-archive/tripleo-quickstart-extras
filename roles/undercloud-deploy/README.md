@@ -15,16 +15,10 @@ Role Variables
 a path to git clone and check-out t-h-t templates from the corresponding repo/branch/ref paths.
 - `undercloud_config_file`: <'undercloud.conf.j2'> -- the name of the jinja template
 used as the base for the undercloud.conf
-- `undercloud_install_script`: <'undercloud-install.j2'> -- the name of the jinja template
-used as the base for the undercloud-install bash script and dev envs hacking. Note, the
-defaults imply the 'openstack undercloud install' command will be invoked. See the undercloud
-deployment methods section below for the alternative modes.
 - `undercloud_install_log`: <'{{ working_dir }}/undercloud_install.log'> -- the full path
 to the undercloud install log file.
 - `undercloud_hieradata_override_file`: <'hieradata-overrides-classic-undercloud.yaml.j2'> -- the name of
 jinja template used to override the undercloud's install hieradata. DEPRECATED. Use instead:
-- `hieradata_override_file_classic_undercloud`: <hieradata-overrides-classic-undercloud.yaml.j2> --
-the source template for hieradata overrides for instack-undercloud deployments.
 - `hieradata_override_file_t_h_t_undercloud`: <hieradata-overrides-t-h-t-undercloud.yaml.j2> --
 the source template for hieradata overrides for heat driven containerized undercloud deployments.
 - `undercloud_ironic_ipxe_port`: <'3816'> -- port to use for httpd ipxe server
@@ -37,8 +31,6 @@ user sessions to provide greater flexixiblity to our users. ** additional docume
 https://docs.openstack.org/tripleo-quickstart/latest/accessing-libvirt.html
 - `undercloud_conf_extra`: <''> -- extra options to be added to ~/undercloud.conf
 - `undercloud_extra_args`: <''> -- extra options for undercloud deploy command.
-- `undercloud_install_cmd`: <'openstack undercloud install'> -- command used to install the undercloud
-- `undercloud_install_cli_options`: <''> -- extra options for undercloud install command.
 - `undercloud_enable_monitoring`: <'false'> -- sets up the 'enable_monitoring'
   option in undercloud.conf.
 - `undercloud_enable_telemetry`: <'true'> -- sets up the 'enable_telemetry'
@@ -143,10 +135,8 @@ Undercloud deployment methods
 
 The undercloud uses ``openstack undercloud install`` command,
 `{{working_dir}}/undercloud.conf` config and the file coming from the
-``hieradata_override_file_classic_undercloud`` variable to set the hieradata
-overrides that will be used for the puppet deployment. Alternatively there is
-a heat yaml way to provide overrides as well. For these cases, hiera override
-data is consumed from ``hieradata_override_file_t_h_t_undercloud``.
+``hieradata_override_file_t_h_t_undercloud`` variable to set the hieradata
+overrides that will be used for the containerized undercloud deploy.
 
 
 Example Playbook
