@@ -36,7 +36,6 @@
         mode: 0600
 
 - name: Create t-h-t driven undercloud hieradata overrides
-  when: undercloud_install_cli_options == '--use-heat' or containerized_undercloud|bool
   block:
     - name: Generate undercloud hieradata overrides file from template
       template:
@@ -48,30 +47,11 @@
       set_fact:
         undercloud_hieradata_override: "./hieradata-overrides-t-h-t-undercloud.yaml"
 
-- name: Create classic undercloud hieradata overrides
-  when: not containerized_undercloud|bool
-  block:
-    - name: Generate undercloud hieradata overrides file from template
-      template:
-        src: "{{ hieradata_override_file_classic_undercloud }}"
-        dest: "./hieradata-overrides-classic-undercloud.yaml"
-        mode: 0600
-
-    - name: Set fact for undercloud hieradata overrides file
-      set_fact:
-        undercloud_hieradata_override: "./hieradata-overrides-classic-undercloud.yaml"
-
 - name: Create undercloud configuration
   template:
     src: "{{ undercloud_config_file }}"
     dest: "./undercloud.conf"
     mode: 0600
-
-- name: Create undercloud install script
-  template:
-    src: "{{ undercloud_install_script }}"
-    dest: "{{ working_dir }}/undercloud-install.sh"
-    mode: 0755
 
 - name: Prepare undercloud custom t-h-t branch/refspec
   include_role:
