@@ -116,7 +116,7 @@
     tripleo_container_image_build_prefix: "{{ docker_prep_prefix }}"
     tripleo_container_image_build_timeout: 10000
     tripleo_container_image_build_base: "{{ containers_base_image }}"
-    tripleo_container_image_build_excludes: "{{ exclude_containers[branch]|default([]) }}"
+    tripleo_container_image_build_excludes: "{{ exclude_containers[branch][container_exclude_distro]|default([]) }}"
     tripleo_container_image_build_tcib_extras: "{{ tcib_extras | default([]) }}"
     tripleo_container_image_build_distro: "{{ (ansible_distribution == 'RedHat') | ternary('rhel', 'centos') }}"
 
