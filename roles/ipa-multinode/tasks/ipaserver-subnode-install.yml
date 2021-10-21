@@ -98,6 +98,7 @@
         --forwarder {{ job.public_name_server|default(forwarder_address_default) }}
         --unattended
         --ip-address {{ subnode_1_ip }}
+        --no-dnssec-validation
       become: true
       when:
         ipa_install.stdout == 'False'
@@ -112,6 +113,7 @@
     --forwarder {{ job.public_name_server|default(forwarder_address_default) }}
     --unattended
     --ip-address {{ subnode_1_ip }}
+    --no-dnssec-validation
   become: true
   when:
     - ipa_install.stdout == 'False'
