@@ -44,21 +44,8 @@
   tags:
     - standalone
 
-- name: Run tripleo-validations standalone and CLI tests
-  hosts: undercloud
-  gather_facts: false
-  vars:
-    validation_command: "validation"
-    inventory: "tripleo-deploy/tripleo-ansible-inventory.yaml"
-    vf_log_dir: "/var/log/validations"
-  tags:
-    - standalone
-  tasks:
-    - include_role:
-        name: validations
-      when:
-        - job.enable_validation|default(false)|bool
-        - release not in ['queens', 'stein']
+- name: Run tripleo-validations standalone tests
+  import_playbook: validations.yml
 
 - name: Validate the undercloud
   hosts: undercloud
