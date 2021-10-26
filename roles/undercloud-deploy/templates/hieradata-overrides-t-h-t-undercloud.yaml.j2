@@ -85,6 +85,10 @@ parameter_defaults:
     ironic::rpc_response_timeout: {{undercloud_ironic_rpc_response_timeout}}
     {%- endif %}
 
+    {% if undercloud_ironic_power_state_change_timeout is defined -%}
+    ironic::conductor::power_state_change_timeout: {{undercloud_ironic_power_state_change_timeout}}
+    {%- endif %}
+
 
     {% if undercloud_swift_workers is defined -%}
     swift::proxy::workers: {{undercloud_swift_workers}}
