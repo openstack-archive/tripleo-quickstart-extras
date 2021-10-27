@@ -257,6 +257,15 @@
       when:
         - ansible_distribution_major_version is version('8', '<')
 
+    - name: Run overcloud_network_discovery role
+      vars:
+        ansible_become: true
+        debug: true
+        execute_netstat: true
+        kill_netstat: false
+      include_role:
+        name: overcloud-network-discovery
+
     - name: Run os_tempest role
       vars:
         ansible_become: true
@@ -264,3 +273,12 @@
         tempest_run: 'yes'
       include_role:
         name: os_tempest
+
+    - name: Run overcloud_network_discovery role to kill netstat service
+      vars:
+        ansible_become: true
+        debug: true
+        execute_netstat: false
+        kill_netstat: true
+      include_role:
+        name: overcloud-network-discovery
