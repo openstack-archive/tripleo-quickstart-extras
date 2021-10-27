@@ -22,6 +22,10 @@
       vars:
         repo_setup_script: repo_setup_upgrade.sh
         repo_setup_run_update: false
+        # when yum_config_module is enabled
+        repo_cmd_before_setup_script: repo_cmd_before_setup_upgrade.sh
+        repo_setup_new_script: repo_setup_upgrade_new.sh
+        repo_cmd_after_setup_script: repo_cmd_after_setup_upgrade.sh
 
     # The next task triggers the yum upgrade command in as
     # repo_setup_run_update is true in release files by default.
@@ -32,6 +36,19 @@
       vars:
         repo_setup_log: repo_setup_upgrade.log
         repo_setup_script: repo_setup_upgrade.sh
+      when: not use_yum_config_module|default(false)|bool
+
+    # Run setup_repos_new tasks when using yum_config_module
+    - name: Standalone upgrade setup new repos using yum-config module
+      include_role:
+        name: repo-setup
+        tasks_from: setup_repos_new
+      vars:
+        repo_setup_log: repo_setup_upgrade.log
+        repo_cmd_before_setup_script: repo_cmd_before_setup_upgrade.sh
+        repo_setup_new_script: repo_setup_upgrade_new.sh
+        repo_cmd_after_setup_script: repo_cmd_after_setup_upgrade.sh
+      when: use_yum_config_module|default(false)|bool
 
     - name: Check and enable the component-ci-testing repo if present
       become: true
