@@ -28,9 +28,4 @@ ipa_packages:
   - ipa-server-dns
   - curl
   - iptables
-forwarder_address_default: >-
-  {% if job.rhcloud|default("") == "vexxhost" -%}
-  208.67.222.222
-  {%- else -%}
-  1.1.1.1
-  {%- endif -%}
+forwarder_address_default: 1.1.1.1
