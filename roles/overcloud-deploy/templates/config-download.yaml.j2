@@ -18,6 +18,11 @@ parameter_defaults:
     - ip_address: 192.168.24.102
       use_neutron: false
 {% endif %}
+# TODO: This is workaround for https://bugzilla.redhat.com/show_bug.cgi?id=2006409, Remove this
+# once this bug is fixed.
+{% if ansible_distribution_major_version is version(9, '>=') %}
+  NovaLibvirtNumPciePorts: 12
+{% endif %}
 
   DeployedServerPortMap:
     control_virtual_ip:
