@@ -25,6 +25,13 @@
     - name: Set names for images and temp dir
       set_fact:
         image_to_modify_qcow: "{{ image_to_modify_abs_path.stdout }}"
+        image_to_modify_raw: "{{ image_to_modify_abs_path.stdout|replace('qcow2', 'raw') }}"
+
+    - name: Convert image
+      shell: >
+        set -eo pipefail;
+        qemu-img convert -f qcow2 -O raw {{ image_to_modify_qcow }} {{ image_to_modify_raw }};
+        rm -rf "{{ image_to_modify_qcow }}";
 
     - name: Install required packages used in modify-image role
       become: true
@@ -37,12 +44,12 @@
       shell: |
         set -ex
         if type tripleo-mount-image  >/dev/null; then
-          tripleo-mount-image -a {{ image_to_modify_qcow }} -m {{ mount_tempdir }}
+          tripleo-mount-image -a {{ image_to_modify_raw }} -m {{ mount_tempdir }}
         else
           # stable branches do not have tripleo-mount-image, and only use
           # partition images
           modprobe nbd
-          qemu-nbd --format raw --connect /dev/nbd0 {{ image_to_modify_qcow }}
+          qemu-nbd --format raw --connect /dev/nbd0 {{ image_to_modify_raw }}
           mount /dev/nbd0 {{ mount_tempdir }}
         fi
       become: true
@@ -117,6 +124,8 @@
           umount {{ mount_tempdir }}
           qemu-nbd --disconnect /dev/nbd0
         fi
+        qemu-img convert -c -f raw -O qcow2 {{ image_to_modify_raw }} {{ image_to_modify_qcow }}
+        rm -rf "{{ image_to_modify_raw }}"
         rm -rf "{{ mount_tempdir }}"
         chown -R {{ undercloud_user }}: /home/{{ undercloud_user }}/
       when: not initramfs_image|bool
