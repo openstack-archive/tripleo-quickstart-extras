@@ -60,9 +60,19 @@
   when: topology_map is defined
 
 - name: Create overcloud baremetal deploy yaml
-  template:
-    src: "overcloud_baremetal_deploy.yaml.j2"
-    dest: "{{ working_dir }}/overcloud_baremetal_deploy.yaml"
+  block:
+    - name: Read instackenv.json file
+      command: cat "{{ working_dir }}/instackenv.json"
+      register: instackenv_json
+
+    - name: Set the baremetal nodes into a json var
+      set_fact:
+        baremetal_instackenv: "{{ instackenv_json.stdout | from_json }}"
+
+    - name: Create overcloud baremetal deploy yaml file
+      template:
+        src: "overcloud_baremetal_deploy.yaml.j2"
+        dest: "{{ working_dir }}/overcloud_baremetal_deploy.yaml"
   when: baremetal_provision|bool and topology_map is defined
 
 - name: Cloud names heat environment

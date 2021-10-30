@@ -7,6 +7,33 @@
 {% if role_count %}
 - name: {{ role }}
   count: {{ role_count }}
+{% if 'Controller' in role %}
+{# (jbadiapa) The to_json | from_json is due to the ansible issue at #}
+{# https://github.com/ansible/ansible/issues/27299 #}
+{%  if ( baremetal_instackenv | to_json | from_json | json_query("nodes[?contains(capabilities, 'profile:control')].name")| length > 0 ) %}
+  instances:
+{% for instance in range (role_count): %}
+  - hostname: {{stack_name}}-{{role|lower}}-{{instance}}
+    name: {{ (baremetal_instackenv | to_json | from_json | json_query("nodes[?contains(capabilities, 'profile:control')].name"))[instance] }}
+{% endfor %}
+{% endif %}
+{% elif 'Compute' in role %}
+{%  if (baremetal_instackenv | to_json | from_json | json_query("nodes[?contains(capabilities, 'profile:compute')].name")| length > 0 ) %}
+  instances:
+{% for instance in range (role_count): %}
+  - hostname: {{stack_name}}-{{role|lower}}-{{instance}}
+    name: {{ (baremetal_instackenv | to_json | from_json | json_query("nodes[?contains(capabilities, 'profile:compute')].name"))[instance] }}
+{% endfor %}
+{% endif %}
+{% elif 'Ceph' in role %}
+{%  if ( baremetal_instackenv | to_json | from_json | json_query("nodes[?contains(capabilities, 'profile:ceph')].name")| length > 0 ) %}
+  instances:
+{% for instance in range (role_count): %}
+  - hostname: {{stack_name}}-{{role|lower}}-{{instance}}
+    name: {{ (baremetal_instackenv | to_json | from_json | json_query("nodes[?contains(capabilities, 'profile:ceph')].name"))[instance] }}
+{% endfor %}
+{% endif %}
+{% endif %}
 {% if role_profile or (network_config and network_provision|bool) or (role_networks and network_isolation and network_provision|bool) %}
   defaults:
 {% endif %}
