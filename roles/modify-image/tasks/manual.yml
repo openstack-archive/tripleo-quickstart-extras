@@ -42,15 +42,58 @@
 
     - name: Mount image
       shell: |
-        set -ex
-        if type tripleo-mount-image  >/dev/null; then
-          tripleo-mount-image -a {{ image_to_modify_raw }} -m {{ mount_tempdir }}
+        set -e
+        modprobe nbd
+        IMAGE_FILE={{ image_to_modify_raw }}
+        MOUNT_DIR={{ mount_tempdir }}
+        NBD_DEVICE=/dev/nbd0
+
+        mount_volume () {
+            if [ -b "$1" ]; then
+                if [ ! -d $2 ]; then
+                    mkdir $2
+                fi
+                mount $1 $2
+            fi
+        }
+
+        set -x
+
+        qemu-nbd --format raw --connect $NBD_DEVICE $IMAGE_FILE
+
+        # search for the vg volume group, this is automatic in some environments
+        vgscan
+        # refresh for when this script is called with different values of $NBD_DEVICE
+        vgchange --refresh
+
+        # activate new logical volumes, this is automatic in some environments
+        vgchange -ay
+
+        if [ -b "${NBD_DEVICE}p3" ]; then
+            # 3 partitions in the image, so assume the first 2 are boot partitions
+            if [ -b "/dev/mapper/vg-lv_root" ]; then
+                # a whole-disk overcloud with lvm volumes
+                # for example, overcloud-hardened-uefi-full.qcow2
+                mount /dev/mapper/vg-lv_root $MOUNT_DIR
+                mount_volume /dev/mapper/vg-lv_var $MOUNT_DIR/var
+                mount_volume /dev/mapper/vg-lv_log $MOUNT_DIR/var/log
+                mount_volume /dev/mapper/vg-lv_audit $MOUNT_DIR/var/log/audit
+                mount_volume /dev/mapper/vg-lv_home $MOUNT_DIR/home
+                mount_volume /dev/mapper/vg-lv_tmp $MOUNT_DIR/tmp
+                mount_volume /dev/mapper/vg-lv_srv $MOUNT_DIR/srv
+            else
+                # a whole-disk overcloud with a single root partition
+                # for example, overcloud-hardened-full.qcow2
+                mount ${NBD_DEVICE}p3 $MOUNT_DIR
+            fi
         else
-          # stable branches do not have tripleo-mount-image, and only use
-          # partition images
-          modprobe nbd
-          qemu-nbd --format raw --connect /dev/nbd0 {{ image_to_modify_raw }}
-          mount /dev/nbd0 {{ mount_tempdir }}
+            # a partition image
+            # for example, overcloud-full.qcow2
+            if [ -b "${NBD_DEVICE}p1" ]; then
+                mount ${NBD_DEVICE}p1 $MOUNT_DIR
+            else
+                mount ${NBD_DEVICE} $MOUNT_DIR
+            fi
         fi
       become: true
       register: mount_result
@@ -118,12 +161,43 @@
     - name: Close qcow2 image
       shell: |
         chroot {{ mount_tempdir }} setfiles /etc/selinux/targeted/contexts/files/file_contexts /
-        if type tripleo-unmount-image  >/dev/null; then
-          tripleo-unmount-image -m {{ mount_tempdir }}
-        else
-          umount {{ mount_tempdir }}
-          qemu-nbd --disconnect /dev/nbd0
+
+        MOUNT_DIR={{ mount_tempdir }}
+        NBD_DEVICE=/dev/nbd0
+
+        unmount_volume () {
+            if mountpoint "$1"; then
+                umount $1
+            fi
+        }
+
+        remove_device () {
+            if [ -b "/dev/mapper/$1" ]; then
+                dmsetup remove $1
+            fi
+        }
+
+        if mountpoint "$MOUNT_DIR"; then
+            unmount_volume $MOUNT_DIR/var/log/audit
+            unmount_volume $MOUNT_DIR/var/log
+            unmount_volume $MOUNT_DIR/var
+            unmount_volume $MOUNT_DIR/home
+            unmount_volume $MOUNT_DIR/tmp
+            unmount_volume $MOUNT_DIR/srv
+            umount $MOUNT_DIR
         fi
+
+        qemu-nbd --disconnect $NBD_DEVICE
+        vgchange --refresh vg || true
+
+        remove_device vg-lv_root
+        remove_device vg-lv_var
+        remove_device vg-lv_log
+        remove_device vg-lv_audit
+        remove_device vg-lv_home
+        remove_device vg-lv_tmp
+        remove_device vg-lv_srv
+
         qemu-img convert -c -f raw -O qcow2 {{ image_to_modify_raw }} {{ image_to_modify_qcow }}
         rm -rf "{{ image_to_modify_raw }}"
         rm -rf "{{ mount_tempdir }}"
