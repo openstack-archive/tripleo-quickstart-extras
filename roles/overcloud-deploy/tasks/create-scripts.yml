@@ -35,7 +35,7 @@
     src: "neutronl3ha.yaml.j2"
     dest: "{{ working_dir }}/neutronl3ha.yaml"
 
-- name: Create config-downlad environment
+- name: Create config-download environment
   when: (deploy_steps_ansible_workflow|bool) and (deploy_multinode|bool)
   template:
     src: "config-download.yaml.j2"
