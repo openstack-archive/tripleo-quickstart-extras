@@ -166,5 +166,10 @@ undercloud_enable_zaqar: >-
   false
   {%- endif %}
 undercloud_enable_heat: "{{ not ephemeral_heat|default(false) }}"
-whole_disk_images: false
+whole_disk_images: >-
+  {% if release in ['train','ussuri','victoria','wallaby'] -%}
+  false
+  {%- else -%}
+  true
+  {%- endif -%}
 overcloud_image: overcloud-full
