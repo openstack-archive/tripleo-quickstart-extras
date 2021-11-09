@@ -167,7 +167,9 @@ undercloud_enable_zaqar: >-
   {%- endif %}
 undercloud_enable_heat: "{{ not ephemeral_heat|default(false) }}"
 whole_disk_images: >-
-  {% if release in ['train','ussuri','victoria','wallaby'] -%}
+  {% if job is defined and job.whole_disk_images is defined -%}
+  {{ job.whole_disk_images }}
+  {%- elif release in ['train','ussuri','victoria','wallaby'] -%}
   false
   {%- else -%}
   true
