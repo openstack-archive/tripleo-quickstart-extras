@@ -88,7 +88,7 @@
     line: 'dns=none'
   when:
     - ansible_os_family == 'RedHat'
-    - ansible_lsb.major_release is version(8, '>=')
+    - ansible_distribution_major_version is version(8, '>=')
 
 - name: cat out resolv.conf to see original DNS config
   become: true
@@ -127,9 +127,7 @@
     line: "nameserver {{ freeipa_internal_ip }}"
     state: present
 
-- name: run undercloud ipa installer
-  become: true
-  become_user: zuul
+- name: run undercloud ipa installer as non-root user
   shell: >
     ansible-playbook -vvv
     --ssh-extra-args "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"

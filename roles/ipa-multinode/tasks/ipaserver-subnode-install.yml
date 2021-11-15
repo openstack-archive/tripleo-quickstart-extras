@@ -21,6 +21,9 @@
 - name: install required packages
   shell: dnf module -y enable pki-deps pki-core idm:DL1
   become: true
+  when:
+    - ansible_distribution|lower in ['redhat', 'centos']
+    - ansible_distribution_major_version is version('8', '==')
 
 - name: install FreeIPA packages
   become: true
