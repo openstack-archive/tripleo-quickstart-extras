@@ -38,7 +38,7 @@ repos:
         # plugins is the standard collection dir for modules
         entry: env ANSIBLE_LIBRARY=plugins ansible-lint --force-color -p -v
         additional_dependencies:
-          - 'ansible<2.10'
+          - 'ansible-core>=2.11,<2.12'
   - repo: https://github.com/openstack-dev/bashate.git
     rev: 2.0.0
     hooks:

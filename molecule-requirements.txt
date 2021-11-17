@@ -1,4 +1,4 @@
-ansible<2.10
+ansible-core>=2.11,<2.12
 ansi2html  # GPL (soft-dependency of pytest-html)
 docker
 paramiko>=2.5.0  # LGPL (soft-dependency of docker that enables ssh protocol)
