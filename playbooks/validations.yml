@@ -8,6 +8,7 @@
   tags:
     - overcloud-deploy
     - undercloud-deploy
+    - standalone
   tasks:
     - include_role:
         name: validations
