@@ -200,3 +200,9 @@ overcloud_selinux_enabled: >-
 
 network_data_yaml: "{{ overcloud_templates_path }}/ci/network_data.yaml"
 vip_data_yaml: "{{ overcloud_templates_path }}/ci/vip_data.yaml"
+
+# Use default network topology - InternalApi, StorageMgmt, Storage, tenant,
+# External. In featureset064: we set this as false as we don't want to
+# use the default cloud-names.yaml created from cloud-names.yaml.j2 and use
+# the values we defined in ci tht templates for custom networks.
+non_custom_network: true
