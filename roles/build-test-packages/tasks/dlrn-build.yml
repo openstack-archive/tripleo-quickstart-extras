@@ -7,10 +7,18 @@
   debug:
     var: artg_release
 
-- name: Set DLRN distro (legacy distgit branch naming)
-  set_fact:
-    artg_distro: "rpm-{{ artg_release }}"
-  when: artg_release in ['master', 'mitaka']
+- when: artg_release in ['master', 'mitaka']
+  block:
+    - name: Set DLRN distro (legacy distgit branch naming)
+      set_fact:
+        artg_distro: "rpm-{{ artg_release }}"
+
+    - name: Set DLRN distro for branchless projects
+      set_fact:
+        artg_distro: "{{ release }}-rdo"
+      when:
+        - release is defined and release not in ['master', 'mitaka']
+        - artg_change.project in artg_branchless_projects
 
 - name: Set DLRN distro (new stable branch naming scheme)
   set_fact:
