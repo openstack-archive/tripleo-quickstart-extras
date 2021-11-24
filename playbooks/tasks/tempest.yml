@@ -146,7 +146,7 @@
     - name: Initialize neutron service for network creation
       set_fact:
         tempest_service_available_neutron: true
-      when: tempest_cloud_name in ['overcloud', 'standalone']
+      when: tempest_cloud_name not in ['undercloud']
 
     - name: Create /root/.config/openstack directory
       file:
