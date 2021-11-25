@@ -235,6 +235,10 @@
 - name: Build package using DLRN
   when: not artg_build_one|bool
   block:
+    - name: Print info about building
+      debug:
+        msg: "Building all changes in the patch together"
+
     - name: Generate DLRN Script
       template:
         src: run_dlrn.sh.j2
