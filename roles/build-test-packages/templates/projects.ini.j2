@@ -36,7 +36,7 @@ release_minor={{ '0' if '.' not in osp_release.split('-')[1] else osp_release.sp
 
 [downstream_driver]
 info_files=osp.yml
-versions_url=https://trunk.rdoproject.org/centos8-master/current/versions.csv
+versions_url=https://trunk.rdoproject.org/centos8-{{ release }}/current/versions.csv
 downstream_distro_branch={{ osp_release }}{{ '.0' if '.' not in osp_release else '' }}-rhel-8-trunk
 downstream_tag=osp-{{ osp_release.split('-')[1] }}{{ '.0' if '.' not in osp_release else '' }}
 downstream_distgit_key=osp-distgit
