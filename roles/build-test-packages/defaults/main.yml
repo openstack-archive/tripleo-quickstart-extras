@@ -18,10 +18,10 @@ dlrn_target: >-
   {%- elif (ansible_distribution == "CentOS") and
   (ansible_distribution_major_version|int >= 8) and
   (dlrn_use_local_mirrors|bool) -%}
-  centos8-local
+  centos{{ ansible_distribution_major_version }}-local
   {%- elif (ansible_distribution == "CentOS") and
   (ansible_distribution_major_version|int >= 8) -%}
-  centos8
+  centos{{ ansible_distribution_major_version }}
   {%- elif (ansible_distribution == "CentOS") and
   (ansible_distribution_major_version|int <= 7) and
   (dlrn_use_local_mirrors|bool) -%}
@@ -35,7 +35,7 @@ initial_dlrn_config: >-
   redhat
   {%- elif (ansible_distribution == "CentOS") and
   (ansible_distribution_major_version|int >= 8) -%}
-  centos8
+  centos{{ ansible_distribution_major_version }}
   {%- else -%}
   centos
   {%- endif -%}
@@ -46,7 +46,7 @@ dlrn_baseurl: >-
   {%- if ansible_distribution == "RedHat" and ansible_distribution_major_version|int == 8 -%}
   https://trunk.rdoproject.org/rhel8-master
   {%- elif (ansible_distribution == "CentOS") and (ansible_distribution_major_version|int >= 8) -%}
-  https://trunk.rdoproject.org/centos8/
+  https://trunk.rdoproject.org/centos{{ ansible_distribution_major_version }}/
   {%- else -%}
   https://trunk.rdoproject.org/centos7/
   {%- endif -%}
