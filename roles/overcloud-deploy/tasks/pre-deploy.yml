@@ -151,7 +151,7 @@
   set_fact:
     cloud_name_args: >-
         -e {{ working_dir }}/cloud-names.yaml
-  when: release not in ['mitaka', 'liberty']
+  when: non_custom_network|bool
 
 - name: Set the hostname_map config if defined
   set_fact:
