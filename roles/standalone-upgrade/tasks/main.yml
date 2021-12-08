@@ -41,6 +41,30 @@
       {{ standalone_control_virtual_ip|default() }}
       {%- endif -%}
 
+# TODO: (rlandy) remove workaround for LP bug #1953326
+- name: Downgrade pcs version
+  when:
+    - release is defined
+    - release in ['ussuri', 'victoria']
+  block:
+    - name: Downgrade pcs
+      shell: |
+        dnf downgrade pcs -y;
+        rpm -qa | grep pcs
+      become: true
+      register: downgrade_result
+
+    - name: Return current pcs version
+      debug:
+        msg: "{{ downgrade_result.stdout }}"
+
+    - name: Ensure the version is not upgraded again
+      become: true
+      lineinfile:
+        path: /etc/dnf/dnf.conf
+        state: present
+        line: 'exclude=pcs'
+
 - name: Upgrade the standalone
   shell: >
     set -o pipefail &&
