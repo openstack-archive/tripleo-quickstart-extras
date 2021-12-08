@@ -82,6 +82,13 @@
     rc_file: "{{ (tempest_cloud_name in ['undercloud']) | ternary('stackrc', 'overcloudrc') }}"
   when: release in ['queens', 'stein']
 
+  # FIXME(chandankumar): https://bugs.launchpad.net/tripleo/+bug/1953032/comments/5
+  # Remove it once the above bug is fixed
+- name: Disable stackviz for CentOS Stream 9
+  set_fact:
+    tempest_run_stackviz: false
+  when: ansible_distribution_major_version is version('9', '>=')
+
 - name: Create clouds.yaml if it doesn't exist
   shell: |
     # queens is returning //v3 so we replace with /v3
