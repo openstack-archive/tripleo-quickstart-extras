@@ -133,6 +133,10 @@
         dest: "{{ build_repo_dir }}/run_dlrn.sh"
         mode: 0744
 
+    - name: Print info about building
+      debug:
+        msg: "Building change for {{ project_name_mapped.stdout|default('unknown') }}"
+
     - name: Run DLRN
       shell: >
         set -o pipefail &&
