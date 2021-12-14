@@ -42,6 +42,7 @@
       {%- endif -%}
 
 # TODO: (rlandy) remove workaround for LP bug #1953326
+#  For now pcs-0.10.11-1 is the last known good version
 - name: Downgrade pcs version
   when:
     - release is defined
@@ -49,7 +50,7 @@
   block:
     - name: Downgrade pcs
       shell: |
-        dnf downgrade pcs -y;
+        dnf downgrade pcs-0.10.11-1.el8 -y;
         rpm -qa | grep pcs
       become: true
       register: downgrade_result
