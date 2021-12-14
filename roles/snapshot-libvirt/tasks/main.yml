@@ -47,7 +47,7 @@
 - name: Create snapshot
   shell: |
     mv {{ libvirt_volume_path }}/{{ item.name }}.qcow2 {{ libvirt_volume_path }}/{{ item.name }}.qcow2.bak
-    qemu-img create -f qcow2 -b {{ libvirt_volume_path }}/{{ item.name }}.qcow2.bak {{ libvirt_volume_path }}/{{ item.name }}.qcow2
+    qemu-img create -F qcow2 -f qcow2 -b {{ libvirt_volume_path }}/{{ item.name }}.qcow2.bak {{ libvirt_volume_path }}/{{ item.name }}.qcow2
   args:
     creates: "{{ libvirt_volume_path }}/{{ item.name }}.qcow2.bak"
   with_items: "{{ overcloud_nodes }}"
@@ -57,7 +57,7 @@
 - name: Restore previous snapshot
   shell: |
     rm {{ libvirt_volume_path }}/{{ item.name }}.qcow2
-    qemu-img create -f qcow2 -b {{ libvirt_volume_path }}/{{ item.name }}.qcow2.bak {{ libvirt_volume_path }}/{{ item.name }}.qcow2
+    qemu-img create -F qcow2 -f qcow2 -b {{ libvirt_volume_path }}/{{ item.name }}.qcow2.bak {{ libvirt_volume_path }}/{{ item.name }}.qcow2
   with_items: "{{ overcloud_nodes }}"
   when: snapshot_restore|bool
   changed_when: true
