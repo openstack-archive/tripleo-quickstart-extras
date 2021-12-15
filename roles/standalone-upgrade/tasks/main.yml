@@ -43,10 +43,8 @@
 
 # TODO: (rlandy) remove workaround for LP bug #1953326
 #  For now pcs-0.10.11-1 is the last known good version
+#  All releases are affected by this issue at this moment
 - name: Downgrade pcs version
-  when:
-    - release is defined
-    - release in ['ussuri', 'victoria']
   block:
     - name: Downgrade pcs
       shell: |
