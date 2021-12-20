@@ -15,7 +15,7 @@ parameter_defaults:
 {% endif %}
 # TODO: This is workaround for https://bugzilla.redhat.com/show_bug.cgi?id=2006409, Remove this
 # once this bug is fixed.
-{% if ansible_distribution_major_version is version(9, '>=') %}
+{% if release not in ['train', 'ussuri', 'victoria'] %}
   NovaLibvirtNumPciePorts: 12
 {% endif %}
 
