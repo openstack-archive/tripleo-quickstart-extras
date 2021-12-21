@@ -35,7 +35,6 @@
     block: |
       # Custom IPA params
         DnsServers: ["{{ subnode_1_ip }}"]
-        NtpServer: "{{ job.standalone_ntp_servers|default(['clock.redhat.com']) }}"
   when: enable_tls|default(false)|bool
 
 # standalone params
