@@ -1,4 +1,5 @@
 ---
 
+external_interface: eth2
 overcloud_prep_network_script: overcloud-prep-network.sh.j2
 overcloud_prep_network_log: "{{ working_dir }}/overcloud_prep_network.log"

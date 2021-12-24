@@ -53,7 +53,7 @@ fi
 sudo sh -c 'iptables-save > /etc/sysconfig/iptables'
 {% endif %}
 
-{% if network_isolation|bool and network_isolation_type in ['single-nic-vlans', 'single_nic_vlans', 'bond-with-vlans', 'bond_with_vlans'] %}
+{% if network_isolation|bool and network_isolation_type in ['single-nic-vlans', 'single_nic_vlans', 'bond-with-vlans', 'bond_with_vlans', 'multiple-nics-vlans'] %}
 
 {% if network_isolation_type in ['single_nic_vlans', 'bond_with_vlans'] %}
 # NOTE: 'bond_with_vlans' and 'single_nic_vlans' are deprecated
@@ -64,15 +64,20 @@ echo "Please use 'single-nic-vlans' and 'bond-with-vlans'"
 
 {% if not overcloud_ipv6|bool and network.device_type is defined and network.device_type == 'ovs' %}
 sudo bash -c 'cat <<EOF > /etc/sysconfig/network-scripts/ifcfg-vlan{{ network.tag }}
-DEVICE=vlan{{ network.tag }}
 ONBOOT=yes
-DEVICETYPE={{ network.device_type }}
-TYPE={{ network.type }}
 BOOTPROTO=static
 IPADDR={{ network.address }}
 NETMASK={{ network.netmask }}
+{% if network_isolation_type == 'multiple-nics-vlans' %}
+DEVICE={{ external_interface }}.{{ network.tag }}
+VLAN=yes
+{% else %}
+DEVICE=vlan{{ network.tag }}
+DEVICETYPE={{ network.device_type }}
+TYPE={{ network.type }}
 OVS_BRIDGE={{ network.ovs_bridge }}
 OVS_OPTIONS={{ network.ovs_options }}
+{% endif %}
 EOF'
 
 sudo ifup ifcfg-vlan{{ network.tag }}
