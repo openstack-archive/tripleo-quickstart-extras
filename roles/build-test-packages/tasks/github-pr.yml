@@ -7,7 +7,7 @@
         name:
           - rpm-build
           - ansible-macros
-          - ansible
+          - "ansible{% if ansible_distribution_major_version|int >= 9 %}-core{% endif %}"
         state: present
         disable_gpg_check: true
       become: true
