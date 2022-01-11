@@ -62,4 +62,6 @@ parameter_defaults:
 {% if release is defined and release not in ['train', 'ussuri'] %}
   NeutronDnsDomain: 'openstackgate.local'
 {% endif %}
-  NtpServer: {{ job.standalone_ntp_servers|default("['0.pool.ntp.org', '1.pool.ntp.org', '2.pool.ntp.org', '3.pool.ntp.org']") }}
+{% if job is defined and job.standalone_ntp_servers is defined %}
+  NtpServer: {{ job.standalone_ntp_servers }}
+{% endif %}
