@@ -19,6 +19,7 @@
     name: tripleo_overcloud_network_provision
   vars:
     tripleo_overcloud_network_provision_debug: true
+    tripleo_overcloud_network_provision_generate_scripts: true
     tripleo_overcloud_network_provision_output_file: "{{ working_dir }}/overcloud-networks-deployed.yaml"
     tripleo_overcloud_network_provision_deployment_file: "{{ network_data_yaml }}"
     tripleo_overcloud_network_provision_rc_file: "{{ working_dir }}/stackrc"
@@ -32,6 +33,7 @@
     name: tripleo_overcloud_network_vip_provision
   vars:
     tripleo_overcloud_network_vip_provision_debug: true
+    tripleo_overcloud_network_vip_provision_generate_scripts: true
     tripleo_overcloud_network_vip_provision_output_file: "{{ working_dir }}/overcloud-vips-deployed.yaml"
     tripleo_overcloud_network_vip_provision_deployment_file: "{{ vip_data_yaml }}"
     tripleo_overcloud_network_vip_provision_rc_file: "{{ working_dir }}/stackrc"
@@ -46,6 +48,7 @@
     name: tripleo_overcloud_node_provision
   vars:
     tripleo_overcloud_node_provision_debug: true
+    tripleo_overcloud_node_provision_generate_scripts: true
     tripleo_overcloud_node_provision_deployment_file: "{{ working_dir }}/overcloud_baremetal_deploy.yaml"
     tripleo_overcloud_node_provision_output_file: "{{ working_dir }}/overcloud-baremetal-deployed.yaml"
     tripleo_overcloud_node_provision_rc_file: "{{ working_dir }}/stackrc"
