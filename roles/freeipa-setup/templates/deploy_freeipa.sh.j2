@@ -37,7 +37,7 @@ dnf module enable -y idm:DL1/{dns,adtrust,client,server,common}
 {% endif %}
 
 {{ ansible_pkg_mgr }} install -yq ipa-server \
-            ipa-server-dns curl epel-release iptables
+            ipa-server-dns curl iptables
 
 ## * Update NSS (required for CA server to launch during deploy)
 
@@ -54,9 +54,6 @@ rpm -Uvh ius-release*.rpm
 
 {{ ansible_pkg_mgr }} install -y haveged
 systemctl start haveged.service
-
-## * Lets now disable epel since we got required packages already
-$DISABLE_REPO_CMD epel
 
 ## * Install FreeIPA::
 
