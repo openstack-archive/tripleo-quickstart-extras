@@ -135,6 +135,14 @@
     regexp: '^ca.crl.MasterCRL.publishOnStart=(.*)$'
     line: 'ca.crl.MasterCRL.publishOnStart=true'
 
+# Add recusion back into ipa node to work around some clouds not using internal
+# networks for their nodes. LP#1957083, https://access.redhat.com/solutions/5753431
+- name: Hack recursion back in to named
+  become: true
+  lineinfile:
+    path: /etc/named/ipa-options-ext.conf
+    line: "allow-recursion { any; };"
+
 - name: restart FreeIPA server
   become: true
   service:
