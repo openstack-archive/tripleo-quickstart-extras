@@ -26,6 +26,19 @@
     path: "{{ images_working_dir }}/web-gating.repo"
   register: new_repo
 
+- name: Inject gating repo during image build process
+  when:
+    - new_repo.stat.exists
+    - to_build|bool
+  block:
+    - name: set facts for gating repo
+      set_fact:
+        gating_repo: "{{ images_working_dir }}/web-gating.repo"
+
+    - name: Append gating repo during image build
+      set_fact:
+        overcloud_repo_paths: "{{ overcloud_repo_paths + [ gating_repo ] }}"
+
 - name: Run the image build script (direct) using oooci-build-images role
   vars:
     dib_yum_repo_conf: "{{ overcloud_repo_paths }}"
@@ -38,22 +51,6 @@
   when:
     - not build_image_isolated|bool
     - to_build|bool
-
-- when: new_repo.stat.exists
-  block:
-    - name: Enject repo in overcloud image
-      include_role:
-        name: install-built-repo
-      vars:
-        ib_repo_image_path: "{{ images_working_dir }}/{{ overcloud_image }}.qcow2"
-
-    - name: Enject repo in IPA image
-      include_role:
-        name: install-built-repo
-      vars:
-        ib_repo_image_path: "{{ images_working_dir }}/ironic-python-agent.initramfs"
-        initramfs_image: true
-        libguestfs_mode: false
 
 - when: build_image_isolated|bool
   block:
