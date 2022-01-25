@@ -97,8 +97,15 @@
       set_fact:
         artg_rdo_packages: '{{ artg_rdo_packages }} + {{ [ project_name_mapped.stdout ] }}'
 
+    - name: Check if project {{ project_name_mapped.stdout }} source already exist
+      stat:
+        path: '{{ build_repo_dir }}/DLRN/data/{{ project_name_mapped.stdout }}/.git'
+      register: repo_status
+
     - name: Create data directory if doesn't exist yet
-      file: path="{{ build_repo_dir }}/DLRN/data/" state=directory
+      file:
+        path: "{{ build_repo_dir }}/DLRN/data/"
+        state: directory
 
     - name: Copy from ready directories if configured
       command: >
@@ -114,7 +121,25 @@
         dest: '{{ build_repo_dir }}/DLRN/data/{{ project_name_mapped.stdout }}'
         refspec: '{{ artg_change.refspec }}'
         version: 'FETCH_HEAD'
-      when: artg_repos_dir is not defined or copy_dir is failed
+      when:
+        - >-
+          (artg_repos_dir is not defined and not repo_status.stat.exists) or
+          copy_dir is defined and copy_dir is failed
+
+    - name: Cleanup and checkout the relevant branch
+      vars:
+        git_path: '{{ build_repo_dir }}/DLRN/data/{{ project_name_mapped.stdout }}'
+        git_branch: '{{ artg_change.branch }}'
+      shell: |
+        set -eu
+        git -C {{ git_path }} clean -ffd
+        git -C {{ git_path }} reset --hard HEAD
+        git -C {{ git_path }} checkout {{ git_branch }}
+
+    - name: Ensure distgit repo is absent, DLRN takes care of cloning based on config
+      file:
+        path: "{{ build_repo_dir }}/DLRN/data/{{ project_name_mapped.stdout }}_distro"
+        state: absent
 
     - name: Clone the distgit change
       git:
@@ -125,7 +150,7 @@
         accept_hostkey: true
       when:
         - artg_change.distgit is defined
-        - artg_repos_dir is not defined or copy_dir is failed
+        - artg_repos_dir is not defined or copy_dir is defined and copy_dir is failed
 
     - name: Generate DLRN Script
       template:

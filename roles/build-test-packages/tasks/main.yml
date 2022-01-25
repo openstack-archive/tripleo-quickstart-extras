@@ -184,25 +184,31 @@
 # Below is the list of cases needs to handle while constructing zuul change lists to process
 # 1. Gerrit change branch is not equal to project branch
 # 2. project name should be present in zuul processed change list
-- name: construct zuul deps list
+- name: construct zuul deps list but don't cache it so it can be reprepared during upgrades
   set_fact:
-    artg_change_list: "{{ artg_change_list|default([]) + [{'host': item.change_url.rpartition('/')[0],
-                                                           'project': item.project.name,
-                                                           'branch': item.branch,
-                                                           'refspec': '/'.join(['refs', 'changes',
-                                                                                item.change[-2:],
-                                                                                item.change,
-                                                                                item.patchset]) }] }}"
-    cacheable: true
+    artg_change_list_prep: "{{ artg_change_list_prep|default([]) + [{'host': item.change_url.rpartition('/')[0],
+                                                                     'project': item.project.name,
+                                                                     'branch': item.branch,
+                                                                     'refspec': '/'.join(['refs', 'changes',
+                                                                                          item.change[-2:],
+                                                                                          item.change,
+                                                                                          item.patchset]) }] }}"
   with_items: "{{ zuul['items'] }}"
   when:
     - zuul is defined
     - "'change_url' in item"
-    - item.project.name not in artg_change_list|default([]) | map(attribute='project') |list
+    - item.project.name not in artg_change_list_prep|default([]) | map(attribute='project') |list
     - >-
-        (item.branch == zuul.override_checkout | default(zuul.branch)) or
+        (release is defined and release in item.branch) or
+        (release is not defined and item.branch == zuul.override_checkout | default(zuul.branch)) or
         (osp_release is defined and osp_release in item.branch) or
         item.project.name in artg_branchless_projects
+
+- name: Cache artg_change_list if change list is prepared
+  set_fact:
+    artg_change_list: "{{ artg_change_list_prep }}"
+    cacheable: true
+  when: artg_change_list_prep is defined
 
 - name: Detect github PRs from commit message
   include: detect_github_pr.yml
