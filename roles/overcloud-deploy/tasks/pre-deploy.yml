@@ -295,6 +295,12 @@
       {% endif %}
   when: deploy_multinode|bool
 
+- name: set the fips args
+  set_fact:
+    fips_args: >-
+      -e {{ overcloud_templates_path }}/environments/fips.yaml
+  when: enable_fips|bool
+
 - name: set the baremetal provision args
   set_fact:
     hypervisor_wait: false
