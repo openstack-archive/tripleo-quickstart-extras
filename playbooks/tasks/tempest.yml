@@ -237,7 +237,7 @@
         tempest_venv_bin: "{{ ansible_user_dir }}/tempest_venv/bin"
       when: tempest_install_method == 'source'
 
-    - name: set cirros image facts for periodic
+    - name: Set extra facts for tempestconf
       vars:
         default_cirros_image: /opt/cache/files/cirros-0.5.2-x86_64-disk.img
       set_fact:
@@ -245,6 +245,8 @@
           image: "{{ featureset_override['cirros_image'] | default(default_cirros_image) }}"
           flavor_min_mem: 128
           retry_image: true
+          overrides:
+            identity.v3_endpoint_type: public
 
     # stackviz in venv pulls oslo.db due upstream constraints,
     # but it dropped py2 support so on such system we need to skip it
