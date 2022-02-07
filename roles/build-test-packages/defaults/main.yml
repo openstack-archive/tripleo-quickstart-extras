@@ -21,7 +21,7 @@ dlrn_target: >-
   centos{{ ansible_distribution_major_version }}-local
   {%- elif (ansible_distribution == "CentOS") and
   (ansible_distribution_major_version|int >= 8) -%}
-  centos{{ ansible_distribution_major_version }}
+  centos{{ ansible_distribution_major_version }}-stream
   {%- elif (ansible_distribution == "CentOS") and
   (ansible_distribution_major_version|int <= 7) and
   (dlrn_use_local_mirrors|bool) -%}
