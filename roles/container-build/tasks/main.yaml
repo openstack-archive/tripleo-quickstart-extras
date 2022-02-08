@@ -53,6 +53,7 @@
     container_image_build_volumes:
       - "/etc/yum.repos.d:/etc/distro.repos.d:z"
       - "/etc/pki/rpm-gpg:/etc/pki/rpm-gpg:z"
+      - "/etc/pki/ca-trust:/etc/pki/ca-trust:z"
   when:
     - (ansible_distribution == 'RedHat') or (ansible_distribution_major_version|int < 8)
 
