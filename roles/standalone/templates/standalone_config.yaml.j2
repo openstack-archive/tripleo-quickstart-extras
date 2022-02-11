@@ -57,9 +57,7 @@ parameter_defaults:
   InterfaceLocalMtu: 1500
   NovaComputeLibvirtType: {{ standalone_libvirt_type }}
   SELinuxMode: {{ standalone_selinux_mode }}
-{% if release is defined and release not in ['train', 'ussuri'] %}
   NeutronDnsDomain: 'openstackgate.local'
-{% endif %}
 {% if job is defined and job.standalone_ntp_servers is defined %}
   NtpServer: {{ job.standalone_ntp_servers }}
 {% endif %}
