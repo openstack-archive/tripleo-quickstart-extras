@@ -86,6 +86,7 @@ https://docs.openstack.org/tripleo-quickstart/latest/accessing-libvirt.html
 - `undercloud_selinux_enabled`: <'true'> -- Enabled for RHEL by default, Disabled for CentOS by default
 - `undercloud_enable_paunch`: <null> -- Enable or disable Paunch to manage containers. Undefined by default.
 - `undercloud_container_cli`: <'podman'> -- Container CLI to use for the Undercloud deployment. Default to 'podman'.
+- `undercloud_parameter_defaults_args`: <null> -- Complement 'parameter_defaults' for the undercloud.
 
 Role Network Variables
 ----------------------

@@ -4,10 +4,16 @@ valid YAML.  The default to_nice_yaml filter doesn't quote strings,
 which can cause unexpected implicit type conversion when the
 resulting YAML is consumed, whereas with JSON all strings are quoted.
 #}
-{% if undercloud_resource_registry_args %}
-{% set undercloud_resource_registry = {'resource_registry': undercloud_resource_registry_args} %}
-{% else %}
-{% set undercloud_resource_registry = {} %}
+{% set undercloud_parameter_defaults = {} %}
+{% set _ = undercloud_parameter_defaults.update({'parameter_defaults': {}}) %}
+{% set _ = undercloud_parameter_defaults.update({'resource_registry': {}}) %}
+{% if undercloud_parameter_defaults_args is defined and undercloud_parameter_defaults_args %}
+{% set _ = undercloud_parameter_defaults['parameter_defaults'].update(undercloud_parameter_defaults_args) %}
 {% endif %}
-{% set undercloud_parameter_defaults = {'parameter_defaults': undercloud_network_environment_args} %}
-{{ undercloud_parameter_defaults|combine(undercloud_resource_registry, recursive=True)|to_nice_json }}
+{% if undercloud_network_environment_args is defined and undercloud_network_environment_args %}
+{% set _ = undercloud_parameter_defaults['parameter_defaults'].update(undercloud_network_environment_args) %}
+{% endif %}
+{% if undercloud_resource_registry_args is defined and undercloud_resource_registry_args %}
+{% set _ = undercloud_parameter_defaults['resource_registry'].update(undercloud_resource_registry_args) %}
+{% endif %}
+{{ undercloud_parameter_defaults | to_nice_json }}
