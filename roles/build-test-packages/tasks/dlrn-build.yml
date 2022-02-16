@@ -132,9 +132,11 @@
         git_branch: '{{ artg_change.branch }}'
       shell: |
         set -eu
-        git -C {{ git_path }} clean -ffd
-        git -C {{ git_path }} reset --hard HEAD
-        git -C {{ git_path }} checkout {{ git_branch }}
+        pushd {{ git_path }}
+        git clean -ffd
+        git reset --hard HEAD
+        git checkout {{ git_branch }}
+        popd
 
     - name: Ensure distgit repo is absent, DLRN takes care of cloning based on config
       file:
