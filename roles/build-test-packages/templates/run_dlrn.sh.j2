@@ -7,6 +7,9 @@ export PKG={{ project_name_mapped.stdout }}
 {% else %}
 export PKG="{{ artg_rdo_packages|join(' --package-name ') }}"
 {% endif %}
+{% if ansible_distribution|lower  == "redhat" %}
+export REQUESTS_CA_BUNDLE=/etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt
+{% endif %}
 
 while true; do
     dlrn --config-file projects.ini --head-only --package-name $PKG --local \
