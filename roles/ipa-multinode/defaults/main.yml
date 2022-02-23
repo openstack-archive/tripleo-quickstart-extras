@@ -29,3 +29,4 @@ ipa_packages:
   - curl
   - iptables
 forwarder_address_default: 1.1.1.1
+openstack_git_root: "{{ ansible_user_dir }}/src/opendev.org/openstack"

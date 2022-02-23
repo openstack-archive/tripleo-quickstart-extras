@@ -145,7 +145,7 @@
     USER: zuul
     CLOUD_DOMAIN: "{{ cloud_domain }}"
     # yamllint disable-line rule:line-length
-    ANSIBLE_ROLES_PATH: "/usr/share/ansible/tripleo-playbooks/roles:/home/zuul/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:/usr/share/ansible/tripleo-playbooks:/home/zuul/{{ zuul.projects['opendev.org/openstack/tripleo-ansible'].src_dir }}/tripleo_ansible/roles"
+    ANSIBLE_ROLES_PATH: "/usr/share/ansible/tripleo-playbooks/roles:/home/zuul/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:/usr/share/ansible/tripleo-playbooks:{{ openstack_git_root }}/tripleo-ansible/tripleo_ansible/roles"
   when:
     - enable_tls | bool
 
