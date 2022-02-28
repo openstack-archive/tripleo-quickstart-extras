@@ -29,7 +29,7 @@ sed -i "1i$IPA_SERVER_IP $CA_SERVER_HOSTNAME" /etc/hosts
 ## * Install required system packages::
 DISABLE_REPO_CMD="yum-config-manager --disable"
 
-{% if ansible_distribution_major_version is version("8", ">=") -%}
+{% if ansible_distribution_major_version is version("8", "==") -%}
 
 DISABLE_REPO_CMD="dnf config-manager --set-disabled"
 dnf module enable -y idm:DL1/{dns,adtrust,client,server,common}
