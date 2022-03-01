@@ -247,6 +247,7 @@
           retry_image: true
           overrides:
             identity.v3_endpoint_type: public
+            validation.ssh_key_type: 'ecdsa'
 
     # stackviz in venv pulls oslo.db due upstream constraints,
     # but it dropped py2 support so on such system we need to skip it
