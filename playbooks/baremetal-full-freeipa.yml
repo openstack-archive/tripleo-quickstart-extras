@@ -45,3 +45,48 @@
 
     - include_role:
         name: freeipa-setup
+
+- name: Use  supplemental node as DNS server
+  hosts: undercloud
+  gather_facts: false
+  tags:
+    - freeipa-setup
+  tasks:
+
+    - name: ensure that DHCP doesn't overwite DNS settings (CentOS/RHEL >= 8)
+      become: true
+      lineinfile:
+        path: /etc/NetworkManager/NetworkManager.conf
+        regexp: '^dns='
+        insertafter: '^[main]'
+        line: 'dns=none'
+      when:
+        - ansible_os_family == 'RedHat'
+        - ansible_distribution_major_version is version(8, '>=')
+
+    - name: cat out resolv.conf to see original DNS config
+      become: true
+      debug:
+        msg: "Content of resolv.conf before modifications: {{ lookup('file', '/etc/resolv.conf') }}"
+
+    - name: remove any existing entries from the resolv.conf file
+      become: true
+      lineinfile:
+        path: /etc/resolv.conf
+        regexp: "^nameserver "
+        state: absent
+
+    - name: disable unbound service
+      become: true
+      service:
+        name: unbound
+        state: stopped
+      ignore_errors: true
+
+    - name: set IPA server as primary DNS provider
+      become: true
+      lineinfile:
+        path: /etc/resolv.conf
+        insertafter: '^search'
+        line: "nameserver {{ supplemental_node_ip }}"
+        state: present
