@@ -1,9 +1,0 @@
----
-env_vars_to_source_file: env_vars_to_src.sh
-reproducer_quickstart_script: reproducer-quickstart.sh.j2
-reproducer_quickstart_readme_file: "{{ artcl_collect_dir }}/{{ old_reproducer_dir }}/README-reproducer-quickstart.html"
-zuul_changes: "{{ lookup('env', 'ZUUL_CHANGES') }}"
-nodes_config: "{{ lookup('env', 'NODES_FILE') | regex_replace('^.*/tripleo-quickstart','') }}"
-toci_jobtype: "{{ lookup('env', 'TOCI_JOBTYPE') }}"
-stable_release: "{{ lookup('env', 'STABLE_RELEASE') }}"
-old_reproducer_dir: reproducer-quickstart-deprecated
