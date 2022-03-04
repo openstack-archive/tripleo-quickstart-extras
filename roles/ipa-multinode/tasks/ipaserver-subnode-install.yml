@@ -25,6 +25,14 @@
     - ansible_distribution|lower in ['redhat', 'centos']
     - ansible_distribution_major_version is version('8', '==')
 
+- name: Temporarily downgrade openssl
+  become: true
+  shell: >
+    dnf downgrade openssl-3.0.1-5.el9 -y;
+  when:
+    - ansible_distribution|lower in ['centos']
+    - ansible_distribution_major_version is version('9', '==')
+
 - name: install FreeIPA packages
   become: true
   package:
