@@ -29,6 +29,29 @@
     - freeipa-setup
   tasks:
 
+    - name: Create /etc/ci directory for supplemental
+      become: true
+      file:
+        path: /etc/ci
+        state: directory
+        owner: root
+        group: root
+        mode: 0755
+
+    - name: Slurp the contents of mirror_info.sh from undercloud
+      become: true
+      slurp:
+        src: '/etc/ci/mirror_info.sh'
+      register: mirror_info_sh
+      delegate_to: undercloud
+
+    - name: Write mirror_info.sh contents to file on supplemental
+      become: true
+      copy:
+        dest: '/etc/ci/mirror_info.sh'
+        content: |
+          {{ mirror_info_sh['content'] | b64decode }}
+
     - include_role:
         name: repo-setup
       vars:
