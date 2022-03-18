@@ -1,3 +1,7 @@
 ---
 - include_tasks: containers.yml
+- include_tasks: ceph-install.yml
+  when:  # TODO(fultonj) use ['master', 'wallaby'] after backport
+    - job.standalone_ceph | default(false)
+    - zuul.branch is defined and zuul.branch in ['master']
 - include_tasks: standalone-install.yml
