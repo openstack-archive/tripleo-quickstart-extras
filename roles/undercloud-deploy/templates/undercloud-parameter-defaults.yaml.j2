@@ -8,7 +8,7 @@ resulting YAML is consumed, whereas with JSON all strings are quoted.
 {% set _ = undercloud_parameter_defaults.update({'parameter_defaults': {}}) %}
 {% set _ = undercloud_parameter_defaults.update({'resource_registry': {}}) %}
 {% if undercloud_parameter_defaults_args is defined and undercloud_parameter_defaults_args %}
-{% set _ = undercloud_parameter_defaults['parameter_defaults'].update(undercloud_parameter_defaults_args) %}
+{% set _ = undercloud_parameter_defaults['parameter_defaults'].update(undercloud_parameter_defaults_args if undercloud_parameter_defaults_args is mapping else undercloud_parameter_defaults_args | from_yaml) %}
 {% endif %}
 {% if undercloud_network_environment_args is defined and undercloud_network_environment_args %}
 {% set _ = undercloud_parameter_defaults['parameter_defaults'].update(undercloud_network_environment_args) %}
