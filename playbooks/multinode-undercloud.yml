@@ -11,6 +11,16 @@
 
 - name: Create configs on subnodes
   hosts: overcloud
+  pre_tasks:
+    - name: Include vars when dependency is defined
+      when: job.dependency is defined or dependency is defined
+      vars:
+        tripleo_quickstart_dir: "{{ ansible_user_dir }}/{{ zuul.projects['opendev.org/openstack/tripleo-quickstart'].src_dir }}"
+        t_q_dependency_dir: "{{ tripleo_quickstart_dir }}/config/release/dependency_ci/{{ job.dependency|default(dependency) }}"
+      block:
+        - name: Load vars from dependency file
+          include_vars:
+            file: "{{ t_q_dependency_dir }}/repo_config.yaml"
   roles:
     # When doing mixed upgrade, we need different repos on undercloud
     # vs. overcloud. Rely on $UPGRADE_RELEASE together with
