@@ -59,14 +59,23 @@ docker_prep_prefix: >-
 # docker suffix
 docker_prep_suffix: ""
 docker_ceph_namespace: >-
-  {% if job.consumer_job | default(false) | bool -%}
+  {% if job is defined and job.docker_ceph_namespace is defined -%}
+  {{ job.docker_ceph_namespace }}
+  {%- elif job.consumer_job | default(false) | bool -%}
   {{ job.registry_ip_address_branch[release] }}:{{ local_registry_port }}/{{ docker_registry_namespace }}
   {%- else -%}
   quay.io/ceph
   {%- endif -%}
-docker_ceph_image: daemon
+docker_ceph_image: >-
+  {% if job is defined and job.docker_ceph_image is defined -%}
+  {{ job.docker_ceph_image }}
+  {%- else -%}
+  daemon
+  {%- endif -%}
 docker_ceph_tag: >-
-  {% if release in ['pike'] -%}
+  {% if job is defined and job.docker_ceph_tag is defined -%}
+  {{ job.docker_ceph_tag }}
+  {%- elif release in ['pike'] -%}
   v3.0.3-stable-3.0-jewel-centos-7-x86_64
   {%- elif release in ['queens'] -%}
   v3.2.14-stable-3.2-luminous-centos-7-x86_64

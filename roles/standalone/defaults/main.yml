@@ -43,7 +43,7 @@ standalone_container_cli: docker
 
 standalone_custom_env_files: []
 
-standalone_container_ceph_updates: false
+standalone_container_ceph_updates: "{{ job.standalone_container_ceph_updates|default(false)|bool }}"
 
 standalone_tripleo_deploy_debug_arg: false
 
