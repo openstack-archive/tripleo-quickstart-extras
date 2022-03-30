@@ -146,7 +146,7 @@
     cat /etc/yum.repos.d/quickstart-{{ ansible_distribution | lower }}-*.repo >> {{ build_repo_dir }}/DLRN/scripts/{{ initial_dlrn_config }}-local.cfg;
     find /etc/yum.repos.d -name "delorean*repo" ! -name "delorean*build-deps.repo" -exec cat {} \; -exec echo ""  \;
     >> {{ build_repo_dir }}/DLRN/scripts/{{ initial_dlrn_config }}-local.cfg;
-    find /etc/yum.repos.d -name "CentOS-Stream-*repo" -exec cat {} \; -exec echo ""  \;
+    find /etc/yum.repos.d -name "CentOS-Stream-*repo" -not -name "CentOS-Stream*Extras-common*repo" -exec cat {} \; -exec echo ""  \;
     >> {{ build_repo_dir }}/DLRN/scripts/{{ initial_dlrn_config }}-local.cfg;
     find /etc/yum.repos.d -name "delorean*build-deps.repo" -exec sed 's/enabled=.*/enabled=1/g' {} \;
     >> {{ build_repo_dir }}/DLRN/scripts/{{ initial_dlrn_config }}-local.cfg;
