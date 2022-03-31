@@ -248,6 +248,7 @@
           overrides:
             identity.v3_endpoint_type: public
             validation.ssh_key_type: 'ecdsa'
+            image.http_image: https://github.com/cirros-dev/cirros/releases/download/0.5.2/cirros-0.5.2-x86_64-disk.img
 
     # stackviz in venv pulls oslo.db due upstream constraints,
     # but it dropped py2 support so on such system we need to skip it
