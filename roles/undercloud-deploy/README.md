@@ -74,7 +74,8 @@ https://docs.openstack.org/tripleo-quickstart/latest/accessing-libvirt.html
   undercloud install CLI. This should only be used to override image prepare
   generating this during the undercloud install.
 - `undercloud_custom_env_files`: <null> --
-  A space-separate string for custom t-h-t env files for `undercloud.conf` used with heat installer.
+  A simple list for custom t-h-t env files for `undercloud.conf` used with heat installer.
+  For backward compatibility, it also supports space-separate string.
 - `undercloud_undercloud_output_dir`: <null> -- allows customize output directory for state, like
   downloaded ansible configs and processed heat templates for heat installer
 - `undercloud_undercloud_cleanup`: <null> -- controls tear down of the processed heat templates

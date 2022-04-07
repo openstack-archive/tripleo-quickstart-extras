@@ -352,8 +352,12 @@ container_insecure_registries = {{ local_registry_ip }}:{{ local_registry_port }
 #container_insecure_registries =
 {% endif %}
 
-{% if undercloud_custom_env_files is defined %}
+{% if undercloud_custom_env_files is defined and undercloud_custom_env_files|length > 0 %}
+{% if undercloud_custom_env_files is iterable and undercloud_custom_env_files is not string %}
+custom_env_files = {{ undercloud_custom_env_files|join(',') }}
+{% else %}
 custom_env_files = {{ undercloud_custom_env_files.split()|join(',') }}
+{% endif %}
 {% else %}
 #custom_env_files = <None>
 {% endif %}
