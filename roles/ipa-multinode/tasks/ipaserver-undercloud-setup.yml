@@ -278,9 +278,11 @@
         state: present
       when: mirror_host_record_public.stdout_lines|length >=2
 
+# Note(rlandy): Switching to IBM DNS till
+# https://bugs.launchpad.net/tripleo/+bug/1968615 is fixed
 - name: Check that the DNS works
   shell: >
-    ping -c 10 redhat.com
+    ping -c 10 ibm.com
   register: dig_ouput_com
   ignore_errors: true
 
