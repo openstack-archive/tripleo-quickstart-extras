@@ -3,7 +3,7 @@
   hosts: undercloud
   gather_facts: true
   vars:
-    inventory: "{{ job.validations_inventory|default('tripleo-deploy/tripleo-ansible-inventory.yaml') }}"
+    inventory: "{{ job.validations_inventory|default('') }}"
     vf_log_dir: "/var/log/validations"
   tags:
     - overcloud-deploy
