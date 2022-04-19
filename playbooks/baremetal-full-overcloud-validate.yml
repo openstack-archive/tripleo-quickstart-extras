@@ -6,7 +6,7 @@
     - overcloud-validate
   roles:
     - {role: validate-perf,
-       when: validate_performance|bool and run_tempest|bool}
+       when: validate_performance|bool and use_os_tempest | default(true) | bool}
   ignore_errors: true
 
 - name: Sanity check the overcloud services
