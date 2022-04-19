@@ -79,6 +79,12 @@
     dest: "{{ working_dir }}/undercloud-parameter-defaults.yaml"
     mode: 0600
 
+- name: Create the undercloud masquerade parameter file.
+  template:
+    src: undercloud-masquerade-override.yaml.j2
+    dest: "{{ working_dir }}/undercloud-parameter-masquerade.yaml"
+    mode: 0600
+
 - name: Set update_containers_repo if delorean-current is not present
   stat:
     path: "/etc/yum.repos.d/delorean-current.repo"
