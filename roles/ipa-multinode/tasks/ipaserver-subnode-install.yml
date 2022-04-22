@@ -39,6 +39,12 @@
     name: '{{ ipa_packages }}'
     state: latest
 
+- name: Temporarily downgrade jss
+  become: true
+  shell: >
+    dnf downgrade jss-5.0.3-1.el9 -y;
+  when: ansible_distribution_major_version is version('9', '==')
+
 - name: set python_cmd
   set_fact:
     python_cmd: "python{{ ansible_python.version.major }}"
