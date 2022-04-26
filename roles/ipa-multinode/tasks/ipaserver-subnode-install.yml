@@ -171,15 +171,13 @@
       - "user: {{ freeipa_principal }}"
       - "password: {{ freeipa_admin_password }}"
 
-# Note(rlandy): Switching to IBM DNS
-# https://bugs.launchpad.net/tripleo/+bug/1968615 is fixed
 - name: Check DNS works
   shell: >
-    ping -c 5 ibm.com
-  register: ping_output_com
+    dig +tries=5 +timeout=5 redhat.com
+  register: dig_output_com
 
 - debug:
-    msg: "{{ ping_output_com.stdout }}"
+    msg: "{{ dig_output_com.stdout }}"
 
 - name: Check curl works with DNS
   shell: >
