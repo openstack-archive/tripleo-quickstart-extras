@@ -4,6 +4,12 @@ parameter_defaults:
       disk_utils/image_convert_memory_limit:
         value:
           2048
+      conductor/heartbeat_interval:
+        value:
+          20
+      conductor/heartbeat_timeout:
+        value:
+          120
 
     # Ironic defaults to using `qemu:///system`.  When running libvirtd
     # unprivileged we need to use `qemu:///session`.  This allows us to pass
