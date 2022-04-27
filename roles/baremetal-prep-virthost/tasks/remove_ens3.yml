@@ -1,8 +1,7 @@
 ---
 - name: Discover if ens3 interface exists
-  become: true
   setup:
-    gather_subset: network
+    gather_subset: "!all,!min,network"
   register: net
 
 - name: Check if ifcfg-ens3 exists
