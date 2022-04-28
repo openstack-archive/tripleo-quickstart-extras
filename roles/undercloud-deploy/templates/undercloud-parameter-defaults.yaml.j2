@@ -16,4 +16,12 @@ resulting YAML is consumed, whereas with JSON all strings are quoted.
 {% if undercloud_resource_registry_args is defined and undercloud_resource_registry_args %}
 {% set _ = undercloud_parameter_defaults['resource_registry'].update(undercloud_resource_registry_args) %}
 {% endif %}
+{% if ctlplane_masquerade|default(false) %}
+{% if overcloud_ipv6|bool %}
+{% set masquerade_nets = {undercloud_network_cidr: [undercloud_network_cidr], undercloud_external_network_cidr_ipv4: [undercloud_external_network_cidr_ipv4]} %}
+{% else %}
+{% set masquerade_nets = {undercloud_network_cidr: [undercloud_network_cidr], undercloud_external_network_cidr: [undercloud_external_network_cidr]} %}
+{% endif %}
+{% set _ = undercloud_parameter_defaults['parameter_defaults'].update({'MasqueradeNetworks': masquerade_nets }) %}
+{% endif %}
 {{ undercloud_parameter_defaults | to_nice_json }}
