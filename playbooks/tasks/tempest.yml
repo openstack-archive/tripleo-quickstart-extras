@@ -189,6 +189,8 @@
         tempest_private_net_seg_id: "{{ (release in ['queens']) | ternary('', omit) }}"
         tempest_network_ping_gateway: true
         tempest_private_net_provider_type: "{{ (release in ['queens']) | ternary('vlan', 'geneve') }}"
+        tempest_private_net_create: true
+        tempest_router_create: true
       when: tempest_cidr is defined
 
     - name: Handle migration of br-ex network
