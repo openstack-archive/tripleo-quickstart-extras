@@ -1,0 +1,45 @@
+---
+- name: Create a temporary file
+  tempfile:
+    state: file
+  register: tempfile
+
+- name: Remove the file at temporary file path.
+  file:
+    path: "{{ tempfile.path }}"
+    state: absent
+
+- name: Fetch publication page
+  get_url:
+    url: "{{ base_url }}?C=M;O=A"
+    dest: "{{ tempfile.path }}"
+
+- name: Find qcow2 url
+  shell: |
+    sed -n "/qcow2/ s/.*\({{ qcow_prefix }}.*.qcow2\)<\/a>.*/\1/p" {{ tempfile.path }} | tail -1
+  register: get_qcow_image_name
+
+- name: Remove the file at temporary file path.
+  file:
+    path: "{{ tempfile.path }}"
+    state: absent
+
+- name: Fetch md5sum file
+  get_url:
+    url: "{{ base_url }}/{{ get_qcow_image_name.stdout }}.MD5SUM"
+    dest: "{{ tempfile.path }}"
+
+- name: Find MD5 value
+  command: "awk -F ' = ' '/MD5/ {print $2}' {{ tempfile.path }}"
+  register: get_md5_value
+
+- name: Remove the file at temporary file path.
+  file:
+    path: "{{ tempfile.path }}"
+    state: absent
+
+- name: "Set expected facts Image: {{ base_url }}{{ get_qcow_image_name.stdout }} Md5sum: {{ get_md5_value.stdout }} "
+  set_fact:
+    discovered_image_name: "{{ get_qcow_image_name.stdout }}"
+    discovered_image_url: "{{ base_url }}{{ get_qcow_image_name.stdout }}"
+    discovered_md5sum: "{{ get_md5_value.stdout }}"

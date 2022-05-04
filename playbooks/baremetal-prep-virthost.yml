@@ -60,6 +60,25 @@
         - ansible_distribution == 'RedHat'
         - ansible_distribution_major_version|int >= 8
 
+- name: Find latest Centos image and set facts for undercloud base image.
+  hosts: virthost
+  gather_facts: true
+  tasks:
+    - block:
+        - name: Discover latest CentOS qcow2 image
+          include_role:
+            name: discover-latest-image
+        - name: set_fact for undercloud base image
+          set_fact:
+            baseos_undercloud_image_url: "{{ discovered_image_url }}"
+            baseos_image: "{{ ansible_distribution | lower }}"
+            baseos_image_type: qcow2
+            baseos_md5sum: "{{ discovered_md5sum }} {{ discovered_image_name }}"
+            cacheable: true
+      when:
+        - ansible_distribution == 'CentOS'
+        - ansible_distribution_major_version is version(9, '>=')
+
 - name: Setup undercloud and baremetal vms and networks in libvirt
   hosts: virthost
   gather_facts: true
