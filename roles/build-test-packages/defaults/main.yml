@@ -91,6 +91,7 @@ artg_github_projects:
   - ansible-collections/ansible.netcommon
 
 artg_branchless_projects:
+  - openstack/diskimage-builder
   - openstack/octavia-tempest-plugin
   - openstack/tempest
   - openstack/validations-common
