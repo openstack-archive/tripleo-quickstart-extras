@@ -1,0 +1,76 @@
+---
+- name: Rerun container image prepare for mixed OS compute deployment
+  hosts: undercloud
+  gather_facts: false
+  tags:
+    - overcloud-prep-containers
+  pre_tasks:
+    #  TODO(marios): tidy this up use copy module & move to new play
+    - name: rename controller logfiles so we can keep them
+      shell: |
+        for file in containers-prepare-parameter.yaml overcloud_deploy.log overcloud_roles.yaml overcloud-topology-config.yaml overcloud-deploy.sh ; do
+          cp $file "ctrl_$file";
+        done
+      failed_when: false
+  roles:
+    - role: overcloud-prep-containers
+      when: containerized_overcloud|bool
+  tasks:
+    - name: "set fact for container_build_id with {{ docker_image_tag }}"
+      set_fact:
+        container_build_id: "{{ dlrn_hash_tag }}"
+        cacheable: true
+    - name: "Recreate containers-prepare-parameter file "
+      include_role:
+        name: undercloud-deploy
+        tasks_from: create-scripts.yml
+    - name: Run container image prepare for compute deploy
+      shell: |
+        source /home/zuul/stackrc
+        sudo openstack tripleo container image prepare -e /home/zuul/containers-prepare-parameter.yaml
+
+- name: Deploy the overcloud compute stack
+  hosts: undercloud
+  gather_facts: false
+  environment:
+    TRIPLEO_ROOT: "{{ lookup('env','TRIPLEO_ROOT') }}"
+  tasks:
+    - name: Deploy the overcloud
+      include_role:
+        name: overcloud-deploy
+      vars:
+        overcloud_roles: "{{ overcloud_roles_compute }}"
+        topology_map: "{{ topology_map_compute }}"
+        extra_args: " -e /home/zuul/overcloud-deploy/overcloud/overcloud-export.yaml --disable-protected-resource-types --baremetal-deployment "
+      tags:
+        - overcloud-deploy
+
+    - name: Check the overcloud_deployment_result.json if this is CI job
+      tags:
+        - overcloud-deploy
+      block:
+        - name: ensure the deployment result has been read into memory
+          include_vars: "{{ local_working_dir }}/overcloud_deployment_result.json"
+          delegate_to: localhost
+
+        # overcloud_deploy_result = ["failed", "passed"]
+        - name: did the deployment pass or fail?
+          debug: var=overcloud_deploy_result
+          failed_when: overcloud_deploy_result == "failed"
+          delegate_to: localhost
+
+- name: nova cell_v2 discover_hosts on Controller after Compute deployment
+  hosts: overcloud_control
+  tags:
+    - overcloud-deploy
+  tasks:
+    - name: Run nova-manage cell_v2 discover_hosts
+      shell: |
+        sudo podman exec nova_api nova-manage cell_v2 discover_hosts --by-service --verbose
+    - name: DEBUG nova-manage cell_v2 list_hosts
+      shell: |
+        sudo podman exec nova_api nova-manage cell_v2 list_hosts
+      register: nova_manage_cell_debug
+    - name: debug nova-manage output
+      debug:
+        msg: "DEBUG output of cell_v2 list_hosts after discovery {{ nova_manage_cell_debug.stdout_lines }}"
