@@ -13,11 +13,7 @@ parameter_defaults:
   DockerRegistryMirror: {{ undercloud_docker_registry_mirror }}
 {% endif %}
   ContainerImagePrepare:
-{% if not build_container_images|default(false)|bool %}
   - push_destination: "{{ local_docker_registry_host }}:8787"
-{% else %}
-  - push_destination: false
-{% endif %}
 {% if update_containers|bool
    and not use_overcloud_mixed_upgrade|default(false)|bool
    and not job.consumer_job | default(false) | bool
