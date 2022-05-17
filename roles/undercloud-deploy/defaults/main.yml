@@ -55,6 +55,7 @@ undercloud_ipxe_deploy: true
 undercloud_enable_swift_encryption: false
 
 undercloud_undercloud_debug: true
+undercloud_undercloud_timezone: 'UTC'
 
 # Path to tripleo-heat-templates to be cloned from given repo/branch/refscpec
 undercloud_templates_path: /usr/share/openstack-tripleo-heat-templates
