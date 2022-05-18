@@ -1,7 +1,7 @@
 ---
 - name: Set release name
   set_fact:
-    artg_release: "{{ artg_change.branch | replace('stable/', '') }}"
+    artg_release: "{{ job.branch_override | default(artg_change.branch) | replace('stable/', '') }}"
 
 - name: print out the release name
   debug:
