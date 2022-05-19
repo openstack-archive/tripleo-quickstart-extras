@@ -20,6 +20,7 @@ nameserver_from_virthost: false
 custom_nameserver:
     - 38.145.33.91
 undercloud_undercloud_nameservers: "{{ custom_nameserver }}"
+undercloud_undercloud_timezone: 'UTC'
 external_net: '38.145.32.0/22'
 overcloud_dns_servers: "{{ custom_nameserver }}"
 ntp_server: 'pool.ntp.org'

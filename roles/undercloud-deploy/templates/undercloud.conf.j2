@@ -105,6 +105,13 @@ undercloud_ntp_servers = {{ undercloud_undercloud_ntp_servers|join(',') }}
 #undercloud_ntp_servers =
 {% endif %}
 
+# Timezone for the Undercloud node. (string value)
+{% if undercloud_undercloud_timezone is string %}
+undercloud_timezone = {{ undercloud_undercloud_timezone }}
+{% else %}
+# undercloud_timezone = <None>
+{% endif %}
+
 # DNS domain name to use when deploying the overcloud. The overcloud
 # parameter "CloudDomain" must be set to a matching value. (string
 # value)
