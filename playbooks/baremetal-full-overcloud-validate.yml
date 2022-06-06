@@ -1,7 +1,23 @@
 ---
+- name: Run dump vars on all!localhost
+  hosts: all:!localhost:!127.0.0.2
+  roles:
+    - dump_vars
+
+- name: Ensure the overcloud nodes are added to the generated inventory
+  hosts: undercloud
+  gather_facts: true
+  tags:
+    - overcloud-validate
+  vars:
+    inventory: all
+  roles:
+    - tripleo-inventory
+  ignore_errors: true
+
 # Execute sanity checks agsinst the overcloud deployment
 - name: setup dstat performance monitoring
-  hosts: overcloud
+  hosts: all:!localhost:!127.0.0.2!undercloud
   tags:
     - overcloud-validate
   roles:
