@@ -1,7 +1,7 @@
 ---
 - include_tasks: containers.yml
 - include_tasks: ceph-install.yml
-  when: # TODO(fultonj) use ['master', 'wallaby'] after backport
+  when:
     - job.standalone_ceph | default(false)
-    - release not in ['train', 'victoria', 'wallaby']
+    - release not in ['train', 'victoria']
 - include_tasks: standalone-install.yml
