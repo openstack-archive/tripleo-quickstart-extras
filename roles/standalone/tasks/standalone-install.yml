@@ -21,12 +21,20 @@
       {%- endif -%}
     tripleo_deploy_roles_file: "{{ overcloud_templates_path }}/roles/{{ standalone_role }}"
     tripleo_deploy_output_dir: "{{ working_dir }}/tripleo-deploy"
+    tripleo_deploy_networks_file: "{{ network_data|default() }}"
     tripleo_deploy_environment_files: |-
       {% set env_files = [overcloud_templates_path + '/environments/standalone/standalone-tripleo.yaml',
                           working_dir + '/containers-prepare-parameters.yaml',
                           working_dir + '/standalone_parameters.yaml']%}
       {% if standalone_custom_env_files %}
       {% set env_files = env_files + standalone_custom_env_files %}
+      {% endif %}
+      {% if deployed_ceph is defined %}
+      {% set env_files = env_files + [deployed_ceph] %}
+      {% endif %}
+      {% if deployed_network is defined %}
+      {% set env_files = env_files + [overcloud_templates_path + '/environments/deployed-network-environment.yaml'] %}
+      {% set env_files = env_files + [deployed_network] %}
       {% endif %}
       {{ env_files }}
     # NOTE(mwhahaha): option no longer required as of V.

@@ -1,0 +1,129 @@
+---
+- block:
+    - name: Set facts for Ceph
+      set_fact:
+        stack: standalone
+        mon_ip: "{{ rfc1918c ~ subnet | string ~ '.1' }}"
+        ceph_network: "{{ rfc1918c ~ subnet | string ~ '.0/' ~ cidr | string }}"
+        network_data: "{{ working_dir }}/network_data.yaml"
+        deployed_network: "{{ working_dir }}/deployed_network.yaml"
+        osd_spec: "{{ working_dir }}/osd_spec.yaml"
+        initial_ceph_conf: "{{ working_dir }}/initial_ceph.conf"
+        ceph_spec: "{{ working_dir }}/ceph_spec.yaml"
+        containers_prep: "{{ working_dir }}/containers-prepare-parameters.yaml"
+        deployed_ceph: "{{ working_dir }}/deployed_ceph.yaml"
+    - name: Configure Storage Network
+      include_tasks: storage-network.yml
+      vars:
+        interface: ceph-dummy0
+        dummy_ip_cidr: "{{ mon_ip ~ '/' ~ cidr | string }}"
+        dummy_vip: "{{ rfc1918c ~ subnet | string ~ '.2' }}"
+        start: "{{ rfc1918c ~ subnet | string ~ '.4' }}"
+        end: "{{ rfc1918c ~ subnet | string ~ '.250' }}"
+  vars:
+    rfc1918c: '192.168.'
+    subnet: 42
+    cidr: 24
+
+- name: Update registries.conf to trust docker_registry_host with Ceph container
+  become: true
+  block:
+    - name: Add docker_registry_host location to registries.conf
+      ini_file:
+        path: /etc/containers/registries.conf
+        create: false
+        backup: false
+        section: '[registry]'
+        option: location
+        value: "'{{ docker_registry_host }}'"
+    - name: Set docker_registry_host as insecure in registries.conf
+      ini_file:
+        path: /etc/containers/registries.conf
+        create: false
+        backup: false
+        section: '[registry]'
+        option: insecure
+        value: 'true'
+
+- name: Create OSD spec file
+  copy:
+    dest: "{{ osd_spec }}"
+    content: |
+      data_devices:
+        paths:
+          - /dev/ceph_vg/ceph_lv_data
+
+- name: Create initial ceph.conf file
+  copy:
+    dest: "{{ initial_ceph_conf }}"
+    content: |
+      [global]
+      osd pool default size = 1
+      [mon]
+      mon_warn_on_pool_no_redundancy = false
+      [mgr]
+      mgr/cephadm/log_to_cluster_level = debug
+
+- name: Create Ceph Spec file via tripleo-operator-ansible
+  collections:
+    - tripleo.operator
+  include_role:
+    name: tripleo_ceph_spec
+  vars:
+    tripleo_ceph_spec_standalone: true
+    tripleo_ceph_spec_overwrite: true
+    tripleo_ceph_spec_mon_ip: "{{ mon_ip }}"
+    tripleo_ceph_spec_stack: "{{ stack }}"
+    tripleo_ceph_spec_file: "{{ ceph_spec }}"
+    tripleo_ceph_spec_osd_spec: "{{ osd_spec }}"
+    tripleo_ceph_spec_debug: true
+    tripleo_ceph_spec_generate_scripts: true
+
+- name: Create ceph-admin user via tripleo-operator-ansible
+  collections:
+    - tripleo.operator
+  include_role:
+    name: tripleo_ceph_user
+  vars:
+    tripleo_ceph_user_spec: "{{ ceph_spec }}"
+    tripleo_ceph_user_enable: true
+    tripleo_ceph_user_stack: "{{ stack }}"
+    tripleo_ceph_user_standalone: true
+    tripleo_ceph_user_debug: true
+    tripleo_ceph_user_generate_scripts: true
+
+- name: Confirm ceph-admin user can SSH to mon_ip before deploying Ceph
+  shell: "ssh -i {{ ssh_key }} {{ ssh_opt }} ceph-admin@{{ mon_ip }} 'echo good'"
+  register: result
+  until: result.stdout.find("good") != -1
+  retries: 12
+  delay: 10
+  vars:
+    ssh_key: /home/zuul/.ssh/ceph-admin-id_rsa
+    ssh_opt: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+
+- name: Deploy Ceph via tripleo-operator-ansible
+  collections:
+    - tripleo.operator
+  include_role:
+    name: tripleo_ceph_deploy
+  vars:
+    tripleo_ceph_deploy_standalone: true
+    tripleo_ceph_deploy_single_host_defaults: true
+    tripleo_ceph_deploy_skip_user_create: true
+    tripleo_ceph_deploy_skip_hosts_config: true
+    tripleo_ceph_deploy_skip_container_registry_config: true
+    tripleo_ceph_deploy_mon_ip: "{{ mon_ip }}"
+    tripleo_ceph_deploy_spec: "{{ ceph_spec }}"
+    tripleo_ceph_deploy_stack: "{{ stack }}"
+    tripleo_ceph_deploy_config: "{{ initial_ceph_conf }}"
+    tripleo_ceph_deploy_output: "{{ deployed_ceph }}"
+    tripleo_ceph_deploy_container_image_prepare: "{{ containers_prep }}"
+    tripleo_ceph_deploy_cephadm_extra_args: "--log-to-file --skip-mon-network"
+    tripleo_ceph_deploy_force: true
+    tripleo_ceph_deploy_become: true
+    tripleo_ceph_deploy_overwrite: true
+    tripleo_ceph_deploy_debug: true
+    tripleo_ceph_deploy_generate_scripts: true
+    tripleo_ceph_deploy_network_data: "{{ network_data }}"
+    tripleo_ceph_deploy_cluster_network_name: storage

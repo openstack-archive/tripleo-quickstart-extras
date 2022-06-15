@@ -1,0 +1,104 @@
+---
+- name: Look for dummy interface
+  become: true
+  command: ip link show "{{ interface }}"
+  register: ip_link_show
+  ignore_errors: true
+
+- name: Create dummy interface
+  become: true
+  command: ip link add "{{ interface }}" type dummy
+  when:
+    - ip_link_show.stdout_lines == []
+
+- name: Assign IP to dummy interface
+  become: true
+  command: ip addr add "{{ dummy_ip_cidr }}" dev "{{ interface }}"
+  when:
+    - ip_link_show.stdout_lines == []
+
+- name: Assign VIP to dummy interface
+  become: true
+  command: ip addr add "{{ dummy_vip }}/32" dev "{{ interface }}"
+  when:
+    - ip_link_show.stdout_lines == []
+
+- name: Bring up dummy interface
+  become: true
+  command: ip link set "{{ interface }}" up
+  when:
+    - ip_link_show.stdout_lines == []
+
+- name: Create network_data file
+  copy:
+    dest: "{{ network_data }}"
+    content: |
+      - name: Storage
+        mtu: 1350
+        vip: true
+        name_lower: storage
+        dns_domain: storage.mydomain.tld.
+        service_net_map_replace: storage
+        subnets:
+          storage_subnet:
+            ip_subnet: '{{ ceph_network }}'
+            allocation_pools: [{'start': '{{ start }}', 'end': '{{ end }}'}]
+
+- name: Create deployed_network environment file (with VIPs)
+  copy:
+    dest: "{{ deployed_network }}"
+    content: |
+      resource_registry:
+        OS::TripleO::Network::Ports::ControlPlaneVipPort: /usr/share/openstack-tripleo-heat-templates/network/ports/deployed_vip_ctlplane.yaml
+        OS::TripleO::Network::Ports::StorageVipPort: network/ports/deployed_vip_storage.yaml
+        OS::TripleO::Network: /usr/share/openstack-tripleo-heat-templates/network/deployed_networks.yaml
+      parameter_defaults:
+        NodePortMap:
+          standalone:
+            ctlplane:
+              ip_address: {{ standalone_ip | default('192.168.24.1') }}
+              ip_subnet: {{ standalone_ip | default('192.168.24.1') }}/{{ standalone_network_prefix | default('24') }}
+              ip_address_uri: {{ standalone_ip | default('192.168.24.1') }}
+            storage:
+              ip_address: {{ mon_ip }}
+              ip_subnet: {{ dummy_ip_cidr }}
+              ip_address_uri: {{ mon_ip }}
+        ControlPlaneVipData:
+          fixed_ips:
+          - ip_address: {{ standalone_ha_control_virtual_ip | default('192.168.24.3') }}
+          name: control_virtual_ip
+          network:
+            tags:
+            - {{ standalone_network | default('192.168.24') ~ '.0/' ~ standalone_network_prefix | default('24') | string }}
+          subnets:
+          - ip_version: 4
+        VipPortMap:
+          storage:
+            ip_address: {{ dummy_vip }}
+            ip_address_uri: {{ dummy_vip }}
+            ip_subnet: {{ dummy_vip ~ '/' ~ cidr | string }}
+        DeployedNetworkEnvironment:
+          net_attributes_map:
+            storage:
+              network:
+                dns_domain: storage.mydomain.tld.
+                mtu: 1350
+                name: storage
+                tags:
+                - tripleo_network_name=Storage
+                - tripleo_net_idx=0
+                - tripleo_service_net_map_replace=storage
+                - tripleo_vip=true
+              subnets:
+                storage_subnet:
+                  cidr: {{ ceph_network }}
+                  dns_nameservers: []
+                  gateway_ip: null
+                  host_routes: []
+                  ip_version: 4
+                  name: storage_subnet
+          net_cidr_map:
+            storage:
+            - {{ ceph_network }}
+          net_ip_version_map:
+            storage: 4
