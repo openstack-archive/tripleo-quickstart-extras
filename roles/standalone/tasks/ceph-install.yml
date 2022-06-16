@@ -102,6 +102,7 @@
     ssh_key: /home/zuul/.ssh/ceph-admin-id_rsa
     ssh_opt: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
+
 - name: Deploy Ceph via tripleo-operator-ansible
   collections:
     - tripleo.operator
@@ -127,3 +128,4 @@
     tripleo_ceph_deploy_generate_scripts: true
     tripleo_ceph_deploy_network_data: "{{ network_data }}"
     tripleo_ceph_deploy_cluster_network_name: storage
+    tripleo_ceph_deploy_container_namespace: "{{ (standalone_container_ceph_updates|bool) | ternary(docker_ceph_namespace, 'quay.rdoproject.org/tripleomastercentos9') }}"
