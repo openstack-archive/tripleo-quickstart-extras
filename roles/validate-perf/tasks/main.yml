@@ -20,7 +20,7 @@
         --nocolor
         --output /var/log/extra/{{ dstat_log_name }}
         {{ dstat_delay }}
-        > /dev/null &
+        >> /var/log/extra/dstat.txt &
     args:
       executable: /bin/bash
     async: 1
