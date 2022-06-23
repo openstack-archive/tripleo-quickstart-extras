@@ -1,5 +1,6 @@
 ---
 - project:
+    queue: tripleo
     templates:
       - tripleo-undercloud-jobs-pipeline
       - tripleo-multinode-container-full-pipeline
@@ -33,7 +34,6 @@
             files:
               - ^roles/repoclosure.*$
     gate:
-      queue: tripleo
       jobs:
         - openstack-tox-linters
         - openstack-tox-molecule:
