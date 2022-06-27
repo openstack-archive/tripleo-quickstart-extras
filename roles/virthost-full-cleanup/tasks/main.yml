@@ -68,7 +68,7 @@
     - name: destroy /run/user/ for stack
       shell: >
         rm -Rf /run/user/{{ item }}/libvirt
-      with_items: "{{ user_id.sdtout }}"
+      with_items: "{{ user_id.stdout }}"
 
     - name: destroy virbr0 network if present
       command: brctl delbr virbr0
