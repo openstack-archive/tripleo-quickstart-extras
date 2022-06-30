@@ -24,4 +24,8 @@ resulting YAML is consumed, whereas with JSON all strings are quoted.
 {% endif %}
 {% set _ = undercloud_parameter_defaults['parameter_defaults'].update({'MasqueradeNetworks': masquerade_nets }) %}
 {% endif %}
+{# TODO(cjeanner) remove this block once nftables is default #}
+{% if undercloud_firewall_engine is defined %}
+{% set _ = undercloud_parameter_defaults['parameter_defaults'].update({'FirewallEngine': undercloud_firewall_engine}) %}
+{% endif %}
 {{ undercloud_parameter_defaults | to_nice_json }}
