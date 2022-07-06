@@ -28,6 +28,14 @@
 - name: Update registries.conf to trust docker_registry_host with Ceph container
   become: true
   block:
+    - name: Remove v1 entries from registries.conf
+      ini_file:
+        path: /etc/containers/registries.conf
+        create: false
+        backup: false
+        section: "registries.{{ item }}"
+        state: absent
+      loop: ['search', 'insecure', 'block']
     - name: Add docker_registry_host location to registries.conf
       ini_file:
         path: /etc/containers/registries.conf
