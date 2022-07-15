@@ -165,7 +165,7 @@
   set_fact:
     gerrit_host: "{{ lookup('env', 'GERRIT_HOST') }}"
     zuul_changes: "{{ lookup('env', 'ZUUL_CHANGES') }}"
-    artg_change_list: "{{ artg_change_list|default([]) }}"
+    artg_change_list: "{{ artg_change_list|default(job.artg_change_list|default([])) }}"
     cacheable: true
 
 - name: Parse Jenkins changes
@@ -206,7 +206,7 @@
 
 - name: Cache artg_change_list if change list is prepared
   set_fact:
-    artg_change_list: "{{ artg_change_list_prep }}"
+    artg_change_list: "{{ artg_change_list|union(artg_change_list_prep) }}"
     cacheable: true
   when: artg_change_list_prep is defined
 
