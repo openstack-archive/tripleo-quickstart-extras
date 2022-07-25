@@ -139,7 +139,6 @@
 - name: update container custom ceph parameters, if required
   when:
     - custom_ceph_parameters|bool
-    - standalone_container_ceph_updates|bool
   replace:
     path: "{{ working_dir }}/containers-prepare-parameters.yaml"
     regexp: " {{ item.original }}: (.*)"
@@ -168,8 +167,8 @@
 # extra-common role.
 - name: update container custom ceph parameters for consumer job
   when:
-    - custom_ceph_parameters|bool
     - job.consumer_job|default(false)|bool
+    - not custom_ceph_parameters|bool
   replace:
     path: "{{ working_dir }}/containers-prepare-parameters.yaml"
     regexp: " {{ item.original }}: (.*)"
