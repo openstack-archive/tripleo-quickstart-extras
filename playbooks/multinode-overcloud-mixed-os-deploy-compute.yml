@@ -4,14 +4,6 @@
   gather_facts: false
   tags:
     - overcloud-prep-containers
-  pre_tasks:
-    #  TODO(marios): tidy this up use copy module & move to new play
-    - name: rename controller logfiles so we can keep them
-      shell: |
-        for file in containers-prepare-parameter.yaml overcloud_deploy.log overcloud_roles.yaml overcloud-topology-config.yaml overcloud-deploy.sh ; do
-          cp $file "ctrl_$file";
-        done
-      failed_when: false
   roles:
     - role: overcloud-prep-containers
       when: containerized_overcloud|bool
