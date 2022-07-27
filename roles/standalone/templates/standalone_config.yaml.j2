@@ -35,6 +35,11 @@ parameter_defaults:
   MasqueradeNetworks:
     {{ standalone_network }}.0/{{ standalone_network_prefix }}:
     - {{ standalone_network }}.0/{{ standalone_network_prefix }}
+# Set machine type if default is not supported on current OS
+# see https://bugzilla.redhat.com/show_bug.cgi?id=2110535
+{% if nova_hw_machine_type is defined and nova_hw_machine_type %}
+  NovaHWMachineType: {{ nova_hw_machine_type }}
+{% endif %}
   NeutronPublicInterface: {{ standalone_interface }}
 {% if standalone_neutron_bridge_mappings is defined and standalone_neutron_bridge_mappings %}
   NeutronBridgeMappings: {{ standalone_neutron_bridge_mappings }}

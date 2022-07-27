@@ -18,6 +18,11 @@ parameter_defaults:
 {% if release not in ['train', 'ussuri', 'victoria'] %}
   NovaLibvirtNumPciePorts: 12
 {% endif %}
+# Set machine type if default is not supported on current OS
+# see https://bugzilla.redhat.com/show_bug.cgi?id=2110535
+{% if nova_hw_machine_type is defined and nova_hw_machine_type %}
+  NovaHWMachineType: {{ nova_hw_machine_type }}
+{% endif %}
 
   DeployedServerPortMap:
 {% for subnode in groups['overcloud'] %}
