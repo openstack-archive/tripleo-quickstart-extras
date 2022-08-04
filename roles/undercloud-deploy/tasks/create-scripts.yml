@@ -13,6 +13,37 @@
     virthost_nameservers: "{{ virthost_nameservers_output.stdout_lines }}"
   when: nameserver_from_virthost|bool
 
+- name: Add custom rules needed in CI infra after switch to nftables.
+  when: release not in ['train', 'wallaby']
+  block:
+    - name: Find the default network on the undercloud node
+      set_fact:
+        source_ci_ip_address: "{{ ansible_default_ipv4.address }}/{{ ansible_default_ipv4.netmask }}"
+
+    - name: Convert to obtain the network address in CIDR notation format.
+      set_fact:
+        source_ci_network: "{{ source_ci_ip_address | ipaddr('network/prefix') }}"
+
+    - name: Set undercloud_network_environment_args to add custom CI rules for VXLAN support and console Streaming
+      set_fact:
+        undercloud_network_environment_args:
+          ExtraFirewallRules:
+            '020 Allow VXLan from CI infra network':
+              proto: "udp"
+              dport: 4789
+              source: "{{ source_ci_network }}"
+              state: []
+            '021 Allow OTV for vxlan from CI infra network':
+              proto: 'udp'
+              dport: 8472
+              source: "{{ source_ci_network }}"
+              state: []
+            '022 Allow CI console stream from CI infra network':
+              proto: 'tcp'
+              dport: 19885
+              source: "{{ source_ci_network }}"
+              state: []
+
 - when: undercloud_hieradata_override_file is defined
   block:
     - name: deprecation message
