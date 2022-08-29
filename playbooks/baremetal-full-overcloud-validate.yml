@@ -17,7 +17,7 @@
 
 # Execute sanity checks agsinst the overcloud deployment
 - name: setup dstat performance monitoring
-  hosts: all:!localhost:!127.0.0.2!undercloud
+  hosts: all:!localhost:!127.0.0.2:!undercloud:!virthost
   tags:
     - overcloud-validate
   roles:
