@@ -99,6 +99,22 @@
       - "tcib_python_version={{ (ansible_distribution_major_version|int < 9) | ternary ('3.6', '3.9') }}"
   when: release not in ['train', 'ussuri', 'victoria']
 
+- name: Add tcib extra config params
+  when:
+    - container_extra_config is defined
+    - release not in ['train', 'wallaby']
+  block:
+    - name: Generate config params
+      copy:
+        dest: "{{ ansible_user_dir }}/extra_config.yaml"
+        content: |
+          {{ container_extra_config | to_nice_yaml }}
+
+    - name: Set tcib config params
+      set_fact:
+        tcib_extra_config: "{{ ansible_user_dir }}/extra_config.yaml"
+
+
 - name: Build and push container images to the local registry
   collections:
     - tripleo.operator
@@ -119,6 +135,7 @@
     tripleo_container_image_build_base: "{{ containers_base_image }}"
     tripleo_container_image_build_excludes: "{{ exclude_containers[branch][container_exclude_distro]|default([]) }}"
     tripleo_container_image_build_tcib_extras: "{{ tcib_extras | default([]) }}"
+    tripleo_container_image_build_extra_config: "{{ tcib_extra_config | default('') }}"
     tripleo_container_image_build_distro: "{{ (ansible_distribution == 'RedHat') | ternary('rhel', 'centos') }}"
 
 - name: Pull and push non *tripleo* container images to local registry

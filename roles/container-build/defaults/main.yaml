@@ -33,3 +33,9 @@ containers_base_image: "{{ job.containers_base_image|default('ubi8') }}"
 container_registry_image: quay.io/tripleoci/registry:2
 container_registry_image_fallback: trunk.registry.rdoproject.org/ceph/registry:2
 container_exclude_distro: "{{ ansible_distribution|lower }}{{ ansible_distribution_major_version}}"
+# Extra config needs to be passed to tcib tool
+# https://docs.openstack.org/tripleo-ansible/latest/roles/role-tripleo_container_image_build.html#r-o-l-e-d-e-f-a-u-l-t-s
+container_extra_config:
+  tcib_args:
+    TRIPLEO_ANSIBLE_REQ: /usr/share/openstack-tripleo-common-containers/container-images/kolla/tripleo-ansible-ee/requirements.yaml
+    ANSIBLE_RUNNER_IMAGE: quay.io/tripleoansible/ansible-runner:stream9
