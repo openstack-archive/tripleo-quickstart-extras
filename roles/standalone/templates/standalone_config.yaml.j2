@@ -1,9 +1,9 @@
-# TODO: This is workaround for downstream osp17 job, TripleO now defaults to
-# libvirt's "modular daemons" but this required libvirt > 7.4, this is a
-# temporary workaround to move back to monolithic modular libvirt daemon till
-# we move RHOSP17 to RHEL9 which will provide  libvirt > 7.4.
+# TODO: This is workaround for downstream osp17 and osp17.1 job,
+# TripleO now defaults to libvirt's "modular daemons" but this
+# required libvirt > 7.4, this is a temporary workaround to move
+# back to monolithic modular libvirt daemon till RHOS17.1 on RHEL8 releases.
 # Details in https://bugzilla.redhat.com/show_bug.cgi?id=2021536
-{% if ansible_distribution in ["RedHat"] and osp_release|default('') == 'rhos-17' %}
+{% if ansible_distribution in ["RedHat"] and osp_release|default('') in ['rhos-17','rhos-17.1'] and ansible_distribution_major_version|int < 9 %}
 resource_registry:
   OS::TripleO::Services::NovaLibvirt: /usr/share/openstack-tripleo-heat-templates/deployment/deprecated/nova/nova-libvirt-container-puppet.yaml
 {% endif %}
