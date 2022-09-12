@@ -24,25 +24,36 @@
       set_fact:
         source_ci_network: "{{ source_ci_ip_address | ipaddr('network/prefix') }}"
 
-    - name: Set undercloud_network_environment_args to add custom CI rules for VXLAN support and console Streaming
+    - name: Set undercloud firewall rule as plain text first
+      vars:
+        ips: "{{ ((hostvars | json_query('*.ansible_host') |list) +
+              ansible_facts['all_ipv4_addresses'] +
+              ansible_facts['all_ipv6_addresses'] +
+              [source_ci_network]) | unique | ipaddr }}"
+      set_fact:
+        uc_firewall_rules: |
+          '022 Allow CI console stream from CI network {{ source_ci_network }}':
+            proto: 'tcp'
+            dport: 19885
+            source: "{{ source_ci_network }}"
+            state: []
+          {% for ip in ips %}
+          '020 Allow VXLan from {{ ip }}':
+            proto: "udp"
+            dport: 4789
+            source: "{{ ip }}"
+            state: []
+          '021 Allow OTV for vxlan from {{ ip }}':
+            proto: 'udp'
+            dport: 8472
+            source: "{{ ip }}"
+            state: []
+          {% endfor %}
+    - name: Set undercloud_network_environment_args to add custom CI rules for VXLAN, console Streaming and ssh accesses
       set_fact:
         undercloud_network_environment_args:
-          ExtraFirewallRules:
-            '020 Allow VXLan from CI infra network':
-              proto: "udp"
-              dport: 4789
-              source: "{{ source_ci_network }}"
-              state: []
-            '021 Allow OTV for vxlan from CI infra network':
-              proto: 'udp'
-              dport: 8472
-              source: "{{ source_ci_network }}"
-              state: []
-            '022 Allow CI console stream from CI infra network':
-              proto: 'tcp'
-              dport: 19885
-              source: "{{ source_ci_network }}"
-              state: []
+          ExtraFirewallRules: "{{ uc_firewall_rules | from_yaml }}"
+          SshFirewallAllowAll: true
 
 - when: undercloud_hieradata_override_file is defined
   block:
