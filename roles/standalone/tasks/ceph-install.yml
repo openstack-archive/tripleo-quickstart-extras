@@ -136,4 +136,4 @@
     tripleo_ceph_deploy_generate_scripts: true
     tripleo_ceph_deploy_network_data: "{{ network_data }}"
     tripleo_ceph_deploy_cluster_network_name: storage
-    tripleo_ceph_deploy_container_namespace: "{{ (standalone_container_ceph_updates|bool) | ternary(docker_ceph_namespace, 'quay.rdoproject.org/tripleo{{ release }}centos9') }}"
+    tripleo_ceph_deploy_container_namespace: "{{ (standalone_container_ceph_updates|bool) | ternary(docker_ceph_namespace, 'quay.rdoproject.org/tripleo' +  release + 'centos9') }}"
