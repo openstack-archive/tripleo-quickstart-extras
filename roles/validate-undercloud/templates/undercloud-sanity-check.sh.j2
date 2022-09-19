@@ -31,7 +31,7 @@ function citest {
     "$@"
     local status=$?
     if [ $status -ne 0 ]; then
-        echo "error with $1" >&2
+        echo "error with ${test_name}" >&2
         generate-subunit $(date +%s) 10 fail $test_name >> {{ working_dir }}/undercloud_sanity.subunit
         script_return_value=1
     else
