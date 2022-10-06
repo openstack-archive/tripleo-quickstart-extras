@@ -7,8 +7,8 @@
 resource_registry:
   OS::TripleO::Services::NovaLibvirt: /usr/share/openstack-tripleo-heat-templates/deployment/deprecated/nova/nova-libvirt-container-puppet.yaml
 {% endif %}
-{% set source_ci_ip_address =  "{{ ansible_default_ipv4.address }}/{{ ansible_default_ipv4.netmask }}" %}
-{% set source_ci_network = "{{ source_ci_ip_address | ipaddr('network/prefix') }}" %}
+{% set source_ci_ip_address = ansible_default_ipv4.address + "/" + ansible_default_ipv4.netmask %}
+{% set source_ci_network = source_ci_ip_address | ipaddr('network/prefix') %}
 {% set ssh_client = (lookup("ansible.builtin.env", "SSH_CLIENT", default='')|split(' '))[0] %}
 {% set console_access = (ssh_client == '') | ternary(source_ci_network, ssh_client) %}
 parameter_defaults:
