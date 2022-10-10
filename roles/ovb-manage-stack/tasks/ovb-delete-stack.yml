@@ -12,7 +12,7 @@
     mode: 0755
 
 - name: Remove stack
-  os_stack:
+  openstack.cloud.stack:
     name: "{{ stack_name }}"
     cloud: "{{ cloud_name }}"
     state: absent
