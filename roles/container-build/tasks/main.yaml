@@ -21,8 +21,8 @@
       shell: >-
         podman run
         -d
+        --network=host
         --name docker_registry
-        -p {{ content_provider_registry_port }}:{{ content_provider_registry_port }}
         -e REGISTRY_HTTP_ADDR="0.0.0.0:{{ content_provider_registry_port }}"
         -e REGISTRY_LOG_LEVEL=debug
         {{ container_registry_image }}
@@ -34,8 +34,8 @@
       shell: >-
         podman run
         -d
+        --network=host
         --name docker_registry
-        -p {{ content_provider_registry_port }}:{{ content_provider_registry_port }}
         -e REGISTRY_HTTP_ADDR="0.0.0.0:{{ content_provider_registry_port }}"
         -e REGISTRY_LOG_LEVEL=debug
         {{ container_registry_image_fallback }}
