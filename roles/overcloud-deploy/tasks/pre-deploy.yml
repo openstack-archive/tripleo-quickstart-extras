@@ -249,9 +249,11 @@
 - name: set the multinode args
   set_fact:
     multinode_args: >-
+      {% if release in ['train'] %}
       -e {{ overcloud_templates_path }}/environments/deployed-server-environment.yaml
+      {% endif %}
       --overcloud-ssh-user {{ undercloud_user }}
-      {% if not undercloud_enable_nova|bool %}
+      {% if not undercloud_enable_nova|bool and release in ['train', 'wallaby'] %}
       --deployed-server
       {% endif %}
   when: deploy_multinode|bool
@@ -266,9 +268,13 @@
   set_fact:
     hypervisor_wait: false
     multinode_args: >-
+      {% if release in ['train'] %}
       -e {{ overcloud_templates_path }}/environments/deployed-server-environment.yaml
+      {% endif %}
       -e {{ working_dir }}/overcloud-baremetal-deployed.yaml
+      {% if release in ['train', 'wallaby'] %}
       --deployed-server
+      {% endif %}
   when: baremetal_provision|bool
 
 - name: set the OVN args
