@@ -75,23 +75,10 @@ def _open_yaml(filename):
 
 def create_enable_file(certpem, keypem, source_dir, dest_dir, tht_release):
     # environments/ssl/* is preferred starting with pike
-    if tht_release in ['mitaka', 'newton', 'ocata']:
-        output_dict = _open_yaml("{}environments/enable-tls.yaml".format(source_dir))
-    else:
-        output_dict = _open_yaml("{}environments/ssl/enable-tls.yaml".format(source_dir))
-
-    if tht_release == 'mitaka':
-        for key in output_dict["parameter_defaults"]["EndpointMap"]:
-            if output_dict["parameter_defaults"]["EndpointMap"][key]["host"] == "CLOUDNAME":
-                output_dict["parameter_defaults"]["EndpointMap"][key]["host"] = "IP_ADDRESS"
+    output_dict = _open_yaml("{}environments/ssl/enable-tls.yaml".format(source_dir))
 
     output_dict["parameter_defaults"]["SSLCertificate"] = certpem
     output_dict["parameter_defaults"]["SSLKey"] = keypem
-
-    # NoteTLSData has been deprecated/removed in rocky and onwards
-    if tht_release in ['mitaka', 'newton', 'ocata', 'pike', 'queens']:
-        output_dict["resource_registry"]["OS::TripleO::NodeTLSData"] = \
-            "{}/puppet/extraconfig/tls/tls-cert-inject.yaml".format(source_dir)
 
     with open("{}enable-tls.yaml".format(dest_dir), "w") as stream:
         yaml.safe_dump(output_dict, stream, default_style='|')
@@ -99,14 +86,9 @@ def create_enable_file(certpem, keypem, source_dir, dest_dir, tht_release):
 
 def create_anchor_file(cert_ca_pem, source_dir, dest_dir, enable_tls_overcloud, tht_release):
 
-    if tht_release in ['mitaka', 'newton', 'ocata']:
-        output_dict = _open_yaml(
-            "{}environments/inject-trust-anchor.yaml".format(source_dir)
-        )
-    else:
-        output_dict = _open_yaml(
-            "{}environments/ssl/inject-trust-anchor.yaml".format(source_dir)
-        )
+    output_dict = _open_yaml(
+        "{}environments/ssl/inject-trust-anchor.yaml".format(source_dir)
+    )
 
     if enable_tls_overcloud:
         ca_map = {"overcloud-ca": {"content": cert_ca_pem}}

@@ -1,8 +1,2 @@
 ---
-# this was fixed in queens/master
-- include: adjust-mtu-dnsmasq-ironic.yml
-  when: release in ['newton', 'ocata', 'pike']
-
-- include: allow-traffic-for-controller.yml
-
 - include: install-upstream-ipxe.yml

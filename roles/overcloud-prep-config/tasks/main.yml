@@ -24,7 +24,7 @@
     - overcloud-scripts
 
 - when:
-    - release not in ['train', 'ussuri', 'victoria']
+    - release not in ['train']
     - job.environment_type is defined and job.environment_type == 'baremetal'
   block:
     - name: Create network_data.yaml according to baremetal environment

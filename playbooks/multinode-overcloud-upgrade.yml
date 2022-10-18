@@ -49,9 +49,6 @@
     - role: overcloud-prep-containers
       # This need the new repo in place.
       update_containers: true
-      # This enable us to run it even on non-containerized overcloud deployment
-      # ie, ffu upgrade where deployment is on newton.
-      containerized_overcloud: "{{ prep_container_upgrade_run|default(false) }}"
       # Do not overwrite the deployment log if any.
       overcloud_prep_containers_log: "upgrade_overcloud_prep_containers.log"
       overcloud_prep_containers_script: "upgrade_overcloud_prep_containers.sh"

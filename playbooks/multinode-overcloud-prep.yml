@@ -26,7 +26,6 @@
   roles:
     - role: overcloud-prep-containers
       use_overcloud_mixed_upgrade: "{{ mixed_upgrade|default(false) }}"
-      when: containerized_overcloud|bool
 
 - name: Ensure openvswitch is started and enabled
   hosts: overcloud

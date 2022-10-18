@@ -18,7 +18,7 @@ source {{ working_dir }}/stackrc
 ## * Deploy the overcloud!
 ## ::
 openstack overcloud deploy --stack {{ stack_name }} \
-  {% if release is not in ['newton', 'ocata', 'pike', 'queens'] %}--override-ansible-cfg {{ working_dir }}/custom_ansible.cfg{% endif %} \
+  --override-ansible-cfg {{ working_dir }}/custom_ansible.cfg \
   --templates {{overcloud_templates_path}} \
   {{ deploy_args | regex_replace("\n", " ") }} \
   "$@" && status_code=0 || status_code=$?
@@ -35,10 +35,8 @@ if ! openstack stack list | grep -q {{ stack_name }}; then
     # so check `openstack stack list` for a CREATE_COMPLETE or an UPDATE_COMPLETE
     # status.
 elif ! openstack stack list | grep -Eq '(CREATE|UPDATE)_COMPLETE'; then
-    {%if release not in ['mitaka', 'liberty'] %}
     # get the failures list
     openstack stack failures list {{ stack_name }} --long > {{ failed_deployment_list }} || true
-    {% endif %}
 
     # get any puppet related errors
     for failed in $(openstack stack resource list \
@@ -59,11 +57,9 @@ elif ! openstack stack list | grep -Eq '(CREATE|UPDATE)_COMPLETE'; then
     # We need to exit with 1 because of the above || true
     done
     exit 1
-{%if release in ['master'] %}
 elif ! openstack overcloud status --plan {{ stack_name }} | grep -Eq 'DEPLOY_SUCCESS'; then
     # NOTE(emilien) "openstack overcloud failures" was introduced in Rocky
     openstack overcloud failures --plan {{ stack_name }} >> {{ failed_deployment_list }} || true
-{% endif %}
 fi
 {% endif %}
 exit $status_code

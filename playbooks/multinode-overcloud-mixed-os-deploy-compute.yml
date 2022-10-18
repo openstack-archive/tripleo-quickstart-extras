@@ -6,7 +6,6 @@
     - overcloud-prep-containers
   roles:
     - role: overcloud-prep-containers
-      when: containerized_overcloud|bool
   tasks:
     - name: Resolve dlrn_hash for periodic jobs (no content provider)
       when: not job.consumer_job | default(false) | bool
