@@ -12,12 +12,6 @@ hieradata_override_file_t_h_t_undercloud: hieradata-overrides-t-h-t-undercloud.y
 step_introspect: false
 step_install_undercloud: true
 
-# The TripleO-UI is available on the undercloud
-# ssl or non-ssl access can be configured
-# Due to self signed certificates a user must grant permission to
-# https://<virthost>/keystone/v3/auth/tokens for ssl access to work.
-tripleo_ui_secure_access: false
-
 # Which libvirt session should we use?  Using `qemu://session` does
 # not require privileged access (but does require the setup performed by the
 # `environment/setup` role).
@@ -49,7 +43,6 @@ undercloud_enable_ironic_inspector: true
 undercloud_enable_monitoring: false
 undercloud_enable_telemetry: false
 undercloud_enable_tempest: false
-undercloud_enable_ui: true
 undercloud_enable_validations: true
 undercloud_ipxe_deploy: true
 undercloud_enable_swift_encryption: false
@@ -85,12 +78,7 @@ undercloud_selinux_enabled: >-
    false
    {%- endif -%}
 
-undercloud_container_cli: >-
-   {% if release not in ['newton', 'ocata', 'pike', 'queens'] -%}
-   podman
-   {% else %}
-   docker
-   {% endif %}
+undercloud_container_cli: podman
 
 # Define a custom t-h-t installation for UC
 undercloud_custom_tht_script: custom-tht-script.sh.j2

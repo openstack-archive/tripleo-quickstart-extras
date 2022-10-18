@@ -138,7 +138,6 @@
   when:
     - job.add_repos is defined
     - job.add_repos != []
-    - containerized_undercloud|bool or containerized_overcloud|bool
   block:
     - name: Create string of repos to update
       set_fact:
@@ -173,9 +172,7 @@
       when: add_repos_update|length > 0
 
 - name: Create containers-prepare-parameter.yaml
-  when: containerized_undercloud|bool or containerized_overcloud|bool
   block:
-
     - name: Write containers-prepare-parameter.yaml
       template:
         src: containers-prepare-parameter.yaml.j2
