@@ -65,9 +65,7 @@ virtualenv --system-site-packages {{ working_dir }}/tempest_git/.venv
 {% endfor %}
 
 # Install python-tempestconf
-{% if release != 'newton'%}
 {{ working_dir }}/tempest_git/tools/with_venv.sh pip install {{ working_dir }}/tempestconf_git
-{% endif %}
 {% endif %}
 
 {% if tempest_format == "container" %}
@@ -120,14 +118,10 @@ export TEMPESTCONF="{{ tempestconf }}"
 {% if tempest_overcloud|bool or tempest_os_cloud != '' %}
 # Get public net id
 
-{% if release == 'newton' %}
-public_net_id=$(neutron net-show {{ public_net_name }} -f value -c id)
-{% else %}
 {% if ironic_overcloud|default(false)|bool %}
 public_net_id=$(openstack network show provisioning -f value -c id)
 {% else %}
 public_net_id=$(openstack network show {{ public_net_name }} -f value -c id)
-{% endif %}
 {% endif %}
 {% endif %}
 
@@ -136,16 +130,11 @@ region_name=${OS_REGION_NAME:-'regionOne'}
 {% if not tempest_overcloud|bool %}
 # query the endpoint if not set (e.g. clouds.yaml)
 export OS_AUTH_URL=${OS_AUTH_URL:-$(openstack endpoint list --service=identity --interface=public -c URL -f value)}
-{% if release not in ['newton', 'ocata'] %}
 # set the itentity api version if not set (e.g. clouds.yaml)
 export OS_IDENTITY_API_VERSION=${OS_IDENTITY_API_VERSION:-3}
 # OS_AUTH_URL does not contains identity api version in stackrc from
 # Pike onwards.
 export OS_AUTH_URL="$OS_AUTH_URL/v$OS_IDENTITY_API_VERSION"
-{% elif release == 'pike' %}
-# Use Identity version v2.0 for pike
-export OS_AUTH_URL="$OS_AUTH_URL/v2.0"
-{% endif %}
 {% endif %}
 # Generate Tempest Config file using python-tempestconf
 # Notice aodh_plugin will be set to False if telemetry service is disabled
@@ -172,24 +161,8 @@ $TEMPESTCONF --out etc/tempest.conf \
   DEFAULT.log_file {{ tempest_log_file }} \
   {% endif %}
   identity.region $region_name \
-  {% if release in ['newton', 'ocata', 'pike'] %}
-  identity.uri $OS_AUTH_URL \
-  identity.admin_password $OS_PASSWORD \
-  identity.admin_username $OS_USERNAME \
-  identity.disable_ssl_certificate_validation true \
-  compute.allow_tenant_isolation true \
-  scenario.img_file {{ tempest_test_image_name }} \
-  {% else %}
   auth.use_dynamic_credentials true \
   network-feature-enabled.port_security true \
-  {% endif %}
-  {% if release in ['queens'] %}
-  compute-feature-enabled.scheduler_available_filters RetryFilter,AvailabilityZoneFilter,ComputeFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,ServerGroupAntiAffinityFilter,ServerGroupAffinityFilter,PciPassthroughFilter \
-  {% endif %}
-  {% if release in ['newton', 'ocata', 'pike', 'queens'] %}
-  compute-feature-enabled.attach_encrypted_volume False \
-  compute-feature-enabled.console_output true \
-  {% endif %}
   network.tenant_network_cidr {{ tenant_network_cidr }} \
   compute.build_timeout 500 \
   network.build_timeout 500 \

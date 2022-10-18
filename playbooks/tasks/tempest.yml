@@ -79,64 +79,12 @@
         python-virtualenv
         {% endif %}
 
-- name: Set the rc file
-  set_fact:
-    rc_file: "{{ (tempest_cloud_name in ['undercloud']) | ternary('stackrc', 'overcloudrc') }}"
-  when: release in ['queens', 'stein']
-
   # FIXME(chandankumar): centos9 https://bugs.launchpad.net/tripleo/+bug/1953032/comments/5
   # TODO(marios): centos8 https://bugs.launchpad.net/tripleo/+bug/1976247
 - name: Disable stackviz for CentOS Stream 9 and 8
   set_fact:
     tempest_run_stackviz: false
   when: ansible_distribution_major_version is version('8', '>=')
-
-- name: Create clouds.yaml if it doesn't exist
-  shell: |
-    # queens is returning //v3 so we replace with /v3
-    sed -i 's/\/\/v3/\/v3/g' {{ ansible_user_dir }}/{{ rc_file }}
-    source {{ ansible_user_dir }}/{{ rc_file }}
-    mkdir -p {{ ansible_user_dir }}/.config/openstack
-    cat <<EOF>>{{ ansible_user_dir }}/.config/openstack/clouds.yaml
-    clouds:
-      {{ tempest_cloud_name }}:
-          identity_api_version: $OS_IDENTITY_API_VERSION
-          region_name: regionOne
-          auth:
-            auth_url: $OS_AUTH_URL
-            password: $OS_PASSWORD
-            username: $OS_USERNAME
-            user_domain_name: Default
-            project_domain_name: Default
-            project_name: $OS_PROJECT_NAME
-    EOF
-  when:
-    - release in ['queens', 'stein']
-    - not tempest_cloud_name in ['standalone']
-
-# Ansible requires openstacksdk>=0.12 do the resource setup, however
-# queens upper-constraint has openstacksdk==0.11.36, so we need to
-# implement a custom venv with the right openstacksdk to make it work
-- name: Queens specific settings and tasks
-  when: release in ['queens']
-  vars:
-    sdk_venv_path: "{{ ansible_user_dir }}/.sdk"
-  block:
-    - name: Set tempest_service_setup_host_python_interpreter
-      set_fact:
-        tempest_service_setup_host_python_interpreter: "{{ sdk_venv_path }}/bin/python"
-
-    - name: Prepare openstacksdk venv
-      import_role:
-        name: "python_venv_build"
-      vars:
-        venv_python_executable: "{{ python_cmd }}"
-        venv_build_constraints:
-          - "--constraint https://releases.openstack.org/constraints/upper/rocky"
-        venv_install_destination_path: "{{ sdk_venv_path }}"
-        venv_pip_packages:
-          - 'openstacksdk'
-        venv_wheel_build_enable: false
 
 # This will execute os_tempest
 - name: Execute os_tempest
@@ -188,9 +136,8 @@
         tempest_public_subnet_cidr: '{{ tempest_cidr }}'
         tempest_public_subnet_gateway_ip: '{{ tempest_cidr|nthhost(1) }}'
         tempest_public_subnet_allocation_pools: '{{ tempest_cidr|nthhost(150) ~ "-" ~ tempest_cidr|nthhost(200) }}'
-        tempest_private_net_seg_id: "{{ (release in ['queens']) | ternary('', omit) }}"
         tempest_network_ping_gateway: "{{ tempest_ping_router|default(true)|bool }}"
-        tempest_private_net_provider_type: "{{ (release in ['queens']) | ternary('vlan', 'geneve') }}"
+        tempest_private_net_provider_type: 'geneve'
         tempest_private_net_create: true
         tempest_router_create: true
       when: tempest_cidr is defined

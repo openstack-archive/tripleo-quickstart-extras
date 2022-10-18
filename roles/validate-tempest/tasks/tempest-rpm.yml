@@ -1,22 +1,4 @@
 ---
-- name: Install openstack services tempest plugin for newton
-  package:
-    name:
-      - python-ceilometer-tests
-      - python-zaqar-tests
-      - python-ironic-inspector-tests
-      - python-gnocchi-tests
-      - python-aodh-tests
-      - python-mistral-tests
-      - python-heat-tests
-      - python-keystone-tests
-      - python-ironic-tests
-      - python-neutron-tests
-      - python-cinder-tests
-    state: present
-  become: true
-  when: release == 'newton'
-
 - name: Install openstack services tempest plugins
   # noqa 403
   package:
@@ -39,12 +21,11 @@
     name: "{{ python_package_prefix }}-tempestconf"
     state: present
   become: true
-  when: release != 'newton'
 
 - name: Set tempest init command
   set_fact:
-    tempest_init: "{% if release == 'newton' %}/usr/share/openstack-tempest-*/tools/configure-tempest-directory{% else %}tempest init {{ tempest_dir }}{% endif %}"
+    tempest_init: "tempest init {{ tempest_dir }}"
 
 - name: Set tempestconf call
   set_fact:
-    tempestconf: "{% if release == 'newton' %}{{ tempest_dir }}/tools/config_tempest.py{% else %}/usr/bin/discover-tempest-config{% endif %}"
+    tempestconf: "/usr/bin/discover-tempest-config"

@@ -1,38 +1,3 @@
-{% if release == 'newton' %}
-
-for i in $(neutron floatingip-list -c id -f value)
-do
-    neutron floatingip-disassociate $i
-    neutron floatingip-delete $i
-done
-for i in $(neutron router-list -c id -f value); do neutron router-gateway-clear $i; done
-for r in $(neutron router-list -c id -f value); do
-    for p in $(neutron router-port-list $r -c id -f value); do
-        neutron router-interface-delete $r port=$p || true
-    done
-done
-for i in $(neutron router-list -c id -f value); do neutron router-delete $i; done
-for i in $(neutron port-list -c id -f value); do neutron port-delete $i; done
-for i in $(neutron net-list -c id -f value); do neutron net-delete $i; done
-
-neutron net-create {{ public_net_name }} --router:external=True \
-{% if public_physical_network != '' %}
-    --provider:network_type {{ public_network_type }} \
-    {% if public_segmentation_id != '' %}
-    --provider:segmentation_id {{ public_segmentation_id }} \
-{% endif %}
-    --provider:physical_network {{ public_physical_network }}
-{% endif %}
-
-neutron subnet-create --name ext-subnet \
-    --allocation-pool \
-    start={{ public_net_pool_start }},end={{ public_net_pool_end }} \
-    --disable-dhcp \
-    --gateway {{ public_net_gateway }} \
-{{ public_net_name }} {{ floating_ip_cidr }}
-
-{% else %}
-
 for i in $(openstack floating ip list -c ID -f value)
 do
     openstack floating ip unset --port $i
@@ -95,5 +60,4 @@ openstack subnet create ext-subnet \
     --gateway {{ public_net_gateway }} \
     --network {{ public_net_name }} \
     --subnet-range {{ floating_ip_cidr }}
-{% endif %}
 {% endif %}

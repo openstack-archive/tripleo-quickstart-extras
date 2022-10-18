@@ -26,9 +26,9 @@ $TEMPESTCLI list-plugins
 $TEMPESTCLI cleanup --init-saved-state
 {% endif %}
 
-{% if release in ["newton", "ocata", "pike"] %} $OSTESTR {% else %} $TEMPESTCLI run {% endif %}{% if test_white_regex != '' %} --regex '({{ test_white_regex }})' {% endif %}
+$TEMPESTCLI run {% if test_white_regex != '' %} --regex '({{ test_white_regex }})' {% endif %}
 {% if tempest_whitelist|length > 0 %} --whitelist_file=$TEMPESTDATA/{{ tempest_whitelist_file }} {% endif %}
-{% if release not in ["newton", "ocata", "pike"] %} {% if test_black_regex|length > 0 %} --black-regex='{{ test_black_regex|join('|') }}'{% endif %} {% endif %}
+{% if test_black_regex|length > 0 %} --black-regex='{{ test_black_regex|join('|') }}'{% endif %}
 {% if skip_file_src != '' %} --blacklist_file=$TEMPESTDATA/{{ skip_file }} {% endif %}
 {% if tempest_workers is defined %} --concurrency {{ tempest_workers }} {% endif %}
 {% if tempest_until_failure|bool %} --until-failure {% endif %}
@@ -72,11 +72,7 @@ sudo cp \
 sudo cp -Rf {{ working_dir }}/.config $TEMPEST_HOST_DATA
 {% endif %}
 
-{% if release not in ['newton', 'ocata', 'pike', 'queens'] %}
 export CONTAINER_BINARY='podman'
-{% else %}
-export CONTAINER_BINARY='docker'
-{% endif %}
 
 sudo $CONTAINER_BINARY pull {{ tempest_container_registry }}/{{ tempest_container_namespace }}:{{ tempest_container_tag }}
 
