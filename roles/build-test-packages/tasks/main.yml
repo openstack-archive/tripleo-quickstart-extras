@@ -88,13 +88,15 @@
         state: latest
         extra_args: --upgrade
 
+    # FIXME(Chandan): Install rdopkg-1.4.0 as latest one is
+    # breaking the CI due to
+    # https://bugs.launchpad.net/tripleo/+bug/1993343
     - name: Pip install rdopkg
       # noqa 403
       pip:
-        name: rdopkg
+        name: rdopkg==1.4.0
         virtualenv: "{{ build_repo_dir }}/dlrn-venv"
         virtualenv_command: "/usr/bin/{{ python_cmd }} -m venv"
-        state: latest
       when: not dlrn_pre_installed|bool
 
     - name: Pip install DLRN
