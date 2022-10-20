@@ -1,0 +1,6 @@
+---
+- name: Deploy Standalone
+  include_role:
+    name: standalone
+
+- import_tasks: generate_tripleo_standalone_vars.yml

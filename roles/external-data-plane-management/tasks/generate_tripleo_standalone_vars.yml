@@ -1,0 +1,20 @@
+---
+# Playbook to generate Tripleo Standalone var file
+- name: Find config_download directory
+  find:
+    path: "{{ config_download_dir }}"
+    patterns: 'standalone-ansible-*'
+    recurse: false
+    file_type: directory
+  register: dir_path
+
+- name: set fact for config_download_dir path
+  set_fact:
+    config_download_path: "{{ dir_path.files[0].path }}"
+
+- name: Generate Tripleo Standalone var file
+  shell: |
+    python3 {{ tripleo_standalone_vars }} -c {{ config_download_path }} \
+    -r {{ role_type }}
+  args:
+    chdir: "/home/{{ ansible_user }}"

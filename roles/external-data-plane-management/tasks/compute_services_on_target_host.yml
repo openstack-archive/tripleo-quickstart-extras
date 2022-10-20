@@ -1,0 +1,61 @@
+---
+# It contains following tasks:
+# - Set hostname for target node
+# - Run repo-setup role to enable specific release files
+# - Build depends-on changes using build-test-packages and enable gating repo
+#   to install built packages from gating repo
+# - Install tripleo-ansible and its required dependencies
+# - Copy standalone env vars to subnode-1
+# - Change localhost to target hostname
+# - Deploy compute services.
+
+- name: Install Required packages
+  become: true
+  package:
+    name:
+      - ansible-collection-containers-podman
+      - python3-tenacity
+      - tripleo-ansible
+      - ansible-role-chrony
+    state: present
+
+- name: Copy 99 standalone var from controller to compute node
+  copy:
+    src: "/home/{{ ansible_user }}/99-standalone-vars"
+    dest: "/usr/share/ansible/tripleo-inventory/99-standalone-vars"
+  become: true
+  when: copy_inventory | default('false') | bool
+
+- name: Change localhost name to target host
+  become: true
+  lineinfile:
+    path: "/usr/share/ansible/tripleo-inventory/02-computes"
+    search_string: 'localhost:'
+    # 4 spaces is added to place at proper hostname position
+    # TODO(chkumar): Explore inifile module to manipulate yaml
+    # file later.
+    line: "    {{ target_host }}:"
+
+- name: Rename the host_vars file to target host
+  become: true
+  copy:
+    src: "/usr/share/ansible/tripleo-inventory/host_vars/localhost"
+    dest: "/usr/share/ansible/tripleo-inventory/host_vars/{{ target_host }}"
+
+- name: Remove the old file
+  become: true
+  file:
+    path: "/usr/share/ansible/tripleo-inventory/host_vars/localhost"
+    state: absent
+
+- name: Generate deploy_compute.sh script
+  template:
+    src: deploy_compute.sh.j2
+    dest: "{{ working_dir }}/deploy_compute.sh"
+    mode: 0755
+
+- name: Run deploy_compute.sh script
+  shell: >
+    set -o pipefail &&
+    {{ working_dir }}/deploy_compute.sh
+    2>&1 > {{ working_dir }}/deploy_compute.log

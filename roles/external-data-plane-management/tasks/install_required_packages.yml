@@ -1,0 +1,10 @@
+---
+- name: Install Required packages
+  become: true
+  package:
+    name:
+      - ansible-collection-containers-podman
+      - python3-tenacity
+      - tripleo-ansible
+      - ansible-role-chrony
+    state: present

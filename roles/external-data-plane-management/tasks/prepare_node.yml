@@ -1,0 +1,11 @@
+---
+# A set of tasks for bootstrapping the node
+- name: Add the  nodes to the generated inventory
+  vars:
+    inventory: multinode
+  include_role:
+    name: tripleo-inventory
+
+- name: Prepare the node for installation
+  include_role:
+    name: undercloud-setup

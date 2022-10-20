@@ -1,0 +1,34 @@
+---
+# This playbook does:
+# - On undercloud node
+#   + it bootstrap the node and deploy standalone
+#   + Generate 99 standalone vars and copy it to
+#     subnode-1
+#
+- hosts: undercloud
+  gather_facts: true
+  tags:
+    - standalone
+  vars:
+    deploy_standalone: true
+  tasks:
+    - name: Run External Data Plane management role
+      include_role:
+        name: external-data-plane-management
+
+# On subnode-1
+# It bootstrap the node and install required packages
+# copy 99 standalone vars to tripleo inventory
+# Deploy compute services
+- hosts: subnode-1
+  gather_facts: true
+  tags:
+    - standalone
+  vars:
+    deploy_standalone: false
+    copy_inventory: true
+    target_host: subnode-1
+  tasks:
+    - name: Run External Data Plane management role
+      include_role:
+        name: external-data-plane-management
