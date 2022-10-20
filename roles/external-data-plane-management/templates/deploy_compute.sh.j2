@@ -8,6 +8,7 @@ sudo ansible-playbook -i /usr/share/ansible/tripleo-inventory \
     -e neutron_public_interface_name={{ neutron_public_interface_name }} \
     -e tripleo_network_config_template={{ tripleo_network_config_template }} \
     -e '{ctlplane_dns_nameservers: {{ ctlplane_dns_nameservers }}}' \
+    -e '{tripleo_container_registry_insecure_registries: {{ tripleo_container_registry_insecure_registries }}}' \
     -e '{tripleo_hosts_entries_overcloud_hosts_entries: {{ tripleo_hosts_entries_overcloud_hosts_entries|to_json }}}' \
     {% if not copy_inventory | bool %}
     -e '{dns_search_domains: {{ dns_search_domains }}}' \
