@@ -35,14 +35,6 @@
        when: run_sanity_checks|default(false)|bool}
 
 # Validate the deployment
-- name: validate the overcloud
-  hosts: undercloud
-  tags:
-    - overcloud-validate
-  gather_facts: false
-  roles:
-    - {role: validate-simple, when: test_ping|bool}
-
 - name: Execute netstat for port audit
   hosts: overcloud
   vars:

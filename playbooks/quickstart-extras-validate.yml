@@ -9,14 +9,6 @@
        when: validate_performance|bool and use_os_tempest | default(true) | bool}
   ignore_errors: true
 
-- name: validate the overcloud
-  hosts: undercloud
-  tags:
-    - overcloud-validate
-  gather_facts: false
-  roles:
-    - {role: validate-simple, when: test_ping|bool}
-
 # Execute tempest against the overcloud deployment
 - name: Validate the deployment
   hosts: undercloud

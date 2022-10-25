@@ -12,10 +12,3 @@
     inventory: all
   roles:
     - tripleo-inventory
-
-# Validate the overcloud
-- name: Validate the overcloud post-delete-node
-  hosts: undercloud
-  gather_facts: false
-  roles:
-    - validate-simple

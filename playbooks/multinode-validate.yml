@@ -16,7 +16,6 @@
     - undercloud-validate
   gather_facts: false
   roles:
-    - {role: validate-simple, when: test_ping|bool}
     - {role: validate-services, when: validate_services|default(false)|bool}
 
 - name: Validate the deployment
