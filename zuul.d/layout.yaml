@@ -6,6 +6,7 @@
       - tripleo-multinode-container-full-pipeline
       - tripleo-multinode-branchful
       - release-notes-jobs-python3
+      - tripleo-external-compute-deployment-pipeline
       - tripleo-standalone-scenarios-pipeline
       - tripleo-standalone-multinode-ipa-pipeline
       - tripleo-upgrades-master-pipeline
