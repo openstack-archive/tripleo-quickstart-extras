@@ -14,13 +14,20 @@ role_type: "Standalone"
 copy_inventory: false
 target_host: undercloud
 
+timestamper_cmd: >-
+    | awk '{ print strftime("%Y-%m-%d %H:%M:%S |"), $0; fflush(); }'
+
 # Vars required for compute service deployment
 tripleo_network_config_template: templates/ci/multinode.j2
 neutron_public_interface_name: eth0
 tripleo_selinux_mode: permissive
 tripleo_hosts_entries_overcloud_hosts_entries:
   - 192.168.24.1 standalone.ctlplane.localdomain standalone.ctlplane
-ctlplane_ip: 192.168.24.1
+tripleo_container_registry_insecure_registries:
+  - "{{ docker_registry_host }}"
+
+# VIP of the standalone
+ctlplane_ip: 192.168.24.3
 
 # Vars needed when allinone compute deployment is done
 ctlplane_dns_nameservers:
