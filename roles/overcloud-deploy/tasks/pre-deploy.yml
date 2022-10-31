@@ -111,14 +111,6 @@
   when:
     - ntp_server|default('')
 
-- name: enable pacemaker
-  set_fact:
-    pacemaker_args: >-
-      -e {{ overcloud_templates_path }}/environments/puppet-pacemaker.yaml
-  when:
-    - enable_pacemaker|bool
-    - not containerized_overcloud|bool
-
 - name: use resource registry
   set_fact:
     resource_registry_nic_configs_args: >-
@@ -164,22 +156,13 @@
     - overcloud_nodes[0] is defined
     - overcloud_nodes[0].hostnamemap_override is defined
 
-- name: set set overcloud SSL args for releases after mitaka
+- name: set set overcloud SSL args
   set_fact:
     ssl_overcloud_args: >-
       -e {{ working_dir }}/enable-tls.yaml
       -e {{ overcloud_templates_path }}/environments/ssl/tls-endpoints-public-ip.yaml
   when:
     - ssl_overcloud|bool
-    - release not in ['mitaka', 'liberty']
-
-- name: set overcloud SSL args fact for mitaka/liberty
-  set_fact:
-    ssl_overcloud_args: >-
-      -e {{ working_dir }}/enable-tls.yaml
-  when:
-    - ssl_overcloud|bool
-    - release in ['mitaka', 'liberty']
 
 - name: set CA injection arg
   set_fact:
@@ -203,7 +186,6 @@
         -e {{ overcloud_templates_path }}/environments/ssl/enable-memcached-tls.yaml
   when:
     - enable_tls_everywhere|bool and undercloud_enable_novajoin|bool
-    - release not in ['mitaka', 'liberty', 'newton']
 
 - name: set TLS everywhere fact with tripleo-ipa
   set_fact:
@@ -215,12 +197,6 @@
         -e {{ working_dir }}/tls-everywhere.yaml
   when:
     - enable_tls_everywhere|bool and not undercloud_enable_novajoin|bool
-    - release not in ['mitaka', 'liberty', 'newton']
-
-- name: set validation_args fact for mitaka/liberty
-  set_fact:
-    validation_args: "--validation-errors-fatal --validation-warnings-fatal"
-  when: release in ['mitaka', 'liberty']
 
 - name: disable L3 HA
   set_fact:
@@ -236,28 +212,16 @@
     workers_args: >-
       -e {{ overcloud_templates_path }}/environments/low-memory-usage.yaml
   when:
-    - release not in ['mitaka', 'liberty']
     - set_overcloud_workers|bool
 
 - name: set container_args fact
   set_fact:
     container_args: >-
-      {% if release in ['pike', 'queens'] %}
-      -e {{ overcloud_templates_path }}/environments/docker.yaml
-      {% endif %}
       {% if enable_pacemaker|bool or osp_release is defined%}
       -e {{ overcloud_templates_path }}/environments/docker-ha.yaml
       {% endif %}
-      {% if release in ['ocata', 'pike', 'queens'] %}
-      -e {{ working_dir }}/containers-default-parameters.yaml
-      {% else %}
       -e {{ working_dir }}/containers-prepare-parameter.yaml
-      {% endif %}
-      {% if release not in ['pike', 'queens'] %}
       -e {{ overcloud_templates_path }}/environments/{{ overcloud_container_cli }}.yaml
-      {% endif %}
-  when:
-    - containerized_overcloud|bool
 
 - name: set composable roles args fact
   set_fact:
@@ -286,9 +250,6 @@
   set_fact:
     multinode_args: >-
       -e {{ overcloud_templates_path }}/environments/deployed-server-environment.yaml
-      {% if release in ['queens', 'stein'] and overcloud_release|default('') in ['queens', 'stein'] %}
-      -e {{ overcloud_templates_path }}/environments/deployed-server-bootstrap-environment-centos.yaml
-      {% endif %}
       --overcloud-ssh-user {{ undercloud_user }}
       {% if not undercloud_enable_nova|bool %}
       --deployed-server
@@ -306,9 +267,6 @@
     hypervisor_wait: false
     multinode_args: >-
       -e {{ overcloud_templates_path }}/environments/deployed-server-environment.yaml
-      {% if release in ['queens', 'stein'] and overcloud_release|default('') in ['queens', 'stein'] %}
-      -e {{ overcloud_templates_path }}/environments/deployed-server-bootstrap-environment-centos.yaml
-      {% endif %}
       -e {{ working_dir }}/overcloud-baremetal-deployed.yaml
       --deployed-server
   when: baremetal_provision|bool

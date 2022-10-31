@@ -48,7 +48,7 @@
     network_config:
       {{ network_config | to_nice_yaml(indent=2) | indent(6)}}
 {% endif %}
-{% if growvols_args and release not in ['train','ussuri','victoria'] %}
+{% if growvols_args and release not in ['train'] %}
   ansible_playbooks:
   - playbook: /usr/share/ansible/tripleo-playbooks/cli-overcloud-node-growvols.yaml
     extra_vars:

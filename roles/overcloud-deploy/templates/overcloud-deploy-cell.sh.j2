@@ -30,7 +30,7 @@ openstack overcloud roles generate --roles-path \
 
 ## * Deploy the cell
 ## ::
-openstack overcloud deploy {% if release is not in ['newton', 'ocata', 'pike', 'queens'] %}--override-ansible-cfg {{ working_dir }}/custom_ansible.cfg{% endif %} \
+openstack overcloud deploy --override-ansible-cfg {{ working_dir }}/custom_ansible.cfg \
     --templates {{overcloud_templates_path}} \
     {{ deploy_args | regex_replace("\n", " ") }} \
     {{ cell_deploy_args | regex_replace("\n", " ") }} \
@@ -46,10 +46,8 @@ if ! openstack stack list | grep -q {{ cell_name }}; then
     # so check `openstack stack list` for a CREATE_COMPLETE or an UPDATE_COMPLETE
     # status.
 elif ! openstack stack list | grep {{ cell_name }} | grep -Eq '(CREATE|UPDATE)_COMPLETE'; then
-    {%if release not in ['mitaka', 'liberty'] %}
     # get the failures list
     openstack stack failures list overcloud --long > {{ failed_cell_deployment_list }} || true
-    {% endif %}
 
     # get any puppet related errors
     for failed in $(openstack stack resource list \
@@ -70,12 +68,10 @@ elif ! openstack stack list | grep {{ cell_name }} | grep -Eq '(CREATE|UPDATE)_C
     # We need to exit with 1 because of the above || true
     done
     exit 1
-{%if release in ['master'] %}
 elif ! openstack overcloud status --stack {{ cell_name }}| grep -Eq 'DEPLOY_SUCCESS'; then
     # NOTE(emilien) "openstack overcloud failures" was introduced in Rocky
     openstack overcloud failures --stack {{ cell_name }}>> {{ failed_cell_deployment_list }} || true
     exit 1
-{% endif %}
 fi
 
 # Create inventory files for overcloud and cell stack

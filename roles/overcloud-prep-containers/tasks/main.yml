@@ -12,13 +12,3 @@
     python_cmd: "python{{ ansible_python.version.major }}"
     cacheable: true
   when: python_cmd is not defined
-
-- include: create-scripts.yml
-  tags:
-    - undercloud-scripts
-  when: release in ['ocata', 'pike', 'queens']
-
-- include: overcloud-prep-containers.yml
-  tags:
-    - containers
-  when: release in ['ocata', 'pike', 'queens']

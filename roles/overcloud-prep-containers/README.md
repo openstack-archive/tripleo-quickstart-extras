@@ -25,7 +25,6 @@ overcloud-prep-containers variables
 --------------
 
 * working_dir: /home/stack
-* containerized_overcloud: false
 * overcloud_prep_containers_script: overcloud-prep-containers.sh.j2
 * overcloud_prep_containers_log: overcloud_prep_containers.log
 * undercloud_network_cidr: 192.168.24.0/24

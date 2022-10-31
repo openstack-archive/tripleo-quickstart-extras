@@ -69,5 +69,4 @@
     dest: "{{ working_dir }}/inject-ara.sh"
     mode: 0755
   when:
-    - release not in ['newton', 'ocata', 'pike', 'queens']
     - undercloud_enable_mistral|bool

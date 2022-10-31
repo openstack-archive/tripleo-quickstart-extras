@@ -23,4 +23,3 @@
     set -o pipefail &&
     {{ working_dir }}/{{ overcloud_prep_containers_script }} 2>&1 {{ timestamper_cmd }} >
     {{ overcloud_prep_containers_log }}
-  when: containerized_overcloud|bool

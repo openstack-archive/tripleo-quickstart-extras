@@ -6,7 +6,7 @@ An Ansible role for scaling and deleting nodes from an overcloud.
 Requirements
 ------------
 
-This role assumes it will be executed against a host on which a Liberty, Mitaka, Newton, or Ocata under/overcloud have already been deployed.
+This role assumes it will be executed against a host on which an under/overcloud have already been deployed.
 
 **Note:** The validate-simple role must be accessible.
 
@@ -63,13 +63,6 @@ Example Playbook
 
     # General deployment info
     libvirt_args: "--libvirt-type qemu"
-    flavor_args: >-
-      --control-flavor {{flavor_map.control
-      if flavor_map is defined and 'control' in flavor_map else 'oooq_control'}}
-      --compute-flavor {{flavor_map.compute
-      if flavor_map is defined and 'compute' in flavor_map else 'oooq_compute'}}
-      --ceph-storage-flavor {{flavor_map.ceph
-      if flavor_map is defined and 'ceph' in flavor_map else 'oooq_ceph'}}
     timeout_args: "--timeout {{ deploy_timeout }}"
     # Pulled this out so we can hand these configs to the openstack overcloud node delete command
     scale_extra_configs: "-e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/net-single-nic-with-vlans.yaml -e ~/network-environment.yaml"
@@ -83,7 +76,6 @@ Example Playbook
     # Scale deployment arguments
     scale_args: >-
       {{ libvirt_args }}
-      {{ flavor_args }}
       {{ timeout_args }}
       {{ scale_extra_args }}
 

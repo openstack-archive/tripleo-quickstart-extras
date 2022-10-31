@@ -9,33 +9,9 @@ set -eux
 ## * Prepare Your Environment.
 ## ::
 
-{% if release in ['mitaka', 'newton', 'ocata', 'pike', 'queens', 'stein'] -%}
-HOSTFILE=/etc/hosts
-{% endif -%}
-
 ## * Source in the undercloud credentials.
 ## ::
 
 . {{ working_dir }}/stackrc
 
-{% if release in ['mitaka', 'newton', 'ocata', 'pike', 'queens', 'stein'] -%}
-## * Remove any old overcloud host entries from `/etc/hosts`.
-## ::
-
-sudo sed -i '/^## BEGIN OVERCLOUD HOSTS/,/^## END OVERCLOUD HOSTS/ d' $HOSTFILE
-
-## * Add overcloud hosts to `/etc/hosts`.
-## ::
-
-cat <<EOF | sudo tee -a $HOSTFILE
-## BEGIN OVERCLOUD HOSTS  #nodocs
-$(openstack stack output show {{ stack_name }} HostsEntry -f value -c output_value)
-
-{% if enable_pacemaker|bool and release == 'mitaka' %}
-$(openstack stack output show {{ stack_name }} PublicVip \
-            -f value -c output_value) overcloud-public-vip
-{% endif %}
-## END OVERCLOUD HOSTS    #nodocs
-EOF
-{% endif -%}
 ### --stop_docs

@@ -19,7 +19,7 @@
         tripleo_os_cloud: undercloud
         tripleo_overcloud_image_upload_debug: true
         tripleo_overcloud_image_upload_generate_scripts: true
-        tripleo_overcloud_image_upload_http_boot: "{{ containerized_undercloud | default(false) | bool | ternary('/var/lib/ironic/httpboot', None) }}"
+        tripleo_overcloud_image_upload_http_boot: '/var/lib/ironic/httpboot'
         tripleo_overcloud_image_upload_whole_disk: "{{ whole_disk_images | default(false) | bool }}"
         tripleo_overcloud_image_upload_local: "{{ not undercloud_enable_nova | default(false)  |bool }}"
         tripleo_overcloud_image_upload_log: "{{ overcloud_image_upload_log }}"
@@ -45,18 +45,7 @@
   when:
     - step_register|bool
   block:
-    - name: Import and register overcloud nodes - legacy
-      when:
-        - release in ['queens', 'stein']
-      shell: >
-        set -o pipefail &&
-        {{ working_dir }}/overcloud-import-nodes.sh 2>&1 {{ timestamper_cmd }} >
-        {{ overcloud_import_nodes_log }}
-      changed_when: true
-
     - name: Run import nodes via tripleo-operator-ansible
-      when:
-        - release not in ['queens', 'stein']
       collections:
         - tripleo.operator
       include_role:
@@ -114,17 +103,7 @@
 - name: Run Introspection
   when: step_introspect|bool
   block:
-    - name: Introspect overcloud nodes - legacy
-      when: release in ['queens', 'stein']
-      shell: >
-        set -o pipefail &&
-        {{ working_dir }}/overcloud-introspect.sh 2>&1 {{ timestamper_cmd }} >
-        {{ overcloud_introspect_script_log }}
-      changed_when: true
-
     - name: Run Introspection on overcloud nodes via tripleo-operator-ansible
-      when:
-        - release not in ['queens', 'stein']
       collections:
         - tripleo.operator
       include_role:
@@ -149,5 +128,4 @@
     {{ inject_ara_log }}
   changed_when: true
   when:
-    - release not in ['newton', 'ocata', 'pike', 'queens']
     - undercloud_enable_mistral|bool

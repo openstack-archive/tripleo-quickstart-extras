@@ -27,7 +27,7 @@
   hosts: undercloud
   gather_facts: false
   roles:
-    - {role: overcloud-prep-containers, when: containerized_overcloud|bool}
+    - role: overcloud-prep-containers
   tags:
     - overcloud-prep-containers
 
