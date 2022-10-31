@@ -96,6 +96,13 @@
             name: NetworkManager
             state: reloaded
 
+        - name: disable unbound service
+          become: true
+          service:
+            name: unbound
+            state: stopped
+          ignore_errors: true
+
     - name: remove any existing entries from the resolv.conf file
       become: true
       lineinfile:
