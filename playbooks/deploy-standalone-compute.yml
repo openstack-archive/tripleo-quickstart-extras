@@ -32,3 +32,14 @@
     - name: Run External Data Plane management role
       include_role:
         name: external-data-plane-management
+
+# On Controller node
+# Run validate_external_compute.sh
+- hosts: undercloud
+  gather_facts: true
+  tags:
+    - standalone
+  tasks:
+    - include_role:
+        name: external-data-plane-management
+        tasks_from: validate_edpm.yml
