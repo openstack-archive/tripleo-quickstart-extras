@@ -1,3 +1,8 @@
+{% if ffu_standalone_upgrade is defined and ffu_standalone_upgrade|bool %}
+resource_registry:
+  OS::TripleO::Services::NovaLibvirt: /usr/share/openstack-tripleo-heat-templates/deployment/deprecated/nova/nova-libvirt-container-puppet.yaml
+
+{% endif %}
 parameter_defaults:
   CertmongerCA: local
   CloudName: {{ standalone_ip }}
@@ -42,3 +47,8 @@ parameter_defaults:
   InterfaceLocalMtu: 1500
   NovaComputeLibvirtType: {{ standalone_libvirt_type }}
   SELinuxMode: {{ standalone_selinux_mode }}
+{% if ffu_standalone_upgrade is defined and ffu_standalone_upgrade|bool %}
+  NovaHWMachineType: 'x86_64=pc-i440fx-rhel7.6.0,aarch64=virt-rhel7.6.0,ppc64=pseries-rhel7.6.0,ppc64le=pseries-rhel7.6.0'
+  ExtraConfig:
+    nova::workarounds::disable_compute_service_check_for_ffu: true
+{% endif %}
