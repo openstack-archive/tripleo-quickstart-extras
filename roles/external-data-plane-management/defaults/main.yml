@@ -36,3 +36,6 @@ ctlplane_dns_nameservers:
 dns_search_domains: []
 tripleo_ovn_dbs:
   - 192.168.24.1
+
+# Values for validation
+tempest_cidr: '192.168.24.0/24'

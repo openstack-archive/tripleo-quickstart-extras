@@ -19,9 +19,67 @@ openstack hypervisor list
 
 # List Compute Services
 openstack compute service list
-if [ "$?" == "0" ]; then
-    echo "External Compute Deployment Validation, SUCCESS"
-    exit 0
-else
-    exit 1
-fi
+
+# List network agents
+openstack network agent list
+
+# Steps to validate host
+# copied from https://github.com/fultonj/zed/blob/main/standalone/verify.sh
+export GATEWAY='{{ tempest_cidr|nthhost(1) }}'
+export PUBLIC_NETWORK_CIDR='{{ tempest_cidr }}'
+export PRIVATE_NETWORK_CIDR=192.168.74.0/28
+export PUBLIC_NET_START='{{ tempest_cidr|nthhost(150) }}'
+export PUBLIC_NET_END='{{ tempest_cidr|nthhost(200) }}'
+export DNS_SERVER=1.1.1.1
+export HYPER='{{ hostvars['subnode-1'].ansible_fqdn }}'
+export INSTANCE_NAME=myserver-$HYPER
+
+
+openstack keypair create --private-key ~/test_key default
+openstack keypair list
+# create basic security group to allow ssh/ping/dns
+openstack security group create basic
+# allow ssh
+openstack security group rule create basic --protocol tcp --dst-port 22:22 --remote-ip 0.0.0.0/0
+# allow ping
+openstack security group rule create --protocol icmp basic
+# allow DNS
+openstack security group rule create --protocol udp --dst-port 53:53 basic
+openstack network create --external --provider-physical-network datacentre --provider-network-type flat public
+openstack network create --internal private
+openstack subnet create public-net \
+          --subnet-range $PUBLIC_NETWORK_CIDR \
+          --no-dhcp \
+          --gateway $GATEWAY \
+          --allocation-pool start=$PUBLIC_NET_START,end=$PUBLIC_NET_END \
+          --network public
+openstack subnet create private-net \
+          --subnet-range $PRIVATE_NETWORK_CIDR \
+          --network private
+openstack floating ip create public
+
+openstack router create vrouter
+openstack router set vrouter --external-gateway public
+openstack router add subnet vrouter private-net
+openstack flavor create --ram 512 --disk 1 --ephemeral 0 --vcpus 1 --public m1.tiny
+curl https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img -o /home/zuul/cirros-0.4.0-x86_64-disk.img
+openstack image create cirros --container-format bare --disk-format qcow2 --public --file /home/zuul/cirros-0.4.0-x86_64-disk.img
+openstack image list
+openstack server create \
+          --nic none \
+          --os-compute-api-version 2.74 --hypervisor-hostname $HYPER \
+          --flavor m1.tiny --image cirros --key-name default \
+          $INSTANCE_NAME
+
+while true; do
+    INSTANCE_STATUS=$(openstack server show ${INSTANCE_NAME} -f json | jq -r '.status')
+    case "${INSTANCE_STATUS}" in
+        "ACTIVE")
+            echo "${INSTANCE_NAME} reached 'ACTIVE' status"
+            break
+            ;;
+        "ERROR")
+            echo "${INSTANCE_NAME} failed"
+            exit 1
+    esac
+done
