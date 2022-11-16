@@ -71,7 +71,9 @@ ipa-server-install -U \
 {% else %}
     --auto-forwarders \
 {% endif %}
+{% if cloudenv is not defined or cloudenv not in ['internal'] -%}
     --auto-reverse {{ ipa_server_install_params|default('') }}
+{% endif %}
 ## * Set CA to create CRL on restart
 sed -i "s/ca.crl.MasterCRL.publishOnStart=.*/ca.crl.MasterCRL.publishOnStart=true/" /etc/pki/pki-tomcat/ca/CS.cfg
 systemctl restart pki-tomcatd@pki-tomcat.service
