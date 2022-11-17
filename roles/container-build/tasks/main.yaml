@@ -121,7 +121,11 @@
   include_role:
     name: tripleo_container_image_build
   vars:
-    tripleo_container_image_build_debug: true
+    # TODO(tkajinam): With Ansible 2.14, the playbook triggered by the command
+    #                 gets stuck if -vvv is set. We temporarily remove --debug
+    #                 as a workaround until we find out the appropriate fix.
+    #                 https://github.com/ansible/ansible-runner/issues/1164
+    # tripleo_container_image_build_debug: true
     tripleo_container_image_build_generate_scripts: true
     tripleo_container_image_build_namespace: "{{ container_registry_namespace }}"
     tripleo_container_image_build_tag: "{{ container_tag }}"
