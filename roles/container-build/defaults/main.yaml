@@ -31,7 +31,7 @@ docker_prep_prefix: >-
 # Temporary pin to 8.2 because of LP #1902846
 containers_base_image: "{{ job.containers_base_image|default('ubi8') }}"
 container_registry_image: quay.io/tripleoci/registry:2
-container_registry_image_fallback: trunk.registry.rdoproject.org/ceph/registry:2
+container_registry_image_fallback: quay.rdoproject.org/ceph/registry:2
 container_exclude_distro: "{{ ansible_distribution|lower }}{{ ansible_distribution_major_version}}"
 # Extra config needs to be passed to tcib tool
 # https://docs.openstack.org/tripleo-ansible/latest/roles/role-tripleo_container_image_build.html#r-o-l-e-d-e-f-a-u-l-t-s

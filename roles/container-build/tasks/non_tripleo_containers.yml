@@ -52,7 +52,7 @@
 
 - name: Pull failed containers from RDO registry
   become: true
-  command: "podman pull docker://trunk.registry.rdoproject.org/ceph/{{ item.split('/')[-1] }}"
+  command: "podman pull docker://quay.rdoproject.org/ceph/{{ item.split('/')[-1] }}"
   register: rdo_pull_success
   ignore_errors: true
   loop: "{{ missing_containers }}"
