@@ -37,8 +37,6 @@ https://docs.openstack.org/tripleo-quickstart/latest/accessing-libvirt.html
   option in undercloud.conf.
 - `undercloud_enable_tempest`: <'true'> -- sets up the 'enable_tempest' option
   in undercloud.conf.
-- `undercloud_enable_ui`: <'true'> -- sets up the 'enable_ui' option in
-  undercloud.conf.
 - `undercloud_enable_validations`: <'true'> -- sets up the 'enable_validations'
   option in undercloud.conf.
 - `undercloud_enable_novajoin`: <'true'> -- sets up the 'enable_novajoin'
@@ -63,8 +61,6 @@ https://docs.openstack.org/tripleo-quickstart/latest/accessing-libvirt.html
   `cloud-names.yaml` template used by the `overcloud-deploy` role.
 - `undercloud_cloud_domain`: The domain configured for use by containerized
   undercloud via the tripleo client's `--local-domain` option. It is unset by default.
-- `tripleo_ui_secure_access`: Defaults to false due to the self signed certificate and
-  usability issues. See the tripleo-quickstart documentation `accessing the undercloud` for details.
 - `local_docker_registry_host`: <`docker_registry_host`> -- registry host/port
   for containerized undercloud services. Defaults to the value provided for overcloud.
   You may want to diverge it, if building locally, or fetching from remote registries
@@ -104,8 +100,7 @@ instead.
 up the 'undercloud_public_host' parameter from undercloud.conf. It is also used by overcloud
 nodes to access the undercloud node via a VIP/hostname that resolves to a routable IP address.
 - `undercloud_undercloud_admin_host`: <a 3rd host of the `undercloud_network_cidr`> -- Sets
-up the 'undercloud_admin_host' from undercloud.conf.  Note, use the `undercloud_admin_vip`
-instead for Mitaka/Newton releases.
+up the 'undercloud_admin_host' from undercloud.conf.
 - `undercloud_dhcp_start`: <a 5th host of the `undercloud_network_cidr`> -- Sets
 up the 'undercloud_dhcp_start' from undercloud.conf.
 - `undercloud_dhcp_end`: <a 30th host of the `undercloud_network_cidr`> -- Sets
@@ -114,7 +109,6 @@ up the 'undercloud_dhcp_end' from undercloud.conf.
 from undercloud.conf. May be a string or a sequence. Only the last item goes for
 the undercloud deploy command.
 - `undercloud_undercloud_hostname`: Sets up the 'undercloud_hostname' value from undercloud.conf.
-Note, use the `undercloud_public_vip` instead for Mitaka/Newton releases.
 - `undercloud_heat_public_endpoints`: <'false'> -- when the ctlplane network is not routable
 from overcloud nodes, for example pre-provisioned
 [deployed servers](https://docs.openstack.org/developer/tripleo-docs/advanced_deployment/deployed_server.html#undercloud),

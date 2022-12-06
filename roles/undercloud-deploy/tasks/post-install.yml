@@ -1,33 +1,4 @@
 ---
-# Extract the undercloud admin password from
-# `undercloud-passwords.conf`.
-- when: not containerized_undercloud|bool
-  block:
-    - name: Get undercloud admin password
-      command: >
-        awk -F= '$1 == "undercloud_admin_password" {print $2}'
-        {{ working_dir }}/undercloud-passwords.conf
-      register: undercloud_admin_password
-      changed_when: false
-
-    - name: Copy stackrc to ansible host
-      tags:
-        - undercloud-post-install
-      fetch:
-        flat: true
-        src: stackrc
-        dest: "{{ local_working_dir }}/stackrc"
-
-    # We need this (and the previous task) in order to replace the
-    # `sudo hiera admin_password` with an actual password in the `stackrc`
-    # file.
-    - name: Update admin password in local credentials file
-      delegate_to: localhost
-      lineinfile:
-        dest: "{{ local_working_dir }}/stackrc"
-        line: "export OS_PASSWORD={{ undercloud_admin_password.stdout }}"
-        regexp: "OS_PASSWORD"
-
 - name: Copy stackrc created at the UC user $HOME to the working dir
   tags:
     - undercloud-post-install
@@ -38,4 +9,3 @@
     remote_src: true
     mode: 0640
   become: true
-  when: containerized_undercloud|bool

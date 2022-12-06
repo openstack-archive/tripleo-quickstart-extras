@@ -127,11 +127,6 @@ undercloud_undercloud_nameservers:
   - 8.8.8.8
 timestamper_cmd: >-
     | awk '{ print strftime("%Y-%m-%d %H:%M:%S |"), $0; fflush(); }'
-# if virtbmc is enabled we can assume a libvirt setup and the libvirt
-# tripleo ui steps will also execute.
-# enable_libvirt_tripleo_ui is a switch to force the steps to run with or
-# without virtbmc
-enable_libvirt_tripleo_ui: false
 composable_scenario: ""
 upgrade_composable_scenario: ""
 artcl_collect_dir: "{{ local_working_dir }}/collected_files"

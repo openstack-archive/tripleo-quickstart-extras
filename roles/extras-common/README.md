@@ -25,8 +25,6 @@ Role Variables
 - `timestamper_cmd`: beginning with the shell pipe character, this command
   prepends a timestamp to the deployment and test commands throughout the
   roles. Can be disabled by specifying this command as an empty string.
-- `enable_libvirt_tripleo_ui`: <false> -- update the triple-ui javascript config
-  for libvirt environments.
 - `local_docker_registry_host`: <"{{undercloud_network_gateway|default(undercloud_network_cidr|nthhost(1))}}"> -- host of the local (undercloud) docker registry
 - `docker_registry_host`: <'docker.io'> -- host of the primary docker registry
 - `docker_registry_namespace`: <'tripleomaster'> -- namespace of

@@ -1,21 +1,4 @@
 ---
-# for instack-undercloud only, retain the existing behavior.
-# FIXME(bogdando): only check for releases once instack removed from Rocky CI fully
-- name: Override undercloud CI hostname ad-hock
-  when: release in ['newton','ocata','pike','queens'] or not containerized_undercloud|bool
-  block:
-    - name: Install hostname correcting script
-      template:
-        src: hostname.sh.j2
-        dest: "{{ working_dir }}/hostname.sh"
-        mode: 0755
-
-    - name: Run the hostname correcting script
-      shell: >
-        set -o pipefail &&
-        {{ working_dir }}/hostname.sh 2>&1 {{ timestamper_cmd }} > {{ working_dir }}/hostname.sh.log
-      become: true
-
 # https://launchpad.net/bugs/1763776
 - name: Add a unique hostname to /etc/hosts resolved to the first IPv4 available
   become: true
@@ -26,11 +9,8 @@
     line: "{{ ansible_all_ipv4_addresses | first }} {{ ansible_hostname }}-unique"
   when: tripleo_set_unique_hostname|default(false)|bool
 
-# for undercloud containers only, starting from Rocky.
 - name: Override containerized undercloud CI hostname for tripleo client
   when:
-    - not release in ['newton','ocata','pike','queens']
-    - containerized_undercloud|bool
     - undercloud_undercloud_hostname is not defined
   block:
     - name: set fact for undercloud_fqdn override when undercloud_cloud_domain was provided

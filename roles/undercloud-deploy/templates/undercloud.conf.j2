@@ -24,13 +24,6 @@ undercloud_hostname = {{undercloud_undercloud_hostname}}
 #undercloud_hostname = <None>
 {% endif %}
 
-{% if release in ['mitaka', 'newton', 'ocata', 'pike'] %}
-# Network CIDR for the Neutron-managed network for Overcloud
-# instances. This should be the subnet used for PXE booting. (string
-# value)
-network_cidr = {{undercloud_network_cidr}}
-{% endif %}
-
 # IP information for the interface on the Undercloud that will be
 # handling the PXE boots and DHCP for Overcloud instances.  The IP
 # portion of the value will be assigned to the network interface
@@ -40,33 +33,12 @@ local_ip = {{undercloud_local_ip|default(
     '%s/%s' % (undercloud_network_cidr|nthhost(1),
     undercloud_network_cidr.split('/').1))}}
 
-{% if release in ['mitaka', 'newton', 'ocata', 'pike'] %}
-# Network gateway for the Neutron-managed network for Overcloud
-# instances. This should match the local_ip above when using
-# masquerading. (string value)
-network_gateway = {{undercloud_network_gateway|default(
-    undercloud_network_cidr|nthhost(1))}}
-{% endif %}
-
 # MTU, set neutron on the undercloud to match mtu of the nics
 # (string value)
 {% if undercloud_local_mtu is defined %}
 local_mtu = {{ undercloud_local_mtu }}
 {% endif %}
 
-{% if release in ['mitaka', 'newton'] %}
-# Virtual IP address to use for the public endpoints of Undercloud
-# services.  Only used if undercloud_service_certficate is set.
-# (string value)
-undercloud_public_vip = {{undercloud_undercloud_public_vip|default(
-    undercloud_network_cidr|nthhost(2))}}
-
-# Virtual IP address to use for the admin endpoints of Undercloud
-# services.  Only used if undercloud_service_certficate is set.
-# (string value)
-undercloud_admin_vip = {{undercloud_undercloud_admin_vip|default(
-    undercloud_network_cidr|nthhost(3))}}
-{% else %}
 # Virtual IP or DNS address to use for the public endpoints of
 # Undercloud services. Only used with SSL. (string value)
 # Deprecated group/name - [DEFAULT]/undercloud_public_vip
@@ -80,7 +52,6 @@ undercloud_public_host = {{undercloud_undercloud_public_host|default(
 #undercloud_admin_host = 192.168.24.3
 undercloud_admin_host = {{undercloud_undercloud_admin_host|default(
     undercloud_network_cidr|nthhost(3))}}
-{% endif %}
 
 # Nameserver for the Undercloud node.
 # (string value)
@@ -156,25 +127,6 @@ local_interface = {{undercloud_local_interface}}
 #local_interface = eth1
 {% endif %}
 
-{% if release in ['mitaka', 'newton', 'ocata', 'pike'] %}
-# Network that will be masqueraded for external access, if required.
-# This should be the subnet used for PXE booting. (string value)
-masquerade_network = {{undercloud_masquerade_network|default(
-    undercloud_network_cidr)}}
-{% endif %}
-
-{% if release in ['mitaka', 'newton', 'ocata', 'pike'] %}
-# Start of DHCP allocation range for PXE and DHCP of Overcloud
-# instances. (string value)
-dhcp_start = {{undercloud_dhcp_start|default(
-    undercloud_network_cidr|nthhost(5))}}
-
-# End of DHCP allocation range for PXE and DHCP of Overcloud
-# instances. (string value)
-dhcp_end = {{undercloud_dhcp_end|default(
-    undercloud_network_cidr|nthhost(30))}}
-{% endif %}
-
 # Path to hieradata override file. If set, the file will be copied
 # under /etc/puppet/hieradata and set as the first file in the hiera
 # hierarchy. This can be used to to custom configure services beyond
@@ -188,16 +140,6 @@ hieradata_override = {{ undercloud_hieradata_override }}
 inspection_interface = {{undercloud_inspection_interface}}
 {% else %}
 #inspection_interface = br-ctlplane
-{% endif %}
-
-{% if release in ['mitaka', 'newton', 'ocata', 'pike'] %}
-# Temporary IP range that will be given to nodes during the inspection
-# process.  Should not overlap with the range defined by dhcp_start
-# and dhcp_end, but should be in the same network. (string value)
-# Deprecated group/name - [DEFAULT]/discovery_iprange
-inspection_iprange = {{undercloud_inspection_iprange|default(
-    '%s,%s' % (undercloud_network_cidr|nthhost(100),
-    undercloud_network_cidr|nthhost(120)))}}
 {% endif %}
 
 # Whether to enable extra hardware collection during the inspection
@@ -218,11 +160,9 @@ inspection_runbench = {{undercloud_inspection_runbench}}
 # services. (boolean value)
 undercloud_debug = {{undercloud_undercloud_debug}}
 
-{% if containerized_undercloud|bool %}
 # Container CLI used for deployment;
 # Can be docker or podman. (string value)
 container_cli = {{undercloud_container_cli}}
-{% endif %}
 
 # Enable or disable SELinux during the deployment. (boolean value)
 {% if undercloud_selinux_enabled is defined %}
@@ -248,9 +188,6 @@ enable_telemetry = {{undercloud_enable_telemetry}}
 # Whether to install requirements to run the TripleO validations.
 # (boolean value)
 enable_validations = {{undercloud_enable_validations}}
-
-# Whether to install the TripleO UI. (boolean value)
-enable_ui = {{undercloud_enable_ui}}
 
 # Whether to install Mistral in the Undercloud. (boolean value)
 enable_mistral = {{undercloud_enable_mistral}}
@@ -345,12 +282,10 @@ docker_insecure_registries= {{undercloud_docker_insecure_registries}}
 
 # additional env files for undercloud, used with containers
 
-{% if undercloud_container_images_file is defined and containerized_undercloud|bool %}
+{% if undercloud_container_images_file is defined%}
 container_images_file = {{ undercloud_container_images_file }}
-{% elif containerized_undercloud|bool %}
-container_images_file = {{ working_dir }}/containers-prepare-parameter.yaml
 {% else %}
-#container_images_file = <None>
+container_images_file = {{ working_dir }}/containers-prepare-parameter.yaml
 {% endif %}
 
 {% if build_container_images|default(false)|bool %}
@@ -417,192 +352,6 @@ roles_file = {{undercloud_roles_data}}
 clean_nodes = {{undercloud_clean_nodes}}
 {% endif %}
 
-
-{% if release in ['mitaka', 'newton', 'ocata', 'pike'] %}
-[auth]
-
-#
-# From instack-undercloud
-#
-
-# Password used for MySQL databases. If left unset, one will be
-# automatically generated. (string value)
-{% if undercloud_undercloud_db_password is defined %}
-undercloud_db_password = {{undercloud_undercloud_db_password}}
-{% else %}
-#undercloud_db_password = <None>
-{% endif %}
-
-# Keystone admin token. If left unset, one will be automatically
-# generated. (string value)
-{% if undercloud_undercloud_admin_token is defined %}
-undercloud_admin_token = {{undercloud_undercloud_admin_token}}
-{% else %}
-#undercloud_admin_token = <None>
-{% endif %}
-
-# Keystone admin password. If left unset, one will be automatically
-# generated. (string value)
-{% if undercloud_undercloud_admin_password is defined %}
-undercloud_admin_password = {{undercloud_undercloud_admin_password}}
-{% else %}
-#undercloud_admin_password = <None>
-{% endif %}
-
-# Glance service password. If left unset, one will be automatically
-# generated. (string value)
-{% if undercloud_undercloud_glance_password is defined %}
-undercloud_glance_password = {{undercloud_undercloud_glance_password}}
-{% else %}
-#undercloud_glance_password = <None>
-{% endif %}
-
-# Heat db encryption key(must be 16, 24, or 32 characters. If left
-# unset, one will be automatically generated. (string value)
-{% if undercloud_undercloud_heat_encryption_key is defined %}
-undercloud_heat_encryption_key = {{undercloud_undercloud_heat_encryption_key}}
-{% else %}
-#undercloud_heat_encryption_key = <None>
-{% endif %}
-
-# Heat service password. If left unset, one will be automatically
-# generated. (string value)
-{% if undercloud_undercloud_heat_password is defined %}
-undercloud_heat_password = {{undercloud_undercloud_heat_password}}
-{% else %}
-#undercloud_heat_password = <None>
-{% endif %}
-
-# Neutron service password. If left unset, one will be automatically
-# generated. (string value)
-{% if undercloud_undercloud_neutron_password is defined %}
-undercloud_neutron_password = {{undercloud_undercloud_neutron_password}}
-{% else %}
-#undercloud_neutron_password = <None>
-{% endif %}
-
-# Nova service password. If left unset, one will be automatically
-# generated. (string value)
-{% if undercloud_undercloud_nova_password is defined %}
-undercloud_nova_password = {{undercloud_undercloud_nova_password}}
-{% else %}
-#undercloud_nova_password = <None>
-{% endif %}
-
-# Ironic service password. If left unset, one will be automatically
-# generated. (string value)
-{% if undercloud_undercloud_ironic_password is defined %}
-undercloud_ironic_password = {{undercloud_undercloud_ironic_password}}
-{% else %}
-#undercloud_ironic_password = <None>
-{% endif %}
-
-# Ceilometer service password. If left unset, one will be
-# automatically generated. (string value)
-{% if undercloud_undercloud_ceilometer_password is defined %}
-undercloud_ceilometer_password = {{undercloud_undercloud_ceilometer_password}}
-{% else %}
-#undercloud_ceilometer_password = <None>
-{% endif %}
-
-# Aodh service password. If left unset, one will be
-# automatically generated. (string value)
-{% if undercloud_undercloud_aodh_password is defined %}
-undercloud_aodh_password = {{undercloud_undercloud_aodh_password}}
-{% else %}
-#undercloud_aodh_password = <None>
-{% endif %}
-
-# Sensu service password. If left unset, one will be automatically
-# generated. (string value)
-{% if undercloud_undercloud_sensu_password is defined %}
-undercloud_sensu_password = {{undercloud_undercloud_sensu_password}}
-{% else %}
-#undercloud_sensu_password = <None>
-{% endif %}
-
-# Ceilometer metering secret. If left unset, one will be automatically
-# generated. (string value)
-{% if undercloud_undercloud_ceilometer_metering_secret is defined %}
-undercloud_ceilometer_metering_secret = {{undercloud_undercloud_ceilometer_metering_secret}}
-{% else %}
-#undercloud_ceilometer_metering_secret = <None>
-{% endif %}
-
-# Ceilometer snmpd user. If left unset, one will be automatically
-# generated. (string value)
-{% if undercloud_undercloud_ceilometer_snmpd_user is defined %}
-undercloud_ceilometer_snmpd_user = {{undercloud_undercloud_ceilometer_snmpd_user}}
-{% else %}
-#undercloud_ceilometer_snmpd_user = <None>
-{% endif %}
-
-# Ceilometer snmpd password. If left unset, one will be automatically
-# generated. (string value)
-{% if undercloud_undercloud_ceilometer_snmpd_password is defined %}
-undercloud_ceilometer_snmpd_password = {{undercloud_undercloud_ceilometer_snmpd_password}}
-{% else %}
-#undercloud_ceilometer_snmpd_password = <None>
-{% endif %}
-
-# Swift service password. If left unset, one will be automatically
-# generated. (string value)
-{% if undercloud_undercloud_swift_password is defined %}
-undercloud_swift_password = {{undercloud_undercloud_swift_password}}
-{% else %}
-#undercloud_swift_password = <None>
-{% endif %}
-
-# Mistral service password. If left unset, one will be automatically
-# generated. (string value)
-{% if undercloud_undercloud_mistral_password is defined %}
-undercloud_mistral_password = {{undercloud_undercloud_mistral_password}}
-{% else %}
-#undercloud_mistral_password = <None>
-{% endif %}
-
-# Rabbitmq cookie. If left unset, one will be automatically generated.
-# (string value)
-{% if undercloud_undercloud_rabbit_cookie is defined %}
-undercloud_rabbit_cookie = {{undercloud_undercloud_rabbit_cookie}}
-{% else %}
-#undercloud_rabbit_cookie = <None>
-{% endif %}
-
-# Rabbitmq password. If left unset, one will be automatically
-# generated. (string value)
-{% if undercloud_undercloud_rabbit_password is defined %}
-undercloud_rabbit_password = {{undercloud_undercloud_rabbit_password}}
-{% else %}
-#undercloud_rabbit_password = <None>
-{% endif %}
-
-# Rabbitmq username. If left unset, one will be automatically
-# generated. (string value)
-{% if undercloud_undercloud_rabbit_username is defined %}
-undercloud_rabbit_username = {{undercloud_undercloud_rabbit_username}}
-{% else %}
-#undercloud_rabbit_username = <None>
-{% endif %}
-
-# Heat stack domain admin password. If left unset, one will be
-# automatically generated. (string value)
-{% if undercloud_undercloud_heat_stack_domain_admin_password is defined %}
-undercloud_heat_stack_domain_admin_password = {{undercloud_undercloud_heat_stack_domain_admin_password}}
-{% else %}
-#undercloud_heat_stack_domain_admin_password = <None>
-{% endif %}
-
-# Swift hash suffix. If left unset, one will be automatically
-# generated. (string value)
-{% if undercloud_undercloud_swift_hash_suffix is defined %}
-undercloud_swift_hash_suffix = {{undercloud_undercloud_swift_hash_suffix}}
-{% else %}
-#undercloud_swift_hash_suffix = <None>
-{% endif %}
-{% endif %}
-
-{% if release not in ['mitaka', 'newton', 'ocata', 'pike'] %}
 # List of routed network subnets for provisioning and introspection.
 # Comma separated list of names/tags. For each network a section/group
 # needs to be added to the configuration file with these parameters
@@ -637,7 +386,6 @@ dhcp_start = {{undercloud_dhcp_start|default(
 dhcp_end = {{undercloud_dhcp_end|default(
     undercloud_network_cidr|nthhost(30))}}
 
-{% if release not in ['queens', 'stein'] %}
 # DNS nameservers for the Neutron-managed subnet for the Overcloud
 # instances on this network. If no nameservers are defined for the
 # subnet, the nameservers defined for undercloud_nameservers will be
@@ -646,7 +394,6 @@ dhcp_end = {{undercloud_dhcp_end|default(
 dns_nameservers = {{ undercloud_ctlplane_dns_nameservers }}
 {% else %}
 #dns_nameservers =
-{% endif %}
 {% endif %}
 
 # Network gateway for the Neutron-managed network for Overcloud
@@ -666,4 +413,3 @@ inspection_iprange = {{undercloud_inspection_iprange|default(
 
 # The network will be masqueraded for external access. (boolean value)
 masquerade={{ ctlplane_masquerade|default(false) }}
-{% endif %}
