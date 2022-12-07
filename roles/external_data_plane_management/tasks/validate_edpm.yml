@@ -5,7 +5,7 @@
     dest: "{{ working_dir }}/validate_external_compute.sh"
     mode: 0755
 
-- name: Run deploy_compute.sh script
+- name: Run validate_external_compute.sh script
   shell: >
     set -o pipefail &&
     {{ working_dir }}/validate_external_compute.sh

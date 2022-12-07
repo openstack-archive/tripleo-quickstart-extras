@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# {{ target_host }}
 set -eux
 
 # Discover new compute nodes
@@ -7,6 +7,16 @@ sudo podman exec -it nova_api nova-manage cell_v2 discover_hosts --verbose
 
 # Export standalone cloud
 export OS_CLOUD=standalone
+
+# Export some needed variables
+export GATEWAY='{{ tempest_cidr|nthhost(1) }}'
+export PUBLIC_NETWORK_CIDR='{{ tempest_cidr }}'
+export PRIVATE_NETWORK_CIDR=192.168.74.0/28
+export PUBLIC_NET_START='{{ tempest_cidr|nthhost(150) }}'
+export PUBLIC_NET_END='{{ tempest_cidr|nthhost(200) }}'
+export DNS_SERVER=1.1.1.1
+export HYPER='{{ hostvars[target_host].ansible_fqdn }}'
+export INSTANCE_NAME=myserver-$HYPER
 
 # List Available Zones
 openstack availability zone list
@@ -25,15 +35,6 @@ openstack network agent list
 
 # Steps to validate host
 # copied from https://github.com/fultonj/zed/blob/main/standalone/verify.sh
-export GATEWAY='{{ tempest_cidr|nthhost(1) }}'
-export PUBLIC_NETWORK_CIDR='{{ tempest_cidr }}'
-export PRIVATE_NETWORK_CIDR=192.168.74.0/28
-export PUBLIC_NET_START='{{ tempest_cidr|nthhost(150) }}'
-export PUBLIC_NET_END='{{ tempest_cidr|nthhost(200) }}'
-export DNS_SERVER=1.1.1.1
-export HYPER='{{ hostvars['subnode-1'].ansible_fqdn }}'
-export INSTANCE_NAME=myserver-$HYPER
-
 
 openstack keypair create --private-key ~/test_key default
 openstack keypair list

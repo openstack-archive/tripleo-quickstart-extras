@@ -5,13 +5,11 @@ tripleo_logrotate_crond_image: "{{ docker_registry_host }}/{{ docker_registry_na
 tripleo_nova_compute_container_image: "{{ docker_registry_host }}/{{ docker_registry_namespace }}/openstack-nova-compute:{{ docker_image_tag }}"
 tripleo_nova_libvirt_container_image: "{{ docker_registry_host }}/{{ docker_registry_namespace }}/openstack-nova-libvirt:{{ docker_image_tag }}"
 tripleo_ovn_controller_image: "{{ docker_registry_host }}/{{ docker_registry_namespace }}/openstack-ovn-controller:{{ docker_image_tag }}"
-deploy_standalone: false
 
 # tripleo-standalone-vars script related vars
 tripleo_standalone_vars: "/home/{{ ansible_user }}/src/opendev.org/openstack/tripleo-ansible/scripts/tripleo-standalone-vars"
 config_download_dir: "/home/{{ ansible_user }}/tripleo-deploy"
 role_type: "Standalone"
-copy_inventory: false
 target_host: undercloud
 
 timestamper_cmd: >-

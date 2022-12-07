@@ -1,0 +1,96 @@
+---
+# It contains following tasks:
+# - Set hostname for target node
+# - Copy standalone env vars to subnode-1
+# - Change localhost to target hostname
+# - Deploy compute services.
+
+- name: Copy id_rsa key to working_dir
+  become: true
+  copy:
+    src: /etc/nodepool/id_rsa
+    dest: "{{ working_dir }}/.ssh/edpm_rsa"
+    owner: "{{ ansible_user }}"
+    mode: 0600
+
+- name: Copy tripleo-inventory as EDPM env
+  become: true
+  copy:
+    src: /usr/share/ansible/tripleo-inventory/
+    dest: "{{ working_dir }}/tripleo-deploy/edpm-inventory/"
+    remote_src: true
+    directory_mode: 0755
+    owner: "{{ ansible_user }}"
+
+- name: Copy 99 standalone var into EDPM inventory
+  copy:
+    src: "{{ working_dir }}/99-standalone-vars"
+    dest: "{{ working_dir }}/tripleo-deploy/edpm-inventory/99-standalone-vars"
+    remote_src: true
+
+- name: Manipulate inventory
+  block:
+    - name: Get subnode IP
+      register: subnode_ip
+      slurp:
+        path: /etc/nodepool/sub_nodes
+
+    - name: Get inventory content
+      register: original_inventory
+      slurp:
+        path: "{{ working_dir }}/tripleo-deploy/edpm-inventory/02-computes"
+
+    - name: Set inventory host content
+      set_fact:
+        inventory_hosts: |
+          {
+            hosts: {
+              {{ target_host }}: {
+                ansible_host: "{{ subnode_ip['content']|b64decode|trim }}",
+                ansible_ssh_private_key_file: '{{ working_dir }}/.ssh/edpm_rsa',
+                ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+              }
+            }
+          }
+
+    - name: Update inventory content
+      set_fact:
+        updated_inventory: >-
+          {%- set _inventory = original_inventory['content']|b64decode|from_yaml %}
+          {%- set _hosts = inventory_hosts |from_yaml %}
+          {%- set _ = _inventory['Compute'].update( _hosts ) %}
+          {{ _inventory }}
+
+    - name: Output new inventory as clean yaml
+      copy:
+        dest: "{{ working_dir }}/tripleo-deploy/edpm-inventory/02-computes"
+        content: "{{ updated_inventory | from_yaml | to_nice_yaml }}"
+
+- name: Rename the host_vars file to target host
+  copy:
+    src: "{{ working_dir }}/tripleo-deploy/edpm-inventory/host_vars/localhost"
+    dest: "{{ working_dir }}/tripleo-deploy/edpm-inventory/host_vars/{{ target_host }}"
+    remote_src: true
+
+- name: Remove the old file
+  file:
+    path: "{{ working_dir }}/tripleo-deploy/edpm-inventory/host_vars/localhost"
+    state: absent
+
+- name: Generate parameter file for deploy_compute task
+  template:
+    src: compute-parameter.yaml.j2
+    dest: "{{ working_dir }}/edpm-compute-parameter.yaml"
+    mode: 0644
+
+- name: Generate deploy_compute.sh script
+  template:
+    src: deploy_compute.sh.j2
+    dest: "{{ working_dir }}/deploy_compute.sh"
+    mode: 0755
+
+- name: Run deploy_compute.sh script
+  shell: >
+    set -o pipefail &&
+    {{ working_dir }}/deploy_compute.sh
+    2>&1 {{ timestamper_cmd }} > {{ working_dir }}/deploy_compute.log

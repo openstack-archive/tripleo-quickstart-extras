@@ -1,0 +1,18 @@
+---
+# Parameter file for the deploy-overcloud-compute.yml playbook
+
+ctlplane_ip: "{{ ctlplane_ip }}"
+tripleo_iscsid_image: "{{ tripleo_iscsid_image }}"
+tripleo_logrotate_crond_image: "{{ tripleo_logrotate_crond_image }}"
+tripleo_nova_compute_container_image: "{{ tripleo_nova_compute_container_image }}"
+tripleo_nova_libvirt_container_image: "{{ tripleo_nova_libvirt_container_image }}"
+tripleo_ovn_controller_image: "{{ tripleo_ovn_controller_image }}"
+tripleo_selinux_mode: "{{ tripleo_selinux_mode }}"
+neutron_public_interface_name: "{{ neutron_public_interface_name }}"
+tripleo_network_config_template: "{{ tripleo_network_config_template }}"
+ctlplane_dns_nameservers: {{ ctlplane_dns_nameservers }}
+tripleo_container_registry_insecure_registries: {{ tripleo_container_registry_insecure_registries }}
+tripleo_hosts_entries_overcloud_hosts_entries: {{ tripleo_hosts_entries_overcloud_hosts_entries|to_json }}
+# For now, don't load firewall
+deploy_tripleo_openstack_run_firewall: false
+tripleo_sshd_configure_firewall: true
