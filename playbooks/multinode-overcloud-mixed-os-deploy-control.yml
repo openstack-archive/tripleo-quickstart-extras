@@ -5,6 +5,7 @@
   environment:
     TRIPLEO_ROOT: "{{ lookup('env','TRIPLEO_ROOT') }}"
   tasks:
+    # TODO(marios) remove this task after we merge tripleo-ci/+/868207
     - name: Deploy the overcloud
       include_role:
         name: overcloud-deploy
@@ -14,6 +15,18 @@
         extra_args: " --disable-protected-resource-types --baremetal-deployment "
       tags:
         - overcloud-deploy
+      when: registry_distro_lower is not defined
+
+    - name: Deploy the overcloud
+      include_role:
+        name: overcloud-deploy
+      vars:
+        overcloud_roles: "{{ overcloud_roles_mixed }}"
+        topology_map: "{{ topology_map_mixed }}"
+        extra_args: " --disable-protected-resource-types --baremetal-deployment "
+      tags:
+        - overcloud-deploy
+      when: registry_distro_lower is defined
 
     - name: Check the overcloud_deployment_result.json if this is CI job
       tags:
