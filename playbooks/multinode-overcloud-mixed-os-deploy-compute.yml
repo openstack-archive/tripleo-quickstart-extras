@@ -35,7 +35,7 @@
     - name: Run container image prepare for compute deploy
       shell: |
         source /home/zuul/stackrc
-        sudo openstack tripleo container image prepare -e /home/zuul/containers-prepare-parameter.yaml
+        sudo openstack tripleo container image prepare -e /home/zuul/containers-prepare-parameter.yaml --log-file /var/log/tripleo-container-image-prepare-compute.log --debug
 
 - name: Deploy the overcloud compute stack
   hosts: undercloud
