@@ -9,3 +9,7 @@
 - name: Prepare the node for installation
   include_role:
     name: undercloud-setup
+
+- name: Set proper container params
+  include_role:
+    name: container-prep

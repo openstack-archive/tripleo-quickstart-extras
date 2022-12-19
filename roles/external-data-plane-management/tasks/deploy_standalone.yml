@@ -1,4 +1,8 @@
 ---
+- name: Set proper container params before deploying standalone
+  include_role:
+    name: container-prep
+
 - name: Deploy Standalone
   include_role:
     name: standalone
