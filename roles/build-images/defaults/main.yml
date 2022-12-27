@@ -14,4 +14,5 @@ overcloud_as_undercloud: true
 overcloud_repo_paths:
   - "/etc/yum.repos.d/delorean*"
   - "/etc/yum.repos.d/quickstart-*"
+  - "/etc/yum.repos.d/centos.repo"
   - "{% if job is defined and job.component is defined -%}/etc/yum.repos.d/*-component.repo{%- endif -%}"
