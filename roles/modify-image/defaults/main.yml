@@ -6,6 +6,12 @@
 # image_to_modify:
 # modify_script:
 
+# Run a specific command
+# modify_image_run_command:
+
+# Note: modify_image_run_command will run first then
+# modify_image_upload_files will run. It is useful in case
+# to make sure remote directories exists.
 # The upload list of files
 modify_image_upload_files: []
 
