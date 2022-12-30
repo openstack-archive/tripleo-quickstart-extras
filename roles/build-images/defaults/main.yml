@@ -14,5 +14,5 @@ overcloud_as_undercloud: true
 overcloud_repo_paths:
   - "/etc/yum.repos.d/delorean*"
   - "/etc/yum.repos.d/quickstart-*"
-  - "/etc/yum.repos.d/centos.repo"
+  - "{% if ansible_distribution_major_version is version('9', '>=') -%}/etc/yum.repos.d/centos.repo{% endif %}"
   - "{% if job is defined and job.component is defined -%}/etc/yum.repos.d/*-component.repo{%- endif -%}"
