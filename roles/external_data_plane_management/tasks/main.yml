@@ -1,0 +1,4 @@
+---
+- name: Do not do anything
+  fail:
+    msg: "This role doesn't do anything unless you include a specific task file"

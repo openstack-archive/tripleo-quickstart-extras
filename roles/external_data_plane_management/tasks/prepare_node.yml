@@ -6,7 +6,7 @@
   include_role:
     name: tripleo-inventory
 
-- name: Prepare the node for installation
+- name: Prepare nodes with repositories and custom builds
   include_role:
     name: undercloud-setup
 
