@@ -16,7 +16,7 @@
 
 - name: Find qcow2 url
   shell: |
-    sed -n "/qcow2/ s/.*\({{ qcow_prefix }}.*.qcow2\)<\/a>.*/\1/p" {{ tempfile.path }} | tail -1
+    sed -n "/qcow2/ s/.*href=\"\({{ qcow_prefix }}.*.qcow2\)\">.*/\1/p" {{ tempfile.path }} | tail -1
   register: get_qcow_image_name
 
 - name: Remove the file at temporary file path.
