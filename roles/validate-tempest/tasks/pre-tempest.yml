@@ -70,7 +70,7 @@
   package:
     name: "{{ python_package_prefix }}-stestr"
     state: present
-  when: tempest_format in ['container', 'packages'] and release not in ['newton', 'ocata']
+  when: tempest_format in ['container', 'packages']
 
 - ignore_errors: true
   block:

@@ -1,24 +1,15 @@
 ---
-- name: Cloning tempest from redhat-openstack repository
-  git:
-    repo: 'https://github.com/redhat-openstack/tempest.git'
-    dest: '{{ working_dir }}/tempest_git'
-    version: '{{ tempest_version }}'
-  when: release == 'newton'
-
 - name: Cloning tempest from openstack repository
   git:
     repo: 'https://opendev.org/openstack/tempest'
     dest: '{{ working_dir }}/tempest_git'
     version: '{{ tempest_version }}'
-  when: release != 'newton'
 
 - name: Cloning python-tempestconf
   git:
     repo: 'https://opendev.org/openinfra/python-tempestconf'
     dest: '{{ working_dir }}/tempestconf_git'
     version: '{{ tempest_conf_version }}'
-  when: release != 'newton'
 
 - name: Check if virtualenv is in the system
   command: "{{ python_cmd }} -m virtualenv --version"
@@ -56,9 +47,9 @@
 
 - name: Set tempest init command
   set_fact:
-    tempest_init: "{{ working_dir }}/tempest_git/tools/{% if release == 'newton' %}configure-tempest-directory{% else %}with_venv.sh tempest init{% endif %}"
+    tempest_init: "{{ working_dir }}/tempest_git/tools/with_venv.sh tempest init"
 
 - name: Set tempestconf call
   set_fact:
     tempestconf: >
-      {% if release == 'newton' %}{{ working_dir }}/tools/config_tempest.py{% else %}{{ working_dir }}/tempest_git/tools/with_venv.sh discover-tempest-config{% endif %}
+      {{ working_dir }}/tempest_git/tools/with_venv.sh discover-tempest-config
