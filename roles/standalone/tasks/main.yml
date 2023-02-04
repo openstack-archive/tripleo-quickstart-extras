@@ -3,5 +3,5 @@
 - include_tasks: ceph-install.yml
   when:
     - job.standalone_ceph | default(false)
-    - release not in ['train', 'victoria']
+    - release not in ['train']
 - include_tasks: standalone-install.yml
