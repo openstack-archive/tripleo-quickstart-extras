@@ -172,8 +172,17 @@
       when: add_repos_update|length > 0
 
 - name: Create containers-prepare-parameter.yaml
+  when: registry_distro_lower is not defined
   block:
     - name: Write containers-prepare-parameter.yaml
       template:
         src: containers-prepare-parameter.yaml.j2
+        dest: "{{ working_dir }}/containers-prepare-parameter.yaml"
+
+- name: Create containers-prepare-parameter.yaml
+  when: registry_distro_lower is defined
+  block:
+    - name: Write containers-prepare-parameter.yaml
+      template:
+        src: containers-prepare-parameter-mixed-os.yaml.j2
         dest: "{{ working_dir }}/containers-prepare-parameter.yaml"

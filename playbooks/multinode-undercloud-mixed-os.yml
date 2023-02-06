@@ -52,9 +52,35 @@
     - build
 
 - name: Install the undercloud
+  tags: undercloud-install
   hosts: undercloud
-  roles:
-    - undercloud-deploy
+  tasks:
+    - name: get hash set fact mixed_os_dlrn_hash_8 for periodic jobs (no content provider)
+      when:
+        - not job.consumer_job | default(false) | bool
+        - registry_distro_lower is defined
+      block:
+        - include_role:
+            name: repo-setup
+            tasks_from: tripleo-get-hash-set-fact.yml
+          vars:
+            search_tag: "{{ dlrn_hash_tag }}"
+            tgh_os_version_override: "{{ (ansible_distribution == 'RedHat') | ternary('rhel', 'centos') }}8"
+            fact_name: "mixed_os_dlrn_hash_8"
+        - name: "debug dlrn_hash_tag resolution "
+          debug:
+            msg: "d_h_t {{ dlrn_hash_tag }} resolved to mixed_os_dlrn_hash_8 {{ mixed_os_dlrn_hash_8 }}  "
+    - name: set fact mixed_os_dlrn_hash_8 for check/gate jobs (with content provider)
+      when:
+        - job.consumer_job | default(false) | bool
+        - job.provider_dlrn_hash_distro is defined
+        - registry_distro_lower is defined
+      set_fact:
+        mixed_os_dlrn_hash_8: "{{ job.provider_dlrn_hash_distro[registry_distro_lower] }}"
+
+    - name: Deploy the undercloud
+      include_role:
+        name: undercloud-deploy
 
 - name: Validate the undercloud
   hosts: undercloud
