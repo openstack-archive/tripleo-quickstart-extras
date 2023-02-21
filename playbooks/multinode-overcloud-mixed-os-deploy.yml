@@ -11,7 +11,6 @@
       vars:
         overcloud_roles: "{{ overcloud_roles_mixed }}"
         topology_map: "{{ topology_map_mixed }}"
-        extra_args: " --disable-protected-resource-types --baremetal-deployment "
       tags:
         - overcloud-deploy
 
@@ -28,24 +27,3 @@
           debug: var=overcloud_deploy_result
           failed_when: overcloud_deploy_result == "failed"
           delegate_to: localhost
-
-- name: Backup controller logfiles before compute deployment overwrites them
-  hosts: undercloud
-  gather_facts: false
-  vars:
-    backup_ctrl_files:
-      - containers-prepare-parameter.yaml
-      - overcloud_deploy.log
-      - overcloud_roles.yaml
-      - overcloud-topology-config.yaml
-      - overcloud-deploy.sh
-  tags:
-    - overcloud-deploy
-  tasks:
-    - name: Rename controller logfiles so we can keep them
-      copy:
-        remote_src: true
-        src: "/home/zuul/{{ item }}"
-        dest: "/home/zuul/ctrl_{{ item }}"
-      loop: "{{ backup_ctrl_files|flatten }}"
-      failed_when: false
