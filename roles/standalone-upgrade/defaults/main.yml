@@ -5,7 +5,7 @@ standalone_network_prefix: 24
 standalone_ip: 192.168.24.1
 standalone_ha_control_virtual_ip: 192.168.24.3
 standalone_interface: br-ex
-standalone_neutron_bridge_mappings: "datacentre:br-ctlplane,tenant:br-tenant"
+standalone_neutron_bridge_mappings: "datacentre:br-ctlplane"
 standalone_neutron_physical_bridge: br-ctlplane
 
 # container prep script
