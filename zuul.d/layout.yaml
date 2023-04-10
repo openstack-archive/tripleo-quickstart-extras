@@ -2,38 +2,16 @@
 - project:
     queue: tripleo
     templates:
-      - tripleo-undercloud-jobs-pipeline
-      - tripleo-multinode-container-full-pipeline
       - tripleo-multinode-branchful
-      - release-notes-jobs-python3
-      - tripleo-external-compute-deployment-pipeline
-      - tripleo-standalone-scenarios-pipeline
-      - tripleo-standalone-multinode-ipa-pipeline
-      - tripleo-upgrades-master-pipeline
     check:
       jobs:
         - openstack-tox-linters
         - openstack-tox-molecule:
             required-projects:
               - openstack/tripleo-quickstart
-        - tripleo-ci-centos-9-content-provider:
+        - tripleo-ci-centos-9-content-provider-wallaby:
             dependencies:
               - openstack-tox-linters
-        - tripleo-ci-centos-9-standalone-on-multinode-ipa:
-            vars:
-              consumer_job: true
-              build_container_images: false
-              remove_tags:
-                - build
-            dependencies:
-              - tripleo-ci-centos-9-content-provider
-            files:
-              - ^roles/ipa-multinode.*$
-              - ^roles/standalone.*$
-              - ^playbooks/multinode-standalone-ipa.yml.*$
-        - tripleo-ci-centos-8-repoclosure:
-            files:
-              - ^roles/repoclosure.*$
     gate:
       jobs:
         - openstack-tox-linters
