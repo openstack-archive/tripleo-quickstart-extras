@@ -67,9 +67,11 @@
     tempest_cloud_name: 'standalone'
   tasks:
     - include_tasks: tasks/tempest.yml
-      when: job is undefined or (job is defined and
-            job.featureset is defined and job.featureset != '056')
-            and use_os_tempest | default(true)
+      when:
+        - job is undefined or (job is defined and
+          job.featureset is defined and job.featureset != '056')
+        - use_os_tempest | default(true)
+        - not job.skip_os_tempest|default(false)
   environment:
     # Disable ssl warnings
     CURL_CA_BUNDLE: ""
