@@ -12,6 +12,8 @@
         ceph_spec: "{{ working_dir }}/ceph_spec.yaml"
         containers_prep: "{{ working_dir }}/containers-prepare-parameters.yaml"
         deployed_ceph: "{{ working_dir }}/deployed_ceph.yaml"
+        ntpserver: "0.pool.ntp.org,1.pool.ntp.org,2.pool.ntp.org"
+        ntp_heat_env_file: "{{ working_dir }}/ntp-parameters.yaml"
     - name: Configure Storage Network
       include_tasks: storage-network.yml
       vars:
@@ -122,6 +124,7 @@
     tripleo_ceph_deploy_skip_user_create: true
     tripleo_ceph_deploy_skip_hosts_config: true
     tripleo_ceph_deploy_skip_container_registry_config: true
+    tripleo_ceph_deploy_skip_ntp: false
     tripleo_ceph_deploy_mon_ip: "{{ mon_ip }}"
     tripleo_ceph_deploy_spec: "{{ ceph_spec }}"
     tripleo_ceph_deploy_stack: "{{ stack }}"
@@ -137,3 +140,6 @@
     tripleo_ceph_deploy_network_data: "{{ network_data }}"
     tripleo_ceph_deploy_cluster_network_name: storage
     tripleo_ceph_deploy_container_namespace: "{{ (standalone_container_ceph_updates|bool) | ternary(docker_ceph_namespace, 'quay.rdoproject.org/tripleo' +  release + 'centos9') }}"
+    tripleo_ceph_deploy_ntp_server: "{{ ntpserver }}"
+    tripleo_ceph_deploy_ntp_heat_env_file: "{{ ntp_heat_env_file }}"
+    tripleo_ceph_deploy_with_ntp: "{{ release in ['wallaby'] }}"
