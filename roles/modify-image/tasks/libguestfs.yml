@@ -50,9 +50,6 @@
     > {{ working_dir }}/{{ modify_script|default('modify_image')|replace('/','_') }}.log 2>&1
   environment:
     LIBGUESTFS_BACKEND: direct
-    # FIXME(ykarel) LIBGUESTFS_BACKEND_SETTINGS can be removed once
-    # https://bugs.launchpad.net/tripleo/+bug/1743749 is completely fixed.
-    LIBGUESTFS_BACKEND_SETTINGS: "{{ lookup( 'env', 'LIBGUESTFS_BACKEND_SETTINGS')|default('force_tcg', true) }}"
   args:
     chdir: "{{ modify_image_working_dir }}"
   changed_when: true
