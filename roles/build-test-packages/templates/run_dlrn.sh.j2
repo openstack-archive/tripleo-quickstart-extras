@@ -3,7 +3,7 @@ set +e
 cd {{ build_repo_dir }}/DLRN
 source {{ build_repo_dir }}/dlrn-venv/bin/activate;
 {% if artg_build_one|bool %}
-export PKG={{ project_name_mapped.stdout }}
+export PKG={{ project_name_mapped }}
 {% else %}
 export PKG="{{ artg_rdo_packages|join(' --package-name ') }}"
 {% endif %}

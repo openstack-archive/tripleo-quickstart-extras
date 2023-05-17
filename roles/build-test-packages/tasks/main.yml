@@ -186,7 +186,7 @@
 # 2. project name should be present in zuul processed change list
 - name: construct zuul deps list but don't cache it so it can be reprepared during upgrades
   set_fact:
-    artg_change_list_prep: "{{ artg_change_list_prep|default([]) + [{'host': item.change_url.rpartition('/')[0],
+    artg_change_list_prep: "{{ artg_change_list_prep|default([]) + [{'host': item.change_url | regex_search('(^https?://.*?)/', '\\1') | first,
                                                                      'project': item.project.name,
                                                                      'branch': item.branch,
                                                                      'refspec': '/'.join(['refs', 'changes',

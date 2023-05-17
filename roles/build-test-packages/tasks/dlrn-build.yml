@@ -68,7 +68,7 @@
 
 - block:
     - name: Map project name to DLRN project name
-      register: project_name_mapped
+      register: project_name_mapped_output
       shell:
         chdir: '{{ build_repo_dir }}/DLRN'
         cmd: |
@@ -77,29 +77,31 @@
           # {{ rdoinfo_repo_name }}/{{ rdoinfo_repo_name.split('info')[0] }}-full.yml will
           # return rdo-full.yml and for downstream is osp-full.yml.
           rdopkg findpkg -s '{{ artg_change.project | basename }}' \
-            -i {{ rdoinfo_repo_name }}/{{ rdoinfo_repo_name.split('info')[0] }}-full.yml | \
-            awk '/^name/{print $2}; {print "findpkg: " $0 > "/dev/stderr"}'
+            -i {{ rdoinfo_repo_name }}/{{ rdoinfo_repo_name.split('info')[0] }}-full.yml
       changed_when: false
-      failed_when: project_name_mapped.rc != 0 or not project_name_mapped.stdout
+      failed_when: project_name_mapped_output.rc != 0 or not project_name_mapped_output.stdout
+
+    - set_fact:
+        project_name_mapped: "{{ project_name_mapped_output.stdout | regex_search('name:(.+)', '\\1') | first | trim }}"
 
   rescue:
     - debug:
         msg: |
-          WARNING: Got {{ project_name_mapped.rc }} result code trying to build {{ artg_change.project }}
+          WARNING: Got {{ project_name_mapped_output.rc }} result code trying to build {{ artg_change.project }}
           --- STDERR ---
-          {{ project_name_mapped.stderr }}
+          {{ project_name_mapped_output.stderr }}
           --- STDOUT ---
-          {{ project_name_mapped.stdout }}
+          {{ project_name_mapped_output.stdout }}
 
-- when: project_name_mapped is success
+- when: project_name_mapped is defined
   block:
     - name: Append project name to package list
       set_fact:
-        artg_rdo_packages: '{{ artg_rdo_packages }} + {{ [ project_name_mapped.stdout ] }}'
+        artg_rdo_packages: '{{ artg_rdo_packages }} + {{ [ project_name_mapped ] }}'
 
-    - name: Check if project {{ project_name_mapped.stdout }} source already exist
+    - name: Check if project {{ project_name_mapped }} source already exist
       stat:
-        path: '{{ build_repo_dir }}/DLRN/data/{{ project_name_mapped.stdout }}/.git'
+        path: '{{ build_repo_dir }}/DLRN/data/{{ project_name_mapped }}/.git'
       register: repo_status
 
     - name: Create data directory if doesn't exist yet
@@ -110,7 +112,7 @@
     - name: Copy from ready directories if configured
       command: >
         cp -raf {{ artg_repos_dir | dirname  }}/{{ artg_change.project }}
-        {{ build_repo_dir }}/DLRN/data/{{ project_name_mapped.stdout }}
+        {{ build_repo_dir }}/DLRN/data/{{ project_name_mapped }}
       ignore_errors: true
       register: copy_dir
       when: artg_repos_dir is defined
@@ -118,7 +120,7 @@
     - name: Clone the gated change
       git:
         repo: '{{ artg_change.host }}/{{ artg_change.project }}'
-        dest: '{{ build_repo_dir }}/DLRN/data/{{ project_name_mapped.stdout }}'
+        dest: '{{ build_repo_dir }}/DLRN/data/{{ project_name_mapped }}'
         refspec: '{{ artg_change.refspec }}'
         version: 'FETCH_HEAD'
       when:
@@ -128,7 +130,7 @@
 
     - name: Cleanup and checkout the relevant branch
       vars:
-        git_path: '{{ build_repo_dir }}/DLRN/data/{{ project_name_mapped.stdout }}'
+        git_path: '{{ build_repo_dir }}/DLRN/data/{{ project_name_mapped }}'
         git_branch: '{{ artg_change.branch }}'
       shell: |
         set -eu
@@ -140,13 +142,13 @@
 
     - name: Ensure distgit repo is absent, DLRN takes care of cloning based on config
       file:
-        path: "{{ build_repo_dir }}/DLRN/data/{{ project_name_mapped.stdout }}_distro"
+        path: "{{ build_repo_dir }}/DLRN/data/{{ project_name_mapped }}_distro"
         state: absent
 
     - name: Clone the distgit change
       git:
         repo: '{{ artg_change.distgit.host }}/{{ artg_change.distgit.project }}'
-        dest: '{{ build_repo_dir }}/DLRN/data/{{ project_name_mapped.stdout }}_distro'
+        dest: '{{ build_repo_dir }}/DLRN/data/{{ project_name_mapped }}_distro'
         refspec: '{{ artg_change.distgit.refspec }}'
         version: 'FETCH_HEAD'
         accept_hostkey: true
@@ -162,7 +164,7 @@
 
     - name: Print info about building
       debug:
-        msg: "Building change for {{ project_name_mapped.stdout|default('unknown') }}"
+        msg: "Building change for {{ project_name_mapped|default('unknown') }}"
 
     - name: Run DLRN
       shell: >
