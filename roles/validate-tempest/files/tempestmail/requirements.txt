@@ -5,7 +5,7 @@ futures==3.0.5
 Jinja2==2.8
 pbr==1.10.0
 PyYAML==3.12
-requests==2.12.3
+requests==2.31.0
 secure-smtpd==3.0.0
 six==1.10.0
 smtpd-tls==0.1
