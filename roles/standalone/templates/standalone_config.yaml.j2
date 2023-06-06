@@ -77,3 +77,6 @@ parameter_defaults:
 {% if job is defined and job.standalone_ntp_servers is defined %}
   NtpServer: {{ job.standalone_ntp_servers }}
 {% endif %}
+{% if cinder_lvm_loop_device_size is defined %}
+  CinderLVMLoopDeviceSize: {{ cinder_lvm_loop_device_size }}
+{% endif %}
