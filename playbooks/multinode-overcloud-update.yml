@@ -1,4 +1,35 @@
 ---
+# the yum repos ALWAYS need to change
+- name: Configure next minor release repository on overcloud nodes
+  hosts: overcloud
+  gather_facts: false
+  tags:
+    - overcloud-update
+  vars:
+    repo_setup_script: "repo-setup-update.sh"
+    repo_setup_log: "repo-setup-update.log"
+    repo_setup_run_update: false
+    # This should not be enabled because the updating of the packages occurs
+    # durring the upgrade process. For general installation it's ok to have
+    # this enabled, but this needs to be disabled for upgrades
+    ib_gating_repo_update: false
+  roles:
+    - role: repo-setup
+      when:
+        - minor_update|default(false)|bool
+        - not mixed_os|default(false)|bool
+
+- name: Update containers file before minor update
+  hosts: undercloud
+  gather_facts: false
+  tags:
+    - overcloud-update
+  roles:
+    - role: container-update
+      when:
+        - minor_update|default(false)|bool
+        - not mixed_os|default(false)|bool
+
 - name: Run tripleo-upgrade role to update the overcloud
   hosts: undercloud
   gather_facts: true
