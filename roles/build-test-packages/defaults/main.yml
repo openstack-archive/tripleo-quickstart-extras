@@ -97,3 +97,4 @@ artg_branchless_projects:
   - openstack/validations-common
   - openstack/validations-libs
   - x/tripleo-ipa
+  - x/whitebox-neutron-tempest-plugin
