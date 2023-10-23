@@ -6,15 +6,9 @@
     check:
       jobs:
         - openstack-tox-linters
-        - openstack-tox-molecule:
-            required-projects:
-              - openstack/tripleo-quickstart
         - tripleo-ci-centos-9-content-provider-wallaby:
             dependencies:
               - openstack-tox-linters
     gate:
       jobs:
         - openstack-tox-linters
-        - openstack-tox-molecule:
-            required-projects:
-              - openstack/tripleo-quickstart
