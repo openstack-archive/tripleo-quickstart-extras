@@ -42,6 +42,22 @@
   tags:
     - undercloud-install
 
+# docker_image_tag is set to the dlrn hash newest but uses the tag
+# as a backup default
+# container_build_id needs to be set to dlrn_hash_newest in downstream
+# minor update job before update to pull correct container images from
+# registry
+- name: set container_build_id from dlrn_hash_newest
+  set_fact:
+    container_build_id: "{{ dlrn_hash_newest | default(dlrn_hash_tag_newest) }}"
+    cacheable: true
+  when:
+    - get_build_command is not defined
+    - override_docker_image_tag|default(false)|bool
+  tags:
+    - undercloud-upgrade
+    - overcloud-update
+
 # overcloud_docker_image_tag is set to overcloud_dlrn_hash
 # I don't see where overcloud_dlrn_hash is set
 # http://codesearch.openstack.org/?q=overcloud_dlrn_hash&i=nope&files=&repos=
