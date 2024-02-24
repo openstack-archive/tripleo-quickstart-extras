@@ -1,8 +1,0 @@
----
-# This playbooks is responsible for gating changes in tripleo-quickstart or
-# tripleo-quickstart-extras with a possibility to depend on changes from the
-# other repo
-- name: Gate quickstart changes
-  hosts: localhost
-  roles:
-    - gate-quickstart

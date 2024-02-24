@@ -1,5 +1,0 @@
----
-features:
-  - New "validate_services" boolean flag in order to check the service state
-  - New "validate-services" role in charge of container and service state
-    validation

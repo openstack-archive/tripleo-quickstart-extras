@@ -1,9 +1,0 @@
-Adding a New Hardware Environment
-=================================
-
-Each hardware environment must have:
- - instackenv.json file describing your baremetal nodes
- - vendor_specific_setup file containing commands required to set up the environment for deployment
- - hw_settings.yml file containing values that will be used in undercloud.conf and deploy-overcloudrc files
-
-If there are no additional commands required to set up the environment, the vendor_specific_setup file is still required however it can be empty (as in the hp_dl320g8 environment).

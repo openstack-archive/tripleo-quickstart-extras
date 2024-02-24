@@ -1,5 +1,0 @@
----
-features:
-  - |
-    Underclouds and overclouds may be installed with Heat templates fetched
-    into a custom location defined with ``overcloud_templates_path``.

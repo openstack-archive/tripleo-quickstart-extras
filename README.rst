@@ -1,19 +1,10 @@
-========================
-Team and repository tags
-========================
+This project is no longer maintained.
 
-.. image:: https://governance.openstack.org/tc/badges/tripleo-quickstart-extras.svg
-    :target: https://governance.openstack.org/tc/reference/tags/index.html
+The contents of this repository are still available in the Git
+source code management system.  To see the contents of this
+repository before it reached its end of life, please check out the
+previous commit with "git checkout HEAD^1".
 
-.. Change things from this point on
-
-==================================
-Extra roles for tripleo-quickstart
-==================================
-
-These Ansible role are extending the functionality of tripleo-quickstart to do
-end-to-end deployment and testing of TripleO.
-
-The documentation of each role is located in the individual role folders, and
-general usage information is in the `tripleo-quickstart documentation
-<https://docs.openstack.org/tripleo-quickstart/latest/>`_.
+For any further questions, please email
+openstack-discuss@lists.openstack.org or join #openstack-dev on
+OFTC.

@@ -1,6 +1,0 @@
-#!/bin/bash
-#
-# simple script to check if the TripleO-UI is available via the ssh-tunnel
-# on libvirt
-
-curl --insecure  "https://{{ virthost_addr }}/login" | grep tripleo_ui.js

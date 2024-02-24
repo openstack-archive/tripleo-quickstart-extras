@@ -1,4 +1,0 @@
----
-- import_playbook: quickstart.yml
-- import_playbook: multinode-undercloud.yml
-- import_playbook: multinode-undercloud-minion.yml

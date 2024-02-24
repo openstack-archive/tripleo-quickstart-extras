@@ -1,5 +1,0 @@
----
-features:
-  - Add support for composable upgrade since Newton release. The workflow for
-    composable upgrade implement also the one for making mixed upgrade
-    https://blueprints.launchpad.net/tripleo/+spec/tripleo-composable-upgrade-job

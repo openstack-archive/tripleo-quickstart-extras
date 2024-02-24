@@ -1,8 +1,0 @@
-{#
-This takes advantage of the fact that valid JSON is also
-valid YAML.  The default to_nice_yaml filter doesn't quote strings,
-which can cause unexpected implicit type conversion when the
-resulting YAML is consumed, whereas with JSON all strings are quoted.
-#}
-{% set resource_registry = {'resource_registry': resource_registry_args} %}
-{{ resource_registry|to_nice_json }}

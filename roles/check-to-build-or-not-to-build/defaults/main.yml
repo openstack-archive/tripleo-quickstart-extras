@@ -1,9 +1,0 @@
----
-default_projects_need_build_list:
-  - diskimage-builder
-  - tripleo-image-elements
-  - tripleo-puppet-elements
-  - instack-undercloud
-  - python-tripleoclient
-  - tripleo-common
-  - ironic-python-agent

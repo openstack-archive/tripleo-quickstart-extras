@@ -1,7 +1,0 @@
----
-- name: Run sanity checks
-  shell: >
-    set -o pipefail &&
-    {{ working_dir }}/validate-sanity-check.sh 2>&1 {{ timestamper_cmd }} >
-    {{ sanity_checks_log }}
-  changed_when: true

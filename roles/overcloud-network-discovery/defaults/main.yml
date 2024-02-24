@@ -1,6 +1,0 @@
----
-netstat_log: /tmp/netstat_audit.log
-netstat_interval: 60
-netstat_dest_directory: /tmp
-execute_netstat: false
-kill_netstat: false

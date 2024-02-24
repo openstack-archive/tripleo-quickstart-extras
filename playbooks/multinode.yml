@@ -1,9 +1,0 @@
----
-- import_playbook: quickstart.yml
-- import_playbook: multinode-undercloud.yml
-- import_playbook: multinode-overcloud-prep.yml
-- import_playbook: multinode-overcloud.yml
-- import_playbook: multinode-overcloud-update.yml
-- import_playbook: multinode-overcloud-upgrade.yml
-- import_playbook: validations.yml
-- import_playbook: multinode-validate.yml

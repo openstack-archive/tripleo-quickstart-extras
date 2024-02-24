@@ -1,5 +1,0 @@
----
-- include: create-scripts.yml
-
-- include: sanity-checks.yml
-  when: sanity_step_sanity_checks|bool

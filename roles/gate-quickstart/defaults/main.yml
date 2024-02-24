@@ -1,5 +1,0 @@
----
-
-gated_projects:
-  - openstack/tripleo-quickstart
-  - openstack/tripleo-quickstart-extras

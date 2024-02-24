@@ -1,7 +1,0 @@
-parameter_defaults:
-  UndercloudMinionExtraConfig:
-    {% if undercloud_heat_workers is defined -%}
-    heat::engine::num_engine_workers: {{undercloud_heat_workers}}
-    {% elif undercloud_workers is defined -%}
-    heat::engine::num_engine_workers: "%{hiera('undercloud_workers')}"
-    {%- endif %}

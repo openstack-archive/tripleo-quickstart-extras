@@ -1,5 +1,0 @@
----
-artcl_publish: true
-artcl_use_zuul_swift_upload: true
-artcl_swift_container: artifacts
-artcl_full_artifact_url: "{{ lookup('env', 'SWIFT_artifacts_URL') }}"

@@ -1,6 +1,0 @@
----
-# this file is intentionally left blank, it can be used to pass the "local"
-# parameter to the collect-logs.sh CI script, resulting in using the default
-# settings, collecting logs locally but not attempting to upload them anywhere
-# we need at least one dummy value here
-artcl_placeholder: true

@@ -1,8 +1,0 @@
----
-- name: Converge
-  hosts: all
-  gather_facts: false
-  tasks:
-    - include_role:
-        name: validate-perf
-        tasks_from: security_disable

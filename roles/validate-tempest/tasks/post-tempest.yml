@@ -1,4 +1,0 @@
----
-- name: Exit with tempest result code if configured
-  shell: tail -10 {{ tempest_log_file }}; exit {{ tempest_result.rc }}
-  when: tempest_result.rc != 0 and tempest_exit_on_failure|bool

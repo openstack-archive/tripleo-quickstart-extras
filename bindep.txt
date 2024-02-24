@@ -1,3 +1,0 @@
-# debian requirements (linters)
-libffi-dev        [platform:dpkg]
-libssl-dev        [platform:dpkg]

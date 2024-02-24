@@ -1,7 +1,0 @@
-parameter_defaults:
-{% for nodes in overcloud_services   %}
-  {{ nodes.name }}
-   {% for node in nodes.services %}
-    - {{ node }}
-   {% endfor %}
-{% endfor %}

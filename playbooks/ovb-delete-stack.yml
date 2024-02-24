@@ -1,5 +1,0 @@
----
-- name: clean up heat stack
-  hosts: localhost
-  roles:
-    - {role: ovb-manage-stack, ovb_manage_stack_mode: 'delete'}

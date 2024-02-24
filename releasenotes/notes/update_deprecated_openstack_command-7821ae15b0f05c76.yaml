@@ -1,5 +1,0 @@
----
-other:
-  - |
-    The nodes registration and configure are done through `openstack overcloud
-    node import instackenv.json` command from newton release and above.

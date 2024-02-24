@@ -1,8 +1,0 @@
----
-- include: create-scripts.yml
-  tags:
-    - undercloud-scripts
-
-- include: overcloud-prep-flavors.yml
-  tags:
-    - undercloud-post-install

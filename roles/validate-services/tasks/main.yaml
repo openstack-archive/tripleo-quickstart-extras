@@ -1,3 +1,0 @@
----
-- include_tasks: containers.yaml
-- include_tasks: systemd.yaml

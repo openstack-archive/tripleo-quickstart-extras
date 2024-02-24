@@ -1,7 +1,0 @@
-parameter_defaults:
-  HostnameMap:
-{% for node in overcloud_nodes %}
-{% if node.hostnamemap_override is defined %}
-    {{ node.default_name }}: {{ node.hostnamemap_override }}
-{% endif %}
-{% endfor %}

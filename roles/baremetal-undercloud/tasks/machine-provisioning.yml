@@ -1,7 +1,0 @@
----
-- name: Provision script execution
-  shell: >
-    set -o pipefail &&
-    {{ baremetal_provisioning_script }} 2>&1 {{ timestamper_cmd }} | tee
-    {{ baremetal_provisioning_log }}
-  when: step_provide_undercloud|bool

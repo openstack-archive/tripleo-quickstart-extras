@@ -1,6 +1,0 @@
----
-- name: Create Sanity Checks scripts
-  template:
-    src: "{{ sanity_scripts }}"
-    dest: "{{ working_dir }}/validate-sanity-check.sh"
-    mode: 0755

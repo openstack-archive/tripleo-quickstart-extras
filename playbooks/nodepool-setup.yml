@@ -1,7 +1,0 @@
----
-# setup the nodepool nodes
-- name: Setup the provisioned virtual machines to look like nodepool nodes
-  hosts: subnodes
-  gather_facts: true
-  roles:
-    - nodepool-setup

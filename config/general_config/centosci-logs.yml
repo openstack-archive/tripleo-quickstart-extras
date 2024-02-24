@@ -1,7 +1,0 @@
----
-artcl_gzip: true
-artcl_artifact_url: https://artifacts.ci.centos.org/rdo
-artcl_publish: true
-artcl_use_rsync: true
-artcl_rsync_use_daemon: true
-artcl_rsync_path: rdo@artifacts.ci.centos.org::rdo

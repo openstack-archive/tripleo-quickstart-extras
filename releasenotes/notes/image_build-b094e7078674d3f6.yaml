@@ -1,9 +1,0 @@
----
-issues:
-  - |
-    Because of very long image modifying by libguestfs, we now implement
-    a different way to do it by converting image to raw, mounting it
-    and modifying in the place (usual tripleo-ci way
-    to do it, as it was before transition to quickstart).
-    This implementation might be temporary until we figure what happens
-    with libguestfs.

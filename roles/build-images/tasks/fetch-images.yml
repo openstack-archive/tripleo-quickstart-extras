@@ -1,4 +1,0 @@
----
-- name: indirect role include (workaround to https://github.com/ansible/ansible/issues/19472)
-  include_role:
-    name: fetch-images

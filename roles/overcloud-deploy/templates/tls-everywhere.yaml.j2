@@ -1,8 +1,0 @@
-# Override the IpaClient path to use tripleo-ipa instead of novajoin for IPA registration
-
-parameter_defaults:
-  IdMServer: {{freeipa_server_hostname}}
-  IdMDomain: {{overcloud_cloud_domain}}
-
-resource_registry:
-  OS::TripleO::Services::IpaClient: {{overcloud_templates_path}}/deployment/ipa/ipaservices-baremetal-ansible.yaml

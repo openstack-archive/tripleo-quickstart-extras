@@ -1,8 +1,0 @@
----
-- include: create-scripts.yml
-  tags:
-    - undercloud-scripts
-
-- include: overcloud-prep-network.yml
-  tags:
-    - undercloud-post-install

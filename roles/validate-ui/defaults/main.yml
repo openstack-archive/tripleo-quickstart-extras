@@ -1,5 +1,0 @@
----
-validate_ui_simple: false
-ui_validate_simple_script: validate_ui_simple.sh.j2
-ui_validate_simple_log: validate_ui_simple.log
-virthost_addr: "{{ hostvars[groups['virthost'][0]].ansible_host }}"

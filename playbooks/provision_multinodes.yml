@@ -1,6 +1,0 @@
----
-- name: Multinode
-  hosts: localhost
-  gather_facts: false
-  roles:
-    - role: multinodes

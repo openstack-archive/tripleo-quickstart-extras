@@ -1,2 +1,0 @@
-2017-01-18 08:47:46.883811 | {3} tempest.api.compute.flavors.test_flavors.FlavorsV2TestJSON.test_get_flavor [0.576186s] ... ok
-2017-01-18 08:47:47.016820 | {3} tempest.api.compute.flavors.test_flavors.FlavorsV2TestJSON.test_list_flavors [0.132801s] ... ok

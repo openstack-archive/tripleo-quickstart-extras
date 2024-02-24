@@ -1,3 +1,0 @@
----
-base_url: https://cloud.centos.org/centos/{{ ansible_distribution_major_version }}-stream/x86_64/images/
-qcow_prefix: CentOS-Stream-GenericCloud-

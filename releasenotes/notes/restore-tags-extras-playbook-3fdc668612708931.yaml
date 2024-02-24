@@ -1,8 +1,0 @@
----
-features:
-  - |
-    Tags were added in all the playbooks so that it is possible to control
-    atomically the flow of the entire process.
-    For details about how to use tags check the chapter *Using tags to
-    atomically execute specific phases of the deployment* in
-    [TripleO Quickstart - Getting Started Guide](https://docs.openstack.org/tripleo-quickstart/latest/getting-started.html)

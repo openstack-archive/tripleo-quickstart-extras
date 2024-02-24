@@ -1,5 +1,0 @@
----
-# execute and log repoclosure
-- name: execute repoclosure
-  include: repoclosure.yml
-  when: job.repoclosure is defined or repoclosure is defined
